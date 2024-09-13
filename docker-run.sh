@@ -1,13 +1,13 @@
 #!/bin/bash
 
-docker stop rmu-api-npc
+docker stop rmu-api-core
 
-docker rm rmu-api-npc
+docker rm rmu-api-core
 
-docker rmi labcabrera/rmu-api-npc:latest
+docker rmi labcabrera/rmu-api-core:latest
 
-docker build -t labcabrera/rmu-api-npc:latest .
+docker build -t labcabrera/rmu-api-core:latest .
 
-docker run -d -p 3002:3002 --network rmu-network --name rmu-api-npc -h rmu-api-npc -e MONGO_URI='mongodb://rmu-mongo:27017/rmu-npc' -e PORT='3002' labcabrera/rmu-api-npc:latest
+docker run -d -p 3003:3003 --network rmu-network --name rmu-api-core -h rmu-api-core -e MONGO_URI='mongodb://rmu-mongo:27017/rmu-core' -e PORT='3003' labcabrera/rmu-api-core:latest
 
-docker logs -f rmu-api-npc
+docker logs -f rmu-api-core
