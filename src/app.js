@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const app = express();
 
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/rmu-core';
 
 app.use(express.json());
