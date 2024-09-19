@@ -16,9 +16,11 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const realmRouter = require('./routes/realm-controller');
 const raceRouter = require('./routes/race-controller');
+const armorTypeRouter = require('./routes/armor-type-controller');
 
 app.use('/v1/realms', realmRouter);
 app.use('/v1/races', raceRouter);
+app.use('/v1/armor-types', armorTypeRouter);
 
 app.get('/', (req, res) => {
   res.send('TODO');
