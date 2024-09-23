@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 
 const categories = [
-    { 'id': "animal" },
-    { 'id': "awareness" },
-    { 'id': "battle-expertise" },
-    { 'id': "body-discipline" },
-    { 'id': "brawn" },
-    { 'id': "combat-expertise" },
-    { 'id': "combat-training" },
+    { 'id': "animal", bonus: ["ag", "em"] },
+    { 'id': "awareness", bonus: ["in", "re"] },
+    { 'id': "battle-expertise", bonus: [] },
+    { 'id': "body-discipline", bonus: ["co", "sd"] },
+    { 'id': "brawn", bonus: ["co", "sd"] },
+    { 'id': "combat-expertise", bonus: [] },
+    { 'id': "combat-training", bonus: ["ag", "st"] },
     { 'id': "composition" },
     { 'id': "crafting" },
     { 'id': "delving" },
