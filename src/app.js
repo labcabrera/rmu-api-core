@@ -25,8 +25,8 @@ app.use('/v1/realms', realmRouter);
 app.use('/v1/races', raceRouter);
 app.use('/v1/armor-types', armorTypeRouter);
 app.use('/v1/character-sizes', characterSizeRouter);
-app.use('/v1/skill-categories', characterSizeRouter);
-app.use('/v1/skills', characterSizeRouter);
+app.use('/v1/skill-categories', skillCategoryRouter);
+app.use('/v1/skills', skillRouter);
 
 app.get('/', (req, res) => {
   res.send('TODO');
