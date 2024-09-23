@@ -18,11 +18,15 @@ const realmRouter = require('./routes/realm-controller');
 const raceRouter = require('./routes/race-controller');
 const armorTypeRouter = require('./routes/armor-type-controller');
 const characterSizeRouter = require('./routes/character-size-controller');
+const skillCategoryRouter = require('./routes/skill-category-controller');
+const skillRouter = require('./routes/skill-controller');
 
 app.use('/v1/realms', realmRouter);
 app.use('/v1/races', raceRouter);
 app.use('/v1/armor-types', armorTypeRouter);
 app.use('/v1/character-sizes', characterSizeRouter);
+app.use('/v1/skill-categories', characterSizeRouter);
+app.use('/v1/skills', characterSizeRouter);
 
 app.get('/', (req, res) => {
   res.send('TODO');
