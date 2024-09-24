@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
 const fs = require('fs');
+const swaggerUi = require('swagger-ui-express');
 const YAML = require('yaml');
 const path = require('path');
 
