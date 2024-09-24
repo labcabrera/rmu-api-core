@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  title: RMU Core API
+  description: RMU Core API
+  contact:
+    name: Luis Cabrera
+    url: https://github.com/labcabrera
+    email: lab.cabrera@gmail.com
+  version: 0.1.0
+servers:
+  - url: http://localhost:3001/v1
+tags:
+  - name: Skill categories
+    description: Skill categories
+paths:
+  /skill-categories:
+    get:
+      tags:
+        - Skill categories
+      summary: Find skill categories
+      operationId: findSkillCategories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedContentItem'
+  /skill-categories/{skillCategoryId}:
+    get:
+      tags:
+        - Skill categories
+      summary: Find skill category by id
+      operationId: findItemById
+      parameters:
+        - name: skillCategoryId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedContentSkillCategory'
+        '404':
+          description: Skill category not found
+components:
+  schemas:
+    PagedContentInfo:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        page:
+          type: integer
+          format: int32
+    PagedContentSkillCategory:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillCategory'
+        info:
+          $ref: '#/components/schemas/PagedContentInfo'
+    SkillCategory:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Skill category identifier
+          example: 66545720ccc0b409343736b2
+        name:
+          type: string
+          description: Skill category name

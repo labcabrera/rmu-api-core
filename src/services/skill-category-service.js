@@ -1,7 +1,3 @@
-const express = require('express');
-const router = express.Router();
-const skillCategoryService = require("../services/skill-category-service");
-
 const categories = [
     { 'id': "animal", bonus: ["ag", "em"] },
     { 'id': "awareness", bonus: ["in", "re"] },
@@ -30,25 +26,20 @@ const categories = [
     { 'id': "vocation" }
 ];
 
-router.get('/', async (req, res) => {
-    try {
-        const page = req.query.page ? parseInt(req.query.page) : 0;
-        const size = req.query.size ? parseInt(req.query.size) : 10;
-        const categories = skillCategoryService.findAll(page, size);
-        res.json(categories);
-    } catch (error) {
-        res.status(error.status ? error.status : 500).json({ message: error.message });
+const findById = (id) => {
+    const item = categories.find(item => item.id === id);
+    if (!item) {
+        throw new { status: 404, message: 'Skill category not found' }
     }
-});
+    return item;
+}
 
-router.get('/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        const skill = skillCategoryService.findById(id);
-        res.json(skill);
-    } catch (error) {
-        res.status(error.status ? error.status : 500).json({ message: error.message });
-    }
-});
+const findAll = (page, size) => {
+    const content = categories.slice(page * size, (page + 1) * size);
+    return { content: content, pagination: { page: page, size: size, totalElements: categories.length } };
+};
 
-module.exports = router;
+module.exports = {
+    findById,
+    findAll,
+};
