@@ -3,7 +3,7 @@ const Realm = require("../models/realm-model");
 const findById = async (id) => {
     const readed = await Realm.findById(id);
     if (!readed) {
-        throw new { status: 404, message: "Realm not found" };
+        throw { status: 404, message: "Realm not found" };
     }
     return toJSON(readed);
 }
@@ -31,7 +31,7 @@ const update = async (gameId, data) => {
     const { name, description } = data;
     const updatedGame = await Realm.findByIdAndUpdate(gameId, { name, description }, { new: true });
     if (!updatedGame) {
-        throw new { status: 404, message: "Realm not found" };
+        throw { status: 404, message: "Realm not found" };
     };
     return toJSON(updatedGame);
 };

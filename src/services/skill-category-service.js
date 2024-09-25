@@ -29,7 +29,7 @@ const categories = [
 const findById = (id) => {
     const item = categories.find(item => item.id === id);
     if (!item) {
-        throw new { status: 404, message: 'Skill category not found' }
+        throw { status: 404, message: 'Skill category not found' }
     }
     return item;
 }

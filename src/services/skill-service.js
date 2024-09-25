@@ -133,7 +133,7 @@ const skills = [
 const findById = (id) => {
     const item = skills.find(item => item.id === id);
     if (!item) {
-        throw new { status: 404, message: 'Skill not found' }
+        throw { status: 404, message: 'Skill not found' }
     }
     return item;
 }

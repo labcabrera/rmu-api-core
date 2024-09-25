@@ -3,7 +3,7 @@ const Race = require("../models/race-model");
 const findById = async (id) => {
     const readedGame = await Race.findById(id);
     if (!readedGame) {
-        throw new { status: 404, message: "Race not found" };
+        throw { status: 404, message: "Race not found" };
     }
     return toJSON(readedGame);
 }
@@ -31,7 +31,7 @@ const update = async (gameId, data) => {
     const { name, description } = data;
     const updatedGame = await Race.findByIdAndUpdate(gameId, { name, description }, { new: true });
     if (!updatedGame) {
-        throw new { status: 404, message: "Race not found" };
+        throw { status: 404, message: "Race not found" };
     };
     return toJSON(updatedGame);
 };
