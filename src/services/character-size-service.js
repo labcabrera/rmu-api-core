@@ -28,7 +28,7 @@ const findAttackEffects = (attackerSizeId, defenderSizeId) => {
     const b = findById(defenderSizeId);
     return {
         hitMultiplier: a.hitMultiplier,
-        critModifier: a.index - b.index
+        criticalTypeModifier: a.index - b.index
     }
 };
 
