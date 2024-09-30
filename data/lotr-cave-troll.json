@@ -1,0 +1,38 @@
+{
+    "id": "lotr-cave-troll",
+    "name": "Cave troll",
+    "realm": "lotr",
+    "size": "big",
+    "defaultStatBonus": {
+        "agility": -1,
+        "constitution": 2,
+        "empathy": -5,
+        "intuition": 0,
+        "memory": -3,
+        "presence": 0,
+        "quickness": 0,
+        "reasoning": -3,
+        "selfDiscipline": -3,
+        "strength": 5
+    },
+    "resistances": {
+        "channeling": -10,
+        "mentalism": -10,
+        "essence": -10,
+        "physical": 15
+    },
+    "averageHeight": {
+        "male": 9,
+        "female": 9
+    },
+    "averageWeight": {
+        "male": 800,
+        "female": 800
+    },
+    "strideBonus": 6,
+    "endurance": 10,
+    "recoveryMultiplier": 0.5,
+    "baseHits": 25,
+    "bonusDevPoints": 29,
+    "description": "LOTR Cave troll"
+}
