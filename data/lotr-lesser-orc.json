@@ -1,0 +1,38 @@
+{
+    "id": "lotr-orc-lesser",
+    "name": "Orc - Lesser",
+    "realm": "lotr",
+    "size": "medium",
+    "defaultStatBonus": {
+        "agility": 0,
+        "constitution": 2,
+        "empathy": -3,
+        "intuition": 0,
+        "memory": -2,
+        "presence": -3,
+        "quickness": 0,
+        "reasoning": -2,
+        "selfDiscipline": -4,
+        "strength": 1
+    },
+    "resistances": {
+        "channeling": 0,
+        "mentalism": 0,
+        "essence": 0,
+        "physical": 5
+    },
+    "averageHeight": {
+        "male": 5,
+        "female": 4.8
+    },
+    "averageWeight": {
+        "male": 150,
+        "female": 125
+    },
+    "strideBonus": -2,
+    "endurance": 5,
+    "recoveryMultiplier": 0.5,
+    "baseHits": 25,
+    "bonusDevPoints": 75,
+    "description": "LOTR Lesser Orc"
+}

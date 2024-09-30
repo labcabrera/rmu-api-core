@@ -1,0 +1,38 @@
+{
+    "id": "lotr-human-common",
+    "name": "Human - Common",
+    "realm": "lotr",
+    "size": "medium",
+    "defaultStatBonus": {
+        "agility": 0,
+        "constitution": 0,
+        "empathy": 0,
+        "intuition": 0,
+        "memory": 0,
+        "presence": 0,
+        "quickness": 0,
+        "reasoning": 0,
+        "selfDiscipline": 0,
+        "strength": 0
+    },
+    "resistances": {
+        "channeling": 0,
+        "mentalism": 0,
+        "essence": 0,
+        "physical": 0
+    },
+    "averageHeight": {
+        "male": 5.6,
+        "female": 5.5
+    },
+    "averageWeight": {
+        "male": 185,
+        "female": 154
+    },
+    "strideBonus": 0,
+    "endurance": 0,
+    "recoveryMultiplier": 1,
+    "baseHits": 25,
+    "bonusDevPoints": 50,
+    "description": "Base human"
+}
