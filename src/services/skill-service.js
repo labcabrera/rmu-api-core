@@ -2,8 +2,8 @@ const skills = [
     { 'id': "animal-handling", categoryId: "animal", bonus: ["pr"], specializations: ["animal-type"] },
     { 'id': "riding", categoryId: "animal", bonus: ["pr"], specializations: ["animal-type"] },
 
-    { 'id': "perception", categoryId: "awarenes", bonus: ["sd"], specializations: null },
-    { 'id': "tracking", categoryId: "awarenes", bonus: ["sd"], specializations: null },
+    { 'id': "perception", categoryId: "awareness", bonus: ["sd"], specializations: null },
+    { 'id': "tracking", categoryId: "awareness", bonus: ["sd"], specializations: null },
 
     { 'id': "armor-maneuver", categoryId: "battle-expertise", bonus: [], specializations: null },
     { 'id': "mounted-combat", categoryId: "battle-expertise", bonus: [], specializations: null },
