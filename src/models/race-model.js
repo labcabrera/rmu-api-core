@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
 const raceStatBonus = new mongoose.Schema({
-    agility: Number,
-    constitution: Number,
-    empathy: Number,
-    intuition: Number,
-    memory: Number,
-    presence: Number,
-    quickness: Number,
-    reasoning: Number,
-    selfDiscipline: Number,
-    strength: Number
+    ag: Number,
+    co: Number,
+    em: Number,
+    in: Number,
+    me: Number,
+    pr: Number,
+    qu: Number,
+    re: Number,
+    sd: Number,
+    st: Number
 }, { _id: false });
 
 const raceResistences = new mongoose.Schema({
