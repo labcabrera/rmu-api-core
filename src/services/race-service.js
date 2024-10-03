@@ -26,7 +26,7 @@ const save = async (user, data) => {
         defaultStatBonus: data.defaultStatBonus,
         resistances: data.resistances,
         averageHeight: data.averageHeight,
-        averageWeight: data.averageHeight,
+        averageWeight: data.averageWeight,
         strideBonus: data.strideBonus,
         endurance: data.endurance,
         recoveryMultiplier: data.recoveryMultiplier,
