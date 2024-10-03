@@ -1,0 +1,38 @@
+{
+    "id": "lotr-wood-elf",
+    "name": "Wood elf",
+    "realm": "lotr",
+    "size": "medium",
+    "defaultStatBonus": {
+        "ag": 2,
+        "co": 0,
+        "em": 2,
+        "in": 0,
+        "me": 1,
+        "pr": 2,
+        "qu": 3,
+        "re": 0,
+        "sd": -5,
+        "st": 2
+    },
+    "resistances": {
+        "channeling": -5,
+        "mentalism": -5,
+        "essence": -5,
+        "physical": 10
+    },
+    "averageHeight": {
+        "male": 6,
+        "female": 5.9
+    },
+    "averageWeight": {
+        "male": 150,
+        "female": 125
+    },
+    "strideBonus": 0,
+    "endurance": 10,
+    "recoveryMultiplier": 2,
+    "baseHits": 20,
+    "bonusDevPoints": 3,
+    "description": "Wood elf"
+}

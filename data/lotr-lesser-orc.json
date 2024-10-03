@@ -4,16 +4,16 @@
     "realm": "lotr",
     "size": "medium",
     "defaultStatBonus": {
-        "agility": 0,
-        "constitution": 2,
-        "empathy": -3,
-        "intuition": 0,
-        "memory": -2,
-        "presence": -3,
-        "quickness": 0,
-        "reasoning": -2,
-        "selfDiscipline": -4,
-        "strength": 1
+        "ag": 0,
+        "co": 2,
+        "em": -3,
+        "in": 0,
+        "me": -2,
+        "pr": -3,
+        "qu": 0,
+        "re": -2,
+        "sd": -4,
+        "st": 1
     },
     "resistances": {
         "channeling": 0,

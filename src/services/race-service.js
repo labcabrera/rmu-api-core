@@ -18,7 +18,7 @@ const findAll = async (page, size) => {
 };
 
 const save = async (user, data) => {
-    const newRace = new Race({
+    const raceData = {
         _id: data.id,
         name: data.name,
         realm: data.realm,
@@ -33,7 +33,8 @@ const save = async (user, data) => {
         baseHits: data.baseHits,
         bonusDevPoints: data.bonusDevPoints,
         descriptiohn: data.description
-    });
+    }
+    const newRace = new Race(raceData);
     const savedRace = await newRace.save();
     return raceConverter.toJSON(savedRace);
 };

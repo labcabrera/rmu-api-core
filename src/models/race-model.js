@@ -42,7 +42,10 @@ const raceSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    defaultStatBonus: raceStatBonus,
+    defaultStatBonus: {
+        type: raceStatBonus,
+        required: true
+    },
     resistances: raceResistences,
     averageHeight: sexBasedAttribute,
     averageWeight: sexBasedAttribute,
