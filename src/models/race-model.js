@@ -13,7 +13,7 @@ const raceStatBonus = new mongoose.Schema({
     st: Number
 }, { _id: false });
 
-const raceResistences = new mongoose.Schema({
+const raceResistances = new mongoose.Schema({
     channeling: Number,
     mentalism: Number,
     essence: Number,
@@ -46,7 +46,7 @@ const raceSchema = new mongoose.Schema({
         type: raceStatBonus,
         required: true
     },
-    resistances: raceResistences,
+    resistances: raceResistances,
     averageHeight: sexBasedAttribute,
     averageWeight: sexBasedAttribute,
     strideBonus: Number,
