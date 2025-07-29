@@ -1,3 +1,14 @@
 = Rolemaster Unified Core API
 
-Mock version for frontend developing: https://github.com/labcabrera/rmu-fe/
+REST API for RMO core services such as:
+
+* Races
+* Skills and categories
+* Realms
+* Armor types
+* Character sizes
+
+This project is part of RMU Online: https://github.com/labcabrera/rmu-platform
+
+WARNING: *This application is an independent project developed by fans of Rolemaster Unified. It is not affiliated with, endorsed by, or licensed by Iron Crown Enterprises (ICE), the owners of the Rolemaster intellectual property.*
+*All Rolemaster trademarks, game systems, and materials are the property of Iron Crown Enterprises. This software is provided for personal, non-commercial use only. If you enjoy Rolemaster, please support the official publications and content from ICE.*
