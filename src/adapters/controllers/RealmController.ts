@@ -1,0 +1,68 @@
+import { Request, Response, NextFunction } from 'express';
+import { inject, injectable } from 'inversify';
+import { RealmService } from '@application/services/RealmService';
+import { CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/Realm';
+import { PaginationOptions } from '@shared/types';
+import { TYPES } from '@shared/types/container';
+
+@injectable()
+export class RealmController {
+  constructor(@inject(TYPES.RealmService) private realmService: RealmService) {}
+
+  async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string) : 0;
+      const size = req.query.size ? parseInt(req.query.size as string) : 10;
+
+      const options: PaginationOptions = { page, size };
+      const result = await this.realmService.findAll(options);
+
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const realm = await this.realmService.findById(id);
+      res.json(realm);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      console.log(`Realm creation << ${req.body.name}`);
+      const createRequest: CreateRealmRequest = req.body;
+      const newRealm = await this.realmService.create(createRequest);
+      res.status(201).json(newRealm);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const updateRequest: UpdateRealmRequest = req.body;
+      const updatedRealm = await this.realmService.update(id, updateRequest);
+      res.json(updatedRealm);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      console.log(`Realm delete << ${req.params.id}`);
+      const { id } = req.params;
+      await this.realmService.deleteById(id);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+}

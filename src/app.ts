@@ -7,6 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 import path from 'path';
 import { raceRouter } from '@adapters/routes/raceRoutes';
+import { realmRouter } from '@adapters/routes/realmRoutes';
 import { errorHandler } from '@adapters/middleware/errorHandler';
 
 const app = express();
@@ -31,6 +32,7 @@ mongoose
 
 // Routes
 app.use('/v1/races', raceRouter);
+app.use('/v1/realms', realmRouter);
 
 // API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

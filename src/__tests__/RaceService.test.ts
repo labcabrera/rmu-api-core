@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import { RaceService } from '@application/services/RaceService';
-import { RaceRepository } from '@domain/ports/RaceRepository';
-import { Race, CreateRaceRequest } from '@domain/entities/Race';
-import { NotFoundError, ConflictError } from '@shared/types';
+import { RaceService } from './../application/services/RaceService';
+import { RaceRepository } from './../domain/ports/RaceRepository';
+import { Race, CreateRaceRequest } from './../domain/entities/Race';
+import { NotFoundError, ConflictError } from './../shared/types';
 
 describe('RaceService', () => {
   let raceService: RaceService;
