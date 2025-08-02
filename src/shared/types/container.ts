@@ -18,6 +18,10 @@ export const TYPES = {
   // Controllers
   RaceController: Symbol.for('RaceController'),
   RealmController: Symbol.for('RealmController'),
+  SkillController: Symbol.for('SkillController'),
+  SkillCategoryController: Symbol.for('SkillCategoryController'),
+  CharacterSizeController: Symbol.for('CharacterSizeController'),
+  ArmorTypeController: Symbol.for('ArmorTypeController'),
 
   // Database
   DatabaseConnection: Symbol.for('DatabaseConnection'),

@@ -32,6 +32,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "inversify": "^7.7.0",
+    "module-alias": "^2.2.3",
     "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
     "reflect-metadata": "^0.2.2",
@@ -55,5 +56,12 @@
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
+  },
+  "_moduleAliases": {
+    "@domain": "dist/domain",
+    "@infrastructure": "dist/infrastructure",
+    "@application": "dist/application",
+    "@adapters": "dist/adapters",
+    "@shared": "dist/shared"
   }
 }
