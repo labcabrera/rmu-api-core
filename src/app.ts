@@ -6,9 +6,9 @@ import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 import path from 'path';
-import { raceRouter } from '@adapters/routes/raceRoutes';
-import { realmRouter } from '@adapters/routes/realmRoutes';
-import { errorHandler } from '@adapters/middleware/errorHandler';
+import { raceRouter } from '@infrastructure/adapters/routes/raceRoutes';
+import { realmRouter } from '@infrastructure/adapters/routes/realmRoutes';
+import { errorHandler } from '@infrastructure/adapters/middleware/errorHandler';
 
 const app = express();
 

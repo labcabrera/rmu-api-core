@@ -7,10 +7,10 @@ import { RealmRepository } from '@domain/ports/RealmRepository';
 
 import { RaceService } from '@application/services/RaceService';
 import { RealmService } from '@application/services/RealmService';
-import { RaceController } from '@adapters/controllers/RaceController';
-import { RealmController } from '@adapters/controllers/RealmController';
-import { MongoRaceRepository } from '@infrastructure/database/repositories/MongoRaceRepository';
-import { MongoRealmRepository } from '@infrastructure/database/repositories/MongoRealmRepository';
+import { RaceController } from '@infrastructure/adapters/controllers/RaceController';
+import { RealmController } from '@infrastructure/adapters/controllers/RealmController';
+import { MongoRaceRepository } from '@infrastructure/adapters/persistence/repositories/MongoRaceRepository';
+import { MongoRealmRepository } from '@infrastructure/adapters/persistence/repositories/MongoRealmRepository';
 
 const container = new Container();
 
