@@ -13,7 +13,7 @@ import { errorHandler } from '@adapters/middleware/errorHandler';
 const app = express();
 
 const PORT = process.env.PORT || 3001;
-const MONGO_URI = process.env.RMU_MONGO_CORE_URI || 'mongodb://localhost:27017/rmu-core';
+const MONGO_URI = process.env.RMU_MONGO_CORE_URI || 'mongodb://admin:admin@localhost:27017/rmu-core?authSource=admin';
 
 // Load OpenAPI documentation
 const openapiFilePath = path.join(__dirname, '../openapi.yaml');
