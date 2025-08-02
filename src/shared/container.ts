@@ -9,12 +9,12 @@ import { SkillCategoryRepository } from '@domain/ports/SkillCategoryRepository';
 import { CharacterSizeRepository } from '@domain/ports/CharacterSizeRepository';
 import { ArmorTypeRepository } from '@domain/ports/ArmorTypeRepository';
 
-import { RaceService } from '@application/services/RaceService';
-import { RealmService } from '@application/services/RealmService';
-import { SkillService } from '@application/services/SkillService';
-import { SkillCategoryService } from '@application/services/SkillCategoryService';
-import { CharacterSizeService } from '@application/services/CharacterSizeService';
-import { ArmorTypeService } from '@application/services/ArmorTypeService';
+import { RaceService } from '@application/services/race-service';
+import { RealmService } from '@application/services/realm-service';
+import { SkillService } from '@application/services/skill-service';
+import { SkillCategoryService } from '@application/services/skill-category-service';
+import { CharacterSizeService } from '@application/services/character-size-service';
+import { ArmorTypeService } from '@application/services/armor-type-service';
 
 import { RaceController } from '@infrastructure/adapters/controllers/RaceController';
 import { RealmController } from '@infrastructure/adapters/controllers/RealmController';

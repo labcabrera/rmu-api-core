@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { TYPES } from '@shared/types/container';
-import { CharacterSizeService } from '@application/services/CharacterSizeService';
+import { CharacterSizeService } from '@application/services/character-size-service';
 import { CharacterSizeCreateRequest, CharacterSizeUpdateRequest } from '@domain/entities/CharacterSize';
 
 @injectable()

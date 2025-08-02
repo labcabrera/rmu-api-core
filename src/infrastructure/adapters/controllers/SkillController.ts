@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { TYPES } from '@shared/types/container';
-import { SkillService } from '@application/services/SkillService';
+import { SkillService } from '@application/services/skill-service';
 import { SkillCreateRequest, SkillUpdateRequest } from '@domain/entities/Skill';
 
 @injectable()
