@@ -4,7 +4,7 @@ import { RealmRepository } from '@domain/ports/realm-repository';
 import { RealmModel, RealmDocument } from '../models/RealmModel';
 import { RealmQuery } from '@domain/queries/realm-query';
 import { Page } from '@domain/entities/page';
-import { NotFoundError } from '@shared/errors';
+import { NotFoundError } from '@domain/errors/errors';
 
 @injectable()
 export class MongoRealmRepository implements RealmRepository {
@@ -44,8 +44,8 @@ export class MongoRealmRepository implements RealmRepository {
 
   async update(id: string, request: UpdateRealmRequest): Promise<Realm> {
     const updatedRealm = await RealmModel.findByIdAndUpdate(id, { $set: request }, { new: true });
-    if(!updatedRealm) {
-      throw new NotFoundError(`Realm with id ${id} not found`);
+    if (!updatedRealm) {
+      throw new NotFoundError('Realm', id);
     }
     return this.mapToEntity(updatedRealm);
   }

@@ -1,12 +1,11 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { TYPES } from '@shared/container';
 import { SkillService } from '@application/services/skill-service';
 import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class SkillController {
-  constructor(@inject(TYPES.SkillService) private skillService: SkillService) {}
+  constructor(@inject('SkillService') private skillService: SkillService) {}
 
   async findById(req: Request, res: Response): Promise<void> {
     try {

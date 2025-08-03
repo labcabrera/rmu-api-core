@@ -1,4 +1,3 @@
-
 export class DomainError extends Error {
   constructor(
     message: string,
@@ -10,8 +9,8 @@ export class DomainError extends Error {
   }
 }
 export class NotFoundError extends DomainError {
-  constructor(message: string) {
-    super(message, 'NOT_FOUND', 404);
+  constructor(entity: string, id: number | string) {
+    super(`Entity '${entity}' with id '${id}' not found`, 'NOT_FOUND', 404);
     this.name = 'NotFoundError';
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }

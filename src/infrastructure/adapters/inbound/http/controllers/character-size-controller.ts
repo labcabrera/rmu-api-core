@@ -1,13 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { TYPES } from '@shared/container';
 import { CharacterSizeService } from '@application/services/character-size-service';
 
 @injectable()
 export class CharacterSizeController {
-  constructor(
-    @inject(TYPES.CharacterSizeService) private characterSizeService: CharacterSizeService
-  ) {}
+  constructor(@inject('CharacterSizeService') private characterSizeService: CharacterSizeService) {}
 
   async findById(req: Request, res: Response): Promise<void> {
     try {

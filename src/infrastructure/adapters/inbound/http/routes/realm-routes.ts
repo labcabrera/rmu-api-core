@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm-controller';
-import { TYPES } from '@shared/container';
 
 const router = Router();
-const realmController = container.get<RealmController>(TYPES.RealmController);
+const realmController = container.get<RealmController>('RealmController');
 
 router.get('/', (req, res, next) => realmController.findAll(req, res, next));
 router.get('/:id', (req, res, next) => realmController.findById(req, res, next));

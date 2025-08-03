@@ -2,13 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RaceService } from '@application/services/race-service';
 import { UpdateRaceRequest } from '@domain/entities/race';
-import { TYPES } from '@shared/container';
 import { RaceQuery } from '@domain/queries/race-query';
 import { CreateRaceCommand } from '@application/commands/create-race.command';
 
 @injectable()
 export class RaceController {
-  constructor(@inject(TYPES.RaceService) private raceService: RaceService) {}
+  constructor(@inject('RaceService') private raceService: RaceService) {}
 
   async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

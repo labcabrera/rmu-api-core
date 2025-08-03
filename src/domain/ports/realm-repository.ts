@@ -1,5 +1,5 @@
 import { Page } from '@domain/entities/page';
-import { Realm} from '@domain/entities/realm';
+import { Realm } from '@domain/entities/realm';
 import { RealmQuery } from '@domain/queries/realm-query';
 
 export interface RealmRepository {

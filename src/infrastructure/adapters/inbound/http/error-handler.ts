@@ -1,5 +1,5 @@
+import { DomainError } from '@domain/errors/errors';
 import { Request, Response } from 'express';
-import { DomainError } from '@shared/types-ex';
 
 export const errorHandler = (error: Error, req: Request, res: Response): void => {
   console.error('Error:', error);

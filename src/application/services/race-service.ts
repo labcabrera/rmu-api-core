@@ -1,19 +1,18 @@
 import { inject, injectable } from 'inversify';
 import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/race-repository';
-import { NotFoundError, ConflictError } from '@shared/types-ex';
-import { TYPES } from '@shared/container';
 import { Page } from '@domain/entities/page';
 import { RaceQuery } from '@domain/queries/race-query';
+import { ConflictError, NotFoundError } from '@domain/errors/errors';
 
 @injectable()
 export class RaceService {
-  constructor(@inject(TYPES.RaceRepository) private raceRepository: RaceRepository) {}
+  constructor(@inject('RaceRepository') private raceRepository: RaceRepository) {}
 
   async findById(id: string): Promise<Race> {
     const race = await this.raceRepository.findById(id);
     if (!race) {
-      throw new NotFoundError('Race', id);
+      throw new NotFoundError('Race ', id);
     }
     return race;
   }

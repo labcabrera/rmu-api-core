@@ -1,19 +1,18 @@
 import { inject, injectable } from 'inversify';
 import { Realm, UpdateRealmRequest } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
-import { TYPES } from '@shared/container';
 import { RealmQuery } from '@domain/queries/realm-query';
 import { Page } from '@domain/entities/page';
-import { NotFoundError, ValidationError } from '@shared/errors';
+import { NotFoundError, ValidationError } from '@domain/errors/errors';
 
 @injectable()
 export class RealmService {
-  constructor(@inject(TYPES.RealmRepository) private realmRepository: RealmRepository) {}
+  constructor(@inject('RealmRepository') private realmRepository: RealmRepository) {}
 
   async findById(id: string): Promise<Realm> {
     const realm = await this.realmRepository.findById(id);
     if (!realm) {
-      throw new NotFoundError(`Realm ${id} not found`);
+      throw new NotFoundError('Realm', id);
     }
     return realm;
   }
@@ -33,7 +32,7 @@ export class RealmService {
   async deleteById(id: string): Promise<void> {
     const deleted = await this.realmRepository.deleteById(id);
     if (!deleted) {
-      throw new NotFoundError(`Realm ${id} not found`);
+      throw new NotFoundError('Realm', id);
     }
   }
 }

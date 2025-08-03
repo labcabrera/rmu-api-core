@@ -1,4 +1,4 @@
-import { RaceResistances, RaceStatBonus, SexBasedAttribute } from "@domain/entities/race";
+import { RaceResistances, RaceStatBonus, SexBasedAttribute } from '@domain/entities/race';
 
 export interface CreateRaceCommand {
   id: string;

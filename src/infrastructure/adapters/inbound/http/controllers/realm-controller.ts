@@ -2,12 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RealmService } from '@application/services/realm-service';
 import { UpdateRealmRequest } from '@domain/entities/realm';
-import { TYPES } from '@shared/container';
 import { RealmQuery } from '@domain/queries/realm-query';
 
 @injectable()
 export class RealmController {
-  constructor(@inject(TYPES.RealmService) private realmService: RealmService) {}
+  constructor(@inject('RealmService') private realmService: RealmService) {}
 
   async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

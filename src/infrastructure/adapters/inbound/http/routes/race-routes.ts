@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race-controller';
-import { TYPES } from '@shared/container';
 
 const router = Router();
-const raceController = container.get<RaceController>(TYPES.RaceController);
+const raceController = container.get<RaceController>('RaceController');
 
 router.get('/', (req, res, next) => raceController.findAll(req, res, next));
 router.get('/:id', (req, res, next) => raceController.findById(req, res, next));

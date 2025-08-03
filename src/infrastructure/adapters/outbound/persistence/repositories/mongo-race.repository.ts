@@ -4,7 +4,7 @@ import { RaceRepository } from '@domain/ports/race-repository';
 import { RaceModel, RaceDocument } from '../models/RaceModel';
 import { Page } from '@domain/entities/page';
 import { RaceQuery } from '@domain/queries/race-query';
-import { NotFoundError } from '@shared/errors';
+import { NotFoundError } from '@domain/errors/errors';
 
 @injectable()
 export class MongoRaceRepository implements RaceRepository {
@@ -40,8 +40,8 @@ export class MongoRaceRepository implements RaceRepository {
 
   async update(id: string, request: UpdateRaceRequest): Promise<Race> {
     const updatedRace = await RaceModel.findByIdAndUpdate(id, { $set: request }, { new: true });
-    if(!updatedRace) {
-      throw new NotFoundError(`Race not found`);
+    if (!updatedRace) {
+      throw new NotFoundError('Race', id);
     }
     return this.mapToEntity(updatedRace);
   }

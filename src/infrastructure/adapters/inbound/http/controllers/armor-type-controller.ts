@@ -1,11 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { TYPES } from '@shared/container';
 import { ArmorTypeService } from '@application/services/armor-type-service';
 
 @injectable()
 export class ArmorTypeController {
-  constructor(@inject(TYPES.ArmorTypeService) private armorTypeService: ArmorTypeService) {}
+  constructor(@inject('ArmorTypeService') private armorTypeService: ArmorTypeService) {}
 
   async findById(req: Request, res: Response): Promise<void> {
     try {
