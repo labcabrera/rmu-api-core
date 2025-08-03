@@ -17,7 +17,6 @@ describe('RaceController', () => {
   let mockNext: NextFunction;
 
   beforeEach(() => {
-    // Crear una nueva instancia del controlador con mocks
     raceController = new RaceController(
       mockRaceService as any,
       mockCreateRaceUseCase as any,
@@ -25,62 +24,58 @@ describe('RaceController', () => {
       mockUpdateRaceUseCase as any
     );
 
-    // Reset de mocks
     jest.clearAllMocks();
 
-    // Mock del request
     mockRequest = {
       params: {},
       query: {},
-      body: {}
+      body: {},
+      user: {
+        id: 'test-user',
+        username: 'testuser',
+        email: 'test@example.com',
+        roles: ['user'],
+        groups: [],
+        realm: 'test'
+      }
     };
 
-    // Mock del response
     mockResponse = {
       json: jest.fn().mockReturnThis(),
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis()
     };
 
-    // Mock del next function
     mockNext = jest.fn();
   });
 
   describe('findById', () => {
     it('should return a race when found', async () => {
-      // Arrange
       const raceId = 'test-race';
       mockRequest.params = { id: raceId };
       mockRaceService.findById.mockResolvedValue(sampleRace);
-
-      // Act
       await raceController.findById(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-
-      // Assert
       expect(mockRaceService.findById).toHaveBeenCalledWith(raceId);
       expect(mockResponse.json).toHaveBeenCalledWith(sampleRace);
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with error when race not found', async () => {
-      // Arrange
       const raceId = 'non-existent-race';
       const error = new NotFoundError('Race', raceId);
       mockRequest.params = { id: raceId };
       mockRaceService.findById.mockRejectedValue(error);
 
-      // Act
       await raceController.findById(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
       expect(mockRaceService.findById).toHaveBeenCalledWith(raceId);
       expect(mockResponse.json).not.toHaveBeenCalled();
       expect(mockNext).toHaveBeenCalledWith(error);
@@ -89,18 +84,15 @@ describe('RaceController', () => {
 
   describe('find', () => {
     it('should return paginated races', async () => {
-      // Arrange
       mockRequest.query = { page: '0', size: '10' };
       mockRaceService.findAll.mockResolvedValue(sampleRacePage);
 
-      // Act
       await raceController.find(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
       expect(mockRaceService.findAll).toHaveBeenCalledWith({
         name: undefined,
         realmId: undefined,
@@ -111,18 +103,15 @@ describe('RaceController', () => {
     });
 
     it('should use default pagination when not provided', async () => {
-      // Arrange
       mockRequest.query = {};
       mockRaceService.findAll.mockResolvedValue(sampleRacePage);
 
-      // Act
       await raceController.find(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
       expect(mockRaceService.findAll).toHaveBeenCalledWith({
         name: undefined,
         realmId: undefined,
@@ -134,7 +123,6 @@ describe('RaceController', () => {
 
   describe('create', () => {
     it('should create a new race successfully', async () => {
-      // Arrange
       const createRaceCommand = {
         id: 'new-race',
         name: 'New Race',
@@ -143,21 +131,22 @@ describe('RaceController', () => {
       mockRequest.body = createRaceCommand;
       mockCreateRaceUseCase.execute.mockResolvedValue(sampleRace);
 
-      // Act
       await raceController.create(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
-      expect(mockCreateRaceUseCase.execute).toHaveBeenCalledWith(createRaceCommand);
+      const expectedCommand = {
+        ...createRaceCommand,
+        username: 'testuser'
+      };
+      expect(mockCreateRaceUseCase.execute).toHaveBeenCalledWith(expectedCommand);
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith(sampleRace);
     });
 
     it('should handle creation errors', async () => {
-      // Arrange
       const createRaceCommand = {
         id: 'new-race',
         name: 'New Race',
@@ -167,15 +156,17 @@ describe('RaceController', () => {
       mockRequest.body = createRaceCommand;
       mockCreateRaceUseCase.execute.mockRejectedValue(error);
 
-      // Act
       await raceController.create(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
-      expect(mockCreateRaceUseCase.execute).toHaveBeenCalledWith(createRaceCommand);
+      const expectedCommand = {
+        ...createRaceCommand,
+        username: 'testuser'
+      };
+      expect(mockCreateRaceUseCase.execute).toHaveBeenCalledWith(expectedCommand);
       expect(mockNext).toHaveBeenCalledWith(error);
       expect(mockResponse.status).not.toHaveBeenCalled();
       expect(mockResponse.json).not.toHaveBeenCalled();
@@ -184,40 +175,42 @@ describe('RaceController', () => {
 
   describe('delete', () => {
     it('should delete a race successfully', async () => {
-      // Arrange
       const raceId = 'test-race';
       mockRequest.params = { id: raceId };
       mockDeleteRaceUseCase.execute.mockResolvedValue(undefined);
 
-      // Act
       await raceController.delete(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
-      expect(mockDeleteRaceUseCase.execute).toHaveBeenCalledWith(raceId);
+      const expectedCommand = {
+        id: raceId,
+        username: 'testuser'
+      };
+      expect(mockDeleteRaceUseCase.execute).toHaveBeenCalledWith(expectedCommand);
       expect(mockResponse.status).toHaveBeenCalledWith(204);
       expect(mockResponse.send).toHaveBeenCalled();
     });
 
     it('should handle deletion errors', async () => {
-      // Arrange
       const raceId = 'test-race';
       const error = new NotFoundError('Race', raceId);
       mockRequest.params = { id: raceId };
       mockDeleteRaceUseCase.execute.mockRejectedValue(error);
 
-      // Act
       await raceController.delete(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
 
-      // Assert
-      expect(mockDeleteRaceUseCase.execute).toHaveBeenCalledWith(raceId);
+      const expectedCommand = {
+        id: raceId,
+        username: 'testuser'
+      };
+      expect(mockDeleteRaceUseCase.execute).toHaveBeenCalledWith(expectedCommand);
       expect(mockNext).toHaveBeenCalledWith(error);
     });
   });

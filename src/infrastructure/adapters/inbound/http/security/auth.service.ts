@@ -3,12 +3,7 @@ import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { injectable, inject } from 'inversify';
 import { JWTPayload, User } from '@domain/entities/auth';
-
-export interface AuthConfig {
-  keycloakUrl: string;
-  realm: string;
-  clientId: string;
-}
+import { Configuration } from '@shared/configuration';
 
 @injectable()
 export class AuthService {
@@ -16,12 +11,12 @@ export class AuthService {
   private issuer: string;
   private audience: string;
 
-  constructor(@inject('AuthConfig') config: AuthConfig) {
-    this.issuer = `${config.keycloakUrl}/realms/${config.realm}`;
-    this.audience = config.clientId;
+  constructor(@inject('Configuration') config: Configuration) {
+    this.issuer = `${config.keycloakUrl}/realms/${config.keycloakRealm}`;
+    this.audience = config.keycloakClientId;
 
     this.jwksClient = jwksClient({
-      jwksUri: `${config.keycloakUrl}/realms/${config.realm}/protocol/openid-connect/certs`,
+      jwksUri: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
       requestHeaders: {},
       timeout: 30000,
       cache: true,

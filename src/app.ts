@@ -15,24 +15,10 @@ import { characterSizeRouter } from '@infrastructure/adapters/inbound/http/route
 import { armorTypeRouter } from '@infrastructure/adapters/inbound/http/routes/armor-type.routes';
 import { healthRouter } from '@infrastructure/adapters/inbound/http/routes/health.routes';
 import { errorHandler } from '@infrastructure/adapters/inbound/http/error-handler';
-
-function maskStdUrl(url: string): string {
-  try {
-    const u = new URL(url);
-    if (u.username) u.username = '***';
-    if (u.password) u.password = '***';
-    return u.toString();
-  } catch {
-    return url;
-  }
-}
+import { Configuration } from '@shared/configuration';
 
 const app = express();
-
-const PORT = process.env.PORT || 3001;
-const MONGO_URI =
-  process.env.RMU_MONGO_CORE_URI ||
-  'mongodb://admin:admin@localhost:27017/rmu-core?authSource=admin';
+const configuration = new Configuration();
 
 const openapiFilePath = path.join(__dirname, '../openapi.yaml');
 const openapiFile = fs.readFileSync(openapiFilePath, 'utf8');
@@ -42,9 +28,11 @@ app.use(express.json());
 app.use(cors());
 
 mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log('Connected to ' + maskStdUrl(MONGO_URI)))
-  .catch(err => console.log('Error connecting to ' + maskStdUrl(MONGO_URI), err));
+  .connect(configuration.mongoUri)
+  .then(() => console.log('Connected to ' + configuration.maskStdUrl(configuration.mongoUri)))
+  .catch(err =>
+    console.log('Error connecting to ' + configuration.maskStdUrl(configuration.mongoUri), err)
+  );
 
 app.use('/v1/races', raceRouter);
 app.use('/v1/realms', realmRouter);
@@ -62,8 +50,8 @@ app.get('/', (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`API started on ${PORT}`);
+app.listen(configuration.port, () => {
+  console.log(`API started on ${configuration.port}`);
 });
 
 export default app;

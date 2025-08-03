@@ -1,7 +1,31 @@
 #!/bin/bash
 
+set -e
+
 DEFAULT_BASE_URL="http://localhost:3001/v1"
 DEFAULT_CONTENT_TYPE="application/json"
+
+KEYCLOAK_BASE_URL="http://localhost:8090"
+KEYCLOAK_REALM="rmu-local"
+KEYCLOAK_CLIENT_ID="rmu-client"
+KEYCLOAK_CLIENT_SECRET="${RMU_KEYCLOAK_CLIENT_SECRET}"
+KEYCLOAK_USERNAME="${RMU_KEYCLOAK_USER}"
+KEYCLOAK_PASSWORD="${RMU_KEYCLOAK_PASSWORD}"
+
+read_access_token() {
+    echo "Fetching access token from Keycloak..."
+
+    ACCESS_TOKEN=$(curl --silent --location "${KEYCLOAK_BASE_URL}/realms/rmu-local/protocol/openid-connect/token" \
+        --header 'Content-Type: application/x-www-form-urlencoded' \
+        --data-urlencode 'grant_type=password' \
+        --data-urlencode "client_id=${KEYCLOAK_CLIENT_ID}" \
+        --data-urlencode "client_secret=${KEYCLOAK_CLIENT_SECRET}" \
+        --data-urlencode "username=${KEYCLOAK_USERNAME}" \
+        --data-urlencode "password=${KEYCLOAK_PASSWORD}" \
+        -v\
+        | jq -r '.access_token') \
+    export ACCESS_TOKEN
+}
 
 send_file_to_service() {
     local filename="$1"
@@ -22,6 +46,7 @@ send_file_to_service() {
     curl -X POST \
          -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
          -H "Accept: application/json" \
+         -H "Authorization: Bearer $ACCESS_TOKEN" \
          -d @"$filename" \
          "$url" \
          -s --show-error \
@@ -37,6 +62,8 @@ send_file_to_service() {
     
     return $exit_code
 }
+
+
 
 initialize_races() {
     echo "Initializing races..."   
@@ -60,5 +87,6 @@ initialize_realms() {
     echo "Realm data initialization completed"
 }
 
+read_access_token
 initialize_races
 initialize_realms

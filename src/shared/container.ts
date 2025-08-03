@@ -33,13 +33,14 @@ import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
-import {
-  AuthService,
-  AuthConfig,
-} from '@infrastructure/adapters/inbound/http/security/auth.service';
+import { AuthService } from '@infrastructure/adapters/inbound/http/security/auth.service';
 import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
+import { Configuration } from './configuration';
 
 const container = new Container();
+
+// Bind Configuration
+container.bind<Configuration>('Configuration').to(Configuration).inSingletonScope();
 
 // Bind Repositories
 container.bind<RaceRepository>('RaceRepository').to(MongoRaceRepository).inSingletonScope();
@@ -99,15 +100,6 @@ container
   .inSingletonScope();
 container.bind<HealthController>('HealthController').to(HealthController).inSingletonScope();
 
-
-// Bind Auth Configuration
-const authConfig: AuthConfig = {
-  keycloakUrl: process.env.KEYCLOAK_URL || 'http://localhost:8090',
-  realm: process.env.KEYCLOAK_REALM || 'rmu-local',
-  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-client',
-};
-
-container.bind<AuthConfig>('AuthConfig').toConstantValue(authConfig);
 container.bind<AuthService>('AuthService').to(AuthService).inSingletonScope();
 
 export { container };
