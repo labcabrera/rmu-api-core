@@ -20,9 +20,8 @@ export class InMemoryCharacterSizeRepository implements CharacterSizeRepository 
         page: 0,
         size: this.characterSizes.length,
         totalPages: 1,
-        totalElements: this.characterSizes.length
-      }
+        totalElements: this.characterSizes.length,
+      },
     };
   }
 }
-

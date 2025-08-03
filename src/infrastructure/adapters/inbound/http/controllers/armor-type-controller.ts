@@ -5,11 +5,9 @@ import { ArmorTypeService } from '@application/services/armor-type-service';
 
 @injectable()
 export class ArmorTypeController {
-  constructor(
-    @inject(TYPES.ArmorTypeService) private armorTypeService: ArmorTypeService
-  ) {}
+  constructor(@inject(TYPES.ArmorTypeService) private armorTypeService: ArmorTypeService) {}
 
-    async findById(req: Request, res: Response): Promise<void> {
+  async findById(req: Request, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -33,6 +31,4 @@ export class ArmorTypeController {
       res.status(err.status || 500).json({ message: err.message });
     }
   }
-
-
 }

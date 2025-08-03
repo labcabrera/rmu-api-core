@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RealmService } from '@application/services/realm-service';
 import { CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
-import { PaginationOptions } from '@shared/types';
 import { TYPES } from '@shared/types/container';
+import { RealmQuery } from '@domain/queries/realm-query';
 
 @injectable()
 export class RealmController {
@@ -11,12 +11,11 @@ export class RealmController {
 
   async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const page = req.query.page ? parseInt(req.query.page as string) : 0;
-      const size = req.query.size ? parseInt(req.query.size as string) : 10;
-
-      const options: PaginationOptions = { page, size };
-      const result = await this.realmService.findAll(options);
-
+      const query: RealmQuery = {
+        page: req.query.page ? parseInt(req.query.page as string) : 0,
+        size: req.query.size ? parseInt(req.query.size as string) : 10,
+      };
+      const result = await this.realmService.findAll(query);
       res.json(result);
     } catch (error) {
       next(error);
@@ -35,9 +34,8 @@ export class RealmController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log(`Realm creation << ${req.body.name}`);
-      const createRequest: CreateRealmRequest = req.body;
-      const newRealm = await this.realmService.create(createRequest);
+      // const createRequest: CreateRealmRequest = req.body;
+      const newRealm = {}; //await this.realmService.create(createRequest);
       res.status(201).json(newRealm);
     } catch (error) {
       next(error);

@@ -1,17 +1,3 @@
-export interface PaginationOptions {
-  page: number;
-  size: number;
-}
-
-export interface PaginatedResult<T> {
-  content: T[];
-  pagination: {
-    page: number;
-    size: number;
-    totalElements: number;
-  };
-}
-
 export class DomainError extends Error {
   constructor(
     message: string,

@@ -6,11 +6,9 @@ import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class SkillController {
-  constructor(
-    @inject(TYPES.SkillService) private skillService: SkillService
-  ) {}
+  constructor(@inject(TYPES.SkillService) private skillService: SkillService) {}
 
-    async findById(req: Request, res: Response): Promise<void> {
+  async findById(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id;
       const skill = await this.skillService.findById(id);
@@ -27,7 +25,7 @@ export class SkillController {
       const size = req.query.size ? parseInt(req.query.size as string) : 500;
       const categoryId = req.query.categoryId ? (req.query.categoryId as string) : undefined;
       const query: SkillQuery = {
-        categoryId: categoryId
+        categoryId: categoryId,
       };
       const result = await this.skillService.find(query, page, size);
       res.json(result);
@@ -36,6 +34,4 @@ export class SkillController {
       res.status(err.status || 500).json({ message: err.message });
     }
   }
-
-
 }

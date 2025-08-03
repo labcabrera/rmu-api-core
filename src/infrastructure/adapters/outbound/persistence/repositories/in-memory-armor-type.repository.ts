@@ -21,8 +21,7 @@ export class InMemoryArmorTypeRepository implements ArmorTypeRepository {
         page: 0,
         totalElements: this.armorTypes.length,
         totalPages: 1,
-      }
-    }
+      },
+    };
   }
-
 }

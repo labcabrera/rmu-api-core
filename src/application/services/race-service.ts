@@ -1,8 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/race-repository';
-import { PaginationOptions, PaginatedResult, NotFoundError, ConflictError } from '@shared/types';
+import { NotFoundError, ConflictError } from '@shared/types-ex';
 import { TYPES } from '@shared/types/container';
+import { Page } from '@domain/entities/page';
+import { RaceQuery } from '@domain/queries/race-query';
 
 @injectable()
 export class RaceService {
@@ -16,12 +18,12 @@ export class RaceService {
     return race;
   }
 
-  async findAll(options: PaginationOptions): Promise<PaginatedResult<Race>> {
-    return this.raceRepository.findAll(options);
+  async findAll(query: RaceQuery): Promise<Page<Race>> {
+    return this.raceRepository.find(query);
   }
 
   async create(request: CreateRaceRequest): Promise<Race> {
-    const exists = await this.raceRepository.existsById(request.id);
+    const exists = await this.raceRepository.findById(request.id);
     if (exists) {
       throw new ConflictError(`Race with id '${request.id}' already exists`);
     }

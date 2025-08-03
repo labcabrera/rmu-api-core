@@ -1,8 +1,10 @@
 import { injectable } from 'inversify';
 import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
-import { PaginationOptions, PaginatedResult } from '@shared/types';
 import { RealmModel, RealmDocument } from '../models/RealmModel';
+import { RealmQuery } from '@domain/queries/realm-query';
+import { Page } from '@domain/entities/page';
+import { NotFoundError } from '@shared/errors';
 
 @injectable()
 export class MongoRealmRepository implements RealmRepository {
@@ -11,21 +13,20 @@ export class MongoRealmRepository implements RealmRepository {
     return realmDoc ? this.mapToEntity(realmDoc) : null;
   }
 
-  async findAll(options: PaginationOptions): Promise<PaginatedResult<Realm>> {
-    const skip = options.page * options.size;
+  async find(query: RealmQuery): Promise<Page<Realm>> {
+    const skip = query.page * query.size;
     const [realmsDocs, totalElements] = await Promise.all([
-      RealmModel.find().skip(skip).limit(options.size).sort({ name: 1 }),
+      RealmModel.find().skip(skip).limit(query.size).sort({ name: 1 }),
       RealmModel.countDocuments(),
     ]);
-
     const content = realmsDocs.map(doc => this.mapToEntity(doc));
-
     return {
       content,
       pagination: {
-        page: options.page,
-        size: options.size,
+        page: query.page,
+        size: query.size,
         totalElements,
+        totalPages: Math.ceil(totalElements / query.size),
       },
     };
   }
@@ -41,9 +42,12 @@ export class MongoRealmRepository implements RealmRepository {
     return this.mapToEntity(savedRealm);
   }
 
-  async update(id: string, request: UpdateRealmRequest): Promise<Realm | null> {
+  async update(id: string, request: UpdateRealmRequest): Promise<Realm> {
     const updatedRealm = await RealmModel.findByIdAndUpdate(id, { $set: request }, { new: true });
-    return updatedRealm ? this.mapToEntity(updatedRealm) : null;
+    if(!updatedRealm) {
+      throw new NotFoundError(`Realm with id ${id} not found`);
+    }
+    return this.mapToEntity(updatedRealm);
   }
 
   async deleteById(id: string): Promise<boolean> {

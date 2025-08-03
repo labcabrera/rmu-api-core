@@ -1,5 +1,4 @@
 export const TYPES = {
-  // Repositories
   RaceRepository: Symbol.for('RaceRepository'),
   RealmRepository: Symbol.for('RealmRepository'),
   SkillRepository: Symbol.for('SkillRepository'),
@@ -7,7 +6,6 @@ export const TYPES = {
   CharacterSizeRepository: Symbol.for('CharacterSizeRepository'),
   ArmorTypeRepository: Symbol.for('ArmorTypeRepository'),
 
-  // Services
   RaceService: Symbol.for('RaceService'),
   RealmService: Symbol.for('RealmService'),
   SkillService: Symbol.for('SkillService'),
@@ -15,7 +13,6 @@ export const TYPES = {
   CharacterSizeService: Symbol.for('CharacterSizeService'),
   ArmorTypeService: Symbol.for('ArmorTypeService'),
 
-  // Controllers
   RaceController: Symbol.for('RaceController'),
   RealmController: Symbol.for('RealmController'),
   SkillController: Symbol.for('SkillController'),
@@ -23,6 +20,4 @@ export const TYPES = {
   CharacterSizeController: Symbol.for('CharacterSizeController'),
   ArmorTypeController: Symbol.for('ArmorTypeController'),
 
-  // Database
-  DatabaseConnection: Symbol.for('DatabaseConnection'),
 };

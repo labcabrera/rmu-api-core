@@ -1,8 +1,10 @@
 import { injectable } from 'inversify';
-import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
+import { Race, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/race-repository';
-import { PaginationOptions, PaginatedResult } from '@shared/types';
 import { RaceModel, RaceDocument } from '../models/RaceModel';
+import { Page } from '@domain/entities/page';
+import { RaceQuery } from '@domain/queries/race-query';
+import { NotFoundError } from '@shared/errors';
 
 @injectable()
 export class MongoRaceRepository implements RaceRepository {
@@ -11,50 +13,37 @@ export class MongoRaceRepository implements RaceRepository {
     return raceDoc ? this.mapToEntity(raceDoc) : null;
   }
 
-  async findAll(options: PaginationOptions): Promise<PaginatedResult<Race>> {
-    const skip = options.page * options.size;
+  async find(query: RaceQuery): Promise<Page<Race>> {
+    const skip = query.page * query.size;
+    const mongoQuery = {};
+    //TODO
     const [racesDocs, totalElements] = await Promise.all([
-      RaceModel.find().skip(skip).limit(options.size).sort({ name: 1 }),
-      RaceModel.countDocuments(),
+      RaceModel.find(mongoQuery).skip(skip).limit(query.size).sort({ name: 1 }),
+      RaceModel.countDocuments(mongoQuery),
     ]);
-
     const content = racesDocs.map(doc => this.mapToEntity(doc));
-
     return {
       content,
       pagination: {
-        page: options.page,
-        size: options.size,
+        page: query.page,
+        size: query.size,
         totalElements,
+        totalPages: Math.ceil(totalElements / query.size),
       },
     };
   }
-
-  async save(request: CreateRaceRequest): Promise<Race> {
-    const raceDoc = new RaceModel({
-      _id: request.id,
-      name: request.name,
-      realm: request.realm,
-      size: request.size,
-      defaultStatBonus: request.defaultStatBonus,
-      resistances: request.resistances,
-      averageHeight: request.averageHeight,
-      averageWeight: request.averageWeight,
-      strideBonus: request.strideBonus,
-      enduranceBonus: request.enduranceBonus,
-      recoveryMultiplier: request.recoveryMultiplier,
-      baseHits: request.baseHits,
-      bonusDevPoints: request.bonusDevPoints,
-      description: request.description,
-    });
-
-    const savedRace = await raceDoc.save();
-    return this.mapToEntity(savedRace);
+  async save(race: Partial<Race>): Promise<Race> {
+    const raceModel = new RaceModel(race);
+    const saved = await raceModel.save();
+    return this.mapToEntity(saved);
   }
 
-  async update(id: string, request: UpdateRaceRequest): Promise<Race | null> {
+  async update(id: string, request: UpdateRaceRequest): Promise<Race> {
     const updatedRace = await RaceModel.findByIdAndUpdate(id, { $set: request }, { new: true });
-    return updatedRace ? this.mapToEntity(updatedRace) : null;
+    if(!updatedRace) {
+      throw new NotFoundError(`Race not found`);
+    }
+    return this.mapToEntity(updatedRace);
   }
 
   async deleteById(id: string): Promise<boolean> {

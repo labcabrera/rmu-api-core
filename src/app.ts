@@ -29,7 +29,9 @@ function maskStdUrl(url: string): string {
 const app = express();
 
 const PORT = process.env.PORT || 3001;
-const MONGO_URI = process.env.RMU_MONGO_CORE_URI || 'mongodb://admin:admin@localhost:27017/rmu-core?authSource=admin';
+const MONGO_URI =
+  process.env.RMU_MONGO_CORE_URI ||
+  'mongodb://admin:admin@localhost:27017/rmu-core?authSource=admin';
 
 const openapiFilePath = path.join(__dirname, '../openapi.yaml');
 const openapiFile = fs.readFileSync(openapiFilePath, 'utf8');
@@ -61,7 +63,5 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`API started on ${PORT}`);
 });
-
-
 
 export default app;

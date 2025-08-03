@@ -24,9 +24,8 @@ export class InMemorySkillCategoryRepository implements SkillCategoryRepository 
         page,
         size,
         totalPages: Math.ceil(this.skillCategories.length / size),
-        totalElements: this.skillCategories.length
-      }
+        totalElements: this.skillCategories.length,
+      },
     };
   }
-
 }

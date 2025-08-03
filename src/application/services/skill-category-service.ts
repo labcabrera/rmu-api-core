@@ -23,5 +23,4 @@ export class SkillCategoryService {
   async find(query: SkillCategoryQuery, page: number, size: number): Promise<Page<SkillCategory>> {
     return await this.skillCategoryRepository.find(query, page, size);
   }
-
 }

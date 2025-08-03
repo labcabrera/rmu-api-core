@@ -22,8 +22,4 @@ export class ArmorTypeService {
   async find(): Promise<Page<ArmorType>> {
     return await this.armorTypeRepository.find();
   }
-
-  
-
-
 }

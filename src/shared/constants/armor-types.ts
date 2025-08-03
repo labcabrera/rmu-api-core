@@ -10,5 +10,5 @@ export const ARMOR_TYPES: ArmorType[] = [
   { id: 7, name: 'Metal Scale' },
   { id: 8, name: 'Mail' },
   { id: 9, name: 'Brigandine' },
-  { id: 10, name: 'Plate' }
+  { id: 10, name: 'Plate' },
 ];

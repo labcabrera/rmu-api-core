@@ -8,19 +8,12 @@
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/app.ts",
     "dev:watch": "nodemon --ext ts --exec \"ts-node -r tsconfig-paths/register src/app.ts\"",
-    "debug": "ts-node -r tsconfig-paths/register --inspect=0.0.0.0:9229 src/app.ts",
-    "debug:watch": "nodemon --ext ts --exec \"ts-node -r tsconfig-paths/register --inspect=0.0.0.0:9229 src/app.ts\"",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:debug": "jest --detectOpenHandles",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\"",
-    "prebuild": "npm run typecheck"
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": {

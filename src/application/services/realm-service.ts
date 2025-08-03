@@ -1,8 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
-import { PaginationOptions, PaginatedResult, NotFoundError, ConflictError } from '@shared/types';
+import { NotFoundError, ConflictError } from '@shared/types-ex';
 import { TYPES } from '@shared/types/container';
+import { RealmQuery } from '@domain/queries/realm-query';
+import { Page } from '@domain/entities/page';
 
 @injectable()
 export class RealmService {
@@ -16,16 +18,8 @@ export class RealmService {
     return realm;
   }
 
-  async findAll(options: PaginationOptions): Promise<PaginatedResult<Realm>> {
-    return this.realmRepository.findAll(options);
-  }
-
-  async create(request: CreateRealmRequest): Promise<Realm> {
-    const exists = await this.realmRepository.existsById(request.id);
-    if (exists) {
-      throw new ConflictError(`Realm with id '${request.id}' already exists`);
-    }
-    return this.realmRepository.save(request);
+  async findAll(query: RealmQuery): Promise<Page<Realm>> {
+    return this.realmRepository.find(query);
   }
 
   async update(id: string, request: UpdateRealmRequest): Promise<Realm> {

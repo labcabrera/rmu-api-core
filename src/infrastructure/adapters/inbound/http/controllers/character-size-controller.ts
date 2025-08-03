@@ -9,7 +9,7 @@ export class CharacterSizeController {
     @inject(TYPES.CharacterSizeService) private characterSizeService: CharacterSizeService
   ) {}
 
-    async findById(req: Request, res: Response): Promise<void> {
+  async findById(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id;
       const characterSize = await this.characterSizeService.findById(id);
@@ -29,8 +29,4 @@ export class CharacterSizeController {
       res.status(err.status || 500).json({ message: err.message });
     }
   }
-
-
-
-  
 }

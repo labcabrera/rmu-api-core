@@ -10,7 +10,7 @@ export class SkillCategoryController {
     @inject(TYPES.SkillCategoryService) private skillCategoryService: SkillCategoryService
   ) {}
 
-    async findById(req: Request, res: Response): Promise<void> {
+  async findById(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id;
       const skillCategory = await this.skillCategoryService.findById(id);
@@ -33,6 +33,4 @@ export class SkillCategoryController {
       res.status(err.status || 500).json({ message: err.message });
     }
   }
-
-
 }

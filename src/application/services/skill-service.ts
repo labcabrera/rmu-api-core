@@ -8,9 +8,7 @@ import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class SkillService {
-  constructor(
-    @inject(TYPES.SkillRepository) private skillRepository: SkillRepository
-  ) {}
+  constructor(@inject(TYPES.SkillRepository) private skillRepository: SkillRepository) {}
 
   async findById(id: string): Promise<Skill> {
     const skill = await this.skillRepository.findById(id);
@@ -22,5 +20,4 @@ export class SkillService {
   async find(query: SkillQuery, page: number, size: number): Promise<Page<Skill>> {
     return await this.skillRepository.find(query, page, size);
   }
-
 }
