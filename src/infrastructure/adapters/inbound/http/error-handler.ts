@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { DomainError } from '@shared/types';
 
 export const errorHandler = (
   error: Error,
   req: Request,
   res: Response,
-  next: NextFunction
 ): void => {
   console.error('Error:', error);
 
@@ -17,7 +16,6 @@ export const errorHandler = (
     return;
   }
 
-  // Default error
   res.status(500).json({
     message: 'Internal Server Error',
     code: 'INTERNAL_ERROR',
