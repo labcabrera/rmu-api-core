@@ -30,9 +30,6 @@ export class RealmService {
   }
 
   async deleteById(id: string): Promise<void> {
-    const deleted = await this.realmRepository.deleteById(id);
-    if (!deleted) {
-      throw new NotFoundError('Realm', id);
-    }
+    await this.realmRepository.deleteById(id);
   }
 }

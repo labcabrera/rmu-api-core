@@ -1,13 +1,31 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RaceService } from '@application/services/race-service';
-import { UpdateRaceRequest } from '@domain/entities/race';
 import { RaceQuery } from '@domain/queries/race-query';
 import { CreateRaceCommand } from '@application/commands/create-race.command';
+import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
+import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
+import { UpdateRaceUseCase } from '@application/use-cases/update-race.usecase';
+import { UpdateRaceCommand } from '@application/commands/update-race.command';
 
 @injectable()
 export class RaceController {
-  constructor(@inject('RaceService') private raceService: RaceService) {}
+  constructor(
+    @inject('RaceService') private raceService: RaceService,
+    @inject('CreateRaceUseCase') private createRaceUseCase: CreateRaceUseCase,
+    @inject('DeleteRaceUseCase') private deleteRaceUseCase: DeleteRaceUseCase,
+    @inject('UpdateRaceUseCase') private updateRaceUseCase: UpdateRaceUseCase
+  ) {}
+
+  async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const race = await this.raceService.findById(id);
+      res.json(race);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -24,43 +42,30 @@ export class RaceController {
     }
   }
 
-  async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { id } = req.params;
-      const race = await this.raceService.findById(id);
-      res.json(race);
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      console.log(`Race creation << ${req.body.name}`);
-      const command: CreateRaceCommand = req.body;
-      const created = await this.raceService.create(command);
-      res.status(201).json(created);
-    } catch (error) {
-      next(error);
-    }
+    console.log(next);
+    const command: CreateRaceCommand = req.body;
+    const created = await this.createRaceUseCase.execute(command);
+    res.status(201).json(created);
   }
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
-      const updateRequest: UpdateRaceRequest = req.body;
-      const updatedRace = await this.raceService.update(id, updateRequest);
-      res.json(updatedRace);
+      const command: UpdateRaceCommand = {
+        id: req.params.id,
+        ...req.body,
+      };
+      const updated = await this.updateRaceUseCase.execute(command);
+      res.json(updated);
     } catch (error) {
       next(error);
     }
   }
 
-  async deleteById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log(`Race delete << ${req.params.id}`);
       const { id } = req.params;
-      await this.raceService.deleteById(id);
+      await this.deleteRaceUseCase.execute(id);
       res.status(204).send();
     } catch (error) {
       next(error);

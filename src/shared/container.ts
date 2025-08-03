@@ -28,6 +28,11 @@ import { InMemorySkillRepository } from '@infrastructure/adapters/outbound/persi
 import { InMemorySkillCategoryRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-skill-category.repository';
 import { InMemoryCharacterSizeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-sharacter-size.repository';
 import { InMemoryArmorTypeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-armor-type.repository';
+import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
+import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
+import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
+import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
+import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
 
 const container = new Container();
 
@@ -47,6 +52,15 @@ container
   .bind<ArmorTypeRepository>('ArmorTypeRepository')
   .to(InMemoryArmorTypeRepository)
   .inSingletonScope();
+
+// Bind Use Cases
+container.bind<CreateRaceUseCase>('CreateRaceUseCase').to(CreateRaceUseCase).inSingletonScope();
+container.bind<DeleteRaceUseCase>('UpdateRaceUseCase').to(DeleteRaceUseCase).inSingletonScope();
+container.bind<DeleteRaceUseCase>('DeleteRaceUseCase').to(DeleteRaceUseCase).inSingletonScope();
+
+container.bind<CreateRealmUseCase>('CreateRealmUseCase').to(CreateRealmUseCase).inSingletonScope();
+container.bind<UpdateRealmUseCase>('UpdateRealmUseCase').to(UpdateRealmUseCase).inSingletonScope();
+container.bind<DeleteRealmUseCase>('DeleteRealmUseCase').to(DeleteRealmUseCase).inSingletonScope();
 
 // Bind Services
 container.bind<RaceService>('RaceService').to(RaceService).inSingletonScope();

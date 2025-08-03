@@ -1,9 +1,9 @@
 import { RaceResistances, RaceStatBonus, SexBasedAttribute } from '@domain/entities/race';
 
-export interface CreateRaceCommand {
+export interface UpdateRaceCommand {
   id: string;
-  name: string;
-  realm: string;
+  name?: string;
+  realm?: string;
   size?: string;
   defaultStatBonus: RaceStatBonus;
   resistances?: RaceResistances;

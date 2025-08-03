@@ -8,9 +8,12 @@ import { NotFoundError } from '@domain/errors/errors';
 
 @injectable()
 export class MongoRaceRepository implements RaceRepository {
-  async findById(id: string): Promise<Race | null> {
+  async findById(id: string): Promise<Race> {
     const raceDoc = await RaceModel.findById(id);
-    return raceDoc ? this.mapToEntity(raceDoc) : null;
+    if (!raceDoc) {
+      throw new NotFoundError('Race', id);
+    }
+    return this.mapToEntity(raceDoc);
   }
 
   async find(query: RaceQuery): Promise<Page<Race>> {
@@ -33,7 +36,8 @@ export class MongoRaceRepository implements RaceRepository {
     };
   }
   async save(race: Partial<Race>): Promise<Race> {
-    const raceModel = new RaceModel(race);
+    const data = { ...race, _id: race.id };
+    const raceModel = new RaceModel(data);
     const saved = await raceModel.save();
     return this.mapToEntity(saved);
   }
@@ -46,9 +50,11 @@ export class MongoRaceRepository implements RaceRepository {
     return this.mapToEntity(updatedRace);
   }
 
-  async deleteById(id: string): Promise<boolean> {
-    const result = await RaceModel.findByIdAndDelete(id);
-    return result !== null;
+  async deleteById(id: string): Promise<void> {
+    const deleted = await RaceModel.findByIdAndDelete(id);
+    if (!deleted) {
+      throw new NotFoundError('Race', id);
+    }
   }
 
   async existsById(id: string): Promise<boolean> {
