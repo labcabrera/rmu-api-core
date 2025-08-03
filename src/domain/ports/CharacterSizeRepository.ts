@@ -1,4 +1,4 @@
-import { CharacterSize, AttackEffects } from '@domain/entities/CharacterSize';
+import { CharacterSize, AttackEffects } from '@domain/entities/character-size';
 
 export interface CharacterSizeRepository {
   findById(id: string): Promise<CharacterSize | null>;

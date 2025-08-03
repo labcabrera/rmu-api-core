@@ -16,12 +16,12 @@ import { SkillCategoryService } from '@application/services/skill-category-servi
 import { CharacterSizeService } from '@application/services/character-size-service';
 import { ArmorTypeService } from '@application/services/armor-type-service';
 
-import { RaceController } from '@infrastructure/adapters/controllers/RaceController';
-import { RealmController } from '@infrastructure/adapters/controllers/RealmController';
-import { SkillController } from '@infrastructure/adapters/controllers/SkillController';
-import { SkillCategoryController } from '@infrastructure/adapters/controllers/SkillCategoryController';
-import { CharacterSizeController } from '@infrastructure/adapters/controllers/CharacterSizeController';
-import { ArmorTypeController } from '@infrastructure/adapters/controllers/ArmorTypeController';
+import { RaceController } from '@infrastructure/adapters/controllers/race-controller';
+import { RealmController } from '@infrastructure/adapters/controllers/realm-controller';
+import { SkillController } from '@infrastructure/adapters/controllers/skill-controller';
+import { SkillCategoryController } from '@infrastructure/adapters/controllers/skill-category-controller';
+import { CharacterSizeController } from '@infrastructure/adapters/controllers/character-size-controller';
+import { ArmorTypeController } from '@infrastructure/adapters/controllers/armor-type-controller';
 
 import { MongoRaceRepository } from '@infrastructure/adapters/persistence/repositories/MongoRaceRepository';
 import { MongoRealmRepository } from '@infrastructure/adapters/persistence/repositories/MongoRealmRepository';

@@ -1,4 +1,4 @@
-import { CharacterSize } from '@domain/entities/CharacterSize';
+import { CharacterSize } from '@domain/entities/character-size';
 
 export const CHARACTER_SIZES: CharacterSize[] = [
   { id: 'minuscule', index: 1, name: 'Minuscule', hitMultiplier: 0.25 },

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { TYPES } from '@shared/types/container';
-import { ArmorTypeController } from '@infrastructure/adapters/controllers/ArmorTypeController';
+import { ArmorTypeController } from '@infrastructure/adapters/controllers/armor-type-controller';
 
 const router = Router();
 const armorTypeController = container.get<ArmorTypeController>(TYPES.ArmorTypeController);

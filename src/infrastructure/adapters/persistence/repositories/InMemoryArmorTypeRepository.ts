@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { ArmorTypeRepository } from '@domain/ports/ArmorTypeRepository';
-import { ArmorType } from '@domain/entities/ArmorType';
+import { ArmorType } from '@domain/entities/armor-type';
 import { ARMOR_TYPES } from '@shared/constants/armor-types';
 
 @injectable()

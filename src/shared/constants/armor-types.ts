@@ -1,4 +1,4 @@
-import { ArmorType } from '@domain/entities/ArmorType';
+import { ArmorType } from '@domain/entities/armor-type';
 
 export const ARMOR_TYPES: ArmorType[] = [
   { id: 1, name: 'None' },

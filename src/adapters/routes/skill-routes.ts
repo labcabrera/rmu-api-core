@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { TYPES } from '@shared/types/container';
-import { SkillController } from '@infrastructure/adapters/controllers/SkillController';
+import { SkillController } from '@infrastructure/adapters/controllers/skill-controller';
 
 const router = Router();
 const skillController = container.get<SkillController>(TYPES.SkillController);

@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
 import { TYPES } from '@shared/types/container';
 import { ArmorTypeService } from '@application/services/armor-type-service';
-import { ArmorTypeCreateRequest, ArmorTypeUpdateRequest } from '@domain/entities/ArmorType';
+import { ArmorTypeCreateRequest, ArmorTypeUpdateRequest } from '@domain/entities/armor-type';
 
 @injectable()
 export class ArmorTypeController {

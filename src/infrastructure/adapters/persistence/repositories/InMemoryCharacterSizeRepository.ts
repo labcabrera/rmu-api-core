@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { CharacterSizeRepository } from '@domain/ports/CharacterSizeRepository';
-import { CharacterSize, AttackEffects } from '@domain/entities/CharacterSize';
+import { CharacterSize, AttackEffects } from '@domain/entities/character-size';
 import { CHARACTER_SIZES } from '@shared/constants/character-sizes';
 
 @injectable()

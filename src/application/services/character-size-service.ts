@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@shared/types/container';
 import { CharacterSizeRepository } from '@domain/ports/CharacterSizeRepository';
-import { CharacterSize, CharacterSizeCreateRequest, CharacterSizeUpdateRequest, AttackEffects } from '@domain/entities/CharacterSize';
+import { CharacterSize, CharacterSizeCreateRequest, CharacterSizeUpdateRequest, AttackEffects } from '@domain/entities/character-size';
 import { NotFoundError, ConflictError } from '@shared/errors';
 
 @injectable()
