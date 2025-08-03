@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { SkillCategoryRepository } from '@domain/ports/skill-category-repository';
+import { SkillCategoryRepository } from '@domain/ports/outbound/skill-category-repository';
 import { SKILL_CATEGORIES, SkillCategory } from '@domain/entities/skill-category';
 import { Page } from '@domain/entities/page';
 import { SkillCategoryQuery } from '@domain/queries/skill-category-query';

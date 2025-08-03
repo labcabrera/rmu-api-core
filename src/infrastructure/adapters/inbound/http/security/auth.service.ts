@@ -142,33 +142,4 @@ export class AuthService {
       next();
     };
   }
-
-  public static requireGroups(groups: string[], requireAll: boolean = false) {
-    return (req: Request, res: Response, next: NextFunction) => {
-      const user = (req as any).user as User;
-
-      if (!user) {
-        return res.status(401).json({
-          message: 'User not authenticated',
-          code: 'UNAUTHORIZED',
-        });
-      }
-
-      const userGroups = user.groups;
-      const hasRequiredGroups = requireAll
-        ? groups.every(group => userGroups.includes(group))
-        : groups.some(group => userGroups.includes(group));
-
-      if (!hasRequiredGroups) {
-        return res.status(403).json({
-          message: `Access denied. Required groups: ${groups.join(', ')}`,
-          code: 'FORBIDDEN',
-          requiredGroups: groups,
-          userGroups: userGroups,
-        });
-      }
-
-      next();
-    };
-  }
 }

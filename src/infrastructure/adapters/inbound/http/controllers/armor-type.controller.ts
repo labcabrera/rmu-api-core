@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { ArmorTypeService } from '@application/services/armor-type-read-service';
+import { ArmorTypeService } from '@application/services/armor-type-read.service';
 
 @injectable()
 export class ArmorTypeController {

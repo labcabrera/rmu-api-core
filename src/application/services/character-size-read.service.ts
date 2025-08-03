@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { CharacterSizeRepository } from '@domain/ports/character-size-repository';
+import { CharacterSizeRepository } from '@domain/ports/outbound/character-size-repository';
 import { CharacterSize } from '@domain/entities/character-size';
 import { NotFoundError } from '@domain/errors/errors';
 import { Page } from '@domain/entities/page';

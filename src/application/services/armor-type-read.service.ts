@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { ArmorTypeRepository } from '@domain/ports/armor-type-repository';
+import { ArmorTypeRepository } from '@domain/ports/outbound/armor-type-repository';
 import { ArmorType } from '@domain/entities/armor-type';
 import { NotFoundError } from '@domain/errors/errors';
 import { Page } from '@domain/entities/page';

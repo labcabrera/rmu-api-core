@@ -34,13 +34,3 @@ export class ValidationError extends DomainError {
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
-
-export class InternalServerError extends DomainError {
-  public readonly status: number = 500;
-
-  constructor(message: string) {
-    super(message, 500);
-    this.name = 'InternalServerError';
-    Object.setPrototypeOf(this, InternalServerError.prototype);
-  }
-}

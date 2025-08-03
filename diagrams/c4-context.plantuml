@@ -44,6 +44,8 @@ Rel(rmu_api_core, mongodb, "Read/Write data", "mongoose")
 
 Rel(rmu_api_core, keycloak, "Read JWK", "HTTP")
 
+Rel(rmu_api_core, kafka, "Publish events", "")
+
 SHOW_LEGEND()
 
 @enduml

@@ -1,7 +1,7 @@
 import { UpdateRaceCommand } from '@application/commands/update-race.command';
 import { Race } from '@domain/entities/race';
-import { RaceRepository } from '@domain/ports/race-repository';
-import { RealmRepository } from '@domain/ports/realm-repository';
+import { RaceRepository } from '@domain/ports/outbound/race-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { inject, injectable } from 'inversify';
 
 @injectable()
