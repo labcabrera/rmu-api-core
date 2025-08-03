@@ -4,7 +4,9 @@ import { CharacterSizeService } from '@application/services/character-size-read-
 
 @injectable()
 export class CharacterSizeController {
-  constructor(@inject('CharacterSizeReadService') private characterSizeService: CharacterSizeService) {}
+  constructor(
+    @inject('CharacterSizeReadService') private characterSizeService: CharacterSizeService
+  ) {}
 
   async findById(req: Request, res: Response): Promise<void> {
     try {

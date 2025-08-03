@@ -34,7 +34,10 @@ import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
-import { AuthService, AuthConfig } from '@infrastructure/adapters/inbound/http/services/auth.service';
+import {
+  AuthService,
+  AuthConfig,
+} from '@infrastructure/adapters/inbound/http/services/auth.service';
 
 const container = new Container();
 
@@ -103,7 +106,7 @@ container
 const authConfig: AuthConfig = {
   keycloakUrl: process.env.KEYCLOAK_URL || 'http://localhost:8080',
   realm: process.env.KEYCLOAK_REALM || 'master',
-  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-api'
+  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-api',
 };
 
 container.bind<AuthConfig>('AuthConfig').toConstantValue(authConfig);

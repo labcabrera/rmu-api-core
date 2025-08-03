@@ -6,7 +6,6 @@ import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
 
 @injectable()
 export class InMemorySkillCategoryRepository implements SkillCategoryRepository {
-
   async findById(id: string): Promise<SkillCategory | null> {
     const skillCategory = SKILL_CATEGORIES.find(sc => sc.id === id);
     return skillCategory || null;

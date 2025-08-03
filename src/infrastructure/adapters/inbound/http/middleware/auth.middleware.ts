@@ -21,14 +21,14 @@ export function requireGroups(groups: string[], requireAll: boolean = false) {
 export function requireAuth() {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user;
-    
+
     if (!user) {
       return res.status(401).json({
         message: 'Authentication required',
-        code: 'UNAUTHORIZED'
+        code: 'UNAUTHORIZED',
       });
     }
-    
+
     next();
   };
 }

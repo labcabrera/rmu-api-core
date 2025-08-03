@@ -4,6 +4,7 @@ export interface RealmDocument extends Document {
   _id: string;
   name: string;
   description?: string;
+  owner: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,9 +23,20 @@ const realmSchema = new Schema<RealmDocument>(
       type: String,
       required: false,
     },
+    owner: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      required: true,
+    },
+    updatedAt: {
+      type: Date,
+      required: false,
+    },
   },
   {
-    timestamps: true,
     collection: 'realms',
   }
 );

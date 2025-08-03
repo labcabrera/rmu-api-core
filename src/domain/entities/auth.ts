@@ -22,7 +22,7 @@ export interface JWTPayload {
   session_state?: string;
   scope?: string;
   sid?: string;
-  
+
   // Keycloak specific claims
   preferred_username?: string;
   given_name?: string;

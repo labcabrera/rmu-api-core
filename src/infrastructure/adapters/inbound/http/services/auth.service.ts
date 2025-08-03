@@ -19,7 +19,7 @@ export class AuthService {
   constructor(@inject('AuthConfig') config: AuthConfig) {
     this.issuer = `${config.keycloakUrl}/realms/${config.realm}`;
     this.audience = config.clientId;
-    
+
     this.jwksClient = jwksClient({
       jwksUri: `${config.keycloakUrl}/realms/${config.realm}/protocol/openid-connect/certs`,
       requestHeaders: {},
@@ -47,9 +47,10 @@ export class AuthService {
 
   private extractUserFromPayload(payload: JWTPayload): User {
     const realmRoles = payload.realm_access?.roles || [];
-    const clientRoles = Object.values(payload.resource_access || {})
-      .flatMap(client => client.roles);
-    
+    const clientRoles = Object.values(payload.resource_access || {}).flatMap(
+      client => client.roles
+    );
+
     return {
       id: payload.sub,
       username: payload.preferred_username || payload.sub,
@@ -58,26 +59,26 @@ export class AuthService {
       lastName: payload.family_name,
       roles: [...realmRoles, ...clientRoles],
       groups: payload.groups || [],
-      realm: payload.iss.split('/').pop() || 'unknown'
+      realm: payload.iss.split('/').pop() || 'unknown',
     };
   }
 
   public async verifyToken(token: string): Promise<User> {
     // Decode the token header to get the kid
     const decodedHeader = jwt.decode(token, { complete: true });
-    
+
     if (!decodedHeader || !decodedHeader.header.kid) {
       throw new Error('Invalid token format');
     }
 
     // Get the signing key
     const signingKey = await this.getKey(decodedHeader.header);
-    
+
     // Verify and decode the token
     const payload = jwt.verify(token, signingKey, {
       issuer: this.issuer,
       audience: this.audience,
-      algorithms: ['RS256']
+      algorithms: ['RS256'],
     }) as JWTPayload;
 
     // Extract user information
@@ -88,41 +89,41 @@ export class AuthService {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const authHeader = req.headers.authorization;
-        
+
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
           return res.status(401).json({
             message: 'Authorization header missing or invalid',
-            code: 'UNAUTHORIZED'
+            code: 'UNAUTHORIZED',
           });
         }
 
         const token = authHeader.substring(7); // Remove "Bearer "
         const user = await this.verifyToken(token);
-        
+
         // Agregar el usuario al request usando any para evitar problemas de tipos
         (req as any).user = user;
-        
+
         next();
       } catch (error) {
         console.error('JWT verification error:', error);
-        
+
         if (error instanceof jwt.TokenExpiredError) {
           return res.status(401).json({
             message: 'Token expired',
-            code: 'TOKEN_EXPIRED'
+            code: 'TOKEN_EXPIRED',
           });
         }
-        
+
         if (error instanceof jwt.JsonWebTokenError) {
           return res.status(401).json({
             message: 'Invalid token',
-            code: 'INVALID_TOKEN'
+            code: 'INVALID_TOKEN',
           });
         }
-        
+
         return res.status(500).json({
           message: 'Internal server error during authentication',
-          code: 'AUTH_ERROR'
+          code: 'AUTH_ERROR',
         });
       }
     };
@@ -131,11 +132,11 @@ export class AuthService {
   public static requireRoles(roles: string[], requireAll: boolean = false) {
     return (req: Request, res: Response, next: NextFunction) => {
       const user = (req as any).user as User;
-      
+
       if (!user) {
         return res.status(401).json({
           message: 'User not authenticated',
-          code: 'UNAUTHORIZED'
+          code: 'UNAUTHORIZED',
         });
       }
 
@@ -149,7 +150,7 @@ export class AuthService {
           message: `Access denied. Required roles: ${roles.join(', ')}`,
           code: 'FORBIDDEN',
           requiredRoles: roles,
-          userRoles: userRoles
+          userRoles: userRoles,
         });
       }
 
@@ -160,11 +161,11 @@ export class AuthService {
   public static requireGroups(groups: string[], requireAll: boolean = false) {
     return (req: Request, res: Response, next: NextFunction) => {
       const user = (req as any).user as User;
-      
+
       if (!user) {
         return res.status(401).json({
           message: 'User not authenticated',
-          code: 'UNAUTHORIZED'
+          code: 'UNAUTHORIZED',
         });
       }
 
@@ -178,7 +179,7 @@ export class AuthService {
           message: `Access denied. Required groups: ${groups.join(', ')}`,
           code: 'FORBIDDEN',
           requiredGroups: groups,
-          userGroups: userGroups
+          userGroups: userGroups,
         });
       }
 

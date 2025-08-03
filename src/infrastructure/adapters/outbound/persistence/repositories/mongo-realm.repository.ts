@@ -67,6 +67,7 @@ export class MongoRealmRepository implements RealmRepository {
       id: doc._id,
       name: doc.name,
       description: doc.description,
+      owner: doc.owner,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };

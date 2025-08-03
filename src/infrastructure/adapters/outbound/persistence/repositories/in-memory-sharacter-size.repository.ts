@@ -5,7 +5,6 @@ import { Page } from '@domain/entities/page';
 
 @injectable()
 export class InMemoryCharacterSizeRepository implements CharacterSizeRepository {
-
   async findById(id: string): Promise<CharacterSize | null> {
     const characterSize = CHARACTER_SIZES.find(cs => cs.id === id);
     return characterSize || null;

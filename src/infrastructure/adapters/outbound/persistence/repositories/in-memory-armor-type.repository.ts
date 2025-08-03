@@ -5,7 +5,6 @@ import { Page } from '@domain/entities/page';
 
 @injectable()
 export class InMemoryArmorTypeRepository implements ArmorTypeRepository {
-
   async findById(id: number): Promise<ArmorType | null> {
     const armorType = ARMOR_TYPES.find(at => at.id === id);
     return armorType || null;
