@@ -1,23 +1,62 @@
 {
   "name": "rmu-api-core",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "dist/app.js",
+  "description": "Core API for RMU",
   "scripts": {
-    "start": "node src/app.js"
+    "build": "npm run clean && tsc",
+    "start": "node dist/app.js",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/app.ts",
+    "dev:watch": "nodemon --ext ts --exec \"ts-node -r tsconfig-paths/register src/app.ts\"",
+    "test": "jest --config jest.config.js",
+    "test:watch": "jest --config jest.config.js --watch",
+    "test:coverage": "jest --config jest.config.js --coverage",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": {
     "name": "Luis Cabrera",
     "email": "lab.cabrera@gmail.com"
   },
-  "license": "ISC",
-  "description": "",
+  "license": "GPL-3.0",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "inversify": "^7.7.0",
+    "module-alias": "^2.2.3",
     "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
+    "reflect-metadata": "^0.2.2",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2"
+  },
+  "_moduleAliases": {
+    "@domain": "dist/domain",
+    "@infrastructure": "dist/infrastructure",
+    "@application": "dist/application",
+    "@adapters": "dist/adapters",
+    "@shared": "dist/shared"
   }
 }
