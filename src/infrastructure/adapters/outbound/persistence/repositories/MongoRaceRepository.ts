@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/Race';
-import { RaceRepository } from '@domain/ports/RaceRepository';
+import { RaceRepository } from '@domain/ports/race-repository';
 import { PaginationOptions, PaginatedResult } from '@shared/types';
 import { RaceModel, RaceDocument } from '../models/RaceModel';
 

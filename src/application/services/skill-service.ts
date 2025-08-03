@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@shared/types/container';
-import { SkillRepository } from '@domain/ports/SkillRepository';
+import { SkillRepository } from '@domain/ports/skill-repository';
 import { Skill, PaginatedSkillsResponse } from '@domain/entities/Skill';
 import { NotFoundError } from '@shared/errors';
 

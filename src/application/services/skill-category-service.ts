@@ -1,8 +1,8 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@shared/types/container';
-import { SkillCategoryRepository } from '@domain/ports/SkillCategoryRepository';
-import { SkillCategory, SkillCategoryCreateRequest, SkillCategoryUpdateRequest, PaginatedSkillCategoriesResponse } from '@domain/entities/SkillCategory';
-import { NotFoundError, ConflictError } from '@shared/errors';
+import { SkillCategoryRepository } from '@domain/ports/skill-category-repository';
+import { SkillCategory, PaginatedSkillCategoriesResponse } from '@domain/entities/SkillCategory';
+import { NotFoundError } from '@shared/errors';
 
 @injectable()
 export class SkillCategoryService {
@@ -32,46 +32,5 @@ export class SkillCategoryService {
         totalElements: result.totalElements
       }
     };
-  }
-
-  async create(request: SkillCategoryCreateRequest): Promise<SkillCategory> {
-    // Check if skill category with same id already exists
-    const existingSkillCategory = await this.skillCategoryRepository.findById(request.id);
-    if (existingSkillCategory) {
-      throw new ConflictError(`Skill category with id ${request.id} already exists`);
-    }
-
-    const skillCategory: SkillCategory = {
-      id: request.id,
-      bonus: request.bonus
-    };
-
-    return await this.skillCategoryRepository.create(skillCategory);
-  }
-
-  async update(id: string, request: SkillCategoryUpdateRequest): Promise<SkillCategory> {
-    const existingSkillCategory = await this.skillCategoryRepository.findById(id);
-    if (!existingSkillCategory) {
-      throw new NotFoundError(`Skill category with id ${id} not found`);
-    }
-
-    const updatedSkillCategory = await this.skillCategoryRepository.update(id, request);
-    if (!updatedSkillCategory) {
-      throw new NotFoundError(`Skill category with id ${id} not found`);
-    }
-
-    return updatedSkillCategory;
-  }
-
-  async deleteById(id: string): Promise<void> {
-    const skillCategory = await this.skillCategoryRepository.findById(id);
-    if (!skillCategory) {
-      throw new NotFoundError(`Skill category with id ${id} not found`);
-    }
-
-    const deleted = await this.skillCategoryRepository.deleteById(id);
-    if (!deleted) {
-      throw new NotFoundError(`Skill category with id ${id} not found`);
-    }
   }
 }
