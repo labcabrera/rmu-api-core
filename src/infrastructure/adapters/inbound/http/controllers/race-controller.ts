@@ -43,10 +43,13 @@ export class RaceController {
   }
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
-    console.log(next);
-    const command: CreateRaceCommand = req.body;
-    const created = await this.createRaceUseCase.execute(command);
-    res.status(201).json(created);
+    try {
+      const command: CreateRaceCommand = req.body;
+      const created = await this.createRaceUseCase.execute(command);
+      res.status(201).json(created);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
