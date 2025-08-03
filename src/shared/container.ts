@@ -21,6 +21,7 @@ import { SkillController } from '@infrastructure/adapters/inbound/http/controlle
 import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/controllers/skill-category-controller';
 import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size-controller';
 import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type-controller';
+import { AuthExampleController } from '@infrastructure/adapters/inbound/http/controllers/auth-example-controller';
 
 import { MongoRaceRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-race.repository';
 import { MongoRealmRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-realm.repository';
@@ -33,6 +34,7 @@ import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
+import { AuthService, AuthConfig } from '@infrastructure/adapters/inbound/http/services/auth.service';
 
 const container = new Container();
 
@@ -92,5 +94,19 @@ container
   .bind<ArmorTypeController>('ArmorTypeController')
   .to(ArmorTypeController)
   .inSingletonScope();
+container
+  .bind<AuthExampleController>('AuthExampleController')
+  .to(AuthExampleController)
+  .inSingletonScope();
+
+// Bind Auth Configuration
+const authConfig: AuthConfig = {
+  keycloakUrl: process.env.KEYCLOAK_URL || 'http://localhost:8080',
+  realm: process.env.KEYCLOAK_REALM || 'master',
+  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-api'
+};
+
+container.bind<AuthConfig>('AuthConfig').toConstantValue(authConfig);
+container.bind<AuthService>('AuthService').to(AuthService).inSingletonScope();
 
 export { container };
