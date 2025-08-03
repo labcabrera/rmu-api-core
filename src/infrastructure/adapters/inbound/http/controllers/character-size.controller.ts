@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { CharacterSizeService } from '@application/services/character-size-read-service';
+import { CharacterSizeService } from '@application/services/character-size-read.service';
 
 @injectable()
 export class CharacterSizeController {

@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { SkillRepository } from '@domain/ports/skill-repository';
+import { SkillRepository } from '@domain/ports/outbound/skill-repository';
 import { RMU_SKILLS, Skill } from '@domain/entities/skill';
 import { Page } from '@domain/entities/page';
 import { SkillQuery } from '@domain/queries/skill-query';

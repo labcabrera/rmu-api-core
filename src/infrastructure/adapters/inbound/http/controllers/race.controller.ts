@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
-import { RaceService } from '@application/services/race-read-service';
+import { RaceService } from '@application/services/race-read.service';
 import { RaceQuery } from '@domain/queries/race-query';
 import { CreateRaceCommand } from '@application/commands/create-race.command';
 import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
