@@ -1,6 +1,6 @@
 import { DeleteRaceCommand } from '@application/commands/delete-race.command';
-import { RaceRepository } from '@domain/ports/race-repository';
-import { RealmRepository } from '@domain/ports/realm-repository';
+import { RaceRepository } from '@domain/ports/outbound/race-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { inject, injectable } from 'inversify';
 
 @injectable()

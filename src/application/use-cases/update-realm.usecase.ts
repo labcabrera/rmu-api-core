@@ -1,6 +1,6 @@
 import { UpdateRealmCommand } from '@application/commands/update-realm.command';
 import { Realm } from '@domain/entities/realm';
-import { RealmRepository } from '@domain/ports/realm-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { inject, injectable } from 'inversify';
 
 @injectable()

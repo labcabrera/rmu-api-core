@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { Realm } from '@domain/entities/realm';
-import { RealmRepository } from '@domain/ports/realm-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { RealmModel, RealmDocument } from '../models/realm-model';
 import { RealmQuery } from '@domain/queries/realm-query';
 import { Page } from '@domain/entities/page';

@@ -1,7 +1,7 @@
 import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { Realm } from '@domain/entities/realm';
 import { ConflictError, ValidationError } from '@domain/errors/errors';
-import { RealmRepository } from '@domain/ports/realm-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { inject, injectable } from 'inversify';
 
 @injectable()

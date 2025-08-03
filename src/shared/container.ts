@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 
-import { RaceRepository } from '@domain/ports/race-repository';
-import { RealmRepository } from '@domain/ports/realm-repository';
-import { SkillRepository } from '@domain/ports/skill-repository';
-import { SkillCategoryRepository } from '@domain/ports/skill-category-repository';
-import { CharacterSizeRepository } from '@domain/ports/character-size-repository';
-import { ArmorTypeRepository } from '@domain/ports/armor-type-repository';
+import { RaceRepository } from '@domain/ports/outbound/race-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
+import { SkillRepository } from '@domain/ports/outbound/skill-repository';
+import { SkillCategoryRepository } from '@domain/ports/outbound/skill-category-repository';
+import { CharacterSizeRepository } from '@domain/ports/outbound/character-size-repository';
+import { ArmorTypeRepository } from '@domain/ports/outbound/armor-type-repository';
 
 import { RaceService } from '@application/services/race-read-service';
 import { RealmReadService } from '@application/services/realm-read-service';

@@ -1,5 +1,5 @@
 import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
-import { RealmRepository } from '@domain/ports/realm-repository';
+import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { inject, injectable } from 'inversify';
 
 @injectable()
