@@ -23,12 +23,12 @@ import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/c
 import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size-controller';
 import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type-controller';
 
-import { MongoRaceRepository } from '@infrastructure/adapters/outbound/persistence/repositories/MongoRaceRepository';
-import { MongoRealmRepository } from '@infrastructure/adapters/outbound/persistence/repositories/MongoRealmRepository';
-import { InMemorySkillRepository } from '@infrastructure/adapters/outbound/persistence/repositories/InMemorySkillRepository';
-import { InMemorySkillCategoryRepository } from '@infrastructure/adapters/outbound/persistence/repositories/InMemorySkillCategoryRepository';
-import { InMemoryCharacterSizeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/InMemoryCharacterSizeRepository';
-import { InMemoryArmorTypeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/InMemoryArmorTypeRepository';
+import { MongoRaceRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-race.repository';
+import { MongoRealmRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-realm.repository';
+import { InMemorySkillRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-skill.repository';
+import { InMemorySkillCategoryRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-skill-category.repository';
+import { InMemoryCharacterSizeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-sharacter-size.repository';
+import { InMemoryArmorTypeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-armor-type.repository';
 
 const container = new Container();
 
