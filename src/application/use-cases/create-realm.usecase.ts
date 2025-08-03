@@ -24,12 +24,8 @@ export class CreateRealmUseCase {
       owner: command.username,
       createdAt: new Date(),
     };
-    
     const savedRealm = await this.realmRepository.save(realm);
-    
-    // Publicar evento de realm creado
     await this.realmEventService.created(savedRealm, command.username);
-    
     return savedRealm;
   }
 

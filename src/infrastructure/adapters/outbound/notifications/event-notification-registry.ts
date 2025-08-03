@@ -14,10 +14,10 @@ export class EventNotificationRegistry {
     
     eventTypes.forEach(eventType => {
       if (this.services.has(eventType)) {
-        console.warn(`⚠️ Overriding existing service for event type: ${eventType}`);
+        console.warn(`Overriding existing service for event type: ${eventType}`);
       }
       this.services.set(eventType, service);
-      console.log(`📝 Registered notification service for event type: ${eventType}`);
+      console.log(`Registered notification service for event type: ${eventType}`);
     });
   }
 
@@ -28,14 +28,14 @@ export class EventNotificationRegistry {
     const service = this.services.get(event.eventType);
     
     if (!service) {
-      console.warn(`⚠️ No notification service found for event type: ${event.eventType}`);
+      console.warn(`No notification service found for event type: ${event.eventType}`);
       return;
     }
 
     try {
       await service.notify(event);
     } catch (error) {
-      console.error(`❌ Failed to notify event ${event.eventType}:`, error);
+      console.error(`Failed to notify event ${event.eventType}:`, error);
       throw error;
     }
   }
@@ -55,7 +55,7 @@ export class EventNotificationRegistry {
         }
         eventsByService.get(service)!.push(event);
       } else {
-        console.warn(`⚠️ No notification service found for event type: ${event.eventType}`);
+        console.warn(`No notification service found for event type: ${event.eventType}`);
       }
     });
 
@@ -65,7 +65,7 @@ export class EventNotificationRegistry {
         try {
           await service.notifyBatch(serviceEvents);
         } catch (error) {
-          console.error(`❌ Failed to notify batch for service:`, error);
+          console.error(`Failed to notify batch for service:`, error);
           throw error;
         }
       }

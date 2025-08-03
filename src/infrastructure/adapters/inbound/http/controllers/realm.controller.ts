@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
-import { RealmReadService } from '@application/services/realm-read-service';
+import { RealmReadService } from '@application/services/realm-read.service';
 import { RealmQuery } from '@domain/queries/realm-query';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';

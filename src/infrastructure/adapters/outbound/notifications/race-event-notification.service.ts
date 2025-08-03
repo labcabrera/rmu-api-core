@@ -1,6 +1,5 @@
 import { injectable } from 'inversify';
 import { DomainEvent } from '@domain/events/domain-event';
-import { RaceCreatedEvent } from '@domain/events/race-created.event';
 import { TopicConfiguration } from '@domain/ports/outbound/event-notification-service';
 import { AbstractKafkaEventNotificationService } from './abstract-kafka-event-notification.service';
 

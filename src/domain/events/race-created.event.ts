@@ -8,7 +8,8 @@ export class RaceCreatedEvent implements DomainEvent {
 
   constructor(
     public readonly aggregateId: string,
-    public readonly race: Race
+    public readonly race: Race,
+    public readonly createdBy: string
   ) {
     this.occurredOn = new Date();
   }

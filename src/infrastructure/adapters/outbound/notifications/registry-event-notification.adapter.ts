@@ -9,7 +9,6 @@ export class RegistryEventNotificationAdapter implements EventNotificationPort {
   constructor(
     @inject('EventNotificationRegistry') private registry: EventNotificationRegistry
   ) {
-    console.log('🚀 Registry Event Notification Adapter initialized');
   }
 
   async notify(event: DomainEvent): Promise<void> {

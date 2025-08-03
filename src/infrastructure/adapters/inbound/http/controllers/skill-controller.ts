@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { SkillReadService } from '@application/services/skill-read-service';
+import { SkillReadService } from '@application/services/skill-read.service';
 import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()

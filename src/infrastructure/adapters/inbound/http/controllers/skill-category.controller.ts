@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { SkillCategoryService } from '@application/services/skill-category-read-service';
+import { SkillCategoryService } from '@application/services/skill-category-read.service';
 import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
 
 @injectable()

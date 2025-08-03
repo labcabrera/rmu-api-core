@@ -8,12 +8,12 @@ import { SkillCategoryRepository } from '@domain/ports/outbound/skill-category-r
 import { CharacterSizeRepository } from '@domain/ports/outbound/character-size-repository';
 import { ArmorTypeRepository } from '@domain/ports/outbound/armor-type-repository';
 
-import { RaceService } from '@application/services/race-read-service';
-import { RealmReadService } from '@application/services/realm-read-service';
-import { SkillReadService } from '@application/services/skill-read-service';
-import { SkillCategoryService } from '@application/services/skill-category-read-service';
-import { CharacterSizeService } from '@application/services/character-size-read-service';
-import { ArmorTypeService } from '@application/services/armor-type-read-service';
+import { RaceService } from '@application/services/race-read.service';
+import { RealmReadService } from '@application/services/realm-read.service';
+import { SkillReadService } from '@application/services/skill-read.service';
+import { SkillCategoryService } from '@application/services/skill-category-read.service';
+import { CharacterSizeService } from '@application/services/character-size-read.service';
+import { ArmorTypeService } from '@application/services/armor-type-read.service';
 
 import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race.controller';
 import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm.controller';
@@ -36,7 +36,6 @@ import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase'
 import { AuthService } from '@infrastructure/adapters/inbound/http/security/auth.service';
 import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
 import { Configuration } from './configuration';
-import { EventNotificationService } from '@application/services/event-notification.service';
 import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
 import { EventNotificationRegistry } from '@infrastructure/adapters/outbound/notifications/event-notification-registry';
 import { RegistryEventNotificationAdapter } from '@infrastructure/adapters/outbound/notifications/registry-event-notification.adapter';
@@ -44,6 +43,8 @@ import { RealmEventNotificationService } from '@infrastructure/adapters/outbound
 import { RaceEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-event-notification.service';
 import { RealmEventService } from '@application/services/realm-event.service';
 import { RealmEventServiceImpl } from '@application/services/realm-event.service.impl';
+import { RaceEventService } from '@application/services/race-event.service';
+import { RaceEventServiceImpl } from '@application/services/race-event.service.impl';
 
 const container = new Container();
 
@@ -92,30 +93,25 @@ container.bind<ArmorTypeService>('ArmorTypeReadService').to(ArmorTypeService).in
 
 // Bind Domain Event Services
 container.bind<RealmEventService>('RealmEventService').to(RealmEventServiceImpl).inSingletonScope();
+container.bind<RaceEventService>('RaceEventService').to(RaceEventServiceImpl).inSingletonScope();
 
 // Bind Event Notification Services with Registry Pattern
-// First, bind the individual notification services
 container.bind<RealmEventNotificationService>('RealmEventNotificationService').to(RealmEventNotificationService).inSingletonScope();
 container.bind<RaceEventNotificationService>('RaceEventNotificationService').to(RaceEventNotificationService).inSingletonScope();
 
 // Bind the registry with factory to configure services
 container.bind<EventNotificationRegistry>('EventNotificationRegistry').toDynamicValue(() => {
   const registry = new EventNotificationRegistry();
-  
-  // Get and register the notification services
   const realmService = container.get<RealmEventNotificationService>('RealmEventNotificationService');
   const raceService = container.get<RaceEventNotificationService>('RaceEventNotificationService');
-  
   registry.registerService(realmService);
   registry.registerService(raceService);
-  
-  console.log('✅ Event Notification Registry configured with all services');
+  console.log('Event Notification Registry configured with all services');
   return registry;
 }).inSingletonScope();
 
 // Bind the main port using the registry adapter
 container.bind<EventNotificationPort>('EventNotificationPort').to(RegistryEventNotificationAdapter).inSingletonScope();
-container.bind<EventNotificationService>('EventNotificationService').to(EventNotificationService).inSingletonScope();
 
 // Bind Controllers
 container.bind<RaceController>('RaceController').to(RaceController).inSingletonScope();

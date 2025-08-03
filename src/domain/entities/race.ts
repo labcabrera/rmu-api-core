@@ -43,23 +43,6 @@ export interface Race {
   updatedAt?: Date;
 }
 
-export interface CreateRaceRequest {
-  id: string;
-  name: string;
-  realm: string;
-  size?: string;
-  defaultStatBonus: RaceStatBonus;
-  resistances?: RaceResistances;
-  averageHeight?: SexBasedAttribute;
-  averageWeight?: SexBasedAttribute;
-  strideBonus?: number;
-  enduranceBonus?: number;
-  recoveryMultiplier?: number;
-  baseHits?: number;
-  bonusDevPoints?: number;
-  description?: string;
-}
-
 export interface UpdateRaceRequest {
   name?: string;
   realm?: string;

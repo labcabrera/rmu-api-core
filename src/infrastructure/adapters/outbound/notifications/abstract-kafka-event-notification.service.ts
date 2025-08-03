@@ -22,7 +22,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
       }
     });
 
-    console.log(`🚀 ${this.getServiceName()} initialized`);
+    console.log(`${this.getServiceName()} initialized`);
   }
 
   abstract getHandledEventTypes(): string[];
@@ -45,17 +45,17 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
 
     try {
       console.log(`🔌 Initializing ${this.getServiceName()} producer...`);
-      this.producer = this.kafka.producer({
-        maxInFlightRequests: 1,
-        idempotent: true,
-        transactionTimeout: 30000
-      });
+    this.producer = this.kafka.producer({
+      maxInFlightRequests: 1,
+      idempotent: true,
+      transactionTimeout: 30000
+    });
 
-      await this.producer.connect();
-      console.log(`✅ ${this.getServiceName()} producer connected successfully`);
+    await this.producer.connect();
+    console.log(`✅ ${this.getServiceName()} producer connected successfully`);
       this.isInitialized = true;
     } catch (error) {
-      console.error(`❌ Failed to initialize ${this.getServiceName()} producer:`, error);
+      console.error(`Failed to initialize ${this.getServiceName()} producer:`, error);
       throw error;
     }
   }
@@ -89,7 +89,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         ]
       };
 
-      console.log(`📤 ${this.getServiceName()} sending event to topic "${topicConfig.topicName}"`);
+      console.log(`${this.getServiceName()} sending event to topic "${topicConfig.topicName}"`);
       const result = await this.producer.send(producerRecord);
       
       console.log(`✅ ${this.getServiceName()} event sent successfully:`, {
@@ -101,7 +101,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
       });
       
     } catch (error) {
-      console.error(`❌ ${this.getServiceName()} failed to send event:`, error);
+      console.error(`${this.getServiceName()} failed to send event:`, error);
       throw error;
     }
   }
@@ -116,7 +116,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
 
       const topicConfig = this.getTopicConfiguration();
       
-      console.log(`📤 ${this.getServiceName()} sending ${events.length} events to topic "${topicConfig.topicName}"`);
+      console.log(`${this.getServiceName()} sending ${events.length} events to topic "${topicConfig.topicName}"`);
       
       const messages = events.map(event => ({
         partition: this.getPartition(event.aggregateId, topicConfig.partitionCount),
@@ -138,10 +138,10 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
 
       const results = await this.producer.send(producerRecord);
       
-      console.log(`✅ ${this.getServiceName()} sent ${results.length} events successfully to topic "${topicConfig.topicName}"`);
+      console.log(`${this.getServiceName()} sent ${results.length} events successfully to topic "${topicConfig.topicName}"`);
       
     } catch (error) {
-      console.error(`❌ ${this.getServiceName()} failed to send batch events:`, error);
+      console.error(`${this.getServiceName()} failed to send batch events:`, error);
       throw error;
     }
   }
@@ -181,13 +181,13 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
   async disconnect(): Promise<void> {
     if (this.producer) {
       try {
-        console.log(`🔌 Disconnecting ${this.getServiceName()} producer...`);
+        console.log(`Disconnecting ${this.getServiceName()} producer...`);
         await this.producer.disconnect();
-        console.log(`✅ ${this.getServiceName()} producer disconnected`);
+        console.log(`${this.getServiceName()} producer disconnected`);
         this.isInitialized = false;
         this.producer = null;
       } catch (error) {
-        console.error(`❌ Error disconnecting ${this.getServiceName()} producer:`, error);
+        console.error(`Error disconnecting ${this.getServiceName()} producer:`, error);
         throw error;
       }
     }
