@@ -104,9 +104,9 @@ container
 
 // Bind Auth Configuration
 const authConfig: AuthConfig = {
-  keycloakUrl: process.env.KEYCLOAK_URL || 'http://localhost:8080',
-  realm: process.env.KEYCLOAK_REALM || 'master',
-  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-api',
+  keycloakUrl: process.env.KEYCLOAK_URL || 'http://localhost:8090',
+  realm: process.env.KEYCLOAK_REALM || 'rmu-local',
+  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-client',
 };
 
 container.bind<AuthConfig>('AuthConfig').toConstantValue(authConfig);

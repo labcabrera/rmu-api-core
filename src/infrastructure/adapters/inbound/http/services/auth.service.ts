@@ -28,7 +28,7 @@ export class AuthService {
       rateLimit: true,
       jwksRequestsPerMinute: 5,
       cacheMaxEntries: 5,
-      cacheMaxAge: 600000, // 10 minutes
+      cacheMaxAge: 600000,
     });
   }
 
@@ -64,24 +64,15 @@ export class AuthService {
   }
 
   public async verifyToken(token: string): Promise<User> {
-    // Decode the token header to get the kid
     const decodedHeader = jwt.decode(token, { complete: true });
-
     if (!decodedHeader || !decodedHeader.header.kid) {
       throw new Error('Invalid token format');
     }
-
-    // Get the signing key
     const signingKey = await this.getKey(decodedHeader.header);
-
-    // Verify and decode the token
     const payload = jwt.verify(token, signingKey, {
       issuer: this.issuer,
-      audience: this.audience,
       algorithms: ['RS256'],
     }) as JWTPayload;
-
-    // Extract user information
     return this.extractUserFromPayload(payload);
   }
 

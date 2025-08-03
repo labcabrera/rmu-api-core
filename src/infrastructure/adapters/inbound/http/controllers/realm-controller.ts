@@ -8,6 +8,7 @@ import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase'
 import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { UpdateRealmCommand } from '@application/commands/update-realm.command';
 import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
+import { getAuthenticatedUser } from '../utils/auth.utils';
 
 @injectable()
 export class RealmController {
@@ -43,7 +44,12 @@ export class RealmController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const command: CreateRealmCommand = { ...req.body };
+      const user = getAuthenticatedUser(req);
+      console.log('Authenticated user:', user);
+      const command: CreateRealmCommand = {
+        ...req.body,
+        username: user?.username,
+      };
       const newRealm = await this.createRealmUseCase.execute(command);
       res.status(201).json(newRealm);
     } catch (error) {
@@ -53,7 +59,12 @@ export class RealmController {
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const command: UpdateRealmCommand = { ...req.body };
+      const user = getAuthenticatedUser(req);
+      const command: UpdateRealmCommand = {
+        ...req.body,
+        id: req.params.id,
+        username: user?.username,
+      };
       const updated = await this.updateRealmUseCase.execute(command);
       res.json(updated);
     } catch (error) {
