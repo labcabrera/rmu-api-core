@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { SkillController } from '@infrastructure/adapters/inbound/http/controllers/skill-controller';
 
 const router = Router();

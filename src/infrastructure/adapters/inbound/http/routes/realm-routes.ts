@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm-controller';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 
 const router = Router();
 const realmController = container.get<RealmController>(TYPES.RealmController);

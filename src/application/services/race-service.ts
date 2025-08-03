@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/race-repository';
 import { NotFoundError, ConflictError } from '@shared/types-ex';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { Page } from '@domain/entities/page';
 import { RaceQuery } from '@domain/queries/race-query';
 

@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
-import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
+import { Realm, UpdateRealmRequest } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
-import { NotFoundError, ConflictError } from '@shared/types-ex';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { RealmQuery } from '@domain/queries/realm-query';
 import { Page } from '@domain/entities/page';
+import { NotFoundError, ValidationError } from '@shared/errors';
 
 @injectable()
 export class RealmService {
@@ -13,7 +13,7 @@ export class RealmService {
   async findById(id: string): Promise<Realm> {
     const realm = await this.realmRepository.findById(id);
     if (!realm) {
-      throw new NotFoundError('Realm', id);
+      throw new NotFoundError(`Realm ${id} not found`);
     }
     return realm;
   }
@@ -25,7 +25,7 @@ export class RealmService {
   async update(id: string, request: UpdateRealmRequest): Promise<Realm> {
     const realm = await this.realmRepository.update(id, request);
     if (!realm) {
-      throw new NotFoundError('Realm', id);
+      throw new ValidationError(`Realm ${id} not found`);
     }
     return realm;
   }
@@ -33,7 +33,7 @@ export class RealmService {
   async deleteById(id: string): Promise<void> {
     const deleted = await this.realmRepository.deleteById(id);
     if (!deleted) {
-      throw new NotFoundError('Realm', id);
+      throw new NotFoundError(`Realm ${id} not found`);
     }
   }
 }

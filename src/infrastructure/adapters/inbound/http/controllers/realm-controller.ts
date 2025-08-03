@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RealmService } from '@application/services/realm-service';
-import { CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
-import { TYPES } from '@shared/types/container';
+import { UpdateRealmRequest } from '@domain/entities/realm';
+import { TYPES } from '@shared/container';
 import { RealmQuery } from '@domain/queries/realm-query';
 
 @injectable()

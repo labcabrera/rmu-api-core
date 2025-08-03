@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race-controller';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 
 const router = Router();
 const raceController = container.get<RaceController>(TYPES.RaceController);

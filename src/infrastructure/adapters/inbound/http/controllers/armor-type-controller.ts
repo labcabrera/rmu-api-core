@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { ArmorTypeService } from '@application/services/armor-type-service';
 
 @injectable()

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size-controller';
 
 const router = Router();

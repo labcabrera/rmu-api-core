@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { TYPES } from '@shared/types/container';
 
 import { RaceRepository } from '@domain/ports/race-repository';
 import { RealmRepository } from '@domain/ports/realm-repository';
@@ -29,6 +28,30 @@ import { InMemorySkillRepository } from '@infrastructure/adapters/outbound/persi
 import { InMemorySkillCategoryRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-skill-category.repository';
 import { InMemoryCharacterSizeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-sharacter-size.repository';
 import { InMemoryArmorTypeRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-armor-type.repository';
+
+export const TYPES = {
+  RaceRepository: Symbol.for('RaceRepository'),
+  RealmRepository: Symbol.for('RealmRepository'),
+  SkillRepository: Symbol.for('SkillRepository'),
+  SkillCategoryRepository: Symbol.for('SkillCategoryRepository'),
+  CharacterSizeRepository: Symbol.for('CharacterSizeRepository'),
+  ArmorTypeRepository: Symbol.for('ArmorTypeRepository'),
+
+  RaceService: Symbol.for('RaceService'),
+  RealmService: Symbol.for('RealmService'),
+  SkillService: Symbol.for('SkillService'),
+  SkillCategoryService: Symbol.for('SkillCategoryService'),
+  CharacterSizeService: Symbol.for('CharacterSizeService'),
+  ArmorTypeService: Symbol.for('ArmorTypeService'),
+
+  RaceController: Symbol.for('RaceController'),
+  RealmController: Symbol.for('RealmController'),
+  SkillController: Symbol.for('SkillController'),
+  SkillCategoryController: Symbol.for('SkillCategoryController'),
+  CharacterSizeController: Symbol.for('CharacterSizeController'),
+  ArmorTypeController: Symbol.for('ArmorTypeController'),
+
+};
 
 const container = new Container();
 

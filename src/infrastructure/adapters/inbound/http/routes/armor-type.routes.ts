@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type-controller';
 
 const router = Router();

@@ -2,7 +2,9 @@ import { CreateRaceCommand } from "@application/commands/create-race.command";
 import { Race } from "@domain/entities/race";
 import { RaceRepository } from "@domain/ports/race-repository";
 import { RealmRepository } from "@domain/ports/realm-repository";
+import { injectable } from "inversify";
 
+@injectable()
 export class CreateRaceUseCase {
   constructor(
     private readonly raceRepository: RaceRepository,

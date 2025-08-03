@@ -1,9 +1,9 @@
 import { injectable, inject } from 'inversify';
-import { TYPES } from '@shared/types/container';
 import { CharacterSizeRepository } from '@domain/ports/character-size-repository';
 import { CharacterSize } from '@domain/entities/character-size';
 import { NotFoundError } from '@shared/errors';
 import { Page } from '@domain/entities/page';
+import { TYPES } from '@shared/container';
 
 @injectable()
 export class CharacterSizeService {

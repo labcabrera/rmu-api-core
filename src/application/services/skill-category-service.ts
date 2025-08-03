@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { SkillCategoryRepository } from '@domain/ports/skill-category-repository';
 import { SkillCategory } from '@domain/entities/skill-category';
 import { NotFoundError } from '@shared/errors';

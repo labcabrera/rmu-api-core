@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response } from 'express';
-import { TYPES } from '@shared/types/container';
+import { TYPES } from '@shared/container';
 import { SkillCategoryService } from '@application/services/skill-category-service';
 import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
 

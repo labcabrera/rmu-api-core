@@ -1,9 +1,9 @@
 import { injectable, inject } from 'inversify';
-import { TYPES } from '@shared/types/container';
 import { ArmorTypeRepository } from '@domain/ports/armor-type-repository';
 import { ArmorType } from '@domain/entities/armor-type';
 import { NotFoundError } from '@shared/errors';
 import { Page } from '@domain/entities/page';
+import { TYPES } from '@shared/container';
 
 @injectable()
 export class ArmorTypeService {
