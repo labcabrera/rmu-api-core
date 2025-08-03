@@ -1,3 +1,4 @@
+import { DeleteRaceCommand } from '@application/commands/delete-race.command';
 import { RaceRepository } from '@domain/ports/race-repository';
 import { RealmRepository } from '@domain/ports/realm-repository';
 import { inject, injectable } from 'inversify';
@@ -9,7 +10,7 @@ export class DeleteRaceUseCase {
     @inject('RealmRepository') private readonly realmRepository: RealmRepository
   ) {}
 
-  async execute(id: string): Promise<void> {
-    return await this.raceRepository.deleteById(id);
+  async execute(command: DeleteRaceCommand): Promise<void> {
+    return await this.raceRepository.deleteById(command.id);
   }
 }

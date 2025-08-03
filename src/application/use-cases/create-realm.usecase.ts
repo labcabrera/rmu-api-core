@@ -14,22 +14,17 @@ export class CreateRealmUseCase {
     if (exists) {
       throw new ConflictError(`Realm ${command.id} already exists`);
     }
-    const realm: Partial<Realm> = { ...command, createdAt: new Date() };
+    const realm: Partial<Realm> = {
+      id: command.id,
+      name: command.name,
+      owner: command.username,
+      createdAt: new Date()
+    };
     return await this.realmRepository.save(realm);
   }
 
   validate(command: CreateRealmCommand): void {
-    if(!command.id) throw new ValidationError('Required realm id');
-    if(!command.username) throw new ValidationError('Required username');
+    if (!command.id) throw new ValidationError('Required realm id');
+    if (!command.username) throw new ValidationError('Required username');
   }
-
-  async existsById(id: string): Promise<boolean> {
-    try {
-      await this.realmRepository.findById(id);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
 }

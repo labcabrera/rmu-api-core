@@ -44,11 +44,9 @@ export class RealmController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = getAuthenticatedUser(req);
-      console.log('Authenticated user:', user);
       const command: CreateRealmCommand = {
         ...req.body,
-        username: user?.username,
+        username: getAuthenticatedUser(req)?.username!,
       };
       const newRealm = await this.createRealmUseCase.execute(command);
       res.status(201).json(newRealm);
@@ -59,11 +57,10 @@ export class RealmController {
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = getAuthenticatedUser(req);
       const command: UpdateRealmCommand = {
         ...req.body,
         id: req.params.id,
-        username: user?.username,
+        username: getAuthenticatedUser(req)?.username!,
       };
       const updated = await this.updateRealmUseCase.execute(command);
       res.json(updated);
@@ -74,7 +71,10 @@ export class RealmController {
 
   async deleteById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const command: DeleteRealmCommand = { id: req.params.id };
+      const command: DeleteRealmCommand = {
+        id: req.params.id,
+        username: getAuthenticatedUser(req)?.username!,
+      };
       await this.deleteRealmUseCase.execute(command);
       res.status(204).send();
     } catch (error) {

@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { Race, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/race-repository';
-import { RaceModel, RaceDocument } from '../models/RaceModel';
+import { RaceModel, RaceDocument } from '../models/race-model';
 import { Page } from '@domain/entities/page';
 import { RaceQuery } from '@domain/queries/race-query';
 import { NotFoundError } from '@domain/errors/errors';
@@ -75,6 +75,7 @@ export class MongoRaceRepository implements RaceRepository {
       baseHits: doc.baseHits,
       bonusDevPoints: doc.bonusDevPoints,
       description: doc.description,
+      owner: doc.owner,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
