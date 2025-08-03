@@ -8,7 +8,7 @@ import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase'
 import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { UpdateRealmCommand } from '@application/commands/update-realm.command';
 import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
-import { getAuthenticatedUser } from '../utils/auth.utils';
+import { getAuthenticatedUser } from '../security/auth.utils';
 
 @injectable()
 export class RealmController {

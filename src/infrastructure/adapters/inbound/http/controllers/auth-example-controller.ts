@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { injectable } from 'inversify';
-import { getAuthenticatedUser } from '@infrastructure/adapters/inbound/http/utils/auth.utils';
+import { getAuthenticatedUser } from '../security/auth.utils';
 
 @injectable()
 export class AuthExampleController {

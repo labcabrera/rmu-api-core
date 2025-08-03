@@ -37,7 +37,7 @@ import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase'
 import {
   AuthService,
   AuthConfig,
-} from '@infrastructure/adapters/inbound/http/services/auth.service';
+} from '@infrastructure/adapters/inbound/http/security/auth.service';
 
 const container = new Container();
 

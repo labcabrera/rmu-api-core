@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
-import { createAuthMiddleware, requireRoles } from '../middleware/auth.middleware';
+import { createAuthMiddleware, requireRoles } from '../security/auth.middleware';
 import { RealmController } from '../controllers/realm-controller';
 import { asyncHandler } from '../async-handler';
 

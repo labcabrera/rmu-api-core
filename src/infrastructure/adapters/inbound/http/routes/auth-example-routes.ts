@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { container } from '@shared/container';
 import { AuthExampleController } from '../controllers/auth-example-controller';
 import { asyncHandler } from '../async-handler';
-import { createAuthMiddleware, requireRoles, requireGroups } from '../middleware/auth.middleware';
+import { createAuthMiddleware, requireRoles, requireGroups } from '../security/auth.middleware';
 
 const router = Router();
 const authExampleController = container.get<AuthExampleController>('AuthExampleController');

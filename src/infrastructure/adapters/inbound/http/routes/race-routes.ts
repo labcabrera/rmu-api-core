@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { container } from '@shared/container';
 import { RaceController } from '../controllers/race-controller';
 import { asyncHandler } from '../async-handler';
-import { createAuthMiddleware, requireRoles } from '../middleware/auth.middleware';
+import { createAuthMiddleware, requireRoles } from '../security/auth.middleware';
 
 const router = Router();
 const raceController = container.get<RaceController>('RaceController');
