@@ -1,0 +1,38 @@
+{
+    "id": "lotr-dwarf",
+    "name": "Dwarf",
+    "realm": "lotr",
+    "size": "medium",
+    "defaultStatBonus": {
+        "ag": -1,
+        "co": 6,
+        "em": -6,
+        "in": 0,
+        "me": 1,
+        "pr": -3,
+        "qu": -1,
+        "re": 0,
+        "sd": 0,
+        "st": 2
+    },
+    "resistances": {
+        "channeling": 0,
+        "mentalism": 15,
+        "essence": 15,
+        "physical": 10
+    },
+    "averageHeight": {
+        "male": 4.6,
+        "female": 4.2
+    },
+    "averageWeight": {
+        "male": 135,
+        "female": 112
+    },
+    "strideBonus": -3,
+    "endurance": 20,
+    "recoveryMultiplier": 0.5,
+    "baseHits": 30,
+    "bonusDevPoints": 6,
+    "description": "Dwarf"
+}
