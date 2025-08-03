@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RealmService } from '@application/services/realm-service';
-import { CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/Realm';
+import { CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
 import { PaginationOptions } from '@shared/types';
 import { TYPES } from '@shared/types/container';
 

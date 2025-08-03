@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/Realm';
+import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
 import { PaginationOptions, PaginatedResult } from '@shared/types';
 import { RealmModel, RealmDocument } from '../models/RealmModel';

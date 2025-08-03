@@ -1,7 +1,9 @@
 import { injectable } from 'inversify';
 import { SkillRepository } from '@domain/ports/skill-repository';
-import { Skill } from '@domain/entities/Skill';
+import { Skill } from '@domain/entities/skill';
 import { RMU_SKILLS } from '@shared/constants/rmu-skills';
+import { Page } from '@domain/entities/page';
+import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class InMemorySkillRepository implements SkillRepository {
@@ -12,49 +14,24 @@ export class InMemorySkillRepository implements SkillRepository {
     return skill || null;
   }
 
-  async findAll(): Promise<Skill[]> {
-    return [...this.skills];
-  }
+  async find(query: SkillQuery, page: number, size: number): Promise<Page<Skill>> {
+    const filteredSkills = this.skills.filter(skill => {
+      return Object.entries(query).every(([key, value]) => {
+        return skill[key as keyof Skill] === value;
+      });
+    });
 
-  async findAllPaginated(page: number, size: number): Promise<{ content: Skill[]; totalElements: number }> {
     const startIndex = page * size;
     const endIndex = startIndex + size;
-    const content = this.skills.slice(startIndex, endIndex);
-    
+    const content = filteredSkills.slice(startIndex, endIndex);
     return {
       content,
-      totalElements: this.skills.length
+      pagination: {
+        page,
+        size,
+        totalElements: filteredSkills.length,
+        totalPages: Math.ceil(filteredSkills.length / size)
+      }
     };
-  }
-
-  async create(skill: Skill): Promise<Skill> {
-    // Check if skill already exists
-    const existingIndex = this.skills.findIndex(s => s.id === skill.id);
-    if (existingIndex !== -1) {
-      throw new Error(`Skill with id ${skill.id} already exists`);
-    }
-
-    this.skills.push(skill);
-    return skill;
-  }
-
-  async update(id: string, skillUpdate: Partial<Skill>): Promise<Skill | null> {
-    const index = this.skills.findIndex(skill => skill.id === id);
-    if (index === -1) {
-      return null;
-    }
-
-    this.skills[index] = { ...this.skills[index], ...skillUpdate };
-    return this.skills[index];
-  }
-
-  async deleteById(id: string): Promise<boolean> {
-    const index = this.skills.findIndex(skill => skill.id === id);
-    if (index === -1) {
-      return false;
-    }
-
-    this.skills.splice(index, 1);
-    return true;
   }
 }

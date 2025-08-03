@@ -1,7 +1,9 @@
 import { injectable } from 'inversify';
 import { SkillCategoryRepository } from '@domain/ports/skill-category-repository';
-import { SkillCategory } from '@domain/entities/SkillCategory';
+import { SkillCategory } from '@domain/entities/skill-category';
 import { SKILL_CATEGORIES } from '@shared/constants/skill-categories';
+import { Page } from '@domain/entities/page';
+import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
 
 @injectable()
 export class InMemorySkillCategoryRepository implements SkillCategoryRepository {
@@ -12,49 +14,19 @@ export class InMemorySkillCategoryRepository implements SkillCategoryRepository 
     return skillCategory || null;
   }
 
-  async findAll(): Promise<SkillCategory[]> {
-    return [...this.skillCategories];
-  }
-
-  async findAllPaginated(page: number, size: number): Promise<{ content: SkillCategory[]; totalElements: number }> {
+  async find(query: SkillCategoryQuery, page: number, size: number): Promise<Page<SkillCategory>> {
     const startIndex = page * size;
     const endIndex = startIndex + size;
     const content = this.skillCategories.slice(startIndex, endIndex);
-    
     return {
       content,
-      totalElements: this.skillCategories.length
+      pagination: {
+        page,
+        size,
+        totalPages: Math.ceil(this.skillCategories.length / size),
+        totalElements: this.skillCategories.length
+      }
     };
   }
 
-  async create(skillCategory: SkillCategory): Promise<SkillCategory> {
-    // Check if skill category already exists
-    const existingIndex = this.skillCategories.findIndex(sc => sc.id === skillCategory.id);
-    if (existingIndex !== -1) {
-      throw new Error(`Skill category with id ${skillCategory.id} already exists`);
-    }
-
-    this.skillCategories.push(skillCategory);
-    return skillCategory;
-  }
-
-  async update(id: string, skillCategoryUpdate: Partial<SkillCategory>): Promise<SkillCategory | null> {
-    const index = this.skillCategories.findIndex(sc => sc.id === id);
-    if (index === -1) {
-      return null;
-    }
-
-    this.skillCategories[index] = { ...this.skillCategories[index], ...skillCategoryUpdate };
-    return this.skillCategories[index];
-  }
-
-  async deleteById(id: string): Promise<boolean> {
-    const index = this.skillCategories.findIndex(sc => sc.id === id);
-    if (index === -1) {
-      return false;
-    }
-
-    this.skillCategories.splice(index, 1);
-    return true;
-  }
 }

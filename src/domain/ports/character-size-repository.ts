@@ -1,7 +1,9 @@
-import { CharacterSize, AttackEffects } from '@domain/entities/character-size';
+import { CharacterSize } from '@domain/entities/character-size';
+import { Page } from '@domain/entities/page';
 
 export interface CharacterSizeRepository {
+
   findById(id: string): Promise<CharacterSize | null>;
-  findAll(): Promise<CharacterSize[]>;
-  calculateAttackEffects(attackerSizeId: string, defenderSizeId: string): Promise<AttackEffects | null>;
+  find(): Promise<Page<CharacterSize>>;
+
 }

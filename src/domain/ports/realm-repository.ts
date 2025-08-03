@@ -1,4 +1,4 @@
-import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/Realm';
+import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
 import { PaginationOptions, PaginatedResult } from '@shared/types';
 
 export interface RealmRepository {

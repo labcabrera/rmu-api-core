@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RaceService } from '@application/services/race-service';
-import { CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/Race';
+import { CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
 import { PaginationOptions } from '@shared/types';
 import { TYPES } from '@shared/types/container';
 

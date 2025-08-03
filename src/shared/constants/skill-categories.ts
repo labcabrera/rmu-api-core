@@ -1,4 +1,4 @@
-import { SkillCategory } from '@domain/entities/SkillCategory';
+import { SkillCategory } from '@domain/entities/skill-category';
 
 export const SKILL_CATEGORIES: SkillCategory[] = [
   { id: "animal", bonus: ["ag", "em"] },

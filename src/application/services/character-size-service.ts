@@ -3,6 +3,7 @@ import { TYPES } from '@shared/types/container';
 import { CharacterSizeRepository } from '@domain/ports/character-size-repository';
 import { CharacterSize } from '@domain/entities/character-size';
 import { NotFoundError } from '@shared/errors';
+import { Page } from '@domain/entities/page';
 
 @injectable()
 export class CharacterSizeService {
@@ -18,7 +19,7 @@ export class CharacterSizeService {
     return characterSize;
   }
 
-  async findAll(): Promise<CharacterSize[]> {
-    return await this.characterSizeRepository.findAll();
+  async find(): Promise<Page<CharacterSize>> {
+    return await this.characterSizeRepository.find();
   }
 }

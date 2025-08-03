@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/Race';
+import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/race-repository';
 import { PaginationOptions, PaginatedResult, NotFoundError, ConflictError } from '@shared/types';
 import { TYPES } from '@shared/types/container';

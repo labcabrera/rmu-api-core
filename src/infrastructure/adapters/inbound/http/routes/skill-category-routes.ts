@@ -6,7 +6,7 @@ import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/c
 const router = Router();
 const skillCategoryController = container.get<SkillCategoryController>(TYPES.SkillCategoryController);
 
-router.get('/', (req, res) => skillCategoryController.findAll(req, res));
+router.get('/', (req, res) => skillCategoryController.find(req, res));
 router.get('/:id', (req, res) => skillCategoryController.findById(req, res));
 
 export { router as skillCategoryRouter };

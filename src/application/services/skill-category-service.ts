@@ -1,8 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@shared/types/container';
 import { SkillCategoryRepository } from '@domain/ports/skill-category-repository';
-import { SkillCategory, PaginatedSkillCategoriesResponse } from '@domain/entities/SkillCategory';
+import { SkillCategory } from '@domain/entities/skill-category';
 import { NotFoundError } from '@shared/errors';
+import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
+import { Page } from '@domain/entities/page';
 
 @injectable()
 export class SkillCategoryService {
@@ -18,19 +20,8 @@ export class SkillCategoryService {
     return skillCategory;
   }
 
-  async findAll(): Promise<SkillCategory[]> {
-    return await this.skillCategoryRepository.findAll();
+  async find(query: SkillCategoryQuery, page: number, size: number): Promise<Page<SkillCategory>> {
+    return await this.skillCategoryRepository.find(query, page, size);
   }
 
-  async findAllPaginated(page: number = 0, size: number = 10): Promise<PaginatedSkillCategoriesResponse> {
-    const result = await this.skillCategoryRepository.findAllPaginated(page, size);
-    return {
-      content: result.content,
-      pagination: {
-        page,
-        size,
-        totalElements: result.totalElements
-      }
-    };
-  }
 }

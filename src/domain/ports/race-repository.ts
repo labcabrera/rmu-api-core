@@ -1,4 +1,4 @@
-import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/Race';
+import { Race, CreateRaceRequest, UpdateRaceRequest } from '@domain/entities/race';
 import { PaginationOptions, PaginatedResult } from '@shared/types';
 
 export interface RaceRepository {

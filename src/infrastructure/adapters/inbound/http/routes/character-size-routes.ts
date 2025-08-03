@@ -6,7 +6,7 @@ import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/c
 const router = Router();
 const characterSizeController = container.get<CharacterSizeController>(TYPES.CharacterSizeController);
 
-router.get('/', (req, res) => characterSizeController.findAll(req, res));
+router.get('/', (req, res) => characterSizeController.find(req, res));
 router.get('/:id', (req, res) => characterSizeController.findById(req, res));
 
 export { router as characterSizeRouter };

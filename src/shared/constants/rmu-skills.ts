@@ -1,4 +1,4 @@
-import { Skill } from '@domain/entities/Skill';
+import { Skill } from '@domain/entities/skill';
 
 export const RMU_SKILLS: Skill[] = [
   { id: "animal-handling", categoryId: "animal", bonus: ["pr"], specializations: ["animal-type"] },
