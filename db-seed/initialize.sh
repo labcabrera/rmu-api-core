@@ -88,8 +88,5 @@ initialize_realms() {
 }
 
 read_access_token
-
-echo "ACCESS_TOKEN: $ACCESS_TOKEN"
-
 initialize_races
 initialize_realms
