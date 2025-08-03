@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
-import { RealmService } from '@application/services/realm-service';
+import { RealmReadService } from '@application/services/realm-read-service';
 import { RealmQuery } from '@domain/queries/realm-query';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
@@ -12,7 +12,7 @@ import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
 @injectable()
 export class RealmController {
   constructor(
-    @inject('RealmService') private realmService: RealmService,
+    @inject('RealmReadService') private realmService: RealmReadService,
     @inject('CreateRealmUseCase') private createRealmUseCase: CreateRealmUseCase,
     @inject('DeleteRealmUseCase') private deleteRealmUseCase: DeleteRealmUseCase,
     @inject('UpdateRealmUseCase') private updateRealmUseCase: UpdateRealmUseCase
@@ -28,13 +28,13 @@ export class RealmController {
     }
   }
 
-  async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async find(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const query: RealmQuery = {
         page: req.query.page ? parseInt(req.query.page as string) : 0,
         size: req.query.size ? parseInt(req.query.size as string) : 10,
       };
-      const result = await this.realmService.findAll(query);
+      const result = await this.realmService.find(query);
       res.json(result);
     } catch (error) {
       next(error);

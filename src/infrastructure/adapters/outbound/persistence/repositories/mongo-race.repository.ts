@@ -8,12 +8,9 @@ import { NotFoundError } from '@domain/errors/errors';
 
 @injectable()
 export class MongoRaceRepository implements RaceRepository {
-  async findById(id: string): Promise<Race> {
-    const raceDoc = await RaceModel.findById(id);
-    if (!raceDoc) {
-      throw new NotFoundError('Race', id);
-    }
-    return this.mapToEntity(raceDoc);
+  async findById(id: string): Promise<Race | null> {
+    const readed = await RaceModel.findById(id);
+    return readed ? this.mapToEntity(readed) : null;
   }
 
   async find(query: RaceQuery): Promise<Page<Race>> {

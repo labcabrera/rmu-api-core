@@ -8,7 +8,7 @@ const realmController = container.get<RealmController>('RealmController');
 
 router.get(
   '/',
-  asyncHandler(async (req, res, next) => await realmController.findAll(req, res, next))
+  asyncHandler(async (req, res, next) => await realmController.find(req, res, next))
 );
 router.get(
   '/:id',

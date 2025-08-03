@@ -8,12 +8,12 @@ import { SkillCategoryRepository } from '@domain/ports/skill-category-repository
 import { CharacterSizeRepository } from '@domain/ports/character-size-repository';
 import { ArmorTypeRepository } from '@domain/ports/armor-type-repository';
 
-import { RaceService } from '@application/services/race-service';
-import { RealmService } from '@application/services/realm-service';
-import { SkillService } from '@application/services/skill-service';
-import { SkillCategoryService } from '@application/services/skill-category-service';
-import { CharacterSizeService } from '@application/services/character-size-service';
-import { ArmorTypeService } from '@application/services/armor-type-service';
+import { RaceService } from '@application/services/race-read-service';
+import { RealmReadService } from '@application/services/realm-read-service';
+import { SkillReadService } from '@application/services/skill-read-service';
+import { SkillCategoryService } from '@application/services/skill-category-read-service';
+import { CharacterSizeService } from '@application/services/character-size-read-service';
+import { ArmorTypeService } from '@application/services/armor-type-read-service';
 
 import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race-controller';
 import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm-controller';
@@ -63,18 +63,18 @@ container.bind<UpdateRealmUseCase>('UpdateRealmUseCase').to(UpdateRealmUseCase).
 container.bind<DeleteRealmUseCase>('DeleteRealmUseCase').to(DeleteRealmUseCase).inSingletonScope();
 
 // Bind Services
-container.bind<RaceService>('RaceService').to(RaceService).inSingletonScope();
-container.bind<RealmService>('RealmService').to(RealmService).inSingletonScope();
-container.bind<SkillService>('SkillService').to(SkillService).inSingletonScope();
+container.bind<RaceService>('RaceReadService').to(RaceService).inSingletonScope();
+container.bind<RealmReadService>('RealmReadService').to(RealmReadService).inSingletonScope();
+container.bind<SkillReadService>('SkillReadService').to(SkillReadService).inSingletonScope();
 container
-  .bind<SkillCategoryService>('SkillCategoryService')
+  .bind<SkillCategoryService>('SkillCategoryReadService')
   .to(SkillCategoryService)
   .inSingletonScope();
 container
-  .bind<CharacterSizeService>('CharacterSizeService')
+  .bind<CharacterSizeService>('CharacterSizeReadService')
   .to(CharacterSizeService)
   .inSingletonScope();
-container.bind<ArmorTypeService>('ArmorTypeService').to(ArmorTypeService).inSingletonScope();
+container.bind<ArmorTypeService>('ArmorTypeReadService').to(ArmorTypeService).inSingletonScope();
 
 // Bind Controllers
 container.bind<RaceController>('RaceController').to(RaceController).inSingletonScope();

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
-import { RaceService } from '@application/services/race-service';
+import { RaceService } from '@application/services/race-read-service';
 import { RaceQuery } from '@domain/queries/race-query';
 import { CreateRaceCommand } from '@application/commands/create-race.command';
 import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
@@ -11,7 +11,7 @@ import { UpdateRaceCommand } from '@application/commands/update-race.command';
 @injectable()
 export class RaceController {
   constructor(
-    @inject('RaceService') private raceService: RaceService,
+    @inject('RaceReadService') private raceService: RaceService,
     @inject('CreateRaceUseCase') private createRaceUseCase: CreateRaceUseCase,
     @inject('DeleteRaceUseCase') private deleteRaceUseCase: DeleteRaceUseCase,
     @inject('UpdateRaceUseCase') private updateRaceUseCase: UpdateRaceUseCase

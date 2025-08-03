@@ -8,12 +8,9 @@ import { NotFoundError } from '@domain/errors/errors';
 
 @injectable()
 export class MongoRealmRepository implements RealmRepository {
-  async findById(id: string): Promise<Realm> {
-    const realmDoc = await RealmModel.findById(id);
-    if (!realmDoc) {
-      throw new NotFoundError('Realm', id);
-    }
-    return this.mapToEntity(realmDoc);
+  async findById(id: string): Promise<Realm | null> {
+    const readed = await RealmModel.findById(id);
+    return readed ? this.mapToEntity(readed) : null;
   }
 
   async find(query: RealmQuery): Promise<Page<Realm>> {
