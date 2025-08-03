@@ -1,4 +1,4 @@
-export interface CreateRealmCommand {
+export interface UpdateRealmCommand {
   id: string;
   name?: string;
 }

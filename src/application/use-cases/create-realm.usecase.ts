@@ -1,4 +1,4 @@
-import { CreateRaceCommand as CreateRealmCommand } from '@application/commands/create-race.command';
+import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { Realm } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
 import { inject, injectable } from 'inversify';
