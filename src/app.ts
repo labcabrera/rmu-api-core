@@ -30,7 +30,9 @@ app.use(cors());
 mongoose
   .connect(configuration.mongoUri)
   .then(() => console.log('Connected to ' + configuration.maskStdUrl(configuration.mongoUri)))
-  .catch(err => console.log('Error connecting to ' + configuration.maskStdUrl(configuration.mongoUri), err));
+  .catch(err =>
+    console.log('Error connecting to ' + configuration.maskStdUrl(configuration.mongoUri), err)
+  );
 
 app.use('/v1/races', raceRouter);
 app.use('/v1/realms', realmRouter);

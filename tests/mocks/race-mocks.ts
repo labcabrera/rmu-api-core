@@ -1,4 +1,3 @@
-// Sample data para tests
 export const sampleRace = {
   id: 'test-race',
   name: 'Test Race',

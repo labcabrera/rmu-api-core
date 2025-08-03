@@ -33,9 +33,7 @@ import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
-import {
-  AuthService,
-} from '@infrastructure/adapters/inbound/http/security/auth.service';
+import { AuthService } from '@infrastructure/adapters/inbound/http/security/auth.service';
 import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
 import { Configuration } from './configuration';
 
