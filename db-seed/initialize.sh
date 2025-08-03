@@ -1,25 +1,29 @@
 #!/bin/bash
 
+set -e
+
 DEFAULT_BASE_URL="http://localhost:3001/v1"
 DEFAULT_CONTENT_TYPE="application/json"
 
-KEYCLOAK__BASE_URL="http://localhost:8090"
+KEYCLOAK_BASE_URL="http://localhost:8090"
 KEYCLOAK_REALM="rmu-local"
 KEYCLOAK_CLIENT_ID="rmu-client"
-KEYCLOAK_CLIENT_SECRET="V6oTeVChtok4eu0gZQyhb8Y2mZIThasG"
-KEYCLOAK_USERNAME="lab.cabrera@gmail.com"
-KEYCLOAK_PASSWORD="changeit"
+KEYCLOAK_CLIENT_SECRET="${RMU_KEYCLOAK_CLIENT_SECRET}"
+KEYCLOAK_USERNAME="${RMU_KEYCLOAK_USER}"
+KEYCLOAK_PASSWORD="${RMU_KEYCLOAK_PASSWORD}"
 
 read_access_token() {
     echo "Fetching access token from Keycloak..."
 
-    ACCESS_TOKEN=$(curl --silent --location "${KEYCLOAK__BASE_URL}/realms/rmu-local/protocol/openid-connect/token" \
+    ACCESS_TOKEN=$(curl --silent --location "${KEYCLOAK_BASE_URL}/realms/rmu-local/protocol/openid-connect/token" \
         --header 'Content-Type: application/x-www-form-urlencoded' \
         --data-urlencode 'grant_type=password' \
         --data-urlencode "client_id=${KEYCLOAK_CLIENT_ID}" \
         --data-urlencode "client_secret=${KEYCLOAK_CLIENT_SECRET}" \
         --data-urlencode "username=${KEYCLOAK_USERNAME}" \
-        --data-urlencode "password=${KEYCLOAK_PASSWORD}" | jq -r '.access_token')
+        --data-urlencode "password=${KEYCLOAK_PASSWORD}" \
+        -v\
+        | jq -r '.access_token') \
     export ACCESS_TOKEN
 }
 
@@ -84,5 +88,8 @@ initialize_realms() {
 }
 
 read_access_token
+
+echo "ACCESS_TOKEN: $ACCESS_TOKEN"
+
 initialize_races
 initialize_realms
