@@ -27,7 +27,7 @@ export class RaceController {
     }
   }
 
-  async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async find(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const query: RaceQuery = {
         name: req.query.name as string,

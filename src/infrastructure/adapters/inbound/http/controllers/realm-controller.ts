@@ -18,7 +18,7 @@ export class RealmController {
     @inject('UpdateRealmUseCase') private updateRealmUseCase: UpdateRealmUseCase
   ) {}
 
-    async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const realm = await this.realmService.findById(id);
@@ -41,8 +41,6 @@ export class RealmController {
     }
   }
 
-
-
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const command: CreateRealmCommand = { ...req.body };
@@ -55,7 +53,7 @@ export class RealmController {
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const command: UpdateRealmCommand = {...req.body};
+      const command: UpdateRealmCommand = { ...req.body };
       const updated = await this.updateRealmUseCase.execute(command);
       res.json(updated);
     } catch (error) {

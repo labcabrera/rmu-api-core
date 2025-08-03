@@ -9,7 +9,7 @@ const raceController = container.get<RaceController>('RaceController');
 router.get(
   '/',
   asyncHandler(async (req, res, next) => {
-    await raceController.findAll(req, res, next);
+    await raceController.find(req, res, next);
   })
 );
 
