@@ -9,24 +9,13 @@ export class ArmorTypeController {
     @inject(TYPES.ArmorTypeService) private armorTypeService: ArmorTypeService
   ) {}
 
-  async findAll(req: Request, res: Response): Promise<void> {
-    try {
-      const armorTypes = await this.armorTypeService.findAll();
-      res.json(armorTypes);
-    } catch (error) {
-      const err = error as Error & { status?: number };
-      res.status(err.status || 500).json({ message: err.message });
-    }
-  }
-
-  async findById(req: Request, res: Response): Promise<void> {
+    async findById(req: Request, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         res.status(400).json({ message: 'Invalid armor type ID' });
         return;
       }
-      
       const armorType = await this.armorTypeService.findById(id);
       res.json(armorType);
     } catch (error) {
@@ -34,4 +23,16 @@ export class ArmorTypeController {
       res.status(err.status || 500).json({ message: err.message });
     }
   }
+
+  async findAll(req: Request, res: Response): Promise<void> {
+    try {
+      const armorTypes = await this.armorTypeService.find();
+      res.json(armorTypes);
+    } catch (error) {
+      const err = error as Error & { status?: number };
+      res.status(err.status || 500).json({ message: err.message });
+    }
+  }
+
+
 }

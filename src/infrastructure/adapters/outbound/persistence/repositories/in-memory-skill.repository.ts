@@ -16,11 +16,14 @@ export class InMemorySkillRepository implements SkillRepository {
 
   async find(query: SkillQuery, page: number, size: number): Promise<Page<Skill>> {
     const filteredSkills = this.skills.filter(skill => {
-      return Object.entries(query).every(([key, value]) => {
-        return skill[key as keyof Skill] === value;
-      });
+      if(query.id && skill.id !== query.id) {
+        return false;
+      }
+      if (query.categoryId && skill.categoryId !== query.categoryId) {
+        return false;
+      }
+      return true;
     });
-
     const startIndex = page * size;
     const endIndex = startIndex + size;
     const content = filteredSkills.slice(startIndex, endIndex);

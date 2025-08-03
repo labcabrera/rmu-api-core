@@ -3,6 +3,7 @@ import { TYPES } from '@shared/types/container';
 import { ArmorTypeRepository } from '@domain/ports/armor-type-repository';
 import { ArmorType } from '@domain/entities/armor-type';
 import { NotFoundError } from '@shared/errors';
+import { Page } from '@domain/entities/page';
 
 @injectable()
 export class ArmorTypeService {
@@ -18,8 +19,8 @@ export class ArmorTypeService {
     return armorType;
   }
 
-  async findAll(): Promise<ArmorType[]> {
-    return await this.armorTypeRepository.findAll();
+  async find(): Promise<Page<ArmorType>> {
+    return await this.armorTypeRepository.find();
   }
 
   

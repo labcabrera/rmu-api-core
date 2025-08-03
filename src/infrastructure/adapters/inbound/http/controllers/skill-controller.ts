@@ -21,11 +21,14 @@ export class SkillController {
     }
   }
 
-  async findAll(req: Request, res: Response): Promise<void> {
+  async find(req: Request, res: Response): Promise<void> {
     try {
       const page = req.query.page ? parseInt(req.query.page as string) : 0;
       const size = req.query.size ? parseInt(req.query.size as string) : 500;
-      const query: SkillQuery = {};
+      const categoryId = req.query.categoryId ? (req.query.categoryId as string) : undefined;
+      const query: SkillQuery = {
+        categoryId: categoryId
+      };
       const result = await this.skillService.find(query, page, size);
       res.json(result);
     } catch (error) {

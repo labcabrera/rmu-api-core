@@ -6,7 +6,7 @@ import { SkillController } from '@infrastructure/adapters/inbound/http/controlle
 const router = Router();
 const skillController = container.get<SkillController>(TYPES.SkillController);
 
-router.get('/', (req, res) => skillController.findAll(req, res));
+router.get('/', (req, res) => skillController.find(req, res));
 router.get('/:id', (req, res) => skillController.findById(req, res));
 
 export { router as skillRouter };
