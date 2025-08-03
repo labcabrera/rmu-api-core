@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Realm, CreateRealmRequest, UpdateRealmRequest } from '@domain/entities/realm';
+import { Realm } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/realm-repository';
 import { RealmModel, RealmDocument } from '../models/RealmModel';
 import { RealmQuery } from '@domain/queries/realm-query';
@@ -31,10 +31,12 @@ export class MongoRealmRepository implements RealmRepository {
     };
   }
 
-  async save(request: CreateRealmRequest): Promise<Realm> {
+  async save(request: Partial<Realm>): Promise<Realm> {
     const realmDoc = new RealmModel({
       _id: request.id,
       name: request.name,
+      owner: request.owner,
+      createdAt: request.createdAt,
       description: request.description,
     });
 
@@ -42,7 +44,7 @@ export class MongoRealmRepository implements RealmRepository {
     return this.mapToEntity(savedRealm);
   }
 
-  async update(id: string, request: UpdateRealmRequest): Promise<Realm> {
+  async update(id: string, request: Partial<Realm>): Promise<Realm> {
     const updatedRealm = await RealmModel.findByIdAndUpdate(id, { $set: request }, { new: true });
     if (!updatedRealm) {
       throw new NotFoundError('Realm', id);
@@ -67,6 +69,7 @@ export class MongoRealmRepository implements RealmRepository {
       id: doc._id,
       name: doc.name,
       description: doc.description,
+      owner: doc.owner,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };

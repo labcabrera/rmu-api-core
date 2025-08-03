@@ -13,13 +13,12 @@ export class CreateRaceUseCase {
 
   async execute(command: CreateRaceCommand): Promise<Race> {
     await this.realmRepository.findById(command.realm);
-    
 
     const race: Partial<Race> = { ...command };
     return await this.raceRepository.save(race);
   }
 
-    async existsById(id: string): Promise<boolean> {
+  async existsById(id: string): Promise<boolean> {
     try {
       await this.realmRepository.findById(id);
       return true;

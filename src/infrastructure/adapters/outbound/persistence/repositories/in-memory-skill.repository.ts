@@ -6,7 +6,6 @@ import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class InMemorySkillRepository implements SkillRepository {
-
   async findById(id: string): Promise<Skill | null> {
     const skill = RMU_SKILLS.find(skill => skill.id === id);
     return skill || null;

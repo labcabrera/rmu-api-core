@@ -5,7 +5,6 @@ export interface Skill {
   specializations: string[] | null;
 }
 
-
 export const RMU_SKILLS: Skill[] = [
   { id: 'animal-handling', categoryId: 'animal', bonus: ['pr'], specializations: ['animal-type'] },
   { id: 'riding', categoryId: 'animal', bonus: ['pr'], specializations: ['animal-type'] },

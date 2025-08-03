@@ -15,4 +15,5 @@ export interface UpdateRaceCommand {
   baseHits?: number;
   bonusDevPoints?: number;
   description?: string;
+  username: string;
 }
