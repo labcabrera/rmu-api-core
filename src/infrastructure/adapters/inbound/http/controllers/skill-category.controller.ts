@@ -5,7 +5,9 @@ import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
 
 @injectable()
 export class SkillCategoryController {
-  constructor(@inject('SkillCategoryReadService') private skillCategoryService: SkillCategoryService) {}
+  constructor(
+    @inject('SkillCategoryReadService') private skillCategoryService: SkillCategoryService
+  ) {}
 
   async findById(req: Request, res: Response): Promise<void> {
     try {

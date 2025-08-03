@@ -15,12 +15,12 @@ import { SkillCategoryService } from '@application/services/skill-category-read-
 import { CharacterSizeService } from '@application/services/character-size-read-service';
 import { ArmorTypeService } from '@application/services/armor-type-read-service';
 
-import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race-controller';
-import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm-controller';
+import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race.controller';
+import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm.controller';
 import { SkillController } from '@infrastructure/adapters/inbound/http/controllers/skill-controller';
-import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/controllers/skill-category-controller';
-import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size-controller';
-import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type-controller';
+import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/controllers/skill-category.controller';
+import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size.controller';
+import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type.controller';
 
 import { MongoRaceRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-race.repository';
 import { MongoRealmRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-realm.repository';
@@ -33,6 +33,11 @@ import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
+import {
+  AuthService,
+  AuthConfig,
+} from '@infrastructure/adapters/inbound/http/security/auth.service';
+import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
 
 const container = new Container();
 
@@ -92,5 +97,17 @@ container
   .bind<ArmorTypeController>('ArmorTypeController')
   .to(ArmorTypeController)
   .inSingletonScope();
+container.bind<HealthController>('HealthController').to(HealthController).inSingletonScope();
+
+
+// Bind Auth Configuration
+const authConfig: AuthConfig = {
+  keycloakUrl: process.env.KEYCLOAK_URL || 'http://localhost:8090',
+  realm: process.env.KEYCLOAK_REALM || 'rmu-local',
+  clientId: process.env.KEYCLOAK_CLIENT_ID || 'rmu-client',
+};
+
+container.bind<AuthConfig>('AuthConfig').toConstantValue(authConfig);
+container.bind<AuthService>('AuthService').to(AuthService).inSingletonScope();
 
 export { container };

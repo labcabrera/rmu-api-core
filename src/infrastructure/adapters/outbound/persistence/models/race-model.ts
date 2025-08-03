@@ -40,6 +40,7 @@ export interface RaceDocument extends Document {
   baseHits?: number;
   bonusDevPoints?: number;
   description?: string;
+  owner: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -109,9 +110,20 @@ const raceSchema = new Schema<RaceDocument>(
     baseHits: Number,
     bonusDevPoints: Number,
     description: String,
+    owner: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      required: true,
+    },
+    updatedAt: {
+      type: Date,
+      required: false,
+    },
   },
   {
-    timestamps: true,
     collection: 'races',
   }
 );

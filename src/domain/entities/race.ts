@@ -38,6 +38,7 @@ export interface Race {
   baseHits?: number;
   bonusDevPoints?: number;
   description?: string;
+  owner: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -9,11 +9,11 @@ export class RealmReadService {
   constructor(@inject('RealmRepository') private realmRepository: RealmRepository) {}
 
   async findById(id: string): Promise<Realm> {
-      const realm = await this.realmRepository.findById(id);
-      if (!realm) {
-        throw new Error('Realm not found');
-      }
-      return realm;
+    const realm = await this.realmRepository.findById(id);
+    if (!realm) {
+      throw new Error('Realm not found');
+    }
+    return realm;
   }
 
   async find(query: RealmQuery): Promise<Page<Realm>> {

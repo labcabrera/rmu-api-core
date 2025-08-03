@@ -7,12 +7,13 @@ import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 import path from 'path';
-import { raceRouter } from '@infrastructure/adapters/inbound/http/routes/race-routes';
-import { realmRouter } from '@infrastructure/adapters/inbound/http/routes/realm-routes';
-import { skillRouter } from '@infrastructure/adapters/inbound/http/routes/skill-routes';
-import { skillCategoryRouter } from '@infrastructure/adapters/inbound/http/routes/skill-category-routes';
-import { characterSizeRouter } from '@infrastructure/adapters/inbound/http/routes/character-size-routes';
+import { raceRouter } from '@infrastructure/adapters/inbound/http/routes/race.routes';
+import { realmRouter } from '@infrastructure/adapters/inbound/http/routes/realm.routes';
+import { skillRouter } from '@infrastructure/adapters/inbound/http/routes/skill.routes';
+import { skillCategoryRouter } from '@infrastructure/adapters/inbound/http/routes/skill-category.routes';
+import { characterSizeRouter } from '@infrastructure/adapters/inbound/http/routes/character-size.routes';
 import { armorTypeRouter } from '@infrastructure/adapters/inbound/http/routes/armor-type.routes';
+import { healthRouter } from '@infrastructure/adapters/inbound/http/routes/health.routes';
 import { errorHandler } from '@infrastructure/adapters/inbound/http/error-handler';
 
 function maskStdUrl(url: string): string {
@@ -51,6 +52,7 @@ app.use('/v1/skills', skillRouter);
 app.use('/v1/skill-categories', skillCategoryRouter);
 app.use('/v1/character-sizes', characterSizeRouter);
 app.use('/v1/armor-types', armorTypeRouter);
+app.use('/v1/health', healthRouter);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

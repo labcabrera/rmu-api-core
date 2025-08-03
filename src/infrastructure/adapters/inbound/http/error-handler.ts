@@ -1,12 +1,17 @@
 import { DomainError } from '@domain/errors/errors';
 import { Request, Response, NextFunction } from 'express';
 
-export const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction): void => {
+export const errorHandler = (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   console.error('Error handler caught:', {
     name: error.name,
     message: error.message,
     url: req.url,
-    method: req.method
+    method: req.method,
   });
 
   if (res.headersSent) {
@@ -28,6 +33,6 @@ export const errorHandler = (error: Error, req: Request, res: Response, next: Ne
     message: 'Internal Server Error',
     timestamp: new Date().toISOString(),
     details: error.message,
-    stack:  error.stack,
+    stack: error.stack,
   });
 };

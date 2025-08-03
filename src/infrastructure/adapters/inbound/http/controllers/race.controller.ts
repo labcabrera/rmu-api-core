@@ -7,6 +7,8 @@ import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
 import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { UpdateRaceUseCase } from '@application/use-cases/update-race.usecase';
 import { UpdateRaceCommand } from '@application/commands/update-race.command';
+import { getAuthenticatedUser } from '../security/auth.utils';
+import { DeleteRaceCommand } from '@application/commands/delete-race.command';
 
 @injectable()
 export class RaceController {
@@ -44,7 +46,10 @@ export class RaceController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const command: CreateRaceCommand = req.body;
+      const command: CreateRaceCommand = {
+        ...req.body,
+        username: getAuthenticatedUser(req)!.username!,
+      };
       const created = await this.createRaceUseCase.execute(command);
       res.status(201).json(created);
     } catch (error) {
@@ -55,8 +60,9 @@ export class RaceController {
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const command: UpdateRaceCommand = {
-        id: req.params.id,
         ...req.body,
+        id: req.params.id,
+        username: getAuthenticatedUser(req)!.username!,
       };
       const updated = await this.updateRaceUseCase.execute(command);
       res.json(updated);
@@ -67,8 +73,11 @@ export class RaceController {
 
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
-      await this.deleteRaceUseCase.execute(id);
+      const command: DeleteRaceCommand = {
+        id: req.params.id,
+        username: getAuthenticatedUser(req)!.username!,
+      };
+      await this.deleteRaceUseCase.execute(command);
       res.status(204).send();
     } catch (error) {
       next(error);

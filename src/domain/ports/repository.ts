@@ -1,7 +1,6 @@
 import { Page } from '@domain/entities/page';
 
 export interface Repository<I, Query> {
-  
   findById(id: string): Promise<I | null>;
 
   find(query: Query): Promise<Page<I>>;
