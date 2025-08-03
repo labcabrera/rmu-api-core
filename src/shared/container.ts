@@ -15,13 +15,12 @@ import { SkillCategoryService } from '@application/services/skill-category-read-
 import { CharacterSizeService } from '@application/services/character-size-read-service';
 import { ArmorTypeService } from '@application/services/armor-type-read-service';
 
-import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race-controller';
-import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm-controller';
+import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race.controller';
+import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm.controller';
 import { SkillController } from '@infrastructure/adapters/inbound/http/controllers/skill-controller';
-import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/controllers/skill-category-controller';
-import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size-controller';
-import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type-controller';
-import { AuthExampleController } from '@infrastructure/adapters/inbound/http/controllers/auth-example-controller';
+import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/controllers/skill-category.controller';
+import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size.controller';
+import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type.controller';
 
 import { MongoRaceRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-race.repository';
 import { MongoRealmRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-realm.repository';
@@ -38,6 +37,7 @@ import {
   AuthService,
   AuthConfig,
 } from '@infrastructure/adapters/inbound/http/security/auth.service';
+import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
 
 const container = new Container();
 
@@ -97,10 +97,8 @@ container
   .bind<ArmorTypeController>('ArmorTypeController')
   .to(ArmorTypeController)
   .inSingletonScope();
-container
-  .bind<AuthExampleController>('AuthExampleController')
-  .to(AuthExampleController)
-  .inSingletonScope();
+container.bind<HealthController>('HealthController').to(HealthController).inSingletonScope();
+
 
 // Bind Auth Configuration
 const authConfig: AuthConfig = {

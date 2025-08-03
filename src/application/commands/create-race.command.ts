@@ -1,7 +1,7 @@
 import { RaceResistances, RaceStatBonus, SexBasedAttribute } from '@domain/entities/race';
 import { AuthenticatedCommand } from './authenticated-command';
 
-export interface CreateRaceCommand extends AuthenticatedCommand{
+export interface CreateRaceCommand extends AuthenticatedCommand {
   readonly id: string;
   readonly name: string;
   readonly realm: string;

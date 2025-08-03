@@ -1,4 +1,4 @@
-import { AuthenticatedCommand } from "./authenticated-command";
+import { AuthenticatedCommand } from './authenticated-command';
 
 export interface CreateRealmCommand extends AuthenticatedCommand {
   readonly id: string;

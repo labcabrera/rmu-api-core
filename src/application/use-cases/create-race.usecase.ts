@@ -14,11 +14,11 @@ export class CreateRaceUseCase {
 
   async execute(command: CreateRaceCommand): Promise<Race> {
     const realm = await this.realmRepository.findById(command.realm);
-    if(!realm) {
+    if (!realm) {
       throw new ValidationError(`Realm with id ${command.realm} does not exist`);
     }
     const existing = await this.raceRepository.findById(command.id);
-    if(existing) {
+    if (existing) {
       throw new ConflictError(`Race with id ${command.id} already exists`);
     }
     const race: Partial<Race> = {
@@ -26,7 +26,7 @@ export class CreateRaceUseCase {
       name: command.name,
       realm: command.realm,
       size: command.size,
-      defaultStatBonus  : command.defaultStatBonus,
+      defaultStatBonus: command.defaultStatBonus,
       resistances: command.resistances,
       averageHeight: command.averageHeight,
       averageWeight: command.averageWeight,
@@ -37,7 +37,7 @@ export class CreateRaceUseCase {
       bonusDevPoints: command.bonusDevPoints,
       description: command.description,
       owner: command.username,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     return await this.raceRepository.save(race);
   }

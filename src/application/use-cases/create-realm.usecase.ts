@@ -18,7 +18,7 @@ export class CreateRealmUseCase {
       id: command.id,
       name: command.name,
       owner: command.username,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     return await this.realmRepository.save(realm);
   }

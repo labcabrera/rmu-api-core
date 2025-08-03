@@ -1,5 +1,5 @@
-import { AuthenticatedCommand } from "./authenticated-command";
+import { AuthenticatedCommand } from './authenticated-command';
 
-export interface DeleteRaceCommand extends AuthenticatedCommand{
+export interface DeleteRaceCommand extends AuthenticatedCommand {
   id: string;
 }

@@ -121,7 +121,7 @@ const raceSchema = new Schema<RaceDocument>(
     updatedAt: {
       type: Date,
       required: false,
-    }
+    },
   },
   {
     collection: 'races',
