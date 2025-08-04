@@ -11,7 +11,7 @@ export class RealmCreatedEventNotificationService extends AbstractKafkaEventNoti
       topicName: 'internal.rmu-core.realm.created.v1',
       partitionCount: parseInt(process.env.REALM_KAFKA_PARTITION_COUNT || '2'),
       replicationFactor: parseInt(process.env.REALM_KAFKA_REPLICATION_FACTOR || '1'),
-      retentionMs: parseInt(process.env.REALM_KAFKA_RETENTION_MS || '604800000'), // 7 days
+      retentionMs: parseInt(process.env.REALM_KAFKA_RETENTION_MS || '604800000'),
       compressionType: (process.env.REALM_KAFKA_COMPRESSION_TYPE as any) || 'snappy'
     };
   }
