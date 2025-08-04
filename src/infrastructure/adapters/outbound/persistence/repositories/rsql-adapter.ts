@@ -9,6 +9,7 @@ export function toMongoQuery(rsql: string): MongoQuery {
   }  
   try {
     const node: any = parse(rsql);
+    console.log(`Parsed RSQL: ${JSON.stringify(node, null, 2)}`);
     return processNode(node);
   } catch (error) {
     console.error(`Error parsing RSQL: ${rsql}`, error);
@@ -18,6 +19,20 @@ export function toMongoQuery(rsql: string): MongoQuery {
 
 function processNode(node: any): MongoQuery {
   switch (node.type) {
+    case 'LOGIC':
+      if (node.operator === ';') {
+        if (!node.left || !node.right) {
+          throw new InvalidSearchExpression('AND operator requires two operands');
+        }
+        return { $and: [processNode(node.left), processNode(node.right)] };
+      } else if (node.operator === ',') {
+        if (!node.left || !node.right) {
+          throw new InvalidSearchExpression('OR operator requires two operands');
+        }
+        return { $or: [processNode(node.left), processNode(node.right)] };
+      } else {
+        throw new InvalidSearchExpression(`Unsupported logic operator: ${node.operator}`);
+      }
     case 'AND':
       if (!node.args || node.args.length === 0) {
         throw new InvalidSearchExpression('AND operator requires at least one argument');
@@ -29,18 +44,21 @@ function processNode(node: any): MongoQuery {
       }
       return { $or: node.args.map(processNode) };
     case 'COMPARISON': {
-      const field = node.left ? node.left.selector : node.selector;
+      // Handle different possible structures for comparison nodes
+      const field = node.left?.selector || node.selector;
       const op = node.operator || node.comparison;
-      const value = node.right ? node.right.value : (node.arguments ? node.arguments[0] : undefined);
+      const value = node.right?.value || (node.arguments ? node.arguments[0] : undefined);
+      
       if (!field) {
-        throw new Error(`Missing field selector in comparison`);
+        throw new InvalidSearchExpression(`Missing field selector in comparison`);
       }
       if (!op) {
-        throw new Error(`Missing operator in comparison for field ${field}`);
+        throw new InvalidSearchExpression(`Missing operator in comparison for field ${field}`);
       }
       if (value === undefined) {
-        throw new Error(`Missing value for comparison operator ${op} on field ${field}`);
+        throw new InvalidSearchExpression(`Missing value for comparison operator ${op} on field ${field}`);
       }
+      
       let processedValue = value;
       if (typeof value === 'string' && !isNaN(Number(value)) && value.trim() !== '') {
         const numValue = Number(value);
