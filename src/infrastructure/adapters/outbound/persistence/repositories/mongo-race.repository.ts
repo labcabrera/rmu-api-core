@@ -3,8 +3,8 @@ import { Race, UpdateRaceRequest } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/outbound/race-repository';
 import { RaceModel, RaceDocument } from '../models/race-model';
 import { Page } from '@domain/entities/page';
-import { RaceQuery } from '@domain/queries/race-query';
 import { NotFoundError } from '@domain/errors/errors';
+import { toMongoQuery } from './rsql-adapter';
 
 @injectable()
 export class MongoRaceRepository implements RaceRepository {
@@ -13,25 +13,25 @@ export class MongoRaceRepository implements RaceRepository {
     return readed ? this.mapToEntity(readed) : null;
   }
 
-  async find(query: RaceQuery): Promise<Page<Race>> {
-    const skip = query.page * query.size;
-    const mongoQuery = {};
-    //TODO
+  async findByRsql(rsql: string, page: number, size: number): Promise<Page<Race>> {
+    const skip = page * size;
+    const mongoQuery = toMongoQuery(rsql);
     const [racesDocs, totalElements] = await Promise.all([
-      RaceModel.find(mongoQuery).skip(skip).limit(query.size).sort({ name: 1 }),
+      RaceModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
       RaceModel.countDocuments(mongoQuery),
     ]);
     const content = racesDocs.map(doc => this.mapToEntity(doc));
     return {
       content,
       pagination: {
-        page: query.page,
-        size: query.size,
+        page: page,
+        size: size,
         totalElements,
-        totalPages: Math.ceil(totalElements / query.size),
+        totalPages: Math.ceil(totalElements / size),
       },
     };
   }
+
   async save(race: Partial<Race>): Promise<Race> {
     const data = { ...race, _id: race.id };
     const raceModel = new RaceModel(data);

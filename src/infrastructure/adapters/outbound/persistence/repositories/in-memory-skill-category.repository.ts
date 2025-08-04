@@ -2,7 +2,6 @@ import { injectable } from 'inversify';
 import { SkillCategoryRepository } from '@domain/ports/outbound/skill-category-repository';
 import { SKILL_CATEGORIES, SkillCategory } from '@domain/entities/skill-category';
 import { Page } from '@domain/entities/page';
-import { SkillCategoryQuery } from '@domain/queries/skill-category-query';
 
 @injectable()
 export class InMemorySkillCategoryRepository implements SkillCategoryRepository {
@@ -11,17 +10,15 @@ export class InMemorySkillCategoryRepository implements SkillCategoryRepository 
     return skillCategory || null;
   }
 
-  async find(query: SkillCategoryQuery, page: number, size: number): Promise<Page<SkillCategory>> {
-    const startIndex = page * size;
-    const endIndex = startIndex + size;
-    const content = SKILL_CATEGORIES.slice(startIndex, endIndex);
+  async findAll(): Promise<Page<SkillCategory>> {
+    const content = SKILL_CATEGORIES;
     return {
       content,
       pagination: {
-        page,
-        size,
-        totalPages: Math.ceil(SKILL_CATEGORIES.length / size),
-        totalElements: SKILL_CATEGORIES.length,
+        page: 0,
+        size: content.length,
+        totalPages: 1,
+        totalElements: content.length,
       },
     };
   }

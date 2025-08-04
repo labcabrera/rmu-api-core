@@ -2,7 +2,6 @@ import { injectable } from 'inversify';
 import { SkillRepository } from '@domain/ports/outbound/skill-repository';
 import { RMU_SKILLS, Skill } from '@domain/entities/skill';
 import { Page } from '@domain/entities/page';
-import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class InMemorySkillRepository implements SkillRepository {
@@ -11,12 +10,9 @@ export class InMemorySkillRepository implements SkillRepository {
     return skill || null;
   }
 
-  async find(query: SkillQuery, page: number, size: number): Promise<Page<Skill>> {
+  async find(categoryId: string | undefined, page: number, size: number): Promise<Page<Skill>> {
     const filteredSkills = RMU_SKILLS.filter(skill => {
-      if (query.id && skill.id !== query.id) {
-        return false;
-      }
-      if (query.categoryId && skill.categoryId !== query.categoryId) {
+      if (categoryId && skill.categoryId !== categoryId) {
         return false;
       }
       return true;

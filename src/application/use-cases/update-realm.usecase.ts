@@ -8,7 +8,7 @@ import { inject, injectable } from 'inversify';
 export class UpdateRealmUseCase {
   constructor(
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RealmEventService') private readonly realmEventService: RealmEventService,
+    @inject('RealmEventService') private readonly realmEventService: RealmEventService
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {

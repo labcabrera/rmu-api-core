@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RaceService } from '@application/services/race-read.service';
-import { RaceQuery } from '@domain/queries/race-query';
 import { CreateRaceCommand } from '@application/commands/create-race.command';
 import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
 import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
@@ -31,13 +30,10 @@ export class RaceController {
 
   async find(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const query: RaceQuery = {
-        name: req.query.name as string,
-        realmId: req.query.realmId as string,
-        page: req.query.page ? parseInt(req.query.page as string) : 0,
-        size: req.query.size ? parseInt(req.query.size as string) : 10,
-      };
-      const result = await this.raceService.findAll(query);
+      const page = req.query.page ? parseInt(req.query.page as string) : 0;
+      const size = req.query.size ? parseInt(req.query.size as string) : 10;
+      const rsql = req.query.q as string;
+      const result = await this.raceService.findByRsql(rsql, page, size);
       res.json(result);
     } catch (error) {
       next(error);

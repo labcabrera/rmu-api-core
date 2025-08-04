@@ -34,3 +34,13 @@ export class ValidationError extends DomainError {
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
+
+export class InvalidSearchExpression extends DomainError {
+  public readonly status: number = 400;
+
+  constructor(message: string) {
+    super(message, 400);
+    this.name = 'InvalidSearchExpression';
+    Object.setPrototypeOf(this, InvalidSearchExpression.prototype);
+  }
+}

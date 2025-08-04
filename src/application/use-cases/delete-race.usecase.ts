@@ -15,7 +15,7 @@ export class DeleteRaceUseCase {
 
   async execute(command: DeleteRaceCommand): Promise<void> {
     const race = await this.raceRepository.findById(command.id);
-    if(!race) {
+    if (!race) {
       throw new NotFoundError('Race', command.id);
     }
     await this.raceRepository.deleteById(command.id);

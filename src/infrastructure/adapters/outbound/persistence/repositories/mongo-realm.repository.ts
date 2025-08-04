@@ -2,9 +2,9 @@ import { injectable } from 'inversify';
 import { Realm } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { RealmModel, RealmDocument } from '../models/realm-model';
-import { RealmQuery } from '@domain/queries/realm-query';
 import { Page } from '@domain/entities/page';
 import { NotFoundError } from '@domain/errors/errors';
+import { toMongoQuery } from './rsql-adapter';
 
 @injectable()
 export class MongoRealmRepository implements RealmRepository {
@@ -13,23 +13,25 @@ export class MongoRealmRepository implements RealmRepository {
     return readed ? this.mapToEntity(readed) : null;
   }
 
-  async find(query: RealmQuery): Promise<Page<Realm>> {
-    const skip = query.page * query.size;
+  async findByRsql(rsql: string, page: number, size: number): Promise<Page<Realm>> {
+    const skip = page * size;
+    const mongoQuery = toMongoQuery(rsql);
     const [realmsDocs, totalElements] = await Promise.all([
-      RealmModel.find().skip(skip).limit(query.size).sort({ name: 1 }),
-      RealmModel.countDocuments(),
+      RealmModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
+      RealmModel.countDocuments(mongoQuery),
     ]);
     const content = realmsDocs.map(doc => this.mapToEntity(doc));
     return {
       content,
       pagination: {
-        page: query.page,
-        size: query.size,
+        page: page,
+        size: size,
         totalElements,
-        totalPages: Math.ceil(totalElements / query.size),
+        totalPages: Math.ceil(totalElements / size),
       },
     };
   }
+
 
   async save(request: Partial<Realm>): Promise<Realm> {
     const realmDoc = new RealmModel({

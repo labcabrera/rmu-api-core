@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify';
 import { Race } from '@domain/entities/race';
 import { RaceRepository } from '@domain/ports/outbound/race-repository';
 import { Page } from '@domain/entities/page';
-import { RaceQuery } from '@domain/queries/race-query';
 import { NotFoundError } from '@domain/errors/errors';
 
 @injectable()
@@ -17,7 +16,7 @@ export class RaceService {
     return race;
   }
 
-  async findAll(query: RaceQuery): Promise<Page<Race>> {
-    return this.raceRepository.find(query);
+  async findByRsql(rsql: string, page: number, size: number): Promise<Page<Race>> {
+    return this.raceRepository.findByRsql(rsql, page, size);
   }
 }
