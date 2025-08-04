@@ -23,7 +23,7 @@ export const sampleRacePage = {
 
 export const mockRaceService = {
   findById: jest.fn(),
-  findAll: jest.fn(),
+  findByRsql: jest.fn(),
   update: jest.fn(),
   deleteById: jest.fn()
 };

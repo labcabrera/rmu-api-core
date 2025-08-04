@@ -85,7 +85,7 @@ describe('RaceController', () => {
   describe('find', () => {
     it('should return paginated races', async () => {
       mockRequest.query = { page: '0', size: '10' };
-      mockRaceService.findAll.mockResolvedValue(sampleRacePage);
+      mockRaceService.findByRsql.mockResolvedValue(sampleRacePage);
 
       await raceController.find(
         mockRequest as Request,
@@ -93,18 +93,13 @@ describe('RaceController', () => {
         mockNext
       );
 
-      expect(mockRaceService.findAll).toHaveBeenCalledWith({
-        name: undefined,
-        realmId: undefined,
-        page: 0,
-        size: 10
-      });
+      expect(mockRaceService.findByRsql).toHaveBeenCalledWith(undefined, 0, 10);
       expect(mockResponse.json).toHaveBeenCalledWith(sampleRacePage);
     });
 
     it('should use default pagination when not provided', async () => {
       mockRequest.query = {};
-      mockRaceService.findAll.mockResolvedValue(sampleRacePage);
+      mockRaceService.findByRsql.mockResolvedValue(sampleRacePage);
 
       await raceController.find(
         mockRequest as Request,
@@ -112,12 +107,21 @@ describe('RaceController', () => {
         mockNext
       );
 
-      expect(mockRaceService.findAll).toHaveBeenCalledWith({
-        name: undefined,
-        realmId: undefined,
-        page: 0,
-        size: 10
-      });
+      expect(mockRaceService.findByRsql).toHaveBeenCalledWith(undefined, 0, 10);
+    });
+
+    it('should handle RSQL queries', async () => {
+      mockRequest.query = { q: 'name==test', page: '1', size: '5' };
+      mockRaceService.findByRsql.mockResolvedValue(sampleRacePage);
+
+      await raceController.find(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockRaceService.findByRsql).toHaveBeenCalledWith('name==test', 1, 5);
+      expect(mockResponse.json).toHaveBeenCalledWith(sampleRacePage);
     });
   });
 
