@@ -100,30 +100,71 @@ container.bind<RealmEventService>('RealmEventService').to(RealmEventServiceImpl)
 container.bind<RaceEventService>('RaceEventService').to(RaceEventServiceImpl).inSingletonScope();
 
 // Bind Event Notification Services with Registry Pattern
-container.bind<RealmCreatedEventNotificationService>('RealmCreatedEventNotificationService').to(RealmCreatedEventNotificationService).inSingletonScope();
-container.bind<RealmUpdatedEventNotificationService>('RealmUpdatedEventNotificationService').to(RealmUpdatedEventNotificationService).inSingletonScope();
-container.bind<RealmDeletedEventNotificationService>('RealmDeletedEventNotificationService').to(RealmDeletedEventNotificationService).inSingletonScope();
+container
+  .bind<RealmCreatedEventNotificationService>('RealmCreatedEventNotificationService')
+  .to(RealmCreatedEventNotificationService)
+  .inSingletonScope();
+container
+  .bind<RealmUpdatedEventNotificationService>('RealmUpdatedEventNotificationService')
+  .to(RealmUpdatedEventNotificationService)
+  .inSingletonScope();
+container
+  .bind<RealmDeletedEventNotificationService>('RealmDeletedEventNotificationService')
+  .to(RealmDeletedEventNotificationService)
+  .inSingletonScope();
 
-container.bind<RaceCreatedEventNotificationService>('RaceCreatedEventNotificationService').to(RaceCreatedEventNotificationService).inSingletonScope();
-container.bind<RaceUpdatedEventNotificationService>('RaceUpdatedEventNotificationService').to(RaceUpdatedEventNotificationService).inSingletonScope();
-container.bind<RaceDeletedEventNotificationService>('RaceDeletedEventNotificationService').to(RaceDeletedEventNotificationService).inSingletonScope();
-
+container
+  .bind<RaceCreatedEventNotificationService>('RaceCreatedEventNotificationService')
+  .to(RaceCreatedEventNotificationService)
+  .inSingletonScope();
+container
+  .bind<RaceUpdatedEventNotificationService>('RaceUpdatedEventNotificationService')
+  .to(RaceUpdatedEventNotificationService)
+  .inSingletonScope();
+container
+  .bind<RaceDeletedEventNotificationService>('RaceDeletedEventNotificationService')
+  .to(RaceDeletedEventNotificationService)
+  .inSingletonScope();
 
 // Bind the registry with factory to configure services
-container.bind<EventNotificationRegistry>('EventNotificationRegistry').toDynamicValue(() => {
-  const registry = new EventNotificationRegistry();
-  registry.registerService("RealmCreatedEvent", container.get<RealmCreatedEventNotificationService>('RealmCreatedEventNotificationService'));
-  registry.registerService("RealmUpdatedEvent", container.get<RealmUpdatedEventNotificationService>('RealmUpdatedEventNotificationService'));
-  registry.registerService("RealmDeletedEvent", container.get<RealmDeletedEventNotificationService>('RealmDeletedEventNotificationService'));
-  registry.registerService("RaceCreatedEvent", container.get<RaceCreatedEventNotificationService>('RaceCreatedEventNotificationService'));
-  registry.registerService("RaceUpdatedEvent", container.get<RaceUpdatedEventNotificationService>('RaceUpdatedEventNotificationService'));
-  registry.registerService("RaceDeletedEvent", container.get<RaceDeletedEventNotificationService>('RaceDeletedEventNotificationService'));
-  console.log('Event Notification Registry configured with all services');
-  return registry;
-}).inSingletonScope();
+container
+  .bind<EventNotificationRegistry>('EventNotificationRegistry')
+  .toDynamicValue(() => {
+    const registry = new EventNotificationRegistry();
+    registry.registerService(
+      'RealmCreatedEvent',
+      container.get<RealmCreatedEventNotificationService>('RealmCreatedEventNotificationService')
+    );
+    registry.registerService(
+      'RealmUpdatedEvent',
+      container.get<RealmUpdatedEventNotificationService>('RealmUpdatedEventNotificationService')
+    );
+    registry.registerService(
+      'RealmDeletedEvent',
+      container.get<RealmDeletedEventNotificationService>('RealmDeletedEventNotificationService')
+    );
+    registry.registerService(
+      'RaceCreatedEvent',
+      container.get<RaceCreatedEventNotificationService>('RaceCreatedEventNotificationService')
+    );
+    registry.registerService(
+      'RaceUpdatedEvent',
+      container.get<RaceUpdatedEventNotificationService>('RaceUpdatedEventNotificationService')
+    );
+    registry.registerService(
+      'RaceDeletedEvent',
+      container.get<RaceDeletedEventNotificationService>('RaceDeletedEventNotificationService')
+    );
+    console.log('Event Notification Registry configured with all services');
+    return registry;
+  })
+  .inSingletonScope();
 
 // Bind the main port using the registry adapter
-container.bind<EventNotificationPort>('EventNotificationPort').to(RegistryEventNotificationAdapter).inSingletonScope();
+container
+  .bind<EventNotificationPort>('EventNotificationPort')
+  .to(RegistryEventNotificationAdapter)
+  .inSingletonScope();
 
 // Bind Controllers
 container.bind<RaceController>('RaceController').to(RaceController).inSingletonScope();

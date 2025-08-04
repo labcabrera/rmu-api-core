@@ -1,13 +1,16 @@
 import { inject, injectable } from 'inversify';
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
 import { DomainEvent } from '@domain/events/domain-event';
-import { EventNotificationService, TopicConfiguration } from '@domain/ports/outbound/event-notification-service';
+import {
+  EventNotificationService,
+  TopicConfiguration,
+} from '@domain/ports/outbound/event-notification-service';
 import { Configuration } from '@shared/configuration';
 
 @injectable()
-export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent> 
-  implements EventNotificationService<T> {
-  
+export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent>
+  implements EventNotificationService<T>
+{
   protected readonly kafka: Kafka;
   protected producer: Producer | null = null;
   protected isInitialized = false;
@@ -18,8 +21,8 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
       brokers: this.getBrokers(),
       retry: {
         initialRetryTime: 100,
-        retries: 3
-      }
+        retries: 3,
+      },
     });
 
     console.log(`${this.getServiceName()} initialized`);
@@ -44,14 +47,14 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
 
     try {
       console.log(`Initializing ${this.getServiceName()} producer...`);
-    this.producer = this.kafka.producer({
-      maxInFlightRequests: 1,
-      idempotent: true,
-      transactionTimeout: 30000
-    });
+      this.producer = this.kafka.producer({
+        maxInFlightRequests: 1,
+        idempotent: true,
+        transactionTimeout: 30000,
+      });
 
-    await this.producer.connect();
-    console.log(`${this.getServiceName()} producer connected successfully`);
+      await this.producer.connect();
+      console.log(`${this.getServiceName()} producer connected successfully`);
       this.isInitialized = true;
     } catch (error) {
       console.error(`Failed to initialize ${this.getServiceName()} producer:`, error);
@@ -62,20 +65,20 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
   async notify(event: T): Promise<void> {
     try {
       await this.initialize();
-      
+
       if (!this.producer) {
         throw new Error(`${this.getServiceName()} producer not initialized`);
       }
 
       console.log(`Notifying event: ${event.eventType} for aggregate ${event.aggregateId}`);
-      
+
       const topicConfig = this.getTopicConfiguration();
 
       console.log(`Topic config: ${JSON.stringify(topicConfig)}`);
 
       const message = this.createMessage(event);
       const partition = this.getPartition(event.aggregateId, topicConfig.partitionCount);
-      
+
       const producerRecord: ProducerRecord = {
         topic: topicConfig.topicName,
         messages: [
@@ -88,23 +91,22 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
               eventType: event.eventType,
               eventVersion: event.eventVersion.toString(),
               contentType: 'application/json',
-              service: this.getServiceName()
-            }
-          }
-        ]
+              service: this.getServiceName(),
+            },
+          },
+        ],
       };
 
       console.log(`${this.getServiceName()} sending event to topic "${topicConfig.topicName}"`);
       const result = await this.producer.send(producerRecord);
-      
+
       console.log(`${this.getServiceName()} event sent successfully:`, {
         topic: topicConfig.topicName,
         partition: result[0].partition,
         offset: result[0].offset,
         eventType: event.eventType,
-        aggregateId: event.aggregateId
+        aggregateId: event.aggregateId,
       });
-      
     } catch (error) {
       console.error(`${this.getServiceName()} failed to send event:`, error);
       throw error;
@@ -115,7 +117,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
     let hash = 0;
     for (let i = 0; i < aggregateId.length; i++) {
       const char = aggregateId.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return Math.abs(hash) % partitionCount;
@@ -133,8 +135,8 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         source: 'rmu-api-core',
         service: this.getServiceName(),
         correlationId: this.generateCorrelationId(),
-        causationId: event.aggregateId
-      }
+        causationId: event.aggregateId,
+      },
     };
   }
 

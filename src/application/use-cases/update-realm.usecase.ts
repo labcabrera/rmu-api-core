@@ -8,26 +8,20 @@ import { inject, injectable } from 'inversify';
 export class UpdateRealmUseCase {
   constructor(
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RealmEventService') private readonly realmEventService: RealmEventService
+    @inject('RealmEventService') private readonly realmEventService: RealmEventService,
   ) {}
-  
+
   async execute(command: UpdateRealmCommand): Promise<Realm> {
-    // Get the original realm to compare changes
     const originalRealm = await this.realmRepository.findById(command.id);
-    
     const realm: Partial<Realm> = { ...command, updatedAt: new Date() };
     const updatedRealm = await this.realmRepository.update(realm.id!, realm);
-    
-    // Calculate changes for the event
     const changes: Partial<Realm> = {};
     if (originalRealm) {
       if (originalRealm.name !== updatedRealm.name) changes.name = updatedRealm.name;
-      if (originalRealm.description !== updatedRealm.description) changes.description = updatedRealm.description;
+      if (originalRealm.description !== updatedRealm.description)
+        changes.description = updatedRealm.description;
     }
-    
-    // Publish realm updated event
     await this.realmEventService.updated(updatedRealm, command.username, changes);
-    
     return updatedRealm;
   }
 }

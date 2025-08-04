@@ -26,11 +26,11 @@ export class RealmDeletedEvent implements DomainEvent {
           id: this.realm.id,
           name: this.realm.name,
           description: this.realm.description,
-          owner: this.realm.owner
+          owner: this.realm.owner,
         },
         deletedBy: this.deletedBy,
-        reason: this.reason
-      }
+        reason: this.reason,
+      },
     };
   }
 }

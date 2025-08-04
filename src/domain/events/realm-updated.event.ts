@@ -23,7 +23,7 @@ export class RealmUpdatedEvent implements DomainEvent {
       updatedBy: this.updatedBy,
       owner: this.realm.owner,
       updatedAt: this.realm.updatedAt,
-      changes: this.changes || {}
+      changes: this.changes || {},
     };
   }
 }

@@ -9,7 +9,8 @@ export class RaceDeletedEvent implements DomainEvent {
   constructor(
     public readonly aggregateId: string,
     public readonly race: Race,
-    public readonly createdBy: string
+    public readonly createdBy: string,
+    public readonly reason?: string
   ) {
     this.occurredOn = new Date();
   }
@@ -22,7 +23,7 @@ export class RaceDeletedEvent implements DomainEvent {
       size: this.race.size,
       defaultStatBonus: this.race.defaultStatBonus,
       resistances: this.race.resistances,
-      description: this.race.description
+      description: this.race.description,
     };
   }
 }

@@ -21,7 +21,7 @@ export class RealmCreatedEvent implements DomainEvent {
       description: this.realm.description,
       createdBy: this.createdBy,
       owner: this.realm.owner,
-      createdAt: this.realm.createdAt
+      createdAt: this.realm.createdAt,
     };
   }
 }

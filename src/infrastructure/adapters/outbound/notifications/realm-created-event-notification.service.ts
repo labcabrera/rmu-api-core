@@ -5,18 +5,17 @@ import { RealmCreatedEvent } from '@domain/events/realm-created.event';
 
 @injectable()
 export class RealmCreatedEventNotificationService extends AbstractKafkaEventNotificationService<RealmCreatedEvent> {
-  
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.realm.created.v1',
       partitionCount: parseInt(process.env.REALM_KAFKA_PARTITION_COUNT || '2'),
       replicationFactor: parseInt(process.env.REALM_KAFKA_REPLICATION_FACTOR || '1'),
       retentionMs: parseInt(process.env.REALM_KAFKA_RETENTION_MS || '604800000'),
-      compressionType: (process.env.REALM_KAFKA_COMPRESSION_TYPE as any) || 'snappy'
+      compressionType: (process.env.REALM_KAFKA_COMPRESSION_TYPE as any) || 'snappy',
     };
   }
 
   getServiceName(): string {
-    return 'Realm Event Notification Service';
+    return 'Realm Created Event Notification Service';
   }
 }

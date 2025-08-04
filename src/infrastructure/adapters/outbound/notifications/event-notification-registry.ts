@@ -6,17 +6,20 @@ import { EventNotificationService } from '@domain/ports/outbound/event-notificat
 export class EventNotificationRegistry {
   private services: Map<string, EventNotificationService<any>> = new Map();
 
-  registerService<T extends DomainEvent>(eventType: string, service: EventNotificationService<T>): void {
-          if (this.services.has(eventType)) {
-        console.warn(`Overriding existing service for event type: ${eventType}`);
-      }
-      this.services.set(eventType, service);
-      console.log(`Registered notification service for event type: ${eventType}`);
+  registerService<T extends DomainEvent>(
+    eventType: string,
+    service: EventNotificationService<T>
+  ): void {
+    if (this.services.has(eventType)) {
+      console.warn(`Overriding existing service for event type: ${eventType}`);
+    }
+    this.services.set(eventType, service);
+    console.log(`Registered notification service for event type: ${eventType}`);
   }
 
   async notify(event: DomainEvent): Promise<void> {
     const service = this.services.get(event.eventType);
-    
+
     if (!service) {
       console.warn(`No notification service found for event type: ${event.eventType}`);
       return;
@@ -33,21 +36,4 @@ export class EventNotificationRegistry {
   getRegisteredServices(): Map<string, EventNotificationService<any>> {
     return new Map(this.services);
   }
-
-  // getAllTopicConfigurations(): Array<{ eventTypes: string[]; config: any }> {
-  //   const configs: Array<{ eventTypes: string[]; config: any }> = [];
-  //   const processedServices = new Set<EventNotificationService<any>>();
-
-  //   this.services.forEach(service => {
-  //     if (!processedServices.has(service)) {
-  //       processedServices.add(service);
-  //       configs.push({
-  //         eventTypes: service.getHandledEventTypes(),
-  //         config: service.getTopicConfiguration()
-  //       });
-  //     }
-  //   });
-
-  //   return configs;
-  // }
 }

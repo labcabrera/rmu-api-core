@@ -15,7 +15,9 @@ export class AuthService {
     this.issuer = `${config.keycloakUrl}/realms/${config.keycloakRealm}`;
     this.audience = config.keycloakClientId;
 
-    console.log(`${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`);
+    console.log(
+      `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`
+    );
     console.log(config.keycloakClientId);
     console.log(config.keycloakRealm);
 

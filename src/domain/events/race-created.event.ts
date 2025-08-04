@@ -22,7 +22,7 @@ export class RaceCreatedEvent implements DomainEvent {
       size: this.race.size,
       defaultStatBonus: this.race.defaultStatBonus,
       resistances: this.race.resistances,
-      description: this.race.description
+      description: this.race.description,
     };
   }
 }

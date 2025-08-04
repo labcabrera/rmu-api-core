@@ -5,11 +5,7 @@ import { EventNotificationRegistry } from './event-notification-registry';
 
 @injectable()
 export class RegistryEventNotificationAdapter implements EventNotificationPort {
-  
-  constructor(
-    @inject('EventNotificationRegistry') private registry: EventNotificationRegistry
-  ) {
-  }
+  constructor(@inject('EventNotificationRegistry') private registry: EventNotificationRegistry) {}
 
   async notify(event: DomainEvent): Promise<void> {
     await this.registry.notify(event);

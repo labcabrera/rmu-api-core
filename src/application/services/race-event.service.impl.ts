@@ -3,6 +3,8 @@ import { Race } from '@domain/entities/race';
 import { RaceEventService } from './race-event.service';
 import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
 import { RaceCreatedEvent } from '@domain/events/race-created.event';
+import { RaceUpdatedEvent } from '@domain/events/race-updated.event';
+import { RaceDeletedEvent } from '@domain/events/race-deleted.event';
 
 @injectable()
 export class RaceEventServiceImpl implements RaceEventService {
@@ -15,13 +17,13 @@ export class RaceEventServiceImpl implements RaceEventService {
     await this.eventNotificationPort.notify(event);
   }
 
-  async updated(race: Race, username: string, changes?: Partial<Race>): Promise<void> {
-    // TODO: Implement when RaceUpdatedEvent is created
-    console.log(`Race ${race.id} updated by ${username}`, changes);
+  async updated(race: Race, username: string): Promise<void> {
+    const event = new RaceUpdatedEvent(race.id!, race, username);
+    await this.eventNotificationPort.notify(event);
   }
 
   async deleted(raceId: string, race: Race, username: string, reason?: string): Promise<void> {
-    // TODO: Implement when RaceDeletedEvent is created
-    console.log(`Race ${raceId} deleted by ${username}`, reason);
+    const event = new RaceDeletedEvent(raceId, race, username, reason);
+    await this.eventNotificationPort.notify(event);
   }
 }
