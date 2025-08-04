@@ -1,9 +1,10 @@
 import { Page } from '@domain/entities/page';
 
-export interface Repository<I, Query> {
+export interface Repository<I> {
+
   findById(id: string): Promise<I | null>;
 
-  find(query: Query): Promise<Page<I>>;
+  findByRsql(rsql: string, page: number, size: number): Promise<Page<I>>;
 
   save(entity: Partial<I>): Promise<I>;
 

@@ -3,7 +3,6 @@ import { SkillRepository } from '@domain/ports/outbound/skill-repository';
 import { Skill } from '@domain/entities/skill';
 import { NotFoundError } from '@domain/errors/errors';
 import { Page } from '@domain/entities/page';
-import { SkillQuery } from '@domain/queries/skill-query';
 
 @injectable()
 export class SkillReadService {
@@ -16,7 +15,7 @@ export class SkillReadService {
     }
     return skill;
   }
-  async find(query: SkillQuery, page: number, size: number): Promise<Page<Skill>> {
-    return await this.skillRepository.find(query, page, size);
+  async find(categoryId: string | undefined, page: number, size: number): Promise<Page<Skill>> {
+    return await this.skillRepository.find(categoryId, page, size);
   }
 }

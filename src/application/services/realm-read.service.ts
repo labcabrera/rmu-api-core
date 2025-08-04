@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Realm } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { RealmQuery } from '@domain/queries/realm-query';
 import { Page } from '@domain/entities/page';
 
 @injectable()
@@ -16,7 +15,7 @@ export class RealmReadService {
     return realm;
   }
 
-  async find(query: RealmQuery): Promise<Page<Realm>> {
-    return this.realmRepository.find(query);
+  async findByRsql(rsql: string, page: number, size: number): Promise<Page<Realm>> {
+    return this.realmRepository.findByRsql(rsql, page, size);
   }
 }
