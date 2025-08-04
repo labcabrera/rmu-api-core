@@ -1,8 +1,8 @@
 import { DomainEvent } from './domain-event';
 import { Race } from '@domain/entities/race';
 
-export class RaceCreatedEvent implements DomainEvent {
-  public readonly eventType = 'RaceCreatedEvent';
+export class RaceUpdatedEvent implements DomainEvent {
+  public readonly eventType = 'RaceUpdatedEvent';
   public readonly eventVersion = 1;
   public readonly occurredOn: Date;
 

@@ -41,11 +41,8 @@ export class CreateRaceUseCase {
       owner: command.username,
       createdAt: new Date(),
     };
-    
     const savedRace = await this.raceRepository.save(race);
-    
     await this.raceEventService.created(savedRace, command.username);
-    
     return savedRace;
   }
 }
