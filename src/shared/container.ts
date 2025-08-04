@@ -51,9 +51,10 @@ import { RealmCreatedEventNotificationService } from '@infrastructure/adapters/o
 import { RaceDeletedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-deleted-event-notification.service';
 
 const container = new Container();
+const configuration = new Configuration();
 
 // Bind Configuration
-container.bind<Configuration>('Configuration').to(Configuration).inSingletonScope();
+container.bind<Configuration>('Configuration').toConstantValue(configuration);
 
 // Bind Repositories
 container.bind<RaceRepository>('RaceRepository').to(MongoRaceRepository).inSingletonScope();

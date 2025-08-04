@@ -32,7 +32,6 @@ export class MongoRealmRepository implements RealmRepository {
     };
   }
 
-
   async save(request: Partial<Realm>): Promise<Realm> {
     const realmDoc = new RealmModel({
       _id: request.id,

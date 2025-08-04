@@ -8,19 +8,8 @@ import { Configuration } from '@shared/configuration';
 @injectable()
 export class AuthService {
   private jwksClient: jwksClient.JwksClient;
-  private issuer: string;
-  private audience: string;
 
   constructor(@inject('Configuration') config: Configuration) {
-    this.issuer = `${config.keycloakUrl}/realms/${config.keycloakRealm}`;
-    this.audience = config.keycloakClientId;
-
-    console.log(
-      `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`
-    );
-    console.log(config.keycloakClientId);
-    console.log(config.keycloakRealm);
-
     this.jwksClient = jwksClient({
       jwksUri: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
       requestHeaders: {},
@@ -71,7 +60,6 @@ export class AuthService {
     }
     const signingKey = await this.getKey(decodedHeader.header);
     const payload = jwt.verify(token, signingKey, {
-      issuer: this.issuer,
       algorithms: ['RS256'],
     }) as JWTPayload;
     return this.extractUserFromPayload(payload);

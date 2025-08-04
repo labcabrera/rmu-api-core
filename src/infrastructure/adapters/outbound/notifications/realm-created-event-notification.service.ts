@@ -1,17 +1,21 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { TopicConfiguration } from '@domain/ports/outbound/event-notification-service';
 import { AbstractKafkaEventNotificationService } from './abstract-kafka-event-notification.service';
 import { RealmCreatedEvent } from '@domain/events/realm-created.event';
+import { Configuration } from '@shared/configuration';
 
 @injectable()
 export class RealmCreatedEventNotificationService extends AbstractKafkaEventNotificationService<RealmCreatedEvent> {
+  constructor(@inject('Configuration') config: Configuration) {
+    super(config);
+  }
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.realm.created.v1',
-      partitionCount: parseInt(process.env.REALM_KAFKA_PARTITION_COUNT || '2'),
-      replicationFactor: parseInt(process.env.REALM_KAFKA_REPLICATION_FACTOR || '1'),
-      retentionMs: parseInt(process.env.REALM_KAFKA_RETENTION_MS || '604800000'),
-      compressionType: (process.env.REALM_KAFKA_COMPRESSION_TYPE as any) || 'snappy',
+      partitionCount: this.config.kafkaPartitionCount,
+      replicationFactor: this.config.kafkaReplicationFactor,
+      retentionMs: this.config.kafkaRetentionMs,
+      compressionType: this.config.kafkaCompressionType,
     };
   }
 
