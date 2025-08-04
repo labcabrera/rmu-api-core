@@ -14,8 +14,4 @@ export class RegistryEventNotificationAdapter implements EventNotificationPort {
   async notify(event: DomainEvent): Promise<void> {
     await this.registry.notify(event);
   }
-
-  async notifyBatch(events: DomainEvent[]): Promise<void> {
-    await this.registry.notifyBatch(events);
-  }
 }

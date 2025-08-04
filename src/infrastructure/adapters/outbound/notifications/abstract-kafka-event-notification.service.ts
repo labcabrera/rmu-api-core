@@ -25,7 +25,6 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
     console.log(`${this.getServiceName()} initialized`);
   }
 
-  abstract getHandledEventTypes(): string[];
   abstract getTopicConfiguration(): TopicConfiguration;
   abstract getServiceName(): string;
 
@@ -44,7 +43,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
     }
 
     try {
-      console.log(`🔌 Initializing ${this.getServiceName()} producer...`);
+      console.log(`Initializing ${this.getServiceName()} producer...`);
     this.producer = this.kafka.producer({
       maxInFlightRequests: 1,
       idempotent: true,
@@ -52,7 +51,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
     });
 
     await this.producer.connect();
-    console.log(`✅ ${this.getServiceName()} producer connected successfully`);
+    console.log(`${this.getServiceName()} producer connected successfully`);
       this.isInitialized = true;
     } catch (error) {
       console.error(`Failed to initialize ${this.getServiceName()} producer:`, error);
@@ -68,14 +67,20 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         throw new Error(`${this.getServiceName()} producer not initialized`);
       }
 
+      console.log(`Notifying event: ${event.eventType} for aggregate ${event.aggregateId}`);
+      
       const topicConfig = this.getTopicConfiguration();
+
+      console.log(`Topic config: ${JSON.stringify(topicConfig)}`);
+
       const message = this.createMessage(event);
+      const partition = this.getPartition(event.aggregateId, topicConfig.partitionCount);
       
       const producerRecord: ProducerRecord = {
         topic: topicConfig.topicName,
         messages: [
           {
-            partition: this.getPartition(event.aggregateId, topicConfig.partitionCount),
+            partition: partition,
             key: event.aggregateId,
             value: JSON.stringify(message),
             timestamp: event.occurredOn.getTime().toString(),
@@ -92,7 +97,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
       console.log(`${this.getServiceName()} sending event to topic "${topicConfig.topicName}"`);
       const result = await this.producer.send(producerRecord);
       
-      console.log(`✅ ${this.getServiceName()} event sent successfully:`, {
+      console.log(`${this.getServiceName()} event sent successfully:`, {
         topic: topicConfig.topicName,
         partition: result[0].partition,
         offset: result[0].offset,
@@ -106,46 +111,6 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
     }
   }
 
-  async notifyBatch(events: T[]): Promise<void> {
-    try {
-      await this.initialize();
-      
-      if (!this.producer) {
-        throw new Error(`${this.getServiceName()} producer not initialized`);
-      }
-
-      const topicConfig = this.getTopicConfiguration();
-      
-      console.log(`${this.getServiceName()} sending ${events.length} events to topic "${topicConfig.topicName}"`);
-      
-      const messages = events.map(event => ({
-        partition: this.getPartition(event.aggregateId, topicConfig.partitionCount),
-        key: event.aggregateId,
-        value: JSON.stringify(this.createMessage(event)),
-        timestamp: event.occurredOn.getTime().toString(),
-        headers: {
-          eventType: event.eventType,
-          eventVersion: event.eventVersion.toString(),
-          contentType: 'application/json',
-          service: this.getServiceName()
-        }
-      }));
-
-      const producerRecord: ProducerRecord = {
-        topic: topicConfig.topicName,
-        messages
-      };
-
-      const results = await this.producer.send(producerRecord);
-      
-      console.log(`${this.getServiceName()} sent ${results.length} events successfully to topic "${topicConfig.topicName}"`);
-      
-    } catch (error) {
-      console.error(`${this.getServiceName()} failed to send batch events:`, error);
-      throw error;
-    }
-  }
-
   protected getPartition(aggregateId: string, partitionCount: number): number {
     let hash = 0;
     for (let i = 0; i < aggregateId.length; i++) {
@@ -153,7 +118,6 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
     }
-    
     return Math.abs(hash) % partitionCount;
   }
 
