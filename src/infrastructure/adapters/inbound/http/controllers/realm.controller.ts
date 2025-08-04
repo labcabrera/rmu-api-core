@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { RealmReadService } from '@application/services/realm-read.service';
-import { RealmQuery } from '@domain/queries/realm-query';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
@@ -31,11 +30,10 @@ export class RealmController {
 
   async find(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const query: RealmQuery = {
-        page: req.query.page ? parseInt(req.query.page as string) : 0,
-        size: req.query.size ? parseInt(req.query.size as string) : 10,
-      };
-      const result = await this.realmService.find(query);
+      const page = req.query.page ? parseInt(req.query.page as string) : 0;
+      const size = req.query.size ? parseInt(req.query.size as string) : 10;
+      const rsql = req.query.q as string;
+      const result = await this.realmService.findByRsql(rsql, page, size);
       res.json(result);
     } catch (error) {
       next(error);
