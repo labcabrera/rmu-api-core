@@ -5,9 +5,9 @@ set -e
 DEFAULT_BASE_URL="http://localhost:3001/v1"
 DEFAULT_CONTENT_TYPE="application/json"
 
-KEYCLOAK_BASE_URL="http://localhost:8090"
-KEYCLOAK_REALM="rmu-local"
-KEYCLOAK_CLIENT_ID="rmu-client"
+KEYCLOAK_BASE_URL="${RMU_KEYCLOAK_BASE_URL}"
+KEYCLOAK_REALM="${RMU_KEYCLOAK_REALM}"
+KEYCLOAK_CLIENT_ID="${RMU_KEYCLOAK_CLIENT_ID}"
 KEYCLOAK_CLIENT_SECRET="${RMU_KEYCLOAK_CLIENT_SECRET}"
 KEYCLOAK_USERNAME="${RMU_KEYCLOAK_USER}"
 KEYCLOAK_PASSWORD="${RMU_KEYCLOAK_PASSWORD}"
@@ -22,7 +22,6 @@ read_access_token() {
         --data-urlencode "client_secret=${KEYCLOAK_CLIENT_SECRET}" \
         --data-urlencode "username=${KEYCLOAK_USERNAME}" \
         --data-urlencode "password=${KEYCLOAK_PASSWORD}" \
-        -v\
         | jq -r '.access_token') \
     export ACCESS_TOKEN
 }

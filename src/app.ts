@@ -16,9 +16,10 @@ import { armorTypeRouter } from '@infrastructure/adapters/inbound/http/routes/ar
 import { healthRouter } from '@infrastructure/adapters/inbound/http/routes/health.routes';
 import { errorHandler } from '@infrastructure/adapters/inbound/http/error-handler';
 import { Configuration } from '@shared/configuration';
+import { container } from '@shared/container';
 
 const app = express();
-const configuration = new Configuration();
+const configuration = container.get<Configuration>('Configuration');
 
 const openapiFilePath = path.join(__dirname, '../openapi.yaml');
 const openapiFile = fs.readFileSync(openapiFilePath, 'utf8');

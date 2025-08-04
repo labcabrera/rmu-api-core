@@ -24,8 +24,6 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         retries: 3,
       },
     });
-
-    console.log(`${this.getServiceName()} initialized`);
   }
 
   abstract getTopicConfiguration(): TopicConfiguration;
@@ -36,7 +34,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
   }
 
   protected getBrokers(): string[] {
-    const brokers = process.env.KAFKA_BROKERS || 'localhost:9092';
+    const brokers = this.config.kafkaBrokers;
     return brokers.split(',').map(broker => broker.trim());
   }
 

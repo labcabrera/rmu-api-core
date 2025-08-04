@@ -1,7 +1,6 @@
 import { Page } from '@domain/entities/page';
 
 export interface Repository<I> {
-
   findById(id: string): Promise<I | null>;
 
   findByRsql(rsql: string, page: number, size: number): Promise<Page<I>>;

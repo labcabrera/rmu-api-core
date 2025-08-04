@@ -4,16 +4,18 @@ import { parse } from '@rsql/parser';
 type MongoQuery = Record<string, any>;
 
 export function toMongoQuery(rsql: string): MongoQuery {
-  if(!rsql || rsql.trim() === '') {
+  if (!rsql || rsql.trim() === '') {
     return {};
-  }  
+  }
   try {
     const node: any = parse(rsql);
     console.log(`Parsed RSQL: ${JSON.stringify(node, null, 2)}`);
     return processNode(node);
   } catch (error) {
     console.error(`Error parsing RSQL: ${rsql}`, error);
-    throw new InvalidSearchExpression(`Invalid RSQL query: ${rsql}. ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new InvalidSearchExpression(
+      `Invalid RSQL query: ${rsql}. ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 
@@ -48,7 +50,7 @@ function processNode(node: any): MongoQuery {
       const field = node.left?.selector || node.selector;
       const op = node.operator || node.comparison;
       const value = node.right?.value || (node.arguments ? node.arguments[0] : undefined);
-      
+
       if (!field) {
         throw new InvalidSearchExpression(`Missing field selector in comparison`);
       }
@@ -56,9 +58,11 @@ function processNode(node: any): MongoQuery {
         throw new InvalidSearchExpression(`Missing operator in comparison for field ${field}`);
       }
       if (value === undefined) {
-        throw new InvalidSearchExpression(`Missing value for comparison operator ${op} on field ${field}`);
+        throw new InvalidSearchExpression(
+          `Missing value for comparison operator ${op} on field ${field}`
+        );
       }
-      
+
       let processedValue = value;
       if (typeof value === 'string' && !isNaN(Number(value)) && value.trim() !== '') {
         const numValue = Number(value);
@@ -104,7 +108,7 @@ function processNode(node: any): MongoQuery {
           return { [field]: { $nin: outValues } };
         }
         case '=re=':
-          return { [field]: { $regex: processedValue, $options: "i" } };
+          return { [field]: { $regex: processedValue, $options: 'i' } };
         default:
           throw new Error(`Unsupported operator: ${op}`);
       }
