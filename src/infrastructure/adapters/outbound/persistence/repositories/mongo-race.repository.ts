@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { Race, UpdateRaceRequest } from '@domain/entities/race';
-import { RaceRepository } from '@domain/ports/outbound/race-repository';
+import { RaceRepository } from '@application/ports/outbound/race-repository';
 import { RaceModel, RaceDocument } from '../models/race-model';
 import { Page } from '@domain/entities/page';
 import { NotFoundError } from '@domain/errors/errors';

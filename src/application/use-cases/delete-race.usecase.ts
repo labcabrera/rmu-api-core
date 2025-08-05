@@ -1,16 +1,18 @@
-import { DeleteRaceCommand } from '@application/commands/delete-race.command';
-import { RaceEventService } from '@application/services/race-event.service';
-import { NotFoundError } from '@domain/errors/errors';
-import { RaceRepository } from '@domain/ports/outbound/race-repository';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
 import { inject, injectable } from 'inversify';
+
+import { DeleteRaceCommand } from '@application/commands/delete-race.command';
+import { NotFoundError } from '@domain/errors/errors';
+import { RaceDeletedEvent } from '@domain/events/race-deleted.event';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
+import { RaceRepository } from '@application/ports/outbound/race-repository';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
 
 @injectable()
 export class DeleteRaceUseCase {
   constructor(
     @inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RaceEventService') private readonly raceEventService: RaceEventService
+    @inject('EventNotificationPort') private readonly eventNotificationPort: EventNotificationPort
   ) {}
 
   async execute(command: DeleteRaceCommand): Promise<void> {
@@ -19,6 +21,6 @@ export class DeleteRaceUseCase {
       throw new NotFoundError('Race', command.id);
     }
     await this.raceRepository.deleteById(command.id);
-    await this.raceEventService.deleted(command.id, race, command.username, command.reason);
+    await this.eventNotificationPort.notify(new RaceDeletedEvent(race));
   }
 }

@@ -6,7 +6,6 @@ import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
 import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { UpdateRaceUseCase } from '@application/use-cases/update-race.usecase';
 import { UpdateRaceCommand } from '@application/commands/update-race.command';
-import { getAuthenticatedUser } from '@infrastructure/adapters/inbound/web/security/auth.utils';
 import { DeleteRaceCommand } from '@application/commands/delete-race.command';
 
 @injectable()
@@ -44,7 +43,7 @@ export class RaceController {
     try {
       const command: CreateRaceCommand = {
         ...req.body,
-        username: getAuthenticatedUser(req)!.username!,
+        username: req.user!.username!,
       };
       const created = await this.createRaceUseCase.execute(command);
       res.status(201).json(created);
@@ -58,7 +57,7 @@ export class RaceController {
       const command: UpdateRaceCommand = {
         ...req.body,
         id: req.params.id,
-        username: getAuthenticatedUser(req)!.username!,
+        username: req.user!.username!,
       };
       const updated = await this.updateRaceUseCase.execute(command);
       res.json(updated);
@@ -71,7 +70,7 @@ export class RaceController {
     try {
       const command: DeleteRaceCommand = {
         id: req.params.id,
-        username: getAuthenticatedUser(req)!.username!,
+        username: req.user!.username!,
       };
       await this.deleteRaceUseCase.execute(command);
       res.status(204).send();

@@ -4,7 +4,7 @@ import jwksClient from 'jwks-rsa';
 import { inject, injectable } from 'inversify';
 import { JWTPayload, User } from '@domain/entities/auth';
 import { config } from '@infrastructure/config/config';
-import { Logger } from '@domain/ports/logger';
+import { Logger } from '@application/ports/logger';
 
 @injectable()
 export class AuthService {

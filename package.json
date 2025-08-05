@@ -1,6 +1,6 @@
 {
   "name": "rmu-api-core",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "main": "dist/app.js",
   "description": "Core API for RMU",
   "scripts": {
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/kafkajs": "^1.8.2",
     "@types/node": "^24.1.0",

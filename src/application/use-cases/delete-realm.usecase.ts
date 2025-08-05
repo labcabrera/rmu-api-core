@@ -1,14 +1,15 @@
 import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { RealmEventService } from '@application/services/realm-event.service';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
 import { NotFoundError } from '@domain/errors/errors';
 import { inject, injectable } from 'inversify';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
+import { RealmDeletedEvent } from '@domain/events/realm-deleted.event';
 
 @injectable()
 export class DeleteRealmUseCase {
   constructor(
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RealmEventService') private readonly realmEventService: RealmEventService
+    @inject('EventNotificationPort') private readonly eventNotificationPort: EventNotificationPort
   ) {}
 
   async execute(command: DeleteRealmCommand): Promise<void> {
@@ -17,6 +18,6 @@ export class DeleteRealmUseCase {
       throw new NotFoundError('Realm', command.id);
     }
     await this.realmRepository.deleteById(command.id);
-    await this.realmEventService.deleted(command.id, realm, command.username, command.reason);
+    await this.eventNotificationPort.notify(new RealmDeletedEvent(realm));
   }
 }

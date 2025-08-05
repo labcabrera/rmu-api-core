@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Realm } from '@domain/entities/realm';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
 import { Page } from '@domain/entities/page';
 
 @injectable()

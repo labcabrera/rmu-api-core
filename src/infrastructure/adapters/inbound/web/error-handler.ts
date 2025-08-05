@@ -1,5 +1,5 @@
 import { DomainError } from '@domain/errors/errors';
-import { Logger } from '@domain/ports/logger';
+import { Logger } from '@application/ports/logger';
 import { container } from '@shared/container';
 import { Request, Response, NextFunction } from 'express';
 
@@ -9,7 +9,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-
   const logger: Logger = container.get('Logger');
 
   logger.error('Error handler caught:', {
