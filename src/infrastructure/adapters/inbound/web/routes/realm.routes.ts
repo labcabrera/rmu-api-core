@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
 import { createAuthMiddleware, requireRoles } from '../security/auth.middleware';
-import { RealmController } from '../controllers/realm.controller';
-import { asyncHandler } from '../async-handler';
+import { RealmController } from '@infrastructure/adapters/inbound/web/controllers/realm.controller';
+import { asyncHandler } from '@infrastructure/adapters/inbound/web/async-handler';
 
 const router = Router();
 const realmController = container.get<RealmController>('RealmController');

@@ -6,7 +6,7 @@ import { CreateRaceUseCase } from '@application/use-cases/create-race.usecase';
 import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { UpdateRaceUseCase } from '@application/use-cases/update-race.usecase';
 import { UpdateRaceCommand } from '@application/commands/update-race.command';
-import { getAuthenticatedUser } from '@infrastructure/adapters/inbound/http/security/auth.utils';
+import { getAuthenticatedUser } from '@infrastructure/adapters/inbound/web/security/auth.utils';
 import { DeleteRaceCommand } from '@application/commands/delete-race.command';
 
 @injectable()
