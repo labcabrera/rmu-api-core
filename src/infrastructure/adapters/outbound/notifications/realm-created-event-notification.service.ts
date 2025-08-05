@@ -3,9 +3,13 @@ import { TopicConfiguration } from '@domain/ports/outbound/event-notification-se
 import { AbstractKafkaEventNotificationService } from './abstract-kafka-event-notification.service';
 import { RealmCreatedEvent } from '@domain/events/realm-created.event';
 import { config } from '@infrastructure/config/config';
+import { Realm } from '@domain/entities/realm';
 
 @injectable()
-export class RealmCreatedEventNotificationService extends AbstractKafkaEventNotificationService<RealmCreatedEvent> {
+export class RealmCreatedEventNotificationService extends AbstractKafkaEventNotificationService<
+  RealmCreatedEvent,
+  Realm
+> {
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.realm.created.v1',

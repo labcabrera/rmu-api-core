@@ -3,15 +3,16 @@ import { Race } from '@domain/entities/race';
 import { ConflictError, ValidationError } from '@domain/errors/errors';
 import { RaceRepository } from '@domain/ports/outbound/race-repository';
 import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { RaceEventService } from '@application/services/race-event.service';
 import { inject, injectable } from 'inversify';
+import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { RaceCreatedEvent } from '@domain/events/race-created.event';
 
 @injectable()
 export class CreateRaceUseCase {
   constructor(
     @inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RaceEventService') private readonly raceEventService: RaceEventService
+    @inject('EventNotificationPort') private readonly eventNotificationPort: EventNotificationPort
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
@@ -42,7 +43,7 @@ export class CreateRaceUseCase {
       createdAt: new Date(),
     };
     const savedRace = await this.raceRepository.save(race);
-    await this.raceEventService.created(savedRace, command.username);
+    await this.eventNotificationPort.notify(new RaceCreatedEvent(savedRace));
     return savedRace;
   }
 }

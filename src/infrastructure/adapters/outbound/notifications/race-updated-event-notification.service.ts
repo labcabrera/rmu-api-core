@@ -1,11 +1,15 @@
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { TopicConfiguration } from '@domain/ports/outbound/event-notification-service';
 import { AbstractKafkaEventNotificationService } from './abstract-kafka-event-notification.service';
 import { RaceUpdatedEvent } from '@domain/events/race-updated.event';
 import { config } from '@infrastructure/config/config';
+import { Race } from '@domain/entities/race';
 
 @injectable()
-export class RaceUpdatedEventNotificationService extends AbstractKafkaEventNotificationService<RaceUpdatedEvent> {
+export class RaceUpdatedEventNotificationService extends AbstractKafkaEventNotificationService<
+  RaceUpdatedEvent,
+  Race
+> {
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.race.updated.v1',

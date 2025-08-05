@@ -3,9 +3,13 @@ import { TopicConfiguration } from '@domain/ports/outbound/event-notification-se
 import { AbstractKafkaEventNotificationService } from './abstract-kafka-event-notification.service';
 import { RaceCreatedEvent } from '@domain/events/race-created.event';
 import { config } from '@infrastructure/config/config';
+import { Race } from '@domain/entities/race';
 
 @injectable()
-export class RaceCreatedEventNotificationService extends AbstractKafkaEventNotificationService<RaceCreatedEvent> {
+export class RaceCreatedEventNotificationService extends AbstractKafkaEventNotificationService<
+  RaceCreatedEvent,
+  Race
+> {
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.race.created.v1',

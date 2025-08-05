@@ -1,14 +1,16 @@
-import { UpdateRealmCommand } from '@application/commands/update-realm.command';
+import { inject, injectable } from 'inversify';
+
 import { Realm } from '@domain/entities/realm';
 import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { RealmEventService } from '@application/services/realm-event.service';
-import { inject, injectable } from 'inversify';
+import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { UpdateRealmCommand } from '@application/commands/update-realm.command';
+import { RealmUpdatedEvent } from '@domain/events/realm-updated.event';
 
 @injectable()
 export class UpdateRealmUseCase {
   constructor(
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RealmEventService') private readonly realmEventService: RealmEventService
+    @inject('EventNotificationPort') private readonly eventNotificationPort: EventNotificationPort
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {
@@ -21,7 +23,7 @@ export class UpdateRealmUseCase {
       if (originalRealm.description !== updatedRealm.description)
         changes.description = updatedRealm.description;
     }
-    await this.realmEventService.updated(updatedRealm, command.username, changes);
+    await this.eventNotificationPort.notify(new RealmUpdatedEvent(updatedRealm));
     return updatedRealm;
   }
 }

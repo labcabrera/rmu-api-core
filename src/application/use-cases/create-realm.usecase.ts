@@ -1,15 +1,17 @@
+import { inject, injectable } from 'inversify';
+
 import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { Realm } from '@domain/entities/realm';
 import { ConflictError, ValidationError } from '@domain/errors/errors';
 import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { RealmEventService } from '@application/services/realm-event.service';
-import { inject, injectable } from 'inversify';
+import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { RealmCreatedEvent } from '@domain/events/realm-created.event';
 
 @injectable()
 export class CreateRealmUseCase {
   constructor(
     @inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @inject('RealmEventService') private readonly realmEventService: RealmEventService
+    @inject('EventNotificationPort') private readonly eventNotificationPort: EventNotificationPort
   ) {}
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
@@ -25,7 +27,7 @@ export class CreateRealmUseCase {
       createdAt: new Date(),
     };
     const savedRealm = await this.realmRepository.save(realm);
-    await this.realmEventService.created(savedRealm, command.username);
+    await this.eventNotificationPort.notify(new RealmCreatedEvent(savedRealm));
     return savedRealm;
   }
 

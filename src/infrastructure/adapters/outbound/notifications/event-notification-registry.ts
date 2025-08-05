@@ -5,14 +5,11 @@ import { Logger } from '@domain/ports/logger';
 
 @injectable()
 export class EventNotificationRegistry {
-  private services: Map<string, EventNotificationService<any>> = new Map();
+  private services: Map<string, EventNotificationService<any, any>> = new Map();
 
   constructor(@inject('Logger') private readonly logger: Logger) {}
 
-  registerService<T extends DomainEvent>(
-    eventType: string,
-    service: EventNotificationService<T>
-  ): void {
+  registerService(eventType: string, service: EventNotificationService<any, any>): void {
     if (this.services.has(eventType)) {
       this.logger.warn(`Overriding existing service for event type: ${eventType}`);
     }
@@ -20,7 +17,7 @@ export class EventNotificationRegistry {
     this.logger.info(`Registered notification service for event type: ${eventType}`);
   }
 
-  async notify(event: DomainEvent): Promise<void> {
+  async notify(event: DomainEvent<any>): Promise<void> {
     const service = this.services.get(event.eventType);
 
     if (!service) {
@@ -36,7 +33,7 @@ export class EventNotificationRegistry {
     }
   }
 
-  getRegisteredServices(): Map<string, EventNotificationService<any>> {
+  getRegisteredServices(): Map<string, EventNotificationService<any, any>> {
     return new Map(this.services);
   }
 }

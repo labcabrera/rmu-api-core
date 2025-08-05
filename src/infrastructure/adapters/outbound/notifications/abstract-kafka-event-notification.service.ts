@@ -10,8 +10,8 @@ import { container } from '@shared/container';
 import { Logger } from '@domain/ports/logger';
 
 @injectable()
-export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent>
-  implements EventNotificationService<T>
+export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent<I>, I>
+  implements EventNotificationService<T, I>
 {
   protected readonly kafka: Kafka;
   protected readonly logger: Logger;
@@ -62,28 +62,24 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
   async notify(event: T): Promise<void> {
     try {
       await this.initialize();
-
       if (!this.producer) {
         throw new Error(`${this.getServiceName()} producer not initialized`);
       }
-
-      this.logger.debug(`Notifying event: ${event.eventType} for aggregate ${event.aggregateId}`);
-
       const topicConfig = this.getTopicConfiguration();
-
-      this.logger.debug(`Topic config: ${JSON.stringify(topicConfig)}`);
-
       const message = this.createMessage(event);
-      const partition = this.getPartition(event.aggregateId, topicConfig.partitionCount);
-
+      const data = event.data as any;
+      const id = data.id;
+      const partition = this.getPartition(id, topicConfig.partitionCount);
+      this.logger.debug(`Notifying event: ${event.eventType} for id ${id}`);
+      this.logger.debug(`Topic config: ${JSON.stringify(topicConfig)}`);
       const producerRecord: ProducerRecord = {
         topic: topicConfig.topicName,
         messages: [
           {
             partition: partition,
-            key: event.aggregateId,
+            key: id,
             value: JSON.stringify(message),
-            timestamp: event.occurredOn.getTime().toString(),
+            timestamp: event.eventTime.getTime().toString(),
             headers: {
               eventType: event.eventType,
               eventVersion: event.eventVersion.toString(),
@@ -104,7 +100,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         partition: result[0].partition,
         offset: result[0].offset,
         eventType: event.eventType,
-        aggregateId: event.aggregateId,
+        id: id,
       });
     } catch (error) {
       this.logger.error(`${this.getServiceName()} failed to send event:`, error);
@@ -124,18 +120,11 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
 
   protected createMessage(event: T): object {
     return {
-      id: `${event.aggregateId}-${event.occurredOn.getTime()}`,
-      timestamp: event.occurredOn.toISOString(),
       eventType: event.eventType,
-      aggregateId: event.aggregateId,
-      version: event.eventVersion,
-      data: event.toJSON(),
-      metadata: {
-        source: 'rmu-api-core',
-        service: this.getServiceName(),
-        correlationId: this.generateCorrelationId(),
-        causationId: event.aggregateId,
-      },
+      eventVersion: event.eventVersion,
+      eventTime: event.eventTime.toISOString(),
+      producer: this.getServiceName(),
+      data: event.data,
     };
   }
 

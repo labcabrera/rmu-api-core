@@ -16,10 +16,6 @@ import { SkillReadService } from '@application/services/skill-read.service';
 import { SkillCategoryService } from '@application/services/skill-category-read.service';
 import { CharacterSizeService } from '@application/services/character-size-read.service';
 import { ArmorTypeService } from '@application/services/armor-type-read.service';
-import { RealmEventService } from '@application/services/realm-event.service';
-import { RealmEventServiceImpl } from '@application/services/realm-event.service.impl';
-import { RaceEventService } from '@application/services/race-event.service';
-import { RaceEventServiceImpl } from '@application/services/race-event.service.impl';
 
 import { RaceController } from '@infrastructure/adapters/inbound/web/controllers/race.controller';
 import { RealmController } from '@infrastructure/adapters/inbound/web/controllers/realm.controller';
@@ -93,10 +89,6 @@ container
   .to(CharacterSizeService)
   .inSingletonScope();
 container.bind<ArmorTypeService>('ArmorTypeReadService').to(ArmorTypeService).inSingletonScope();
-
-// Bind Domain Event Services
-container.bind<RealmEventService>('RealmEventService').to(RealmEventServiceImpl).inSingletonScope();
-container.bind<RaceEventService>('RaceEventService').to(RaceEventServiceImpl).inSingletonScope();
 
 // Bind Event Notification Services with Registry Pattern
 container

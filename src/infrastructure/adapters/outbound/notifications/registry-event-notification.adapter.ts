@@ -1,4 +1,5 @@
 import { injectable, inject } from 'inversify';
+
 import { DomainEvent } from '@domain/events/domain-event';
 import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
 import { EventNotificationRegistry } from './event-notification-registry';
@@ -7,7 +8,7 @@ import { EventNotificationRegistry } from './event-notification-registry';
 export class RegistryEventNotificationAdapter implements EventNotificationPort {
   constructor(@inject('EventNotificationRegistry') private registry: EventNotificationRegistry) {}
 
-  async notify(event: DomainEvent): Promise<void> {
+  async notify(event: DomainEvent<any>): Promise<void> {
     await this.registry.notify(event);
   }
 }
