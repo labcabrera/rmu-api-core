@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RaceController } from '../../src/infrastructure/adapters/inbound/http/controllers/race.controller';
+import { RaceController } from '../../src/infrastructure/adapters/inbound/web/controllers/race.controller';
 import { 
   mockRaceService, 
   mockCreateRaceUseCase, 

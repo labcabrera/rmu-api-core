@@ -9,7 +9,14 @@ module.exports = {
   transform: {
     '^.+\\.ts$': ['ts-jest', {
       tsconfig: {
-        module: 'commonjs'
+        module: 'commonjs',
+        target: 'es2020',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+        experimentalDecorators: true,
+        emitDecoratorMetadata: true,
+        skipLibCheck: true,
+        types: ['jest', 'node']
       }
     }]
   },
@@ -28,5 +35,10 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testTimeout: 30000,
-  verbose: true
+  verbose: true,
+  globals: {
+    'ts-jest': {
+      isolatedModules: true
+    }
+  }
 };
