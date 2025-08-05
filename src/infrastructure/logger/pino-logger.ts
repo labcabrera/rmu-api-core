@@ -10,14 +10,17 @@ export class PinoLogger implements Logger {
   constructor() {
     this.logger = pino({
       level: config.logger.level,
-      transport: config.logger.mode === 'development' ? {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'SYS:standard',
-          ignore: 'pid,hostname',
-        },
-      }:undefined
+      transport:
+        config.logger.mode === 'development'
+          ? {
+              target: 'pino-pretty',
+              options: {
+                colorize: true,
+                translateTime: 'SYS:standard',
+                ignore: 'pid,hostname',
+              },
+            }
+          : undefined,
     });
   }
 

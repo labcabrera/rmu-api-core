@@ -9,7 +9,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-
   const logger: Logger = container.get('Logger');
 
   logger.error('Error handler caught:', {
