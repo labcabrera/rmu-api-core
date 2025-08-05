@@ -7,7 +7,6 @@ import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase'
 import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { UpdateRealmCommand } from '@application/commands/update-realm.command';
 import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
-import { getAuthenticatedUser } from '@infrastructure/adapters/inbound/web/security/auth.utils';
 
 @injectable()
 export class RealmController {
@@ -44,7 +43,7 @@ export class RealmController {
     try {
       const command: CreateRealmCommand = {
         ...req.body,
-        username: getAuthenticatedUser(req)?.username!,
+        username: req.user!.username!,
       };
       const newRealm = await this.createRealmUseCase.execute(command);
       res.status(201).json(newRealm);
@@ -58,7 +57,7 @@ export class RealmController {
       const command: UpdateRealmCommand = {
         ...req.body,
         id: req.params.id,
-        username: getAuthenticatedUser(req)?.username!,
+        username: req.user!.username!,
       };
       const updated = await this.updateRealmUseCase.execute(command);
       res.json(updated);
@@ -71,7 +70,7 @@ export class RealmController {
     try {
       const command: DeleteRealmCommand = {
         id: req.params.id,
-        username: getAuthenticatedUser(req)?.username!,
+        username: req.user!.username!,
       };
       await this.deleteRealmUseCase.execute(command);
       res.status(204).send();
