@@ -35,7 +35,6 @@ import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase'
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
 import { AuthService } from '@infrastructure/adapters/inbound/http/security/auth.service';
 import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
-import { Configuration } from './configuration';
 import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
 import { EventNotificationRegistry } from '@infrastructure/adapters/outbound/notifications/event-notification-registry';
 import { RegistryEventNotificationAdapter } from '@infrastructure/adapters/outbound/notifications/registry-event-notification.adapter';
@@ -51,10 +50,6 @@ import { RealmCreatedEventNotificationService } from '@infrastructure/adapters/o
 import { RaceDeletedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-deleted-event-notification.service';
 
 const container = new Container();
-const configuration = new Configuration();
-
-// Bind Configuration
-container.bind<Configuration>('Configuration').toConstantValue(configuration);
 
 // Bind Repositories
 container.bind<RaceRepository>('RaceRepository').to(MongoRaceRepository).inSingletonScope();

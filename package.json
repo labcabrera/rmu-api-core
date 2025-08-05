@@ -33,7 +33,8 @@
     "mongoose": "^8.17.0",
     "reflect-metadata": "^0.2.2",
     "swagger-ui-express": "^5.0.1",
-    "yaml": "^2.7.1"
+    "yaml": "^2.7.1",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

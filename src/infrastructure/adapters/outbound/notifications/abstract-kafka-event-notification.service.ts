@@ -1,11 +1,11 @@
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
 import { DomainEvent } from '@domain/events/domain-event';
 import {
   EventNotificationService,
   TopicConfiguration,
 } from '@domain/ports/outbound/event-notification-service';
-import { Configuration } from '@shared/configuration';
+import { config } from '@infrastructure/config/config';
 
 @injectable()
 export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent>
@@ -15,10 +15,10 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
   protected producer: Producer | null = null;
   protected isInitialized = false;
 
-  constructor(@inject('Configuration') protected config: Configuration) {
+  constructor() {
     this.kafka = new Kafka({
       clientId: this.getClientId(),
-      brokers: this.getBrokers(),
+      brokers: config.kafka.brokers,
       retry: {
         initialRetryTime: 100,
         retries: 3,
@@ -31,11 +31,6 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
 
   protected getClientId(): string {
     return `rmu-api-core-${this.getServiceName().toLowerCase().replace(/\s+/g, '-')}`;
-  }
-
-  protected getBrokers(): string[] {
-    const brokers = this.config.kafkaBrokers;
-    return brokers.split(',').map(broker => broker.trim());
   }
 
   protected async initialize(): Promise<void> {

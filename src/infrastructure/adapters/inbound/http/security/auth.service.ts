@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
 import { JWTPayload, User } from '@domain/entities/auth';
-import { Configuration } from '@shared/configuration';
+import { config } from '@infrastructure/config/config';
 
 @injectable()
 export class AuthService {
   private jwksClient: jwksClient.JwksClient;
 
-  constructor(@inject('Configuration') config: Configuration) {
+  constructor() {
     this.jwksClient = jwksClient({
-      jwksUri: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
+      jwksUri: `${config.keycloak.baseUrl}/realms/${config.keycloak.realm}/protocol/openid-connect/certs`,
       requestHeaders: {},
       timeout: 30000,
       cache: true,
