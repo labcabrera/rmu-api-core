@@ -6,8 +6,6 @@ import { config } from '@infrastructure/config/config';
 
 @injectable()
 export class RealmUpdatedEventNotificationService extends AbstractKafkaEventNotificationService<RealmUpdatedEvent> {
-
-
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.realm.updated.v1',

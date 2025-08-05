@@ -48,8 +48,13 @@ import { RaceUpdatedEventNotificationService } from '@infrastructure/adapters/ou
 import { RealmUpdatedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/realm-updated-event-notification.service';
 import { RealmCreatedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/realm-created-event-notification.service';
 import { RaceDeletedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-deleted-event-notification.service';
+import { Logger } from '@domain/ports/logger';
+import { PinoLogger } from '@infrastructure/logger/pino-logger';
+import { th } from 'zod/v4/locales/index.cjs';
 
 const container = new Container();
+
+container.bind<Logger>('Logger').to(PinoLogger).inSingletonScope();
 
 // Bind Repositories
 container.bind<RaceRepository>('RaceRepository').to(MongoRaceRepository).inSingletonScope();
@@ -126,7 +131,7 @@ container
 container
   .bind<EventNotificationRegistry>('EventNotificationRegistry')
   .toDynamicValue(() => {
-    const registry = new EventNotificationRegistry();
+    const registry = new EventNotificationRegistry(container.get<Logger>('Logger'));
     registry.registerService(
       'RealmCreatedEvent',
       container.get<RealmCreatedEventNotificationService>('RealmCreatedEventNotificationService')
@@ -151,7 +156,6 @@ container
       'RaceDeletedEvent',
       container.get<RaceDeletedEventNotificationService>('RaceDeletedEventNotificationService')
     );
-    console.log('Event Notification Registry configured with all services');
     return registry;
   })
   .inSingletonScope();

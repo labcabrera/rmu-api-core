@@ -16,6 +16,10 @@ import { armorTypeRouter } from '@infrastructure/adapters/inbound/http/routes/ar
 import { healthRouter } from '@infrastructure/adapters/inbound/http/routes/health.routes';
 import { errorHandler } from '@infrastructure/adapters/inbound/http/error-handler';
 import { config } from '@infrastructure/config/config';
+import { container } from '@shared/container';
+import { Logger } from '@domain/ports/logger';
+
+const logger: Logger = container.get('Logger');
 
 const app = express();
 
@@ -28,8 +32,8 @@ app.use(cors());
 
 mongoose
   .connect(config.mongoUri)
-  .then(() => console.log(`Connected to ${config.mongoUri}`))
-  .catch(err => console.log(`Error connecting to ${config.mongoUri}`, err));
+  .then(() => logger.info(`Connected to ${config.mongoUri}`))
+  .catch(err => logger.error(`Error connecting to ${config.mongoUri}`, err));
 
 app.use('/v1/races', raceRouter);
 app.use('/v1/realms', realmRouter);
@@ -48,7 +52,7 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 app.listen(config.port, () => {
-  console.log(`API started on ${config.port}`);
+  logger.info(`API started on ${config.port}`);
 });
 
 export default app;

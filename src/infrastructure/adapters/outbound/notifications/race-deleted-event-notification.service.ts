@@ -5,7 +5,6 @@ import { RaceDeletedEvent } from '@domain/events/race-deleted.event';
 import { config } from '@infrastructure/config/config';
 @injectable()
 export class RaceDeletedEventNotificationService extends AbstractKafkaEventNotificationService<RaceDeletedEvent> {
-  
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.race.deleted.v1',

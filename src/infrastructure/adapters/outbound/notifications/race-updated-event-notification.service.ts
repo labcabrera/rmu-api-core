@@ -6,7 +6,6 @@ import { config } from '@infrastructure/config/config';
 
 @injectable()
 export class RaceUpdatedEventNotificationService extends AbstractKafkaEventNotificationService<RaceUpdatedEvent> {
-
   getTopicConfiguration(): TopicConfiguration {
     return {
       topicName: 'internal.rmu-core.race.updated.v1',
