@@ -1,17 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { JWTPayload, User } from '@domain/entities/auth';
-import { Configuration } from '@shared/configuration';
+import { config } from '@infrastructure/config/config';
+import { Logger } from '@domain/ports/logger';
 
 @injectable()
 export class AuthService {
   private jwksClient: jwksClient.JwksClient;
 
-  constructor(@inject('Configuration') config: Configuration) {
+  constructor(@inject('Logger') private logger: Logger) {
     this.jwksClient = jwksClient({
-      jwksUri: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
+      jwksUri: `${config.keycloak.baseUrl}/realms/${config.keycloak.realm}/protocol/openid-connect/certs`,
       requestHeaders: {},
       timeout: 30000,
       cache: true,
@@ -84,7 +85,7 @@ export class AuthService {
 
         next();
       } catch (error) {
-        console.error('JWT verification error:', error);
+        this.logger.error('JWT verification error:', error);
 
         if (error instanceof jwt.TokenExpiredError) {
           return res.status(401).json({

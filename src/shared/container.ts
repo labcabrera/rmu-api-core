@@ -7,6 +7,8 @@ import { SkillRepository } from '@domain/ports/outbound/skill-repository';
 import { SkillCategoryRepository } from '@domain/ports/outbound/skill-category-repository';
 import { CharacterSizeRepository } from '@domain/ports/outbound/character-size-repository';
 import { ArmorTypeRepository } from '@domain/ports/outbound/armor-type-repository';
+import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { Logger } from '@domain/ports/logger';
 
 import { RaceService } from '@application/services/race-read.service';
 import { RealmReadService } from '@application/services/realm-read.service';
@@ -14,14 +16,17 @@ import { SkillReadService } from '@application/services/skill-read.service';
 import { SkillCategoryService } from '@application/services/skill-category-read.service';
 import { CharacterSizeService } from '@application/services/character-size-read.service';
 import { ArmorTypeService } from '@application/services/armor-type-read.service';
+import { RealmEventService } from '@application/services/realm-event.service';
+import { RealmEventServiceImpl } from '@application/services/realm-event.service.impl';
+import { RaceEventService } from '@application/services/race-event.service';
+import { RaceEventServiceImpl } from '@application/services/race-event.service.impl';
 
-import { RaceController } from '@infrastructure/adapters/inbound/http/controllers/race.controller';
-import { RealmController } from '@infrastructure/adapters/inbound/http/controllers/realm.controller';
-import { SkillController } from '@infrastructure/adapters/inbound/http/controllers/skill-controller';
-import { SkillCategoryController } from '@infrastructure/adapters/inbound/http/controllers/skill-category.controller';
-import { CharacterSizeController } from '@infrastructure/adapters/inbound/http/controllers/character-size.controller';
-import { ArmorTypeController } from '@infrastructure/adapters/inbound/http/controllers/armor-type.controller';
-
+import { RaceController } from '@infrastructure/adapters/inbound/web/controllers/race.controller';
+import { RealmController } from '@infrastructure/adapters/inbound/web/controllers/realm.controller';
+import { SkillController } from '@infrastructure/adapters/inbound/web/controllers/skill-controller';
+import { SkillCategoryController } from '@infrastructure/adapters/inbound/web/controllers/skill-category.controller';
+import { CharacterSizeController } from '@infrastructure/adapters/inbound/web/controllers/character-size.controller';
+import { ArmorTypeController } from '@infrastructure/adapters/inbound/web/controllers/armor-type.controller';
 import { MongoRaceRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-race.repository';
 import { MongoRealmRepository } from '@infrastructure/adapters/outbound/persistence/repositories/mongo-realm.repository';
 import { InMemorySkillRepository } from '@infrastructure/adapters/outbound/persistence/repositories/in-memory-skill.repository';
@@ -33,28 +38,21 @@ import { DeleteRaceUseCase } from '@application/use-cases/delete-race.usecase';
 import { CreateRealmUseCase } from '@application/use-cases/create-realm.usecase';
 import { UpdateRealmUseCase } from '@application/use-cases/update-realm.usecase';
 import { DeleteRealmUseCase } from '@application/use-cases/delete-realm.usecase';
-import { AuthService } from '@infrastructure/adapters/inbound/http/security/auth.service';
-import { HealthController } from '@infrastructure/adapters/inbound/http/controllers/health.controller';
-import { Configuration } from './configuration';
-import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { AuthService } from '@infrastructure/adapters/inbound/web/security/auth.service';
+import { HealthController } from '@infrastructure/adapters/inbound/web/controllers/health.controller';
 import { EventNotificationRegistry } from '@infrastructure/adapters/outbound/notifications/event-notification-registry';
 import { RegistryEventNotificationAdapter } from '@infrastructure/adapters/outbound/notifications/registry-event-notification.adapter';
 import { RealmDeletedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/realm-deleted-event-notification.service';
 import { RaceCreatedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-created-event-notification.service';
-import { RealmEventService } from '@application/services/realm-event.service';
-import { RealmEventServiceImpl } from '@application/services/realm-event.service.impl';
-import { RaceEventService } from '@application/services/race-event.service';
-import { RaceEventServiceImpl } from '@application/services/race-event.service.impl';
 import { RaceUpdatedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-updated-event-notification.service';
 import { RealmUpdatedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/realm-updated-event-notification.service';
 import { RealmCreatedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/realm-created-event-notification.service';
 import { RaceDeletedEventNotificationService } from '@infrastructure/adapters/outbound/notifications/race-deleted-event-notification.service';
+import { PinoLogger } from '@infrastructure/logger/pino-logger';
 
 const container = new Container();
-const configuration = new Configuration();
 
-// Bind Configuration
-container.bind<Configuration>('Configuration').toConstantValue(configuration);
+container.bind<Logger>('Logger').to(PinoLogger).inSingletonScope();
 
 // Bind Repositories
 container.bind<RaceRepository>('RaceRepository').to(MongoRaceRepository).inSingletonScope();
@@ -131,7 +129,7 @@ container
 container
   .bind<EventNotificationRegistry>('EventNotificationRegistry')
   .toDynamicValue(() => {
-    const registry = new EventNotificationRegistry();
+    const registry = new EventNotificationRegistry(container.get<Logger>('Logger'));
     registry.registerService(
       'RealmCreatedEvent',
       container.get<RealmCreatedEventNotificationService>('RealmCreatedEventNotificationService')
@@ -156,7 +154,6 @@ container
       'RaceDeletedEvent',
       container.get<RaceDeletedEventNotificationService>('RaceDeletedEventNotificationService')
     );
-    console.log('Event Notification Registry configured with all services');
     return registry;
   })
   .inSingletonScope();

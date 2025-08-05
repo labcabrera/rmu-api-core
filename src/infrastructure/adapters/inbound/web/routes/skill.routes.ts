@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
-import { SkillController } from '@infrastructure/adapters/inbound/http/controllers/skill-controller';
+import { SkillController } from '@infrastructure/adapters/inbound/web/controllers/skill-controller';
 
 const router = Router();
 const skillController = container.get<SkillController>('SkillController');

@@ -9,10 +9,8 @@ export function toMongoQuery(rsql: string): MongoQuery {
   }
   try {
     const node: any = parse(rsql);
-    console.log(`Parsed RSQL: ${JSON.stringify(node, null, 2)}`);
     return processNode(node);
   } catch (error) {
-    console.error(`Error parsing RSQL: ${rsql}`, error);
     throw new InvalidSearchExpression(
       `Invalid RSQL query: ${rsql}. ${error instanceof Error ? error.message : 'Unknown error'}`
     );

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { container } from '@shared/container';
-import { HealthController } from '../controllers/health.controller';
+import { HealthController } from '@infrastructure/adapters/inbound/web/controllers/health.controller';
 
 const router = Router();
 const healthController = container.get<HealthController>('HealthController');

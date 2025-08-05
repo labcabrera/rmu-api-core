@@ -1,4 +1,6 @@
 import { DomainError } from '@domain/errors/errors';
+import { Logger } from '@domain/ports/logger';
+import { container } from '@shared/container';
 import { Request, Response, NextFunction } from 'express';
 
 export const errorHandler = (
@@ -7,7 +9,10 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.error('Error handler caught:', {
+
+  const logger: Logger = container.get('Logger');
+
+  logger.error('Error handler caught:', {
     name: error.name,
     message: error.message,
     url: req.url,
@@ -15,12 +20,12 @@ export const errorHandler = (
   });
 
   if (res.headersSent) {
-    console.error('Headers already sent, delegating to default Express error handler');
+    logger.error('Headers already sent, delegating to default Express error handler');
     return next(error);
   }
 
   if (error instanceof DomainError) {
-    console.log(`Domain error: ${error.constructor.name} - Status: ${error.statusCode}`);
+    logger.warn(`Domain error: ${error.constructor.name} - Status: ${error.statusCode}`);
     res.status(error.statusCode).json({
       message: error.message,
       timestamp: new Date().toISOString(),
@@ -28,7 +33,7 @@ export const errorHandler = (
     return;
   }
 
-  console.error('Unhandled error:', error);
+  logger.error('Unhandled error:', error);
   res.status(500).json({
     message: 'Internal Server Error',
     timestamp: new Date().toISOString(),

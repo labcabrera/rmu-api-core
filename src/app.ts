@@ -7,19 +7,21 @@ import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 import path from 'path';
-import { raceRouter } from '@infrastructure/adapters/inbound/http/routes/race.routes';
-import { realmRouter } from '@infrastructure/adapters/inbound/http/routes/realm.routes';
-import { skillRouter } from '@infrastructure/adapters/inbound/http/routes/skill.routes';
-import { skillCategoryRouter } from '@infrastructure/adapters/inbound/http/routes/skill-category.routes';
-import { characterSizeRouter } from '@infrastructure/adapters/inbound/http/routes/character-size.routes';
-import { armorTypeRouter } from '@infrastructure/adapters/inbound/http/routes/armor-type.routes';
-import { healthRouter } from '@infrastructure/adapters/inbound/http/routes/health.routes';
-import { errorHandler } from '@infrastructure/adapters/inbound/http/error-handler';
-import { Configuration } from '@shared/configuration';
+import { raceRouter } from '@infrastructure/adapters/inbound/web/routes/race.routes';
+import { realmRouter } from '@infrastructure/adapters/inbound/web/routes/realm.routes';
+import { skillRouter } from '@infrastructure/adapters/inbound/web/routes/skill.routes';
+import { skillCategoryRouter } from '@infrastructure/adapters/inbound/web/routes/skill-category.routes';
+import { characterSizeRouter } from '@infrastructure/adapters/inbound/web/routes/character-size.routes';
+import { armorTypeRouter } from '@infrastructure/adapters/inbound/web/routes/armor-type.routes';
+import { healthRouter } from '@infrastructure/adapters/inbound/web/routes/health.routes';
+import { errorHandler } from '@infrastructure/adapters/inbound/web/error-handler';
+import { config } from '@infrastructure/config/config';
 import { container } from '@shared/container';
+import { Logger } from '@domain/ports/logger';
+
+const logger: Logger = container.get('Logger');
 
 const app = express();
-const configuration = container.get<Configuration>('Configuration');
 
 const openapiFilePath = path.join(__dirname, '../openapi.yaml');
 const openapiFile = fs.readFileSync(openapiFilePath, 'utf8');
@@ -29,11 +31,9 @@ app.use(express.json());
 app.use(cors());
 
 mongoose
-  .connect(configuration.mongoUri)
-  .then(() => console.log('Connected to ' + configuration.maskStdUrl(configuration.mongoUri)))
-  .catch(err =>
-    console.log('Error connecting to ' + configuration.maskStdUrl(configuration.mongoUri), err)
-  );
+  .connect(config.mongoUri)
+  .then(() => logger.info(`Connected to ${config.mongoUri}`))
+  .catch(err => logger.error(`Error connecting to ${config.mongoUri}`, err));
 
 app.use('/v1/races', raceRouter);
 app.use('/v1/realms', realmRouter);
@@ -51,8 +51,8 @@ app.get('/', (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(configuration.port, () => {
-  console.log(`API started on ${configuration.port}`);
+app.listen(config.port, () => {
+  logger.info(`API started on ${config.port}`);
 });
 
 export default app;

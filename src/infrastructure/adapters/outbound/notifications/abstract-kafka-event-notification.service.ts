@@ -1,24 +1,28 @@
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
 import { DomainEvent } from '@domain/events/domain-event';
 import {
   EventNotificationService,
   TopicConfiguration,
 } from '@domain/ports/outbound/event-notification-service';
-import { Configuration } from '@shared/configuration';
+import { config } from '@infrastructure/config/config';
+import { container } from '@shared/container';
+import { Logger } from '@domain/ports/logger';
 
 @injectable()
 export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent>
   implements EventNotificationService<T>
 {
   protected readonly kafka: Kafka;
+  protected readonly logger: Logger;
   protected producer: Producer | null = null;
   protected isInitialized = false;
 
-  constructor(@inject('Configuration') protected config: Configuration) {
+  constructor() {
+    this.logger = container.get('Logger');
     this.kafka = new Kafka({
       clientId: this.getClientId(),
-      brokers: this.getBrokers(),
+      brokers: config.kafka.brokers,
       retry: {
         initialRetryTime: 100,
         retries: 3,
@@ -33,18 +37,13 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
     return `rmu-api-core-${this.getServiceName().toLowerCase().replace(/\s+/g, '-')}`;
   }
 
-  protected getBrokers(): string[] {
-    const brokers = this.config.kafkaBrokers;
-    return brokers.split(',').map(broker => broker.trim());
-  }
-
   protected async initialize(): Promise<void> {
     if (this.isInitialized) {
       return;
     }
 
     try {
-      console.log(`Initializing ${this.getServiceName()} producer...`);
+      this.logger.debug(`Initializing ${this.getServiceName()} producer...`);
       this.producer = this.kafka.producer({
         maxInFlightRequests: 1,
         idempotent: true,
@@ -52,10 +51,10 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
       });
 
       await this.producer.connect();
-      console.log(`${this.getServiceName()} producer connected successfully`);
+      this.logger.info(`${this.getServiceName()} producer connected successfully`);
       this.isInitialized = true;
     } catch (error) {
-      console.error(`Failed to initialize ${this.getServiceName()} producer:`, error);
+      this.logger.error(`Failed to initialize ${this.getServiceName()} producer:`, error);
       throw error;
     }
   }
@@ -68,11 +67,11 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         throw new Error(`${this.getServiceName()} producer not initialized`);
       }
 
-      console.log(`Notifying event: ${event.eventType} for aggregate ${event.aggregateId}`);
+      this.logger.debug(`Notifying event: ${event.eventType} for aggregate ${event.aggregateId}`);
 
       const topicConfig = this.getTopicConfiguration();
 
-      console.log(`Topic config: ${JSON.stringify(topicConfig)}`);
+      this.logger.debug(`Topic config: ${JSON.stringify(topicConfig)}`);
 
       const message = this.createMessage(event);
       const partition = this.getPartition(event.aggregateId, topicConfig.partitionCount);
@@ -95,10 +94,12 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         ],
       };
 
-      console.log(`${this.getServiceName()} sending event to topic "${topicConfig.topicName}"`);
+      this.logger.debug(
+        `${this.getServiceName()} sending event to topic "${topicConfig.topicName}"`
+      );
       const result = await this.producer.send(producerRecord);
 
-      console.log(`${this.getServiceName()} event sent successfully:`, {
+      this.logger.debug(`${this.getServiceName()} event sent successfully:`, {
         topic: topicConfig.topicName,
         partition: result[0].partition,
         offset: result[0].offset,
@@ -106,7 +107,7 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
         aggregateId: event.aggregateId,
       });
     } catch (error) {
-      console.error(`${this.getServiceName()} failed to send event:`, error);
+      this.logger.error(`${this.getServiceName()} failed to send event:`, error);
       throw error;
     }
   }
@@ -145,13 +146,13 @@ export abstract class AbstractKafkaEventNotificationService<T extends DomainEven
   async disconnect(): Promise<void> {
     if (this.producer) {
       try {
-        console.log(`Disconnecting ${this.getServiceName()} producer...`);
+        this.logger.debug(`Disconnecting ${this.getServiceName()} producer...`);
         await this.producer.disconnect();
-        console.log(`${this.getServiceName()} producer disconnected`);
+        this.logger.info(`${this.getServiceName()} producer disconnected`);
         this.isInitialized = false;
         this.producer = null;
       } catch (error) {
-        console.error(`Error disconnecting ${this.getServiceName()} producer:`, error);
+        this.logger.error(`Error disconnecting ${this.getServiceName()} producer:`, error);
         throw error;
       }
     }
