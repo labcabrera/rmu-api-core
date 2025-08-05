@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { DomainEvent } from '@domain/events/domain-event';
-import { EventNotificationService } from '@domain/ports/outbound/event-notification-service';
-import { Logger } from '@domain/ports/logger';
+import { EventNotificationService } from '@application/ports/outbound/event-notification-service';
+import { Logger } from '@application/ports/logger';
 
 @injectable()
 export class EventNotificationRegistry {

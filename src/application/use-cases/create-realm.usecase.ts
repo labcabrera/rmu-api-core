@@ -3,8 +3,8 @@ import { inject, injectable } from 'inversify';
 import { CreateRealmCommand } from '@application/commands/create-realm.command';
 import { Realm } from '@domain/entities/realm';
 import { ConflictError, ValidationError } from '@domain/errors/errors';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
 import { RealmCreatedEvent } from '@domain/events/realm-created.event';
 
 @injectable()

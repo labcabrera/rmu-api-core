@@ -17,7 +17,7 @@ import { healthRouter } from '@infrastructure/adapters/inbound/web/routes/health
 import { errorHandler } from '@infrastructure/adapters/inbound/web/error-handler';
 import { config } from '@infrastructure/config/config';
 import { container } from '@shared/container';
-import { Logger } from '@domain/ports/logger';
+import { Logger } from '@application/ports/logger';
 
 const logger: Logger = container.get('Logger');
 

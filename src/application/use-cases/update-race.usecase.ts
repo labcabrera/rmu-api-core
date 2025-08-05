@@ -2,9 +2,9 @@ import { inject, injectable } from 'inversify';
 
 import { Race } from '@domain/entities/race';
 import { RaceUpdatedEvent } from '@domain/events/race-updated.event';
-import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
-import { RaceRepository } from '@domain/ports/outbound/race-repository';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
+import { RaceRepository } from '@application/ports/outbound/race-repository';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
 
 import { UpdateRaceCommand } from '@application/commands/update-race.command';
 

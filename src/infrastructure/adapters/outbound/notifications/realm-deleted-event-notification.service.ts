@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { TopicConfiguration } from '@domain/ports/outbound/event-notification-service';
+import { TopicConfiguration } from '@application/ports/outbound/event-notification-service';
 import { AbstractKafkaEventNotificationService } from './abstract-kafka-event-notification.service';
 import { RealmDeletedEvent } from '@domain/events/realm-deleted.event';
 import { config } from '@infrastructure/config/config';

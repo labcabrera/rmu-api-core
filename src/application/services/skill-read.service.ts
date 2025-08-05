@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { SkillRepository } from '@domain/ports/outbound/skill-repository';
+import { SkillRepository } from '@application/ports/outbound/skill-repository';
 import { Skill } from '@domain/entities/skill';
 import { NotFoundError } from '@domain/errors/errors';
 import { Page } from '@domain/entities/page';

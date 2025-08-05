@@ -1,4 +1,4 @@
-import { Logger } from '@domain/ports/logger';
+import { Logger } from '@application/ports/logger';
 import { injectable } from 'inversify';
 import pino from 'pino';
 import { config } from '@infrastructure/config/config';

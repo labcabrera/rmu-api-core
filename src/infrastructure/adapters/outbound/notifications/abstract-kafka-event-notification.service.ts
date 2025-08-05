@@ -4,10 +4,10 @@ import { DomainEvent } from '@domain/events/domain-event';
 import {
   EventNotificationService,
   TopicConfiguration,
-} from '@domain/ports/outbound/event-notification-service';
+} from '@application/ports/outbound/event-notification-service';
 import { config } from '@infrastructure/config/config';
 import { container } from '@shared/container';
-import { Logger } from '@domain/ports/logger';
+import { Logger } from '@application/ports/logger';
 
 @injectable()
 export abstract class AbstractKafkaEventNotificationService<T extends DomainEvent<I>, I>

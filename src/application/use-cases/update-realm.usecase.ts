@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
 
 import { Realm } from '@domain/entities/realm';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
-import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
 import { UpdateRealmCommand } from '@application/commands/update-realm.command';
 import { RealmUpdatedEvent } from '@domain/events/realm-updated.event';
 

@@ -3,9 +3,9 @@ import { inject, injectable } from 'inversify';
 import { DeleteRaceCommand } from '@application/commands/delete-race.command';
 import { NotFoundError } from '@domain/errors/errors';
 import { RaceDeletedEvent } from '@domain/events/race-deleted.event';
-import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
-import { RaceRepository } from '@domain/ports/outbound/race-repository';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
+import { RaceRepository } from '@application/ports/outbound/race-repository';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
 
 @injectable()
 export class DeleteRaceUseCase {

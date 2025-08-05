@@ -1,8 +1,8 @@
 import { DeleteRealmCommand } from '@application/commands/delete-realm.command';
-import { RealmRepository } from '@domain/ports/outbound/realm-repository';
+import { RealmRepository } from '@application/ports/outbound/realm-repository';
 import { NotFoundError } from '@domain/errors/errors';
 import { inject, injectable } from 'inversify';
-import { EventNotificationPort } from '@domain/ports/outbound/event-notification.port';
+import { EventNotificationPort } from '@application/ports/outbound/event-notification.port';
 import { RealmDeletedEvent } from '@domain/events/realm-deleted.event';
 
 @injectable()
