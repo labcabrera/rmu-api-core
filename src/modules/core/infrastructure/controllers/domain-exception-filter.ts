@@ -13,9 +13,9 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const status = exception.statusCode || HttpStatus.BAD_REQUEST;
 
     response.status(status).json({
-      statusCode: status,
       error: exception.name,
       message: exception.message,
+      timestamp: new Date().toISOString(),
     });
   }
 }

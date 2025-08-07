@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Realm } from '../../domain/entities/realm';
-import { UpdateRealmCommand } from '../commands/update-realm.command';
-import * as realmNotificationPort from '../ports/outbound/realm-event-producer';
-import * as realmRepository from '../ports/outbound/realm-repository';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UpdateRealmUseCase {
+import { Realm } from '../../../domain/entities/realm';
+import { UpdateRealmCommand } from '../update-realm.command';
+import * as realmNotificationPort from '../../ports/outbound/realm-event-producer';
+import * as realmRepository from '../../ports/outbound/realm-repository';
+
+@CommandHandler(UpdateRealmCommand)
+export class UpdateRealmCommandHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
   constructor(
-    @Inject('RaceRepository') private readonly realmRepository: realmRepository.RealmRepository,
+    @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
     @Inject('RealmEventProducer') private readonly realmNotificationPort: realmNotificationPort.RealmEventProducer,
   ) {}
 

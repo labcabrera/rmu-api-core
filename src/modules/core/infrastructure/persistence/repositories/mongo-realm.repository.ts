@@ -4,7 +4,7 @@ import { Page } from 'src/modules/core/domain/entities/page';
 import { Realm } from 'src/modules/core/domain/entities/realm';
 import { RealmModel, RealmDocument } from '../models/realm-model';
 import { toMongoQuery } from './rsql-adapter';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
+import { NotFoundError, NotModifiedError } from 'src/modules/core/domain/errors/errors';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 
@@ -35,7 +35,22 @@ export class MongoRealmRepository implements RealmRepository {
   }
 
   async update(id: string, request: Partial<Realm>): Promise<Realm> {
-    const updatedRealm = await this.realmModel.findByIdAndUpdate(id, { $set: request }, { new: true });
+    const current = await this.realmModel.findById(id);
+    if (!current) {
+      throw new NotFoundError('Realm', id);
+    }
+    const update = {};
+    if (request.name && request.name !== current.name) {
+      update['name'] = request.name;
+    }
+    if (request.description && request.description !== current.description) {
+      update['description'] = request.description;
+    }
+    if (Object.keys(update).length === 0) {
+      throw new NotModifiedError('No fields to update');
+    }
+    update['updatedAt'] = new Date();
+    const updatedRealm = await this.realmModel.findByIdAndUpdate(id, { $set: update }, { new: true });
     if (!updatedRealm) {
       throw new NotFoundError('Realm', id);
     }

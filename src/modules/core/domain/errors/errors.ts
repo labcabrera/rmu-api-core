@@ -25,6 +25,16 @@ export class ConflictError extends DomainError {
   }
 }
 
+export class NotModifiedError extends DomainError {
+  public readonly status: number = 304;
+
+  constructor(message: string) {
+    super(message, 304);
+    this.name = 'NotModifiedError';
+    Object.setPrototypeOf(this, NotModifiedError.prototype);
+  }
+}
+
 export class ValidationError extends DomainError {
   public readonly status: number = 400;
 

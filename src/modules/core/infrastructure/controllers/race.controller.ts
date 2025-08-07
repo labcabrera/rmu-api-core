@@ -6,9 +6,9 @@ import { Controller, Delete, Get, Inject, Param, Patch, Post, Query, Request, Us
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from './dto/paged-rsql-query';
-import { DeleteRaceUseCase } from '../../application/use-cases/delete-race.usecase';
-import { UpdateRaceUseCase } from '../../application/use-cases/update-race.usecase';
-import { CreateRaceUseCase } from '../../application/use-cases/create-race.usecase';
+import { DeleteRaceUseCase } from '../../application/commands/handlers/delete-race.usecase';
+import { UpdateRaceUseCase } from '../../application/commands/handlers/update-race.usecase';
+import { CreateRaceUseCase } from '../../application/commands/handlers/create-race.usecase';
 import * as raceRepository from '../../application/ports/outbound/race-repository';
 import { UpdateRaceCommand } from '../../application/commands/update-race.command';
 import { CreateRaceCommand } from '../../application/commands/create-race.command';
@@ -60,11 +60,11 @@ export class RaceController {
 
   @Delete(':id')
   delete(@Param('id') id: string, @Request() req) {
-    const userId = req.user!.id;
-    const command = {
-      id: id,
-      username: userId,
-    };
-    return this.deleteRaceUseCase.execute(command);
+    // const userId = req.user!.id;
+    // const command = {
+    //   id: id,
+    //   username: userId,
+    // };
+    //return this.deleteRaceUseCase.execute(command);
   }
 }

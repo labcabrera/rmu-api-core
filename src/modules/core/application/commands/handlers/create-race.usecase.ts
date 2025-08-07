@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import * as raceRepository from '../ports/outbound/race-repository';
-import * as realmRepository from '../ports/outbound/realm-repository';
-import * as realmNotificationPortCopy from '../ports/outbound/race-event-producer';
-import { Race } from '../../domain/entities/race';
-import { ValidationError, ConflictError } from '../../domain/errors/errors';
-import { CreateRaceCommand } from '../commands/create-race.command';
+import * as raceRepository from '../../ports/outbound/race-repository';
+import * as realmRepository from '../../ports/outbound/realm-repository';
+import * as realmNotificationPortCopy from '../../ports/outbound/race-event-producer';
+import { Race } from '../../../domain/entities/race';
+import { ValidationError, ConflictError } from '../../../domain/errors/errors';
+import { CreateRaceCommand } from '../create-race.command';
 
 @Injectable()
 export class CreateRaceUseCase {
@@ -39,7 +39,7 @@ export class CreateRaceUseCase {
       baseHits: command.baseHits,
       bonusDevPoints: command.bonusDevPoints,
       description: command.description,
-      owner: command.username,
+      owner: command.userId,
       createdAt: new Date(),
     };
     const savedRace = await this.raceRepository.save(race);
