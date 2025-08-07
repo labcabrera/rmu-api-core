@@ -29,7 +29,7 @@ export class MongoRealmRepository implements RealmRepository {
   }
 
   async save(request: Partial<Realm>): Promise<Realm> {
-    const model = new this.realmModel(request);
+    const model = new this.realmModel({ ...request, _id: request.id });
     await model.save();
     return this.mapToEntity(model);
   }
@@ -42,11 +42,9 @@ export class MongoRealmRepository implements RealmRepository {
     return this.mapToEntity(updatedRealm);
   }
 
-  async deleteById(id: string): Promise<void> {
+  async deleteById(id: string): Promise<Realm | null> {
     const result = await this.realmModel.findByIdAndDelete(id);
-    if (!result) {
-      throw new NotFoundError('Realm', id);
-    }
+    return result ? this.mapToEntity(result) : null;
   }
 
   async existsById(id: string): Promise<boolean> {
@@ -56,7 +54,7 @@ export class MongoRealmRepository implements RealmRepository {
 
   private mapToEntity(doc: RealmDocument): Realm {
     return {
-      id: doc._id as string,
+      id: doc.id,
       name: doc.name,
       description: doc.description,
       owner: doc.owner,

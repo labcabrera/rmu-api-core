@@ -7,6 +7,9 @@ export type RealmDocument = Realm & Document;
 @Schema({ collection: 'realms', versionKey: false })
 export class RealmModel {
   @Prop({ required: true })
+  _id: string;
+
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: false })

@@ -39,11 +39,9 @@ export class MongoRaceRepository implements RaceRepository {
     return this.mapToEntity(updatedRace);
   }
 
-  async deleteById(id: string): Promise<void> {
-    const deleted = await RaceModel.findByIdAndDelete(id);
-    if (!deleted) {
-      throw new NotFoundError('Race', id);
-    }
+  async deleteById(id: string): Promise<Race | null> {
+    const result = await RaceModel.findByIdAndDelete(id);
+    return result ? this.mapToEntity(result) : null;
   }
 
   async existsById(id: string): Promise<boolean> {

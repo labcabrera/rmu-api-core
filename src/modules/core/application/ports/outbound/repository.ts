@@ -9,5 +9,5 @@ export interface Repository<I> {
 
   update(id: string, entity: Partial<I>): Promise<I>;
 
-  deleteById(id: string): Promise<void>;
+  deleteById(id: string): Promise<I | null>;
 }

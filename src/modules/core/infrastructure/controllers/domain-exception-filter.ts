@@ -9,9 +9,12 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    response.status(HttpStatus.BAD_REQUEST).json({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: exception.statusCode,
+    console.log('error', JSON.stringify(exception, null, 2));
+    const status = exception.statusCode || HttpStatus.BAD_REQUEST;
+
+    response.status(status).json({
+      statusCode: status,
+      error: exception.name,
       message: exception.message,
     });
   }

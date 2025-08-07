@@ -32,14 +32,10 @@ export class RealmController {
   }
 
   @Get('')
-  async find(@Query() query: PagedQueryDto) {
+  find(@Query() query: PagedQueryDto) {
+    //TODO convertir to use case for authenticated user
     // const userId = req.user!.id as string;
-
-    console.log('findByRsql query:', JSON.stringify(query, null, 2));
-
-    const result = await this.realmRepository.findByRsql(query.q, query.page, query.size);
-    console.log('findByRsql result:', JSON.stringify(result, null, 2));
-    return result;
+    return this.realmRepository.findByRsql(query.q, query.page, query.size);
   }
 
   @Post('')

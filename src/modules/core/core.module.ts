@@ -14,11 +14,13 @@ import { UpdateRaceUseCase } from './application/use-cases/update-race.usecase';
 import { DeleteRaceUseCase } from './application/use-cases/delete-race.usecase';
 import { MongoRaceRepository } from './infrastructure/persistence/repositories/mongo-race.repository';
 import { MongoRealmRepository } from './infrastructure/persistence/repositories/mongo-realm.repository';
-import { KafkaRealmProducerService } from './infrastructure/messaging/kafla-realm-producer.service';
-import { KafkaRaceProducerService } from './infrastructure/messaging/kafla-race-producer.service';
+import { KafkaRealmProducerService } from './infrastructure/messaging/kafka-realm-producer.service';
+import { KafkaRaceProducerService } from './infrastructure/messaging/kafka-race-producer.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     MongooseModule.forFeature([
       { name: RealmModel.name, schema: RealmSchema },
       { name: RaceModel.name, schema: RaceSchema },

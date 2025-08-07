@@ -4,20 +4,20 @@ import { RealmDeletedEvent } from '../../domain/events/realm-deleted.event';
 import { RealmUpdatedEvent } from '../../domain/events/realm-updated.event';
 import { KafkaProducerService } from './kafka-producer.service';
 
-export class KafkaRealmProducerService {
-  constructor(private KafkaProducerService: KafkaProducerService) {}
+export class KafkaRaceProducerService {
+  constructor(private readonly kafkaProducerService: KafkaProducerService) {}
 
   async created(entity: Realm): Promise<void> {
     const event = new RealmCreatedEvent(entity);
-    await this.KafkaProducerService.emit('internal.rmu-core.realm.created.v1', event);
+    await this.kafkaProducerService.emit('internal.rmu-core.realm.created.v1', event);
   }
   async updated(entity: Realm): Promise<void> {
     const event = new RealmUpdatedEvent(entity);
-    await this.KafkaProducerService.emit('internal.rmu-core.realm.updated.v1', event);
+    await this.kafkaProducerService.emit('internal.rmu-core.realm.updated.v1', event);
   }
 
   async deleted(entity: Realm): Promise<void> {
     const event = new RealmDeletedEvent(entity);
-    await this.KafkaProducerService.emit('internal.rmu-core.realm.deleted.v1', event);
+    await this.kafkaProducerService.emit('internal.rmu-core.realm.deleted.v1', event);
   }
 }

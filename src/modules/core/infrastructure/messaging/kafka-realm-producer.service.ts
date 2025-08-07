@@ -1,11 +1,14 @@
+import { Logger } from '@nestjs/common/services/logger.service';
 import { Realm } from '../../domain/entities/realm';
 import { RealmCreatedEvent } from '../../domain/events/realm-created.event';
 import { RealmDeletedEvent } from '../../domain/events/realm-deleted.event';
 import { RealmUpdatedEvent } from '../../domain/events/realm-updated.event';
 import { KafkaProducerService } from './kafka-producer.service';
+import { Injectable } from '@nestjs/common';
 
-export class KafkaRaceProducerService {
-  constructor(private kafkaProducerService: KafkaProducerService) {}
+@Injectable()
+export class KafkaRealmProducerService {
+  constructor(private readonly kafkaProducerService: KafkaProducerService) {}
 
   async created(entity: Realm): Promise<void> {
     const event = new RealmCreatedEvent(entity);

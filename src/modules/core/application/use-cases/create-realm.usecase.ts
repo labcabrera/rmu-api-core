@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import * as realmEventProducer from '../ports/outbound/realm-event-producer';
 import * as realmRepository from '../ports/outbound/realm-repository';
@@ -8,6 +8,8 @@ import { CreateRealmCommand } from '../commands/create-realm.command';
 
 @Injectable()
 export class CreateRealmUseCase {
+  private readonly logger = new Logger(CreateRealmUseCase.name);
+
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
     @Inject('RealmEventProducer') private readonly realmEventProducer: realmEventProducer.RealmEventProducer,
@@ -15,6 +17,7 @@ export class CreateRealmUseCase {
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
     this.validate(command);
+    this.logger.log(`Creating realm ${command.id} for user ${command.username}`);
     const exists = await this.realmRepository.findById(command.id);
     if (exists) {
       throw new ConflictError(`Realm ${command.id} already exists`);
