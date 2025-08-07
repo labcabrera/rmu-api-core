@@ -1,20 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { Race } from 'src/modules/core/domain/entities/race';
+import * as race from 'src/modules/core/domain/entities/race';
+import { RaceStatBonus } from './race-model-childs';
 
-export type RaceDocument = Race & Document;
+export type RaceDocument = race.Race & Document;
 
 @Schema({ collection: 'races', versionKey: false })
 export class RaceModel {
   @Prop({ required: true })
+  _id: string;
+
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: false })
-  description?: string;
+  realm: string;
 
   @Prop({ required: true })
-  owner: string;
+  size: string;
+
+  @Prop({ type: RaceStatBonus, required: true })
+  defaultStatBonus: race.RaceStatBonus;
 
   @Prop({ required: true })
   createdAt: Date;

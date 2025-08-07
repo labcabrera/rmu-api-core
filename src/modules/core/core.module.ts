@@ -17,6 +17,7 @@ import { MongoRealmRepository } from './infrastructure/persistence/repositories/
 import { KafkaRealmProducerService } from './infrastructure/messaging/kafka-realm-producer.service';
 import { KafkaRaceProducerService } from './infrastructure/messaging/kafka-race-producer.service';
 import { ConfigModule } from '@nestjs/config';
+import { RaceController } from './infrastructure/controllers/race.controller';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { ConfigModule } from '@nestjs/config';
     ]),
     AuthModule,
   ],
-  controllers: [RealmController],
+  controllers: [RealmController, RaceController],
   providers: [
     KafkaProducerService,
     CreateRealmUseCase,

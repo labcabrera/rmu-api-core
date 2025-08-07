@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { Realm } from '../../domain/entities/realm';
 import { RealmCreatedEvent } from '../../domain/events/realm-created.event';
 import { RealmDeletedEvent } from '../../domain/events/realm-deleted.event';
 import { RealmUpdatedEvent } from '../../domain/events/realm-updated.event';
 import { KafkaProducerService } from './kafka-producer.service';
 
+@Injectable()
 export class KafkaRaceProducerService {
   constructor(private readonly kafkaProducerService: KafkaProducerService) {}
 

@@ -5,11 +5,15 @@ import { Race, UpdateRaceRequest } from 'src/modules/core/domain/entities/race';
 import { RaceModel, RaceDocument } from '../models/race-model-old';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { toMongoQuery } from './rsql-adapter';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {
+  constructor(@InjectModel(RaceModel.name) private raceModel: Model<RaceDocument>) {}
+
   async findById(id: string): Promise<Race | null> {
-    const readed = await RaceModel.findById(id);
+    const readed = await this.raceModel.findById(id);
     return readed ? this.mapToEntity(readed) : null;
   }
 
@@ -17,22 +21,21 @@ export class MongoRaceRepository implements RaceRepository {
     const skip = page * size;
     const mongoQuery = toMongoQuery(rsql);
     const [racesDocs, totalElements] = await Promise.all([
-      RaceModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
-      RaceModel.countDocuments(mongoQuery),
+      this.raceModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
+      this.raceModel.countDocuments(mongoQuery),
     ]);
     const content = racesDocs.map((doc) => this.mapToEntity(doc));
     return new Page<Race>(content, page, size, totalElements);
   }
 
   async save(race: Partial<Race>): Promise<Race> {
-    const data = { ...race, _id: race.id };
-    const raceModel = new RaceModel(data);
-    const saved = await raceModel.save();
-    return this.mapToEntity(saved);
+    const model = new this.raceModel({ ...race, _id: race.id });
+    await model.save();
+    return this.mapToEntity(model);
   }
 
   async update(id: string, request: UpdateRaceRequest): Promise<Race> {
-    const updatedRace = await RaceModel.findByIdAndUpdate(id, { $set: request }, { new: true });
+    const updatedRace = await this.raceModel.findByIdAndUpdate(id, { $set: request }, { new: true });
     if (!updatedRace) {
       throw new NotFoundError('Race', id);
     }
@@ -40,12 +43,12 @@ export class MongoRaceRepository implements RaceRepository {
   }
 
   async deleteById(id: string): Promise<Race | null> {
-    const result = await RaceModel.findByIdAndDelete(id);
+    const result = await this.raceModel.findByIdAndDelete(id);
     return result ? this.mapToEntity(result) : null;
   }
 
   async existsById(id: string): Promise<boolean> {
-    const exists = await RaceModel.exists({ _id: id });
+    const exists = await this.raceModel.exists({ _id: id });
     return exists !== null;
   }
 
