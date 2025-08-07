@@ -5,23 +5,25 @@ set -e
 DEFAULT_BASE_URL="http://localhost:3001/v1"
 DEFAULT_CONTENT_TYPE="application/json"
 
-KEYCLOAK_BASE_URL="${RMU_KEYCLOAK_BASE_URL}"
-KEYCLOAK_REALM="${RMU_KEYCLOAK_REALM}"
-KEYCLOAK_CLIENT_ID="${RMU_KEYCLOAK_CLIENT_ID}"
-KEYCLOAK_CLIENT_SECRET="${RMU_KEYCLOAK_CLIENT_SECRET}"
-KEYCLOAK_USERNAME="${RMU_KEYCLOAK_USER}"
-KEYCLOAK_PASSWORD="${RMU_KEYCLOAK_PASSWORD}"
+KEYCLOAK_TOKEN_URI="${RMU_IAM_TOKEN_URI}"
+KEYCLOAK_REALM="${RMU_IAM_REALM}"
+KEYCLOAK_CLIENT_ID="${RMU_IAM_CLIENT_ID}"
+KEYCLOAK_CLIENT_SECRET="${RMU_IAM_CLIENT_SECRET}"
+KEYCLOAK_USERNAME="${RMU_IAM_USERNAME}"
+KEYCLOAK_PASSWORD="${RMU_IAM_PASSWORD}"
+
+KEYCLOAK_CLIENT_SECRET=1tUzPc24SYJMPpX37g2eymEoS9C3Ttzw
 
 read_access_token() {
     echo "Fetching access token from Keycloak..."
 
-    ACCESS_TOKEN=$(curl --silent --location "${KEYCLOAK_BASE_URL}/realms/rmu-local/protocol/openid-connect/token" \
+    ACCESS_TOKEN=$(curl --silent --location "${KEYCLOAK_TOKEN_URI}" \
         --header 'Content-Type: application/x-www-form-urlencoded' \
         --data-urlencode 'grant_type=password' \
         --data-urlencode "client_id=${KEYCLOAK_CLIENT_ID}" \
         --data-urlencode "client_secret=${KEYCLOAK_CLIENT_SECRET}" \
         --data-urlencode "username=${KEYCLOAK_USERNAME}" \
-        --data-urlencode "password=${KEYCLOAK_PASSWORD}" \
+        --data-urlencode "password=${KEYCLOAK_PASSWORD}" -v \
         | jq -r '.access_token') \
     export ACCESS_TOKEN
 }
