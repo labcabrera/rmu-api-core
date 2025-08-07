@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SkillRepository } from 'src/modules/core/application/ports/outbound/skill-repository';
-import { Page } from 'src/modules/core/domain/entities/page';
 import { Skill, RMU_SKILLS } from 'src/modules/core/domain/entities/skill';
 
 @Injectable()
@@ -9,17 +8,17 @@ export class InMemorySkillRepository implements SkillRepository {
     const skill = RMU_SKILLS.find((skill) => skill.id === id);
     return skill || null;
   }
+  findAll(): Skill[] {
+    return RMU_SKILLS;
+  }
 
-  find(categoryId: string | undefined, page: number, size: number): Page<Skill> {
+  findByCategory(categoryId: string): Skill[] {
     const filteredSkills = RMU_SKILLS.filter((skill) => {
       if (categoryId && skill.categoryId !== categoryId) {
         return false;
       }
       return true;
     });
-    const startIndex = page * size;
-    const endIndex = startIndex + size;
-    const content = filteredSkills.slice(startIndex, endIndex);
-    return new Page<Skill>(content, page, size, filteredSkills.length);
+    return filteredSkills;
   }
 }

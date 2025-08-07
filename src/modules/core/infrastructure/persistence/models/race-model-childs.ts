@@ -33,4 +33,30 @@ export class RaceStatBonus {
   st: number;
 }
 
+@Schema({ _id: false })
+export class RaceResistances {
+  @Prop({ required: true })
+  channeling: number;
+
+  @Prop({ required: true })
+  mentalism: number;
+
+  @Prop({ required: true })
+  essence: number;
+
+  @Prop({ required: true })
+  physical: number;
+}
+
+@Schema({ _id: false })
+export class SexBasedAttribute {
+  @Prop({ required: true })
+  male: number;
+
+  @Prop({ required: true })
+  female: number;
+}
+
 export const RaceStatBonusSchema = SchemaFactory.createForClass(RaceStatBonus);
+export const RaceResistancesSchema = SchemaFactory.createForClass(RaceResistances);
+export const SexBasedAttributeSchema = SchemaFactory.createForClass(SexBasedAttribute);

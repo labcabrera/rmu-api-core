@@ -30,7 +30,7 @@
         "female": 125
     },
     "strideBonus": 0,
-    "endurance": 10,
+    "enduranceBonus": 10,
     "recoveryMultiplier": 2,
     "baseHits": 20,
     "bonusDevPoints": 3,

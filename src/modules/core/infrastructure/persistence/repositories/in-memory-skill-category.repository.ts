@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SkillCategoryRepository } from 'src/modules/core/application/ports/outbound/skill-category-repository';
-import { Page } from 'src/modules/core/domain/entities/page';
-import { SkillCategory, SKILL_CATEGORIES } from 'src/modules/core/domain/entities/skill-category';
+import { SKILL_CATEGORIES, SkillCategory } from 'src/modules/core/domain/entities/skill-category';
 
 @Injectable()
 export class InMemorySkillCategoryRepository implements SkillCategoryRepository {
@@ -10,7 +9,7 @@ export class InMemorySkillCategoryRepository implements SkillCategoryRepository 
     return skillCategory || null;
   }
 
-  findAll(): Page<SkillCategory> {
-    return new Page<SkillCategory>(SKILL_CATEGORIES, 0, SKILL_CATEGORIES.length, SKILL_CATEGORIES.length);
+  find(): SkillCategory[] {
+    return SKILL_CATEGORIES;
   }
 }

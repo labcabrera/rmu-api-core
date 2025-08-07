@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { RaceRepository } from 'src/modules/core/application/ports/outbound/race-repository';
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Race, UpdateRaceRequest } from 'src/modules/core/domain/entities/race';
-import { RaceModel, RaceDocument } from '../models/race-model-old';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { toMongoQuery } from './rsql-adapter';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { NotFoundError } from 'src/modules/core/domain/errors/errors';
+import { RaceDocument, RaceModel } from '../models/race-model';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {

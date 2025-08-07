@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import { parse } from '@rsql/parser';
 import { InvalidSearchExpression } from 'src/modules/core/domain/errors/errors';
 
