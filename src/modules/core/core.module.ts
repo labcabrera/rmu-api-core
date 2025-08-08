@@ -4,10 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { CreateRaceUseCase } from './application/commands/handlers/create-race.usecase';
+import { CreateRaceCommandHandler } from './application/commands/handlers/create-race.command.handler';
 import { CreateRealmCommandHandler } from './application/commands/handlers/create-realm.command.handler';
 import { DeleteRaceCommandHandler } from './application/commands/handlers/delete-race.command.handler';
-import { UpdateRaceUseCase } from './application/commands/handlers/update-race.usecase';
+import { UpdateRaceCommandHandler } from './application/commands/handlers/update-race.command.handler';
 import { CharacterSizeController } from './infrastructure/controllers/character-size.controller';
 import { RaceController } from './infrastructure/controllers/race.controller';
 import { RealmController } from './infrastructure/controllers/realm.controller';
@@ -43,13 +43,13 @@ import { UpdateRealmCommandHandler } from './application/commands/handlers/updat
   controllers: [RealmController, RaceController, ArmorTypeController, CharacterSizeController, SkillCategoryController, SkillController],
   providers: [
     KafkaProducerService,
+    GetRealmQueryHandler,
+    GetRealmsQueryHandler,
     CreateRealmCommandHandler,
     UpdateRealmCommandHandler,
     DeleteRealmCommandHandler,
-    GetRealmQueryHandler,
-    GetRealmsQueryHandler,
-    CreateRaceUseCase,
-    UpdateRaceUseCase,
+    CreateRaceCommandHandler,
+    UpdateRaceCommandHandler,
     DeleteRaceCommandHandler,
     {
       provide: 'RaceRepository',

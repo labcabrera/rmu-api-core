@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateRaceCommand } from 'src/modules/core/application/commands/create-race.command';
 
 export interface RaceStatBonusDto {
   ag: number;
@@ -67,6 +68,71 @@ export class RaceDto {
 
   @ApiProperty({ description: 'Description of the race' })
   description: string;
+}
+
+export class CreateRaceDto {
+  @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
+  id: string;
+
+  @ApiProperty({ description: 'Name of the race', example: 'Elf' })
+  name: string;
+
+  @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
+  realm: string;
+
+  @ApiProperty({ description: 'Size of the race', example: 'Medium' })
+  size: string;
+
+  @ApiProperty({ description: 'Default stat bonus for the race' })
+  defaultStatBonus: RaceStatBonusDto;
+
+  @ApiProperty({ description: 'Resistances of the race' })
+  resistances: RaceResistancesDto;
+
+  @ApiProperty({ description: 'Average height of the race by sex' })
+  averageHeight: SexBasedAttributeDto;
+
+  @ApiProperty({ description: 'Average weight of the race by sex' })
+  averageWeight: SexBasedAttributeDto;
+
+  @ApiProperty({ description: 'Stride bonus for the race' })
+  strideBonus: number;
+
+  @ApiProperty({ description: 'Endurance bonus for the race' })
+  enduranceBonus: number;
+
+  @ApiProperty({ description: 'Recovery multiplier for the race' })
+  recoveryMultiplier: number;
+
+  @ApiProperty({ description: 'Base hits for the race' })
+  baseHits: number;
+
+  @ApiProperty({ description: 'Bonus development points for the race' })
+  bonusDevPoints: number;
+
+  @ApiProperty({ description: 'Description of the race' })
+  description: string;
+
+  static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
+    return new CreateRaceCommand(
+      dto.id,
+      dto.name,
+      dto.realm,
+      dto.size,
+      dto.defaultStatBonus,
+      dto.resistances,
+      dto.averageHeight,
+      dto.averageWeight,
+      dto.strideBonus,
+      dto.enduranceBonus,
+      dto.recoveryMultiplier,
+      dto.baseHits,
+      dto.bonusDevPoints,
+      dto.description,
+      userId,
+      roles,
+    );
+  }
 }
 
 export interface UpdateRaceRequest {

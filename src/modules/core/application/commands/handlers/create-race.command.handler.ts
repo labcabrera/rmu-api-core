@@ -9,7 +9,7 @@ import { ValidationError, ConflictError } from '../../../domain/errors/errors';
 import { CreateRaceCommand } from '../create-race.command';
 
 @CommandHandler(CreateRaceCommand)
-export class CreateRaceUseCase implements ICommandHandler<CreateRaceCommand, Race> {
+export class CreateRaceCommandHandler implements ICommandHandler<CreateRaceCommand, Race> {
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
     @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
