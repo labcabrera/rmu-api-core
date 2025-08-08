@@ -1,6 +1,12 @@
 import { AuthenticatedCommand } from './authenticated-command';
 
-export interface DeleteRealmCommand extends AuthenticatedCommand {
-  readonly id: string;
-  readonly reason?: string;
+export class DeleteRealmCommand extends AuthenticatedCommand {
+  constructor(
+    public readonly id: string,
+    public readonly reason: string | undefined,
+    userId: string,
+    roles: string[] | undefined,
+  ) {
+    super(userId, roles);
+  }
 }

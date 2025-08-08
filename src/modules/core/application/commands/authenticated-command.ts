@@ -1,4 +1,6 @@
-export interface AuthenticatedCommand {
-  readonly username: string;
-  readonly roles?: string[];
+export class AuthenticatedCommand {
+  constructor(
+    public readonly userId: string,
+    public readonly roles?: string[],
+  ) {}
 }

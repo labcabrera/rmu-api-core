@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import * as raceRepository from '../ports/outbound/race-repository';
-import * as raceNotificationPort from '../ports/outbound/race-event-producer';
-import { DeleteRaceCommand } from '../commands/delete-race.command';
-import { NotFoundError } from '../../domain/errors/errors';
+import * as raceRepository from '../../ports/outbound/race-repository';
+import * as raceNotificationPort from '../../ports/outbound/race-event-producer';
+import { DeleteRaceCommand } from '../delete-race.command';
+import { NotFoundError } from '../../../domain/errors/errors';
 
 @Injectable()
 export class DeleteRaceUseCase {

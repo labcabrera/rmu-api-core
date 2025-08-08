@@ -1,6 +1,13 @@
 import { AuthenticatedCommand } from './authenticated-command';
 
-export interface CreateRealmCommand extends AuthenticatedCommand {
-  readonly id: string;
-  readonly name: string;
+export class CreateRealmCommand extends AuthenticatedCommand {
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+    public readonly description: string | undefined,
+    userId: string,
+    roles: string[],
+  ) {
+    super(userId, roles);
+  }
 }
