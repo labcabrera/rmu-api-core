@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import { Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -13,7 +13,7 @@ import { PagedQueryDto } from './dto/paged-rsql-query';
 import { GetRealmQuery } from '../../application/queries/get-realm.query';
 import { GetRealmsQuery } from '../../application/queries/get-realms.query';
 import { DeleteRealmCommand } from '../../application/commands/delete-realm.command';
-import { CreateRealmDto, RealmDto } from './dto/realm.dto';
+import { CreateRealmDto, RealmDto, UpdateRealmDto } from './dto/realm.dto';
 import { Realm } from '../../domain/entities/realm';
 import { Page } from '../../domain/entities/page';
 
@@ -28,7 +28,7 @@ export class RealmController {
 
   @Get(':id')
   @ApiOkResponse({ type: RealmDto })
-  @ApiOperation({ operationId: 'findRealmById' })
+  @ApiOperation({ operationId: 'findRealmById', summary: 'Find a realm by its id' })
   async findById(@Param('id') id: string, @Request() req) {
     const query = new GetRealmQuery(id, req.user!.id as string);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
@@ -36,44 +36,32 @@ export class RealmController {
   }
 
   @Get('')
-  @ApiOperation({ operationId: 'findRealms' })
+  @ApiOperation({ operationId: 'findRealms', summary: 'Find realms by RSQL' })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId);
-    const pagedEntities = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
-    const mappedContent = pagedEntities.content.map((realm) => RealmDto.fromEntity(realm));
-    return new Page<RealmDto>(
-      mappedContent,
-      pagedEntities.pagination.page,
-      pagedEntities.pagination.size,
-      pagedEntities.pagination.totalElements,
-    );
+    const page = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
+    const mapped = page.content.map((realm) => RealmDto.fromEntity(realm));
+    return new Page<RealmDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
   @Post('')
   @ApiBody({ type: CreateRealmDto })
-  @ApiOperation({ operationId: 'createRealm' })
-  async create(@Request() req) {
+  @ApiOperation({ operationId: 'createRealm', summary: 'Create a new realm' })
+  async create(@Body() dto: CreateRealmDto, @Request() req) {
     const user = req.user!;
-    const { id, name, description } = req.body;
-    const command = new CreateRealmCommand(id, name, description, user.id as string, user.roles as string[]);
-    console.log('Creating realm with command:', JSON.stringify(command));
+    const command = CreateRealmDto.toCommand(dto, user.id as string, user.roles as string[]);
     const entity = await this.commandBus.execute<CreateRealmCommand, Realm>(command);
     return RealmDto.fromEntity(entity);
   }
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateRealm' })
-  updateSettings(@Param('id') id: string, @Request() req) {
+  async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req) {
     const user = req.user!;
-    const command = new UpdateRealmCommand(
-      id,
-      req.body.name as string,
-      req.body.description as string,
-      user.id as string,
-      user.roles as string[],
-    );
-    return this.commandBus.execute(command);
+    const command = UpdateRealmDto.toCommand(id, dto, user.id as string, user.roles as string[]);
+    const entity = await this.commandBus.execute<UpdateRealmCommand, Realm>(command);
+    return RealmDto.fromEntity(entity);
   }
 
   @Delete(':id')

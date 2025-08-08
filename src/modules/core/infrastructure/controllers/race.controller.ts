@@ -15,6 +15,7 @@ import { Page } from '../../domain/entities/page';
 import { GetRaceQuery } from '../../application/queries/get-race.query';
 import { Race } from '../../domain/entities/race';
 import { GetRacesQuery } from '../../application/queries/get-races.query';
+import { RealmDto } from './dto/realm.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -39,7 +40,8 @@ export class RaceController {
     const userId: string = req.user!.id as string;
     const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId);
     const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
-    return page.content.map((race) => RaceDto.fromEntity(race));
+    const mapped = page.content.map((race) => RaceDto.fromEntity(race));
+    return new Page<RaceDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
   @Post('')
