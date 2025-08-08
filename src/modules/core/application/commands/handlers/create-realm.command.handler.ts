@@ -25,6 +25,7 @@ export class CreateRealmCommandHandler implements ICommandHandler<CreateRealmCom
     const realm: Partial<Realm> = {
       id: command.id,
       name: command.name,
+      description: command.description,
       owner: command.userId,
       createdAt: new Date(),
     };

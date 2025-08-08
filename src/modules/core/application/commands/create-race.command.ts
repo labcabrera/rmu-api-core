@@ -1,19 +1,25 @@
 import { RaceResistances, RaceStatBonus, SexBasedAttribute } from '../../domain/entities/race';
 import { AuthenticatedCommand } from './authenticated-command';
 
-export interface CreateRaceCommand extends AuthenticatedCommand {
-  readonly id: string;
-  readonly name: string;
-  readonly realm: string;
-  readonly size?: string;
-  readonly defaultStatBonus: RaceStatBonus;
-  readonly resistances?: RaceResistances;
-  readonly averageHeight?: SexBasedAttribute;
-  readonly averageWeight?: SexBasedAttribute;
-  readonly strideBonus?: number;
-  readonly enduranceBonus?: number;
-  readonly recoveryMultiplier?: number;
-  readonly baseHits?: number;
-  readonly bonusDevPoints?: number;
-  readonly description?: string;
+export class CreateRaceCommand extends AuthenticatedCommand {
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+    public readonly realm: string,
+    public readonly size: string,
+    public readonly defaultStatBonus: RaceStatBonus,
+    public readonly resistances: RaceResistances,
+    public readonly averageHeight: SexBasedAttribute,
+    public readonly averageWeight: SexBasedAttribute,
+    public readonly strideBonus: number,
+    public readonly enduranceBonus: number,
+    public readonly recoveryMultiplier: number,
+    public readonly baseHits: number,
+    public readonly bonusDevPoints: number,
+    public readonly description: string | undefined,
+    userId: string,
+    roles?: string[],
+  ) {
+    super(userId, roles);
+  }
 }
