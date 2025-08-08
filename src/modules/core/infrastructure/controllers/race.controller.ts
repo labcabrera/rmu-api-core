@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import { Controller, Delete, Get, Inject, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from './dto/paged-rsql-query';
-import { DeleteRaceUseCase } from '../../application/commands/handlers/delete-race.usecase';
+import { DeleteRaceCommandHandler } from '../../application/commands/handlers/delete-race.command.handler';
 import { UpdateRaceUseCase } from '../../application/commands/handlers/update-race.usecase';
 import { CreateRaceUseCase } from '../../application/commands/handlers/create-race.usecase';
 import * as raceRepository from '../../application/ports/outbound/race-repository';
 import { UpdateRaceCommand } from '../../application/commands/update-race.command';
 import { CreateRaceCommand } from '../../application/commands/create-race.command';
 import { RaceDto } from './dto/race.dto';
+import { DeleteRaceCommand } from '../../application/commands/delete-race.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -21,7 +23,9 @@ export class RaceController {
   constructor(
     private readonly createRaceUseCase: CreateRaceUseCase,
     private readonly updateRaceUseCase: UpdateRaceUseCase,
-    private readonly deleteRaceUseCase: DeleteRaceUseCase,
+    private readonly deleteRaceUseCase: DeleteRaceCommandHandler,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
   ) {}
 
@@ -61,12 +65,9 @@ export class RaceController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Request() req) {
-    // const userId = req.user!.id;
-    // const command = {
-    //   id: id,
-    //   username: userId,
-    // };
-    //return this.deleteRaceUseCase.execute(command);
+  @HttpCode(204)
+  async delete(@Param('id') id: string, @Request() req) {
+    const command = new DeleteRaceCommand(id, undefined, req.user!.id as string, req.user!.roles as string[]);
+    await this.commandBus.execute(command);
   }
 }

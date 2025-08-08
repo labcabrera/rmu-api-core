@@ -6,7 +6,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { CreateRaceUseCase } from './application/commands/handlers/create-race.usecase';
 import { CreateRealmCommandHandler } from './application/commands/handlers/create-realm.command.handler';
-import { DeleteRaceUseCase } from './application/commands/handlers/delete-race.usecase';
+import { DeleteRaceCommandHandler } from './application/commands/handlers/delete-race.command.handler';
 import { UpdateRaceUseCase } from './application/commands/handlers/update-race.usecase';
 import { CharacterSizeController } from './infrastructure/controllers/character-size.controller';
 import { RaceController } from './infrastructure/controllers/race.controller';
@@ -50,7 +50,7 @@ import { UpdateRealmCommandHandler } from './application/commands/handlers/updat
     GetRealmsQueryHandler,
     CreateRaceUseCase,
     UpdateRaceUseCase,
-    DeleteRaceUseCase,
+    DeleteRaceCommandHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,

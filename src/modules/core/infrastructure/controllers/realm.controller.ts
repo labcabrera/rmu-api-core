@@ -80,9 +80,9 @@ export class RealmController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteRealm' })
-  delete(@Param('id') id: string, @Request() req) {
+  async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
     const command = new DeleteRealmCommand(id, undefined, user.id as string, user.roles! as string[]);
-    return this.commandBus.execute(command);
+    await this.commandBus.execute(command);
   }
 }
