@@ -1,4 +1,4 @@
-export class GetRealmsQuery {
+export class GetRacesQuery {
   constructor(
     public readonly rsql: string | undefined,
     public readonly page: number,

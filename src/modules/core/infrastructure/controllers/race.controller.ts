@@ -14,6 +14,7 @@ import { DeleteRaceCommand } from '../../application/commands/delete-race.comman
 import { Page } from '../../domain/entities/page';
 import { GetRaceQuery } from '../../application/queries/get-race.query';
 import { Race } from '../../domain/entities/race';
+import { GetRacesQuery } from '../../application/queries/get-races.query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -34,10 +35,11 @@ export class RaceController {
 
   @Get('')
   @ApiOkResponse({ type: Page<RaceDto> })
-  find(@Query() query: PagedQueryDto) {
-    //TODO convertir to use case for authenticated user
-    // const userId = req.user!.id as string;
-    return this.raceRepository.findByRsql(query.q, query.page, query.size);
+  async find(@Query() dto: PagedQueryDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId);
+    const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
+    return page.content.map((race) => RaceDto.fromEntity(race));
   }
 
   @Post('')

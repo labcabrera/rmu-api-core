@@ -39,7 +39,7 @@ export class RealmController {
   @ApiOperation({ operationId: 'findRealms' })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
-    const query = new GetRealmsQuery(userId, dto.q, dto.page, dto.size);
+    const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId);
     const pagedEntities = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
     const mappedContent = pagedEntities.content.map((realm) => RealmDto.fromEntity(realm));
     return new Page<RealmDto>(
