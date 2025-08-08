@@ -3,11 +3,11 @@
 
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+
+import * as raceRepository from '../../application/ports/outbound/race-repository';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from './dto/paged-rsql-query';
-import * as raceRepository from '../../application/ports/outbound/race-repository';
 import { UpdateRaceCommand } from '../../application/commands/update-race.command';
 import { CreateRaceDto, RaceDto } from './dto/race.dto';
 import { DeleteRaceCommand } from '../../application/commands/delete-race.command';
@@ -15,7 +15,7 @@ import { Page } from '../../domain/entities/page';
 import { GetRaceQuery } from '../../application/queries/get-race.query';
 import { Race } from '../../domain/entities/race';
 import { GetRacesQuery } from '../../application/queries/get-races.query';
-import { RealmDto } from './dto/realm.dto';
+import { RacePageDto } from './dto/page.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -35,7 +35,7 @@ export class RaceController {
   }
 
   @Get('')
-  @ApiOkResponse({ type: Page<RaceDto> })
+  @ApiOkResponse({ type: RacePageDto })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId);

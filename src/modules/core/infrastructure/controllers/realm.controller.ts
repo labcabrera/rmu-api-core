@@ -3,7 +3,7 @@
 
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
@@ -16,6 +16,8 @@ import { DeleteRealmCommand } from '../../application/commands/delete-realm.comm
 import { CreateRealmDto, RealmDto, UpdateRealmDto } from './dto/realm.dto';
 import { Realm } from '../../domain/entities/realm';
 import { Page } from '../../domain/entities/page';
+import { ErrorDto } from './dto/error-dto';
+import { RealmPageDto } from './dto/page.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')
@@ -28,7 +30,15 @@ export class RealmController {
 
   @Get(':id')
   @ApiOkResponse({ type: RealmDto })
-  @ApiOperation({ operationId: 'findRealmById', summary: 'Find a realm by its id' })
+  @ApiOperation({ operationId: 'findRealmById', summary: 'Find realm by id' })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing authentication token',
+    type: ErrorDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Realm not found',
+    type: ErrorDto,
+  })
   async findById(@Param('id') id: string, @Request() req) {
     const query = new GetRealmQuery(id, req.user!.id as string);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
@@ -36,6 +46,11 @@ export class RealmController {
   }
 
   @Get('')
+  @ApiOkResponse({ type: RealmPageDto })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing authentication token',
+    type: ErrorDto,
+  })
   @ApiOperation({ operationId: 'findRealms', summary: 'Find realms by RSQL' })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
@@ -56,7 +71,7 @@ export class RealmController {
   }
 
   @Patch(':id')
-  @ApiOperation({ operationId: 'updateRealm' })
+  @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm settings' })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req) {
     const user = req.user!;
     const command = UpdateRealmDto.toCommand(id, dto, user.id as string, user.roles as string[]);
@@ -66,7 +81,7 @@ export class RealmController {
 
   @Delete(':id')
   @HttpCode(204)
-  @ApiOperation({ operationId: 'deleteRealm' })
+  @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete a realm' })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
     const command = new DeleteRealmCommand(id, undefined, user.id as string, user.roles! as string[]);
