@@ -22,7 +22,7 @@ import { InMemorySkillCategoryRepository } from './infrastructure/persistence/re
 import { InMemorySkillRepository } from './infrastructure/persistence/repositories/in-memory-skill.repository';
 import { MongoRaceRepository } from './infrastructure/persistence/repositories/mongo-race.repository';
 import { MongoRealmRepository } from './infrastructure/persistence/repositories/mongo-realm.repository';
-import { ArmorTypeController } from './infrastructure/controllers/armor-type.controller copy';
+import { ArmorTypeController } from './infrastructure/controllers/armor-type.controller';
 import { SkillCategoryController } from './infrastructure/controllers/skill-categories.controller';
 import { SkillController } from './infrastructure/controllers/skill.controller';
 import { GetRealmQueryHandler } from './application/queries/handlers/get-realm.query.handler';
@@ -31,9 +31,12 @@ import { DeleteRealmCommandHandler } from './application/commands/handlers/delet
 import { UpdateRealmCommandHandler } from './application/commands/handlers/update-realm.command.handler';
 import { GetRaceQueryHandler } from './application/queries/handlers/get-race.query.handler';
 import { GetRacesQueryHandler } from './application/queries/handlers/get-races.query.handler';
+import { HealthController } from './infrastructure/controllers/health.controller';
+import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
   imports: [
+    TerminusModule,
     CqrsModule,
     ConfigModule,
     MongooseModule.forFeature([
@@ -42,7 +45,15 @@ import { GetRacesQueryHandler } from './application/queries/handlers/get-races.q
     ]),
     AuthModule,
   ],
-  controllers: [RealmController, RaceController, ArmorTypeController, CharacterSizeController, SkillCategoryController, SkillController],
+  controllers: [
+    RealmController,
+    RaceController,
+    ArmorTypeController,
+    CharacterSizeController,
+    SkillCategoryController,
+    SkillController,
+    HealthController,
+  ],
   providers: [
     KafkaProducerService,
     GetRealmQueryHandler,
