@@ -30,8 +30,7 @@ export class RealmController {
   @ApiOkResponse({ type: RealmDto })
   @ApiOperation({ operationId: 'findRealmById' })
   async findById(@Param('id') id: string, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const query = new GetRealmQuery(userId, id);
+    const query = new GetRealmQuery(id, req.user!.id as string);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
     return RealmDto.fromEntity(entity);
   }

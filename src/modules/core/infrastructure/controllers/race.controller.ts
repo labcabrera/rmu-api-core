@@ -12,6 +12,8 @@ import { UpdateRaceCommand } from '../../application/commands/update-race.comman
 import { CreateRaceDto, RaceDto } from './dto/race.dto';
 import { DeleteRaceCommand } from '../../application/commands/delete-race.command';
 import { Page } from '../../domain/entities/page';
+import { GetRaceQuery } from '../../application/queries/get-race.query';
+import { Race } from '../../domain/entities/race';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -25,10 +27,9 @@ export class RaceController {
 
   @Get(':id')
   @ApiOkResponse({ type: RaceDto })
-  findById(@Param('id') id: string) {
-    //TODO convertir to use case for authenticated user
-    // const userId = req.user!.id as string;
-    return this.raceRepository.findById(id);
+  async findById(@Param('id') id: string, @Request() req) {
+    const entity = await this.queryBus.execute<GetRaceQuery, Race>(new GetRaceQuery(id, req.user!.id as string));
+    return RaceDto.fromEntity(entity);
   }
 
   @Get('')

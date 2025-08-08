@@ -32,19 +32,19 @@ export class RaceModel {
   averageWeight: SexBasedAttribute;
 
   @Prop({ required: true })
-  strideBonus?: number;
+  strideBonus: number;
 
   @Prop({ required: true })
-  enduranceBonus?: number;
+  enduranceBonus: number;
 
   @Prop({ required: true })
-  recoveryMultiplier?: number;
+  recoveryMultiplier: number;
 
   @Prop({ required: true })
-  baseHits?: number;
+  baseHits: number;
 
   @Prop({ required: true })
-  bonusDevPoints?: number;
+  bonusDevPoints: number;
 
   @Prop({ required: false })
   description?: string;

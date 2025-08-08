@@ -29,6 +29,7 @@ import { GetRealmQueryHandler } from './application/queries/handlers/get-realm.q
 import { GetRealmsQueryHandler } from './application/queries/handlers/get-realms.query.handler';
 import { DeleteRealmCommandHandler } from './application/commands/handlers/delete-realm.command.handler';
 import { UpdateRealmCommandHandler } from './application/commands/handlers/update-realm.command.handler';
+import { GetRaceQueryHandler } from './application/queries/handlers/get-race.query.handler';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { UpdateRealmCommandHandler } from './application/commands/handlers/updat
     CreateRealmCommandHandler,
     UpdateRealmCommandHandler,
     DeleteRealmCommandHandler,
+    GetRaceQueryHandler,
     CreateRaceCommandHandler,
     UpdateRaceCommandHandler,
     DeleteRaceCommandHandler,
