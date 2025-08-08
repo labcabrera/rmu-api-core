@@ -1,70 +1,72 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import { Controller, Delete, Get, Inject, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from './dto/paged-rsql-query';
-import { DeleteRaceUseCase } from '../../application/use-cases/delete-race.usecase';
-import { UpdateRaceUseCase } from '../../application/use-cases/update-race.usecase';
-import { CreateRaceUseCase } from '../../application/use-cases/create-race.usecase';
 import * as raceRepository from '../../application/ports/outbound/race-repository';
 import { UpdateRaceCommand } from '../../application/commands/update-race.command';
-import { CreateRaceCommand } from '../../application/commands/create-race.command';
+import { CreateRaceDto, RaceDto } from './dto/race.dto';
+import { DeleteRaceCommand } from '../../application/commands/delete-race.command';
+import { Page } from '../../domain/entities/page';
+import { GetRaceQuery } from '../../application/queries/get-race.query';
+import { Race } from '../../domain/entities/race';
+import { GetRacesQuery } from '../../application/queries/get-races.query';
+import { RealmDto } from './dto/realm.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
 @ApiTags('Races')
 export class RaceController {
   constructor(
-    private readonly createRaceUseCase: CreateRaceUseCase,
-    private readonly updateRaceUseCase: UpdateRaceUseCase,
-    private readonly deleteRaceUseCase: DeleteRaceUseCase,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
   ) {}
 
   @Get(':id')
-  findById(@Param('id') id: string) {
-    //TODO convertir to use case for authenticated user
-    // const userId = req.user!.id as string;
-    return this.raceRepository.findById(id);
+  @ApiOkResponse({ type: RaceDto })
+  async findById(@Param('id') id: string, @Request() req) {
+    const entity = await this.queryBus.execute<GetRaceQuery, Race>(new GetRaceQuery(id, req.user!.id as string));
+    return RaceDto.fromEntity(entity);
   }
 
   @Get('')
-  find(@Query() query: PagedQueryDto) {
-    //TODO convertir to use case for authenticated user
-    // const userId = req.user!.id as string;
-    return this.raceRepository.findByRsql(query.q, query.page, query.size);
+  @ApiOkResponse({ type: Page<RaceDto> })
+  async find(@Query() dto: PagedQueryDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId);
+    const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
+    const mapped = page.content.map((race) => RaceDto.fromEntity(race));
+    return new Page<RaceDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
   @Post('')
-  create(@Request() req) {
-    const userId = req.user!.id as string;
-    const command: CreateRaceCommand = {
-      ...req.body,
-      username: userId,
-    };
-    return this.createRaceUseCase.execute(command);
+  @ApiOkResponse({ type: RaceDto })
+  create(@Body() createRaceDto: CreateRaceDto, @Request() req) {
+    const command = CreateRaceDto.toCommand(createRaceDto, req.user!.id as string, req.user!.roles as string[]);
+    console.log('Creating race with command:', JSON.stringify(command, null, 2));
+    return this.commandBus.execute(command);
   }
 
   @Patch(':id')
+  @ApiOkResponse({ type: RaceDto })
   updateSettings(@Param('id') id: string, @Request() req) {
     // const userId = req.user!.id as string;
     const command: UpdateRaceCommand = {
       ...req.body,
       id: id,
     };
-    return this.updateRaceUseCase.execute(command);
+    return this.commandBus.execute(command);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Request() req) {
-    const userId = req.user!.id;
-    const command = {
-      id: id,
-      username: userId,
-    };
-    return this.deleteRaceUseCase.execute(command);
+  @HttpCode(204)
+  async delete(@Param('id') id: string, @Request() req) {
+    const command = new DeleteRaceCommand(id, undefined, req.user!.id as string, req.user!.roles as string[]);
+    await this.commandBus.execute(command);
   }
 }

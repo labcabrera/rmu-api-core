@@ -1,12 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 
-import * as raceRepository from '../ports/outbound/race-repository';
-import * as raceNotificationPort from '../ports/outbound/race-event-producer';
-import { DeleteRaceCommand } from '../commands/delete-race.command';
-import { NotFoundError } from '../../domain/errors/errors';
+import * as raceRepository from '../../ports/outbound/race-repository';
+import * as raceNotificationPort from '../../ports/outbound/race-event-producer';
+import { DeleteRaceCommand } from '../delete-race.command';
+import { NotFoundError } from '../../../domain/errors/errors';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class DeleteRaceUseCase {
+@CommandHandler(DeleteRaceCommand)
+export class DeleteRaceCommandHandler implements ICommandHandler<DeleteRaceCommand> {
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
     @Inject('RaceEventProducer') private readonly raceNotificationPort: raceNotificationPort.RaceEventProducer,

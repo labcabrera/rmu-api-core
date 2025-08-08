@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CqrsModule } from '@nestjs/cqrs';
+
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { CreateRaceUseCase } from './application/use-cases/create-race.usecase';
-import { CreateRealmUseCase } from './application/use-cases/create-realm.usecase';
-import { DeleteRaceUseCase } from './application/use-cases/delete-race.usecase';
-import { DeleteRealmUseCase } from './application/use-cases/delete-realm.usecase';
-import { UpdateRaceUseCase } from './application/use-cases/update-race.usecase';
-import { UpdateRealmUseCase } from './application/use-cases/update-realm.usecase';
+import { CreateRaceCommandHandler } from './application/commands/handlers/create-race.command.handler';
+import { CreateRealmCommandHandler } from './application/commands/handlers/create-realm.command.handler';
+import { DeleteRaceCommandHandler } from './application/commands/handlers/delete-race.command.handler';
+import { UpdateRaceCommandHandler } from './application/commands/handlers/update-race.command.handler';
 import { CharacterSizeController } from './infrastructure/controllers/character-size.controller';
 import { RaceController } from './infrastructure/controllers/race.controller';
 import { RealmController } from './infrastructure/controllers/realm.controller';
@@ -25,9 +25,16 @@ import { MongoRealmRepository } from './infrastructure/persistence/repositories/
 import { ArmorTypeController } from './infrastructure/controllers/armor-type.controller copy';
 import { SkillCategoryController } from './infrastructure/controllers/skill-categories.controller';
 import { SkillController } from './infrastructure/controllers/skill.controller';
+import { GetRealmQueryHandler } from './application/queries/handlers/get-realm.query.handler';
+import { GetRealmsQueryHandler } from './application/queries/handlers/get-realms.query.handler';
+import { DeleteRealmCommandHandler } from './application/commands/handlers/delete-realm.command.handler';
+import { UpdateRealmCommandHandler } from './application/commands/handlers/update-realm.command.handler';
+import { GetRaceQueryHandler } from './application/queries/handlers/get-race.query.handler';
+import { GetRacesQueryHandler } from './application/queries/handlers/get-races.query.handler';
 
 @Module({
   imports: [
+    CqrsModule,
     ConfigModule,
     MongooseModule.forFeature([
       { name: RealmModel.name, schema: RealmSchema },
@@ -38,12 +45,16 @@ import { SkillController } from './infrastructure/controllers/skill.controller';
   controllers: [RealmController, RaceController, ArmorTypeController, CharacterSizeController, SkillCategoryController, SkillController],
   providers: [
     KafkaProducerService,
-    CreateRealmUseCase,
-    UpdateRealmUseCase,
-    DeleteRealmUseCase,
-    CreateRaceUseCase,
-    UpdateRaceUseCase,
-    DeleteRaceUseCase,
+    GetRealmQueryHandler,
+    GetRealmsQueryHandler,
+    CreateRealmCommandHandler,
+    UpdateRealmCommandHandler,
+    DeleteRealmCommandHandler,
+    GetRaceQueryHandler,
+    GetRacesQueryHandler,
+    CreateRaceCommandHandler,
+    UpdateRaceCommandHandler,
+    DeleteRaceCommandHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,
