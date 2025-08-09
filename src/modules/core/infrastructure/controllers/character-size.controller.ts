@@ -1,8 +1,10 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import * as characterSizeRepository from '../../application/ports/outbound/character-size-repository';
+import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
+import { CharacterSizeDto } from './dto/character-size.dto';
+import { NotFoundError } from '../../domain/errors/errors';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/character-sizes')
@@ -13,12 +15,21 @@ export class CharacterSizeController {
   ) {}
 
   @Get(':id')
+  @ApiOperation({ operationId: 'findCharacterSizeById', summary: 'Find character size by id' })
+  @ApiOkResponse({ type: CharacterSizeDto })
   findById(@Param('id') id: string) {
-    return this.characterSizeRepository.findById(id);
+    const entity = this.characterSizeRepository.findById(id);
+    if (!entity) {
+      throw new NotFoundError('CharacterSize', id);
+    }
+    return CharacterSizeDto.fromEntity(entity);
   }
 
   @Get('')
+  @ApiOkResponse({ type: [CharacterSizeDto] })
+  @ApiOperation({ operationId: 'findCharacterSizes', summary: 'Find all character sizes' })
   find() {
-    return this.characterSizeRepository.find();
+    const entities = this.characterSizeRepository.find();
+    return entities.map((e) => CharacterSizeDto.fromEntity(e));
   }
 }
