@@ -5,13 +5,16 @@ import { Model } from 'mongoose';
 import { RaceRepository } from 'src/modules/core/application/ports/outbound/race-repository';
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Race, UpdateRaceRequest } from 'src/modules/core/domain/entities/race';
-import { toMongoQuery } from './rsql-adapter';
+import { RsqlParser } from './rsql-parser';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { RaceDocument, RaceModel } from '../models/race-model';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {
-  constructor(@InjectModel(RaceModel.name) private raceModel: Model<RaceDocument>) {}
+  constructor(
+    @InjectModel(RaceModel.name) private raceModel: Model<RaceDocument>,
+    private rsqlParser: RsqlParser,
+  ) {}
 
   async findById(id: string): Promise<Race | null> {
     const readed = await this.raceModel.findById(id);
@@ -20,7 +23,7 @@ export class MongoRaceRepository implements RaceRepository {
 
   async findByRsql(rsql: string, page: number, size: number): Promise<Page<Race>> {
     const skip = page * size;
-    const mongoQuery = toMongoQuery(rsql);
+    const mongoQuery = this.rsqlParser.parse(rsql);
     const [racesDocs, totalElements] = await Promise.all([
       this.raceModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
       this.raceModel.countDocuments(mongoQuery),

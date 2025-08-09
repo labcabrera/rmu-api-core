@@ -2,16 +2,17 @@
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsOptional, IsInt, Min } from 'class-validator';
+import { IsOptional, IsInt, Min, IsString } from 'class-validator';
 
 export class PagedQueryDto {
-  @ApiPropertyOptional({ description: 'RSQL search expression' })
+  @ApiPropertyOptional({ description: 'RSQL search expression', example: 'name=re=lord', type: String, required: false })
+  @IsString()
   @IsOptional()
-  q?: string;
+  q: string | undefined;
 
   @ApiProperty({ description: 'Page', minimum: 0, example: 0, default: 0 })
-  @IsOptional()
   @IsInt()
+  @IsOptional()
   @Min(0)
   @Transform(({ value }) => {
     if (value === undefined || value === null || value === '') return 0;
@@ -20,8 +21,8 @@ export class PagedQueryDto {
   page: number = 0;
 
   @ApiProperty({ description: 'Size', minimum: 1, example: 10, default: 10 })
-  @IsOptional()
   @IsInt()
+  @IsOptional()
   @Min(1)
   @Transform(({ value }) => {
     if (value === undefined || value === null || value === '') return 10;

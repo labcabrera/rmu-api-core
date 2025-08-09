@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
-
-import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
@@ -13,11 +12,13 @@ import { PagedQueryDto } from './dto/paged-rsql-query';
 import { GetRealmQuery } from '../../application/queries/get-realm.query';
 import { GetRealmsQuery } from '../../application/queries/get-realms.query';
 import { DeleteRealmCommand } from '../../application/commands/delete-realm.command';
-import { CreateRealmDto, RealmDto, UpdateRealmDto } from './dto/realm.dto';
+import { RealmDto } from './dto/realm.dto';
 import { Realm } from '../../domain/entities/realm';
 import { Page } from '../../domain/entities/page';
 import { ErrorDto } from './dto/error-dto';
 import { RealmPageDto } from './dto/page.dto';
+import { CreateRealmDto } from './dto/create-realm.dto';
+import { UpdateRealmDto } from './dto/update-realm.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')
@@ -29,7 +30,7 @@ export class RealmController {
   ) {}
 
   @Get(':id')
-  @ApiOkResponse({ type: RealmDto })
+  @ApiOkResponse({ type: RealmDto, description: 'Success' })
   @ApiOperation({ operationId: 'findRealmById', summary: 'Find realm by id' })
   @ApiUnauthorizedResponse({
     description: 'Invalid or missing authentication token',
@@ -46,7 +47,7 @@ export class RealmController {
   }
 
   @Get('')
-  @ApiOkResponse({ type: RealmPageDto })
+  @ApiOkResponse({ type: RealmPageDto, description: 'Success' })
   @ApiUnauthorizedResponse({
     description: 'Invalid or missing authentication token',
     type: ErrorDto,
@@ -63,6 +64,21 @@ export class RealmController {
   @Post('')
   @ApiBody({ type: CreateRealmDto })
   @ApiOperation({ operationId: 'createRealm', summary: 'Create a new realm' })
+  @ApiOkResponse({ type: RealmDto, description: 'Success' })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing authentication token',
+    type: ErrorDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request, invalid data',
+    type: ErrorDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict, realm already exists',
+    type: ErrorDto,
+  })
   async create(@Body() dto: CreateRealmDto, @Request() req) {
     const user = req.user!;
     const command = CreateRealmDto.toCommand(dto, user.id as string, user.roles as string[]);
@@ -72,6 +88,11 @@ export class RealmController {
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm' })
+  @ApiOkResponse({ type: RealmDto, description: 'Success' })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing authentication token',
+    type: ErrorDto,
+  })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req) {
     const user = req.user!;
     const command = UpdateRealmDto.toCommand(id, dto, user.id as string, user.roles as string[]);
@@ -81,6 +102,10 @@ export class RealmController {
 
   @Delete(':id')
   @HttpCode(204)
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing authentication token',
+    type: ErrorDto,
+  })
   @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete realm by id' })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;

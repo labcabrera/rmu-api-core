@@ -33,6 +33,7 @@ import { GetRaceQueryHandler } from './application/queries/handlers/get-race.que
 import { GetRacesQueryHandler } from './application/queries/handlers/get-races.query.handler';
 import { HealthController } from './infrastructure/controllers/health.controller';
 import { TerminusModule } from '@nestjs/terminus';
+import { RsqlParser } from './infrastructure/persistence/repositories/rsql-parser';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { TerminusModule } from '@nestjs/terminus';
     HealthController,
   ],
   providers: [
+    RsqlParser,
     KafkaProducerService,
     GetRealmQueryHandler,
     GetRealmsQueryHandler,

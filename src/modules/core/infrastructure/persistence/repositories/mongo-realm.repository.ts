@@ -3,14 +3,17 @@ import { RealmRepository } from 'src/modules/core/application/ports/outbound/rea
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Realm } from 'src/modules/core/domain/entities/realm';
 import { RealmModel, RealmDocument } from '../models/realm-model';
-import { toMongoQuery } from './rsql-adapter';
+import { RsqlParser } from './rsql-parser';
 import { NotFoundError, NotModifiedError } from 'src/modules/core/domain/errors/errors';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 
 @Injectable()
 export class MongoRealmRepository implements RealmRepository {
-  constructor(@InjectModel(RealmModel.name) private realmModel: Model<RealmDocument>) {}
+  constructor(
+    @InjectModel(RealmModel.name) private realmModel: Model<RealmDocument>,
+    private rsqlParser: RsqlParser,
+  ) {}
 
   async findById(id: string): Promise<Realm | null> {
     const readed = await this.realmModel.findById(id);
@@ -19,7 +22,7 @@ export class MongoRealmRepository implements RealmRepository {
 
   async findByRsql(rsql: string, page: number, size: number): Promise<Page<Realm>> {
     const skip = page * size;
-    const mongoQuery = toMongoQuery(rsql);
+    const mongoQuery = this.rsqlParser.parse(rsql);
     const [realmsDocs, totalElements] = await Promise.all([
       this.realmModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
       this.realmModel.countDocuments(mongoQuery),
