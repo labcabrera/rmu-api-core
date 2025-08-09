@@ -23,7 +23,7 @@ export class KafkaProducerService implements OnModuleInit {
       brokers,
     });
     this.logger.debug(`Created Kafka with brokers: ${JSON.stringify(brokers)} and clientId: ${clientId} `);
-    this.defaultPartitions = this.configService.get<number>('KAFKA_DEFAULT_PARTITIONS', 1);
+    this.defaultPartitions = this.configService.get<number>('RMU_KAFKA_DEFAULT_PARTITIONS', 1);
   }
 
   async onModuleInit() {
