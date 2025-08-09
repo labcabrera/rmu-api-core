@@ -52,7 +52,6 @@ export class RaceController {
   @ApiOperation({ operationId: 'createRace', summary: 'Create a new race' })
   create(@Body() createRaceDto: CreateRaceDto, @Request() req) {
     const command = CreateRaceDto.toCommand(createRaceDto, req.user!.id as string, req.user!.roles as string[]);
-    console.log('Creating race with command:', JSON.stringify(command, null, 2));
     return this.commandBus.execute(command);
   }
 
