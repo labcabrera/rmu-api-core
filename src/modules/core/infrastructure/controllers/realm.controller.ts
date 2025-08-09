@@ -71,7 +71,7 @@ export class RealmController {
   }
 
   @Patch(':id')
-  @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm settings' })
+  @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm' })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req) {
     const user = req.user!;
     const command = UpdateRealmDto.toCommand(id, dto, user.id as string, user.roles as string[]);
@@ -81,7 +81,7 @@ export class RealmController {
 
   @Delete(':id')
   @HttpCode(204)
-  @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete a realm' })
+  @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete realm by id' })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
     const command = new DeleteRealmCommand(id, undefined, user.id as string, user.roles! as string[]);
