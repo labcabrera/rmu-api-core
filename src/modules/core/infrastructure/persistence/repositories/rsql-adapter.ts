@@ -11,9 +11,12 @@ export function toMongoQuery(rsql: string): MongoQuery {
   if (!rsql || rsql.trim() === '') {
     return {};
   }
+  console.debug(`Converting RSQL to MongoDB query: ${rsql}`);
   try {
     const node: any = parse(rsql);
-    return processNode(node);
+    const result = processNode(node);
+    console.debug(`Converted MongoDB query: ${JSON.stringify(result)}`);
+    return result;
   } catch (error) {
     throw new InvalidSearchExpression(`Invalid RSQL query: ${rsql}. ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -47,7 +50,12 @@ function processNode(node: any): MongoQuery {
       return { $or: node.args.map(processNode) };
     case 'COMPARISON': {
       // Handle different possible structures for comparison nodes
-      const field = node.left?.selector || node.selector;
+      let field = node.left?.selector || node.selector;
+
+      if (field === 'id') {
+        field = '_id';
+      }
+
       const op = node.operator || node.comparison;
       const value = node.right?.value || (node.arguments ? node.arguments[0] : undefined);
 
