@@ -9,6 +9,7 @@ import * as Joi from 'joi';
 
 import { CoreModule } from './modules/core/core.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ProfessionsModule } from './modules/professions/professions.module';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
       inject: [ConfigService],
     }),
-    CoreModule,
     AuthModule,
+    CoreModule,
+    ProfessionsModule,
   ],
 })
 export class AppModule {}

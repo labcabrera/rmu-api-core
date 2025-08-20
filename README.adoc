@@ -25,4 +25,5 @@ image::diagrams/c4-context.png[API Core Context System]
 |_CharacterSize_  | Static
 |_Realm_          | Dynamic
 |_Race_           | Dynamic
+|_Profession_     | Static
 |===
