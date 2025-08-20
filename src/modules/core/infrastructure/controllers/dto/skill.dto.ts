@@ -17,6 +17,7 @@ export class SkillDto {
   static fromEntity(entity: Skill): SkillDto {
     const dto = new SkillDto();
     dto.id = entity.id;
+    dto.categoryId = entity.categoryId;
     dto.bonus = entity.bonus || [];
     dto.specializations = entity.specializations || [];
     return dto;
