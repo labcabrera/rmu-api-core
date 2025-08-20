@@ -10,6 +10,8 @@ import * as Joi from 'joi';
 import { CoreModule } from './modules/core/core.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProfessionsModule } from './modules/professions/professions.module';
+import { RacesModule } from './modules/races/races.module';
+import { RealmsModule } from './modules/realms/realms.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { ProfessionsModule } from './modules/professions/professions.module';
     AuthModule,
     CoreModule,
     ProfessionsModule,
+    RacesModule,
+    RealmsModule,
   ],
 })
 export class AppModule {}
