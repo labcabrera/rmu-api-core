@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SkillCategoryRepository } from 'src/modules/core/application/ports/outbound/skill-category-repository';
+import { SkillCategoryRepository } from 'src/modules/core/application/ports/out/skill-category-repository';
 import { SKILL_CATEGORIES, SkillCategory } from 'src/modules/core/domain/entities/skill-category';
 
 @Injectable()

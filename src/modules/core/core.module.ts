@@ -39,6 +39,6 @@ import { RsqlParser } from './infrastructure/persistence/repositories/rsql-parse
       useClass: InMemorySkillRepository,
     },
   ],
-  exports: [RsqlParser],
+  exports: [RsqlParser, KafkaProducerService],
 })
 export class CoreModule {}

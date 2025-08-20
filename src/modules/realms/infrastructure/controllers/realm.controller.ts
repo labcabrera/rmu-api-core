@@ -30,16 +30,10 @@ export class RealmController {
   ) {}
 
   @Get(':id')
-  @ApiOkResponse({ type: RealmDto, description: 'Success' })
   @ApiOperation({ operationId: 'findRealmById', summary: 'Find realm by id' })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid or missing authentication token',
-    type: ErrorDto,
-  })
-  @ApiNotFoundResponse({
-    description: 'Realm not found',
-    type: ErrorDto,
-  })
+  @ApiOkResponse({ type: RealmDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
     const query = new GetRealmQuery(id, req.user!.id as string);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
@@ -47,12 +41,10 @@ export class RealmController {
   }
 
   @Get('')
-  @ApiOkResponse({ type: RealmPageDto, description: 'Success' })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid or missing authentication token',
-    type: ErrorDto,
-  })
   @ApiOperation({ operationId: 'findRealms', summary: 'Find realms by RSQL' })
+  @ApiOkResponse({ type: RealmPageDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId);
@@ -65,20 +57,9 @@ export class RealmController {
   @ApiBody({ type: CreateRealmDto })
   @ApiOperation({ operationId: 'createRealm', summary: 'Create a new realm' })
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid or missing authentication token',
-    type: ErrorDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad request, invalid data',
-    type: ErrorDto,
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict, realm already exists',
-    type: ErrorDto,
-  })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  @ApiResponse({ status: 409, description: 'Conflict, realm already exists', type: ErrorDto })
   async create(@Body() dto: CreateRealmDto, @Request() req) {
     const user = req.user!;
     const command = CreateRealmDto.toCommand(dto, user.id as string, user.roles as string[]);
@@ -89,10 +70,9 @@ export class RealmController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm' })
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
-  @ApiUnauthorizedResponse({
-    description: 'Invalid or missing authentication token',
-    type: ErrorDto,
-  })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req) {
     const user = req.user!;
     const command = UpdateRealmDto.toCommand(id, dto, user.id as string, user.roles as string[]);
@@ -102,11 +82,9 @@ export class RealmController {
 
   @Delete(':id')
   @HttpCode(204)
-  @ApiUnauthorizedResponse({
-    description: 'Invalid or missing authentication token',
-    type: ErrorDto,
-  })
   @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete realm by id' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
     const command = new DeleteRealmCommand(id, undefined, user.id as string, user.roles! as string[]);

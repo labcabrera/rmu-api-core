@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CharacterSizeRepository } from 'src/modules/core/application/ports/outbound/character-size-repository';
+import { CharacterSizeRepository } from 'src/modules/core/application/ports/out/character-size-repository';
 import { CharacterSize, CHARACTER_SIZES } from 'src/modules/core/domain/entities/character-size';
 
 @Injectable()
