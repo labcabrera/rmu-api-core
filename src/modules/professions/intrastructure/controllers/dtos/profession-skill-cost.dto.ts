@@ -9,16 +9,16 @@ export class ProfessionSkillCostsDto {
   awareness: number[];
 
   @ApiProperty({ description: 'Battle expertise skill costs', example: [2, 4] })
-  battleExpertise: number[];
+  'battle-expertise': number[];
 
   @ApiProperty({ description: 'Body discipline skill costs', example: [2, 4] })
-  bodyDiscipline: number[];
+  'body-discipline': number[];
 
   @ApiProperty({ description: 'Brawn skill costs', example: [2, 4] })
   brawn: number[];
 
   @ApiProperty({ description: 'Combat expertise skill costs', example: [2, 4] })
-  combatExpertise: number[];
+  'combat-expertise': number[];
 
   @ApiProperty({ description: 'Combat skill 1 costs', example: [2, 4] })
   combat1: number[];
@@ -51,22 +51,22 @@ export class ProfessionSkillCostsDto {
   lore: number[];
 
   @ApiProperty({ description: 'Magical expertise skill costs', example: [2, 4] })
-  magicalExpertise: number[];
+  'magical-expertise': number[];
 
   @ApiProperty({ description: 'Medical skill costs', example: [2, 4] })
   medical: number[];
 
   @ApiProperty({ description: 'Mental discipline skill costs', example: [2, 4] })
-  mentalDiscipline: number[];
+  'mental-discipline': number[];
 
   @ApiProperty({ description: 'Movement skill costs', example: [2, 4] })
   movement: number[];
 
   @ApiProperty({ description: 'Performance art skill costs', example: [2, 4] })
-  performanceArt: number[];
+  'performance-art': number[];
 
   @ApiProperty({ description: 'Power manipulation skill costs', example: [2, 4] })
-  powerManipulation: number[];
+  'power-manipulation': number[];
 
   @ApiProperty({ description: 'Science skill costs', example: [2, 4] })
   science: number[];
@@ -75,19 +75,19 @@ export class ProfessionSkillCostsDto {
   social: number[];
 
   @ApiProperty({ description: 'Spells base open skill costs', example: [2, 4] })
-  spellsBaseOpen: number[];
+  'spells-base-open': number[];
 
   @ApiProperty({ description: 'Spells ritual magic skill costs', example: [2, 4] })
-  spellsRitualMagic: number[];
+  'spells-ritual-magic': number[];
 
   @ApiProperty({ description: 'Closed skill costs', example: [2, 4] })
-  spellsClosed: number[];
+  'spells-closed': number[];
 
   @ApiProperty({ description: 'Arcane skill costs', example: [2, 4] })
-  spellsArcane: number[];
+  'spells-arcane': number[];
 
   @ApiProperty({ description: 'Restricted skill costs', example: [2, 4] })
-  spellsRestricted: number[];
+  'spells-restricted': number[];
 
   @ApiProperty({ description: 'Subterfuge skill costs', example: [2, 4] })
   subterfuge: number[];
