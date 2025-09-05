@@ -72,7 +72,7 @@ export class MongoRealmRepository implements RealmRepository {
 
   private mapToEntity(doc: RealmDocument): Realm {
     return {
-      id: doc.id,
+      id: doc.id as string,
       name: doc.name,
       description: doc.description,
       owner: doc.owner,
