@@ -1,5 +1,4 @@
 import { AbsoluteManeuverResult } from '../entities/absolute-maneuver-result.entity';
-import { PercentManeuverResult } from '../entities/percent-maneuver-result.entity';
 
 const percentTable: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
   {
