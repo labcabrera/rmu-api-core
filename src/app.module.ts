@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -12,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ProfessionsModule } from './modules/professions/professions.module';
 import { RacesModule } from './modules/races/races.module';
 import { RealmsModule } from './modules/realms/realms.module';
+import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 
 @Module({
   imports: [
@@ -42,6 +39,7 @@ import { RealmsModule } from './modules/realms/realms.module';
     ProfessionsModule,
     RacesModule,
     RealmsModule,
+    ManeuversModule,
   ],
 })
 export class AppModule {}

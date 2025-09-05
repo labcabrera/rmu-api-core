@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -5,11 +8,11 @@ import { JwtAuthGuard } from '../src/modules/auth/jwt.auth.guard';
 import { RealmController } from '../src/modules/realms/infrastructure/controllers/realm.controller';
 import { Realm } from '../src/modules/realms/domain/entities/realm';
 import { Page } from '../src/modules/core/domain/entities/page';
-import { CreateRealmCommand } from '../src/modules/core/application/commands/create-realm.command';
-import { UpdateRealmCommand } from '../src/modules/core/application/commands/update-realm.command';
-import { DeleteRealmCommand } from '../src/modules/core/application/commands/delete-realm.command';
 
-const supertest = require('supertest');
+import supertest from 'supertest';
+import { CreateRealmCommand } from 'src/modules/realms/application/commands/create-realm.command';
+import { UpdateRealmCommand } from 'src/modules/realms/application/commands/update-realm.command';
+import { DeleteRealmCommand } from 'src/modules/realms/application/commands/delete-realm.command';
 
 describe('RealmController (e2e)', () => {
   let app: INestApplication;
