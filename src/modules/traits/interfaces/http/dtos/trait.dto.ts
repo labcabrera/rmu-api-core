@@ -6,6 +6,12 @@ export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   id: string;
 
+  @ApiProperty({ description: 'Indicates if the trait is a talent', example: true })
+  isTalent: boolean;
+
+  @ApiProperty({ description: 'Indicates if the trait requires specialization', example: true })
+  requiresSpecialization: boolean;
+
   @ApiProperty({ description: 'Cost of the trait', example: 7, required: false })
   cost: number | undefined;
 
@@ -15,6 +21,8 @@ export class TraitDto {
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
+    dto.isTalent = entity.isTalent;
+    dto.requiresSpecialization = entity.requiresSpecialization;
     dto.cost = entity.cost;
     dto.description = entity.description;
     return dto;

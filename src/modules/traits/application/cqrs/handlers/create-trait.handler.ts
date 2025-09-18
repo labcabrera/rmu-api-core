@@ -21,7 +21,14 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
     if (existing) {
       throw new ConflictError(`Trait with id ${command.id} already exists`);
     }
-    const trait = Trait.create(command.id, command.cost, command.description, command.userId);
+    const trait = Trait.create(
+      command.id,
+      command.isTalent,
+      command.requiresSpecialization,
+      command.cost,
+      command.description,
+      command.userId,
+    );
     const savedTrait = await this.traitRepository.save(trait);
     trait.getUncommittedEvents().forEach((event) => this.traitEventBus.publish(event));
     return savedTrait;

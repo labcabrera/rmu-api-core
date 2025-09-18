@@ -6,6 +6,8 @@ import { TraitUpdatedEvent } from '../events/trait-updated.event';
 export class Trait extends AggregateRoot<DomainEvent<Trait>> {
   constructor(
     public id: string,
+    public isTalent: boolean,
+    public requiresSpecialization: boolean,
     public cost: number | undefined,
     public description: string | undefined,
     public owner: string,
@@ -14,13 +16,27 @@ export class Trait extends AggregateRoot<DomainEvent<Trait>> {
   ) {
     super();
   }
-  static create(id: string, cost: number | undefined, description: string | undefined, userId: string) {
-    const realm = new Trait(id, cost, description, userId, new Date(), undefined);
+  static create(
+    id: string,
+    isTalent: boolean,
+    requiresSpecialization: boolean,
+    cost: number | undefined,
+    description: string | undefined,
+    userId: string,
+  ) {
+    const realm = new Trait(id, isTalent, requiresSpecialization, cost, description, userId, new Date(), undefined);
     realm.apply(new TraitCreatedEvent(realm));
     return realm;
   }
 
-  update(cost: number | undefined, description: string | undefined) {
+  update(
+    isTalent: boolean | undefined,
+    requiresSpecialization: boolean | undefined,
+    cost: number | undefined,
+    description: string | undefined,
+  ) {
+    if (isTalent !== undefined) this.isTalent = isTalent;
+    if (requiresSpecialization !== undefined) this.requiresSpecialization = requiresSpecialization;
     if (cost !== undefined) this.cost = cost;
     if (description) this.description = description;
     this.updatedAt = new Date();

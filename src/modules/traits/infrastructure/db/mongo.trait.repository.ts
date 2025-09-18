@@ -56,6 +56,15 @@ export class MongoTraitRepository implements TraitRepository {
   }
 
   private mapToEntity(doc: TraitDocument): Trait {
-    return new Trait(doc.id as string, doc.cost, doc.description, doc.owner, doc.createdAt, doc.updatedAt);
+    return new Trait(
+      doc.id as string,
+      doc.isTalent,
+      doc.requiresSpecialization,
+      doc.cost,
+      doc.description,
+      doc.owner,
+      doc.createdAt,
+      doc.updatedAt,
+    );
   }
 }

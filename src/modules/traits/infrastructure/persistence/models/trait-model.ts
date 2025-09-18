@@ -9,6 +9,12 @@ export class TraitModel {
   @Prop({ required: true })
   _id: string;
 
+  @Prop({ required: true })
+  isTalent: boolean;
+
+  @Prop({ required: true })
+  requiresSpecialization: boolean;
+
   @Prop({ type: Number, required: false })
   cost?: number;
 
