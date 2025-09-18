@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
 import { UpdateTraitCommand } from 'src/modules/traits/application/cqrs/commands/update-trait.command';
 
 export class UpdateTraitDto {
-  @ApiProperty({ description: 'Name of the trait', example: 'Bravery' })
-  @IsString()
+  @ApiProperty({ description: 'Cost of the trait', required: false, example: 7 })
+  @IsNumber()
   @IsOptional()
-  name: string | undefined;
+  cost: number | undefined;
 
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   @IsString()
@@ -14,6 +14,6 @@ export class UpdateTraitDto {
   description: string | undefined;
 
   static toCommand(id: string, dto: UpdateTraitDto, userId: string, userRoles: string[]) {
-    return new UpdateTraitCommand(id, dto.name, dto.description, userId, userRoles);
+    return new UpdateTraitCommand(id, dto.cost, dto.description, userId, userRoles);
   }
 }

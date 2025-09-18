@@ -1,12 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
-import { CreateRealmCommand } from 'src/modules/realms/application/cqrs/commands/create-realm.command';
+import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
+import { CreateTraitCommand } from 'src/modules/traits/application/cqrs/commands/create-trait.command';
 
 export class CreateTraitDto {
-  @ApiProperty({ description: 'Name of the trait', example: 'Bravery' })
+  @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  id: string;
+
+  @ApiProperty({ description: 'Cost of the trait', example: 7 })
+  @IsNumber()
+  @IsOptional()
+  cost: number | undefined;
 
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   @IsString()
@@ -14,6 +19,6 @@ export class CreateTraitDto {
   description: string | undefined;
 
   static toCommand(dto: CreateTraitDto, userId: string, userRoles: string[]) {
-    return new CreateRealmCommand(dto.name, dto.description, userId, userRoles);
+    return new CreateTraitCommand(dto.id, dto.cost, dto.description, userId, userRoles);
   }
 }

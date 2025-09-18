@@ -6,16 +6,16 @@ export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   id: string;
 
-  @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
-  name: string;
+  @ApiProperty({ description: 'Cost of the trait', example: 7, required: false })
+  cost: number | undefined;
 
-  @ApiProperty({ description: 'Description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
+  @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   description?: string;
 
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
-    dto.name = entity.name;
+    dto.cost = entity.cost;
     dto.description = entity.description;
     return dto;
   }

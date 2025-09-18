@@ -4,13 +4,13 @@ import { Trait } from 'src/modules/traits/domain/aggregates/trait';
 
 export type TraitDocument = Trait & Document;
 
-@Schema({ collection: 'traits', versionKey: false })
+@Schema({ collection: 'traits', _id: false, versionKey: false })
 export class TraitModel {
   @Prop({ required: true })
   _id: string;
 
-  @Prop({ required: true })
-  name: string;
+  @Prop({ type: Number, required: false })
+  cost?: number;
 
   @Prop({ required: false })
   description?: string;
