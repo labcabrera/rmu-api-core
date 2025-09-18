@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RealmDto } from '../../../../realms/interfaces/http/dtos/realm.dto';
-import { RaceDto } from '../../../../races/interfaces/http/dtos/race.dto';
 
 export class PaginationDto {
   @ApiProperty({
@@ -26,18 +24,4 @@ export class PaginationDto {
     example: 5,
   })
   totalPages: number;
-}
-
-export class RacePageDto {
-  @ApiProperty({
-    type: [RaceDto],
-    description: 'Races',
-    isArray: true,
-  })
-  content: RaceDto[];
-  @ApiProperty({
-    type: PaginationDto,
-    description: 'Pagination information',
-  })
-  pagination: PaginationDto;
 }

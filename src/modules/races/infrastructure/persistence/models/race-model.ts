@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-
-import { RaceResistances, RaceStats, SexBasedAttribute } from './race-model-childs';
+import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 
 export type RaceDocument = RaceModel & Document;
 

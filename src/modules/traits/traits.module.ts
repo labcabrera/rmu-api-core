@@ -4,7 +4,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CoreModule } from '../core/core.module';
-import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-bus.adapter';
+import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-event-bus.adapter';
 import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository';
 import { TraitController } from './interfaces/http/trait.controller';
 import { CreateTraitHandler } from './application/cqrs/handlers/create-trait.handler';
