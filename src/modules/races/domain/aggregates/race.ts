@@ -12,7 +12,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     public name: string,
     public readonly realmId: string,
     public realmName: string,
-    public size: string,
+    public sizeId: string,
     public stats: RaceStats,
     public resistances: RaceResistances,
     public averageHeight: SexBasedAttribute,
@@ -97,7 +97,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     description: string | undefined,
   ) {
     if (name) this.name = name;
-    if (size) this.size = size;
+    if (size) this.sizeId = size;
     if (stats) this.stats = stats;
     if (resistances) this.resistances = resistances;
     if (averageHeight) this.averageHeight = averageHeight;

@@ -61,7 +61,7 @@ export class MongoRaceRepository implements RaceRepository {
       doc.name,
       doc.realmId,
       doc.realmName,
-      doc.size,
+      doc.sizeId,
       doc.stats,
       doc.resistances,
       doc.averageHeight,

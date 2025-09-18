@@ -20,7 +20,7 @@ export class RaceModel {
   realmName: string;
 
   @Prop({ required: true })
-  size: string;
+  sizeId: string;
 
   @Prop({ type: RaceStats, required: true })
   stats: RaceStats;

@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray } from 'class-validator';
-import { RaceStatBonusDto, SexBasedAttributeDto } from './race.dto';
 import { RaceResistancesDto } from './race-resistances.dto';
 import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/create-race.command';
+import { RaceStatsDto } from './race-stats.dto';
+import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 
 export class CreateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
@@ -19,12 +20,12 @@ export class CreateRaceDto {
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   @IsString()
   @IsNotEmpty()
-  size: string;
+  sizeId: string;
 
   @ApiProperty({ description: 'Default stat bonus for the race' })
   @ValidateNested()
-  @Type(() => RaceStatBonusDto)
-  stats: RaceStatBonusDto;
+  @Type(() => RaceStatsDto)
+  stats: RaceStatsDto;
 
   @ApiProperty({ description: 'Resistances of the race' })
   @ValidateNested()
@@ -82,7 +83,7 @@ export class CreateRaceDto {
     return new CreateRaceCommand(
       dto.name,
       dto.realmId,
-      dto.size,
+      dto.sizeId,
       dto.stats,
       RaceResistancesDto.toEntity(dto.resistances),
       dto.averageHeight,

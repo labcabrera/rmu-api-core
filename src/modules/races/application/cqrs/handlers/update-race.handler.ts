@@ -20,7 +20,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
     }
     race.update(
       command.name,
-      command.size,
+      command.sizeId,
       command.stats,
       command.resistances,
       command.averageHeight,

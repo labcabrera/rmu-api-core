@@ -1,60 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
-
 import { Race } from 'src/modules/races/domain/aggregates/race';
 import { RaceResistancesDto } from './race-resistances.dto';
-
-export class RaceStatBonusDto {
-  @ApiProperty({ description: 'Agility bonus', example: 5 })
-  @IsNumber()
-  ag: number;
-
-  @ApiProperty({ description: 'Constitution bonus', example: 0 })
-  @IsNumber()
-  co: number;
-
-  @ApiProperty({ description: 'Empathy bonus', example: 0 })
-  @IsNumber()
-  em: number;
-
-  @ApiProperty({ description: 'Intelligence bonus', example: 5 })
-  @IsNumber()
-  in: number;
-
-  @ApiProperty({ description: 'Mental endurance bonus', example: 0 })
-  @IsNumber()
-  me: number;
-
-  @ApiProperty({ description: 'Physical prowess bonus', example: 5 })
-  @IsNumber()
-  pr: number;
-
-  @ApiProperty({ description: 'Quickness bonus', example: 5 })
-  @IsNumber()
-  qu: number;
-
-  @ApiProperty({ description: 'Resistance bonus', example: 5 })
-  @IsNumber()
-  re: number;
-
-  @ApiProperty({ description: 'Stealth bonus', example: 5 })
-  @IsNumber()
-  sd: number;
-
-  @ApiProperty({ description: 'Strength bonus', example: 5 })
-  @IsNumber()
-  st: number;
-}
-
-export class SexBasedAttributeDto {
-  @ApiProperty({ description: 'Average height for males', example: 180 })
-  @IsNumber()
-  male: number;
-
-  @ApiProperty({ description: 'Average height for females', example: 170 })
-  @IsNumber()
-  female: number;
-}
+import { RaceStatsDto } from './race-stats.dto';
+import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -70,10 +18,10 @@ export class RaceDto {
   realmName: string;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
-  size: string;
+  sizeId: string;
 
   @ApiProperty({ description: 'Default stat bonus for the race' })
-  stats: RaceStatBonusDto;
+  stats: RaceStatsDto;
 
   @ApiProperty({ description: 'Resistances of the race' })
   resistances: RaceResistancesDto;
@@ -107,7 +55,7 @@ export class RaceDto {
     dto.id = entity.id;
     dto.name = entity.name;
     dto.realmId = entity.realmId;
-    dto.size = entity.size;
+    dto.sizeId = entity.sizeId;
     dto.stats = entity.stats;
     dto.resistances = entity.resistances;
     dto.averageHeight = entity.averageHeight;
@@ -126,7 +74,7 @@ export class UpdateRaceDto {
   name?: string;
   realm?: string;
   size?: string;
-  defaultStatBonus?: RaceStatBonusDto;
+  defaultStatBonus?: RaceStatsDto;
   resistances?: RaceResistancesDto;
   averageHeight?: SexBasedAttributeDto;
   averageWeight?: SexBasedAttributeDto;

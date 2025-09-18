@@ -6,7 +6,7 @@ export class CreateRaceCommand {
   constructor(
     public readonly name: string,
     public readonly realmId: string,
-    public readonly size: string,
+    public readonly sizeId: string,
     public readonly stats: RaceStats,
     public readonly resistances: RaceResistances,
     public readonly averageHeight: SexBasedAttribute,

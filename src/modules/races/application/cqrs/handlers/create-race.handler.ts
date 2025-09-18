@@ -24,7 +24,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       command.name,
       command.realmId,
       realm.name,
-      command.size,
+      command.sizeId,
       command.stats,
       command.resistances,
       command.averageHeight,
