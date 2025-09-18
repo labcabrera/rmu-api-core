@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray, IsOptional } from 'class-validator';
 import { RaceResistancesDto } from './race-resistances.dto';
 import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/create-race.command';
 import { RaceStatsDto } from './race-stats.dto';
@@ -76,8 +76,8 @@ export class CreateRaceDto {
 
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
-  @IsNotEmpty()
-  description: string;
+  @IsOptional()
+  description: string | undefined;
 
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(
