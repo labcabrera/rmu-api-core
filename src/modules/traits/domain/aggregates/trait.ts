@@ -29,7 +29,7 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
   }
   static create(props: Omit<TraitProps, 'createdAt' | 'updatedAt'>): Trait {
     const trait = new Trait(
-      props.id,
+      props.id.toLowerCase().replaceAll(' ', '-'),
       props.isTalent,
       props.requiresSpecialization,
       props.cost,
