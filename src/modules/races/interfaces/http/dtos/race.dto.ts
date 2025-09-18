@@ -47,6 +47,15 @@ export class RaceDto {
   @ApiProperty({ description: 'Base development points for the race' })
   baseDevPoints: number;
 
+  @ApiProperty({ description: 'Racial armor type', example: 1 })
+  baseAt: number;
+
+  @ApiProperty({ description: 'Default language', example: 'Common Tongue' })
+  defaultLanguage?: string;
+
+  @ApiProperty({ description: 'List of racial talents', example: ['Night Vision', 'Keen Senses'] })
+  talents: string[];
+
   @ApiProperty({ description: 'Description of the race' })
   description?: string;
 
@@ -55,6 +64,7 @@ export class RaceDto {
     dto.id = entity.id;
     dto.name = entity.name;
     dto.realmId = entity.realmId;
+    dto.realmName = entity.realmName;
     dto.sizeId = entity.sizeId;
     dto.stats = entity.stats;
     dto.resistances = entity.resistances;
@@ -65,23 +75,10 @@ export class RaceDto {
     dto.recoveryMultiplier = entity.recoveryMultiplier;
     dto.baseHits = entity.baseHits;
     dto.baseDevPoints = entity.baseDevPoints;
+    dto.baseAt = entity.baseAt;
+    dto.defaultLanguage = entity.defaultLanguage;
+    dto.talents = entity.talents;
     dto.description = entity.description;
     return dto;
   }
-}
-
-export class UpdateRaceDto {
-  name?: string;
-  realm?: string;
-  size?: string;
-  defaultStatBonus?: RaceStatsDto;
-  resistances?: RaceResistancesDto;
-  averageHeight?: SexBasedAttributeDto;
-  averageWeight?: SexBasedAttributeDto;
-  strideBonus?: number;
-  enduranceBonus?: number;
-  recoveryMultiplier?: number;
-  baseHits?: number;
-  bonusDevPoints?: number;
-  description?: string;
 }

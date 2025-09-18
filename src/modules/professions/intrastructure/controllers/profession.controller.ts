@@ -9,7 +9,7 @@ import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { ProfessionDto } from './dtos/profession.dto';
 import { GetProfessionQuery } from '../../application/queries/get-profession.query';
 import { Profession } from '../../domain/entities/profession.entity';
-import { ErrorDto } from 'src/modules/core/infrastructure/controllers/dto/error-dto';
+import { ErrorDto } from 'src/modules/core/interfaces/http/dto/error-dto';
 import { GetProfessionsQuery } from '../../application/queries/get-professions.query';
 
 @UseGuards(JwtAuthGuard)

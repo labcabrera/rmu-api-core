@@ -4,17 +4,18 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Req
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { PagedQueryDto } from '../../../core/infrastructure/controllers/dto/paged-rsql-query';
+import { PagedQueryDto } from '../../../core/interfaces/http/dto/paged-rsql-query';
 import { Page } from '../../../core/domain/entities/page';
 import { Race } from '../../domain/aggregates/race';
-import { RacePageDto } from '../../../core/infrastructure/controllers/dto/page.dto';
+import { RacePageDto } from '../../../core/interfaces/http/dto/page.dto';
 import { RaceDto } from './dtos/race.dto';
 import { CreateRaceDto } from './dtos/create-race.dto';
-import { ErrorDto } from 'src/modules/core/infrastructure/controllers/dto/error-dto';
+import { ErrorDto } from 'src/modules/core/interfaces/http/dto/error-dto';
 import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command';
 import { UpdateRaceCommand } from '../../application/cqrs/commands/update-race.command';
 import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query';
 import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query';
+import { UpdateRaceDto } from './dtos/update-race.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -64,14 +65,9 @@ export class RaceController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Race not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  updateSettings(@Param('id') id: string, @Request() req) {
+  updateSettings(@Param('id') id: string, @Body() updateRaceDto: UpdateRaceDto, @Request() req) {
     const user = req.user!;
-    const command: UpdateRaceCommand = {
-      ...req.body,
-      id: id,
-      userId: user.id as string,
-      roles: user.roles as string[],
-    };
+    const command = UpdateRaceDto.toCommand(id, updateRaceDto, user.id as string, user.roles as string[]);
     return this.commandBus.execute(command);
   }
 

@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { DomainExceptionFilter } from 'src/modules/core/infrastructure/controllers/domain-exception.filter';
+import { DomainExceptionFilter } from 'src/modules/core/interfaces/http/domain-exception.filter';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 
 function configureOpenApi(app: INestApplication<any>) {

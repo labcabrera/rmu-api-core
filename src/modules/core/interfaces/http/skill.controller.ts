@@ -2,7 +2,7 @@ import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
 
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import * as skillRepository from '../../application/ports/out/skill-repository';
+import * as skillRepository from '../../application/ports/skill-repository';
 import { SkillDto } from './dto/skill.dto';
 import { NotFoundError } from '../../domain/errors/errors';
 

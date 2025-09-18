@@ -4,14 +4,14 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Req
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { PagedQueryDto } from '../../../core/infrastructure/controllers/dto/paged-rsql-query';
+import { PagedQueryDto } from '../../../core/interfaces/http/dto/paged-rsql-query';
 import { GetRealmQuery } from '../../application/cqrs/queries/get-realm.query';
 import { GetRealmsQuery } from '../../application/cqrs/queries/get-realms.query';
 import { RealmDto } from './dtos/realm.dto';
 import { Realm } from '../../domain/aggregates/realm';
 import { Page } from '../../../core/domain/entities/page';
-import { ErrorDto } from '../../../core/infrastructure/controllers/dto/error-dto';
-import { RealmPageDto } from '../../../core/infrastructure/controllers/dto/page.dto';
+import { ErrorDto } from '../../../core/interfaces/http/dto/error-dto';
+import { RealmPageDto } from '../../../core/interfaces/http/dto/page.dto';
 import { CreateRealmDto } from './dtos/create-realm.dto';
 import { UpdateRealmDto } from './dtos/update-realm.dto';
 import { CreateRealmCommand } from '../../application/cqrs/commands/create-realm.command';
