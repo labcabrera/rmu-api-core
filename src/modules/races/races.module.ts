@@ -3,9 +3,9 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../auth/auth.module';
-import { RaceController } from './infrastructure/controllers/race.controller';
-import { KafkaRaceProducerService } from './infrastructure/messaging/kafka-race-producer.service';
-import { MongoRaceRepository } from './infrastructure/persistence/repositories/mongo-race.repository';
+import { RaceController } from './interfaces/http/race.controller';
+import { KafkaRaceEventBusAdapter } from './infrastructure/messaging/kafka.race-event-bus-adapter';
+import { MongoRaceRepository } from './infrastructure/db/mongo-race.repository';
 import { RealmsModule } from '../realms/realms.module';
 import { CoreModule } from '../core/core.module';
 import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race-model';
@@ -37,7 +37,7 @@ import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.han
     },
     {
       provide: 'RaceEventProducer',
-      useClass: KafkaRaceProducerService,
+      useClass: KafkaRaceEventBusAdapter,
     },
   ],
   exports: ['RaceRepository'],

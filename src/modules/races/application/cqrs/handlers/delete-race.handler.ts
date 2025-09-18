@@ -3,13 +3,14 @@ import { DeleteRaceCommand } from '../commands/delete-race.command';
 import { NotFoundError } from '../../../../core/domain/errors/errors';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import type { RaceRepository } from '../../ports/out/race-repository';
-import type { RaceEventProducer } from '../../ports/out/race-event-producer';
+import type { RaceEventBusPort } from '../../ports/out/race-event-bus.port';
+import { RaceDeletedEvent } from 'src/modules/races/domain/events/race-deleted.event';
 
 @CommandHandler(DeleteRaceCommand)
 export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RaceEventProducer') private readonly raceNotificationPort: RaceEventProducer,
+    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 
   async execute(command: DeleteRaceCommand): Promise<void> {
@@ -18,6 +19,6 @@ export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
       throw new NotFoundError('Race', command.id);
     }
     await this.raceRepository.deleteById(command.id);
-    await this.raceNotificationPort.deleted(race);
+    this.raceEventBus.publish(new RaceDeletedEvent(race));
   }
 }

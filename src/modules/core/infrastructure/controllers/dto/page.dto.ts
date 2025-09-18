@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RealmDto } from '../../../../realms/interfaces/http/dtos/realm.dto';
-import { RaceDto } from '../../../../races/infrastructure/controllers/dtos/race.dto';
+import { RaceDto } from '../../../../races/interfaces/http/dtos/race.dto';
 
 export class PaginationDto {
   @ApiProperty({

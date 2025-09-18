@@ -4,9 +4,9 @@ import { Model } from 'mongoose';
 import { RaceRepository } from 'src/modules/races/application/ports/out/race-repository';
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Race } from 'src/modules/races/domain/aggregates/race';
-import { RsqlParser } from '../../../../core/infrastructure/persistence/repositories/rsql-parser';
+import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
-import { RaceDocument, RaceModel } from '../models/race-model';
+import { RaceDocument, RaceModel } from '../persistence/models/race-model';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {

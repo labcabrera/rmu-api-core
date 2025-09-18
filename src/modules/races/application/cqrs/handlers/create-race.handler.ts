@@ -5,14 +5,14 @@ import { ValidationError } from '../../../../core/domain/errors/errors';
 import { CreateRaceCommand } from '../commands/create-race.command';
 import type { RaceRepository } from '../../ports/out/race-repository';
 import type { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
-import type { RaceEventProducer } from '../../ports/out/race-event-producer';
+import type { RaceEventBusPort } from '../../ports/out/race-event-bus.port';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RaceEventProducer') private readonly raceNotificationPort: RaceEventProducer,
+    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
@@ -41,7 +41,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       command.userId,
     );
     const savedRace = await this.raceRepository.save(race);
-    await this.raceNotificationPort.created(savedRace);
+    race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
     return savedRace;
   }
 }

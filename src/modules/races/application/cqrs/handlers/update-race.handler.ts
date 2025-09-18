@@ -1,31 +1,42 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-
 import { Race } from '../../../domain/aggregates/race';
 import { UpdateRaceCommand } from '../commands/update-race.command';
-import * as raceNotificationPort from '../../ports/out/race-event-producer';
-import * as raceRepository from '../../ports/out/race-repository';
-import * as realmRepository from '../../../../realms/application/ports/out/realm-repository';
-import { ValidationError } from '../../../../core/domain/errors/errors';
+import { NotFoundError } from '../../../../core/domain/errors/errors';
+import type { RaceEventBusPort } from '../../ports/out/race-event-bus.port';
+import type { RaceRepository } from '../../ports/out/race-repository';
 
 @CommandHandler(UpdateRaceCommand)
 export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Race> {
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
-    @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
-    @Inject('RaceEventProducer') private readonly raceNotificationPort: raceNotificationPort.RaceEventProducer,
+    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
+    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 
   async execute(command: UpdateRaceCommand): Promise<Race> {
-    if (command.realmId) {
-      const realm = await this.realmRepository.findById(command.realmId);
-      if (!realm) {
-        throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
-      }
+    const race = await this.raceRepository.findById(command.id);
+    if (!race) {
+      throw new NotFoundError('Race', command.id);
     }
-    const race: Partial<Race> = { ...command, updatedAt: new Date() };
+    race.update(
+      command.name,
+      command.size,
+      command.stats,
+      command.resistances,
+      command.averageHeight,
+      command.averageWeight,
+      command.strideBonus,
+      command.enduranceBonus,
+      command.recoveryMultiplier,
+      command.baseHits,
+      command.baseDevPoints,
+      command.baseAt,
+      command.defaultLanguage,
+      command.talents,
+      command.description,
+    );
     const updated = await this.raceRepository.update(command.id, race);
-    await this.raceNotificationPort.updated(updated);
+    race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
     return updated;
   }
 }

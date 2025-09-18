@@ -79,4 +79,39 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     race.apply(new RaceCreatedEvent(race));
     return race;
   }
+  update(
+    name: string | undefined,
+    size: string | undefined,
+    stats: RaceStats | undefined,
+    resistances: RaceResistances | undefined,
+    averageHeight: SexBasedAttribute | undefined,
+    averageWeight: SexBasedAttribute | undefined,
+    strideBonus: number | undefined,
+    enduranceBonus: number | undefined,
+    recoveryMultiplier: number | undefined,
+    baseHits: number | undefined,
+    baseDevPoints: number | undefined,
+    baseAt: number | undefined,
+    defaultLanguage: string | undefined,
+    talents: string[] | undefined,
+    description: string | undefined,
+  ) {
+    if (name) this.name = name;
+    if (size) this.size = size;
+    if (stats) this.stats = stats;
+    if (resistances) this.resistances = resistances;
+    if (averageHeight) this.averageHeight = averageHeight;
+    if (averageWeight) this.averageWeight = averageWeight;
+    if (strideBonus !== undefined) this.strideBonus = strideBonus;
+    if (enduranceBonus !== undefined) this.enduranceBonus = enduranceBonus;
+    if (recoveryMultiplier !== undefined) this.recoveryMultiplier = recoveryMultiplier;
+    if (baseHits !== undefined) this.baseHits = baseHits;
+    if (baseDevPoints !== undefined) this.baseDevPoints = baseDevPoints;
+    if (baseAt !== undefined) this.baseAt = baseAt;
+    if (defaultLanguage !== undefined) this.defaultLanguage = defaultLanguage;
+    if (talents) this.talents = talents;
+    if (description !== undefined) this.description = description;
+    this.updatedAt = new Date();
+    this.apply(new RaceCreatedEvent(this));
+  }
 }
