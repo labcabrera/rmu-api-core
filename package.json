@@ -1,6 +1,6 @@
 {
   "name": "rmu-api-core",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Core API for RMU",
   "author": {
     "name": "Luis Cabrera",
