@@ -6,8 +6,32 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 
+export interface RaceProps {
+  id: string;
+  name: string;
+  realmId: string;
+  realmName: string;
+  sizeId: string;
+  stats: RaceStats;
+  resistances: RaceResistances;
+  averageHeight: SexBasedAttribute;
+  averageWeight: SexBasedAttribute;
+  strideBonus: number;
+  enduranceBonus: number;
+  recoveryMultiplier: number;
+  baseHits: number;
+  baseDevPoints: number;
+  baseAt: number;
+  defaultLanguage?: string;
+  talents: string[];
+  description?: string;
+  owner: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
 export class Race extends AggregateRoot<DomainEvent<Race>> {
-  constructor(
+  private constructor(
     public readonly id: string,
     public name: string,
     public readonly realmId: string,
@@ -33,84 +57,76 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     super();
   }
 
-  static create(
-    name: string,
-    realmId: string,
-    realmName: string,
-    size: string,
-    stats: RaceStats,
-    resistances: RaceResistances,
-    averageHeight: SexBasedAttribute,
-    averageWeight: SexBasedAttribute,
-    strideBonus: number,
-    enduranceBonus: number,
-    recoveryMultiplier: number,
-    baseHits: number,
-    baseDevPoints: number,
-    baseAt: number,
-    defaultLanguage: string | undefined,
-    talents: string[],
-    description: string | undefined,
-    owner: string,
-  ) {
+  static create(props: Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt'>) {
     const race = new Race(
       randomUUID(),
-      name,
-      realmId,
-      realmName,
-      size,
-      stats,
-      resistances,
-      averageHeight,
-      averageWeight,
-      strideBonus,
-      enduranceBonus,
-      recoveryMultiplier,
-      baseHits,
-      baseDevPoints,
-      baseAt,
-      defaultLanguage,
-      talents,
-      description,
-      owner,
+      props.name,
+      props.realmId,
+      props.realmName,
+      props.sizeId,
+      props.stats,
+      props.resistances,
+      props.averageHeight,
+      props.averageWeight,
+      props.strideBonus,
+      props.enduranceBonus,
+      props.recoveryMultiplier,
+      props.baseHits,
+      props.baseDevPoints,
+      props.baseAt,
+      props.defaultLanguage,
+      props.talents,
+      props.description,
+      props.owner,
       new Date(),
       undefined,
     );
     race.apply(new RaceCreatedEvent(race));
     return race;
   }
-  update(
-    name: string | undefined,
-    size: string | undefined,
-    stats: RaceStats | undefined,
-    resistances: RaceResistances | undefined,
-    averageHeight: SexBasedAttribute | undefined,
-    averageWeight: SexBasedAttribute | undefined,
-    strideBonus: number | undefined,
-    enduranceBonus: number | undefined,
-    recoveryMultiplier: number | undefined,
-    baseHits: number | undefined,
-    baseDevPoints: number | undefined,
-    baseAt: number | undefined,
-    defaultLanguage: string | undefined,
-    talents: string[] | undefined,
-    description: string | undefined,
-  ) {
-    if (name) this.name = name;
-    if (size) this.sizeId = size;
-    if (stats) this.stats = stats;
-    if (resistances) this.resistances = resistances;
-    if (averageHeight) this.averageHeight = averageHeight;
-    if (averageWeight) this.averageWeight = averageWeight;
-    if (strideBonus !== undefined) this.strideBonus = strideBonus;
-    if (enduranceBonus !== undefined) this.enduranceBonus = enduranceBonus;
-    if (recoveryMultiplier !== undefined) this.recoveryMultiplier = recoveryMultiplier;
-    if (baseHits !== undefined) this.baseHits = baseHits;
-    if (baseDevPoints !== undefined) this.baseDevPoints = baseDevPoints;
-    if (baseAt !== undefined) this.baseAt = baseAt;
-    if (defaultLanguage !== undefined) this.defaultLanguage = defaultLanguage;
-    if (talents) this.talents = talents;
-    if (description !== undefined) this.description = description;
+
+  static fromProps(props: RaceProps) {
+    return new Race(
+      props.id,
+      props.name,
+      props.realmId,
+      props.realmName,
+      props.sizeId,
+      props.stats,
+      props.resistances,
+      props.averageHeight,
+      props.averageWeight,
+      props.strideBonus,
+      props.enduranceBonus,
+      props.recoveryMultiplier,
+      props.baseHits,
+      props.baseDevPoints,
+      props.baseAt,
+      props.defaultLanguage,
+      props.talents,
+      props.description,
+      props.owner,
+      props.createdAt,
+      props.updatedAt,
+    );
+  }
+
+  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realmId' | 'realmName' | 'owner'>>) {
+    if (props.name) this.name = props.name;
+    if (props.sizeId) this.sizeId = props.sizeId;
+    if (props.stats) this.stats = props.stats;
+    if (props.resistances) this.resistances = props.resistances;
+    if (props.averageHeight) this.averageHeight = props.averageHeight;
+    if (props.averageWeight) this.averageWeight = props.averageWeight;
+    if (props.strideBonus !== undefined) this.strideBonus = props.strideBonus;
+    if (props.enduranceBonus !== undefined) this.enduranceBonus = props.enduranceBonus;
+    if (props.recoveryMultiplier !== undefined) this.recoveryMultiplier = props.recoveryMultiplier;
+    if (props.baseHits !== undefined) this.baseHits = props.baseHits;
+    if (props.baseDevPoints !== undefined) this.baseDevPoints = props.baseDevPoints;
+    if (props.baseAt !== undefined) this.baseAt = props.baseAt;
+    if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
+    if (props.talents) this.talents = props.talents;
+    if (props.description !== undefined) this.description = props.description;
     this.updatedAt = new Date();
     this.apply(new RaceCreatedEvent(this));
   }

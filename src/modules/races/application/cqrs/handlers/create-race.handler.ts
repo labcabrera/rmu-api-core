@@ -20,26 +20,26 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
     if (!realm) {
       throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
     }
-    const race = Race.create(
-      command.name,
-      command.realmId,
-      realm.name,
-      command.sizeId,
-      command.stats,
-      command.resistances,
-      command.averageHeight,
-      command.averageWeight,
-      command.strideBonus,
-      command.enduranceBonus,
-      command.recoveryMultiplier,
-      command.baseHits,
-      command.baseDevPoints,
-      command.baseAt,
-      command.defaultLanguage,
-      command.talents,
-      command.description,
-      command.userId,
-    );
+    const race = Race.create({
+      name: command.name,
+      realmId: command.realmId,
+      realmName: realm.name,
+      sizeId: command.sizeId,
+      stats: command.stats,
+      resistances: command.resistances,
+      averageHeight: command.averageHeight,
+      averageWeight: command.averageWeight,
+      strideBonus: command.strideBonus,
+      enduranceBonus: command.enduranceBonus,
+      recoveryMultiplier: command.recoveryMultiplier,
+      baseHits: command.baseHits,
+      baseDevPoints: command.baseDevPoints,
+      baseAt: command.baseAt,
+      defaultLanguage: command.defaultLanguage,
+      talents: command.talents,
+      description: command.description,
+      owner: command.userId,
+    });
     const savedRace = await this.raceRepository.save(race);
     race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
     return savedRace;

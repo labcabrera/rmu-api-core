@@ -18,23 +18,23 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
     if (!race) {
       throw new NotFoundError('Race', command.id);
     }
-    race.update(
-      command.name,
-      command.sizeId,
-      command.stats,
-      command.resistances,
-      command.averageHeight,
-      command.averageWeight,
-      command.strideBonus,
-      command.enduranceBonus,
-      command.recoveryMultiplier,
-      command.baseHits,
-      command.baseDevPoints,
-      command.baseAt,
-      command.defaultLanguage,
-      command.talents,
-      command.description,
-    );
+    race.update({
+      name: command.name,
+      sizeId: command.sizeId,
+      stats: command.stats,
+      resistances: command.resistances,
+      averageHeight: command.averageHeight,
+      averageWeight: command.averageWeight,
+      strideBonus: command.strideBonus,
+      enduranceBonus: command.enduranceBonus,
+      recoveryMultiplier: command.recoveryMultiplier,
+      baseHits: command.baseHits,
+      baseDevPoints: command.baseDevPoints,
+      baseAt: command.baseAt,
+      defaultLanguage: command.defaultLanguage,
+      talents: command.talents,
+      description: command.description,
+    });
     const updated = await this.raceRepository.update(command.id, race);
     race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
     return updated;

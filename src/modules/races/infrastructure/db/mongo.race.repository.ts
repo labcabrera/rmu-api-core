@@ -56,28 +56,28 @@ export class MongoRaceRepository implements RaceRepository {
   }
 
   private mapToEntity(doc: RaceDocument): Race {
-    return new Race(
-      doc._id,
-      doc.name,
-      doc.realmId,
-      doc.realmName,
-      doc.sizeId,
-      doc.stats,
-      doc.resistances,
-      doc.averageHeight,
-      doc.averageWeight,
-      doc.strideBonus,
-      doc.enduranceBonus,
-      doc.recoveryMultiplier,
-      doc.baseHits,
-      doc.baseDevPoints,
-      doc.baseAt,
-      doc.defaultLanguage,
-      doc.talents,
-      doc.description,
-      doc.owner,
-      doc.createdAt,
-      doc.updatedAt,
-    );
+    return Race.fromProps({
+      id: doc._id,
+      name: doc.name,
+      realmId: doc.realmId,
+      realmName: doc.realmName,
+      sizeId: doc.sizeId,
+      stats: doc.stats,
+      resistances: doc.resistances,
+      averageHeight: doc.averageHeight,
+      averageWeight: doc.averageWeight,
+      strideBonus: doc.strideBonus,
+      enduranceBonus: doc.enduranceBonus,
+      recoveryMultiplier: doc.recoveryMultiplier,
+      baseHits: doc.baseHits,
+      baseDevPoints: doc.baseDevPoints,
+      baseAt: doc.baseAt,
+      defaultLanguage: doc.defaultLanguage,
+      talents: doc.talents,
+      description: doc.description,
+      owner: doc.owner,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    });
   }
 }
