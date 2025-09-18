@@ -7,8 +7,8 @@ import type { RealmRepository } from '../../ports/out/realm-repository';
 import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';
 
 @CommandHandler(DeleteRealmCommand)
-export class DeleteRealmCommandHandler implements ICommandHandler<DeleteRealmCommand> {
-  private readonly logger = new Logger(DeleteRealmCommandHandler.name);
+export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
+  private readonly logger = new Logger(DeleteRealmHandler.name);
 
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,

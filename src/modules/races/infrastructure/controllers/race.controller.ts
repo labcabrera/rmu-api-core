@@ -1,23 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
-import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-
-import * as raceRepository from '../../application/ports/out/race-repository';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from '../../../core/infrastructure/controllers/dto/paged-rsql-query';
 import { Page } from '../../../core/domain/entities/page';
-import { GetRaceQuery } from '../../application/queries/get-race.query';
 import { Race } from '../../domain/aggregates/race';
-import { GetRacesQuery } from '../../application/queries/get-races.query';
 import { RacePageDto } from '../../../core/infrastructure/controllers/dto/page.dto';
 import { RaceDto } from './dtos/race.dto';
 import { CreateRaceDto } from './dtos/create-race.dto';
-import { DeleteRaceCommand } from 'src/modules/races/application/commands/delete-race.command';
-import { UpdateRaceCommand } from 'src/modules/races/application/commands/update-race.command';
 import { ErrorDto } from 'src/modules/core/infrastructure/controllers/dto/error-dto';
+import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command';
+import { UpdateRaceCommand } from '../../application/cqrs/commands/update-race.command';
+import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query';
+import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -26,7 +23,6 @@ export class RaceController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
   ) {}
 
   @Get(':id')

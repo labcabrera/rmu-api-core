@@ -2,14 +2,14 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { Race } from '../../../domain/aggregates/race';
-import { UpdateRaceCommand } from '../update-race.command';
+import { UpdateRaceCommand } from '../commands/update-race.command';
 import * as raceNotificationPort from '../../ports/out/race-event-producer';
 import * as raceRepository from '../../ports/out/race-repository';
 import * as realmRepository from '../../../../realms/application/ports/out/realm-repository';
 import { ValidationError } from '../../../../core/domain/errors/errors';
 
 @CommandHandler(UpdateRaceCommand)
-export class UpdateRaceCommandHandler implements ICommandHandler<UpdateRaceCommand, Race> {
+export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Race> {
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
     @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,

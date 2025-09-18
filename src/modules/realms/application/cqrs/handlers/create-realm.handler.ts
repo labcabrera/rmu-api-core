@@ -1,14 +1,13 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Realm } from '../../../domain/aggregates/realm';
-import { ConflictError } from '../../../../core/domain/errors/errors';
 import { CreateRealmCommand } from '../commands/create-realm.command';
 import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/out/realm-repository';
 
 @CommandHandler(CreateRealmCommand)
-export class CreateRealmCommandHandler implements ICommandHandler<CreateRealmCommand, Realm> {
-  private readonly logger = new Logger(CreateRealmCommandHandler.name);
+export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, Realm> {
+  private readonly logger = new Logger(CreateRealmHandler.name);
 
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,

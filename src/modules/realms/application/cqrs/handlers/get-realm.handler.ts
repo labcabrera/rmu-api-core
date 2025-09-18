@@ -6,7 +6,7 @@ import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import type { RealmRepository } from '../../ports/out/realm-repository';
 
 @QueryHandler(GetRealmQuery)
-export class GetRealmQueryHandler implements IQueryHandler<GetRealmQuery, Realm> {
+export class GetRealmHandler implements IQueryHandler<GetRealmQuery, Realm> {
   constructor(@Inject('RealmRepository') private readonly realmRepository: RealmRepository) {}
 
   async execute(query: GetRealmQuery): Promise<Realm> {

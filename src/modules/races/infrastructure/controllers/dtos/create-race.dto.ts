@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray } from 'class-validator';
-import { CreateRaceCommand } from 'src/modules/races/application/commands/create-race.command';
 import { RaceStatBonusDto, SexBasedAttributeDto } from './race.dto';
 import { RaceResistancesDto } from './race-resistances.dto';
+import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/create-race.command';
 
 export class CreateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })

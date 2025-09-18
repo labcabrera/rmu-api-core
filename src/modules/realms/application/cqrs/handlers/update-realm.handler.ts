@@ -7,7 +7,7 @@ import type { RealmRepository } from '../../ports/out/realm-repository';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 
 @CommandHandler(UpdateRealmCommand)
-export class UpdateRealmCommandHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
+export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,

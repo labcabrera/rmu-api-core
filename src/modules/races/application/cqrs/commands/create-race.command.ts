@@ -1,6 +1,6 @@
-import { RaceResistances } from '../../domain/value-objects/race-resistances.vo';
-import { SexBasedAttribute } from '../../domain/value-objects/sex-based-attribute.vo';
-import { RaceStats } from '../../infrastructure/persistence/models/race-model-childs';
+import { RaceResistances } from 'src/modules/races/domain/value-objects/race-resistances.vo';
+import { RaceStats } from 'src/modules/races/domain/value-objects/race-stats.vo';
+import { SexBasedAttribute } from 'src/modules/races/domain/value-objects/sex-based-attribute.vo';
 
 export class CreateRaceCommand {
   constructor(

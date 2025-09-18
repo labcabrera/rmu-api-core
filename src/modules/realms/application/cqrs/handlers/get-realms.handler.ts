@@ -6,7 +6,7 @@ import { Page } from 'src/modules/core/domain/entities/page';
 import type { RealmRepository } from '../../ports/out/realm-repository';
 
 @QueryHandler(GetRealmsQuery)
-export class GetRealmsQueryHandler implements IQueryHandler<GetRealmsQuery, Page<Realm>> {
+export class GetRealmsHandler implements IQueryHandler<GetRealmsQuery, Page<Realm>> {
   constructor(@Inject('RealmRepository') private readonly realmRepository: RealmRepository) {}
 
   async execute(query: GetRealmsQuery): Promise<Page<Realm>> {

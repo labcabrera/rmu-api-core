@@ -1,16 +1,15 @@
 import { Inject } from '@nestjs/common';
-
-import * as raceRepository from '../../ports/out/race-repository';
-import * as raceNotificationPort from '../../ports/out/race-event-producer';
-import { DeleteRaceCommand } from '../delete-race.command';
+import { DeleteRaceCommand } from '../commands/delete-race.command';
 import { NotFoundError } from '../../../../core/domain/errors/errors';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import type { RaceRepository } from '../../ports/out/race-repository';
+import type { RaceEventProducer } from '../../ports/out/race-event-producer';
 
 @CommandHandler(DeleteRaceCommand)
-export class DeleteRaceCommandHandler implements ICommandHandler<DeleteRaceCommand> {
+export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
-    @Inject('RaceEventProducer') private readonly raceNotificationPort: raceNotificationPort.RaceEventProducer,
+    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
+    @Inject('RaceEventProducer') private readonly raceNotificationPort: RaceEventProducer,
   ) {}
 
   async execute(command: DeleteRaceCommand): Promise<void> {
