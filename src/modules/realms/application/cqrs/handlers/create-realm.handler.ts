@@ -1,0 +1,28 @@
+import { Inject, Logger } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { Realm } from '../../../domain/aggregates/realm';
+import { CreateRealmCommand } from '../commands/create-realm.command';
+import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
+import type { RealmRepository } from '../../ports/out/realm-repository';
+
+@CommandHandler(CreateRealmCommand)
+export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, Realm> {
+  private readonly logger = new Logger(CreateRealmHandler.name);
+
+  constructor(
+    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
+    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
+  ) {}
+
+  async execute(command: CreateRealmCommand): Promise<Realm> {
+    this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
+    const realm = Realm.create({
+      name: command.name,
+      description: command.description,
+      owner: command.userId,
+    });
+    const savedRealm = await this.realmRepository.save(realm);
+    realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));
+    return savedRealm;
+  }
+}

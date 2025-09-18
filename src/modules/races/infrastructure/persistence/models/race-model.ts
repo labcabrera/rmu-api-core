@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-
-import { RaceResistances, RaceStatBonus, SexBasedAttribute } from './race-model-childs';
+import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 
 export type RaceDocument = RaceModel & Document;
 
-@Schema({ collection: 'races', versionKey: false })
+@Schema({ collection: 'races', _id: false, versionKey: false })
 export class RaceModel {
   @Prop({ required: true })
   _id: string;
@@ -14,13 +13,16 @@ export class RaceModel {
   name: string;
 
   @Prop({ required: true })
-  realm: string;
+  realmId: string;
 
   @Prop({ required: true })
-  size: string;
+  realmName: string;
 
-  @Prop({ type: RaceStatBonus, required: true })
-  defaultStatBonus: RaceStatBonus;
+  @Prop({ required: true })
+  sizeId: string;
+
+  @Prop({ type: RaceStats, required: true })
+  stats: RaceStats;
 
   @Prop({ type: RaceResistances, required: true })
   resistances: RaceResistances;
@@ -44,10 +46,19 @@ export class RaceModel {
   baseHits: number;
 
   @Prop({ required: true })
-  bonusDevPoints: number;
+  baseDevPoints: number;
 
-  @Prop({ required: false })
-  description?: string;
+  @Prop({ required: true })
+  baseAt: number;
+
+  @Prop({ type: String, required: false })
+  defaultLanguage: string | undefined;
+
+  @Prop({ type: [String], required: true })
+  talents: string[] = [];
+
+  @Prop({ type: String, required: false })
+  description: string | undefined;
 
   @Prop({ required: true })
   owner: string;

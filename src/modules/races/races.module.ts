@@ -3,18 +3,17 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../auth/auth.module';
-
-import { RaceController } from './infrastructure/controllers/race.controller';
-import { KafkaRaceProducerService } from './infrastructure/messaging/kafka-race-producer.service';
-import { MongoRaceRepository } from './infrastructure/persistence/repositories/mongo-race.repository';
-import { CreateRaceCommandHandler } from './application/commands/handlers/create-race.command.handler';
-import { DeleteRaceCommandHandler } from './application/commands/handlers/delete-race.command.handler';
-import { UpdateRaceCommandHandler } from './application/commands/handlers/update-race.command.handler';
+import { RaceController } from './interfaces/http/race.controller';
+import { KafkaRaceEventBusAdapter } from './infrastructure/messaging/kafka.race-event-bus.adapter';
+import { MongoRaceRepository } from './infrastructure/db/mongo.race.repository';
 import { RealmsModule } from '../realms/realms.module';
 import { CoreModule } from '../core/core.module';
 import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race-model';
-import { GetRaceQueryHandler } from './application/queries/handlers/get-race.query.handler';
-import { GetRacesQueryHandler } from './application/queries/handlers/get-races.query.handler';
+import { DeleteRaceHandler } from './application/cqrs/handlers/delete-race.handler';
+import { UpdateRaceHandler } from './application/cqrs/handlers/update-race.handler';
+import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handler';
+import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler';
+import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
 
 @Module({
   imports: [
@@ -27,18 +26,18 @@ import { GetRacesQueryHandler } from './application/queries/handlers/get-races.q
   ],
   controllers: [RaceController],
   providers: [
-    GetRaceQueryHandler,
-    GetRacesQueryHandler,
-    CreateRaceCommandHandler,
-    UpdateRaceCommandHandler,
-    DeleteRaceCommandHandler,
+    GetRaceHandler,
+    GetRacesHandler,
+    CreateRaceHandler,
+    UpdateRaceHandler,
+    DeleteRaceHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,
     },
     {
       provide: 'RaceEventProducer',
-      useClass: KafkaRaceProducerService,
+      useClass: KafkaRaceEventBusAdapter,
     },
   ],
   exports: ['RaceRepository'],

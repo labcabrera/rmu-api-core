@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { MongoRealmRepository } from './infrastructure/persistence/repositories/mongo-realm.repository';
-import { RealmController } from './infrastructure/controllers/realm.controller';
-import { CreateRealmCommandHandler } from './application/commands/handlers/create-realm.command.handler';
-import { UpdateRealmCommandHandler } from './application/commands/handlers/update-realm.command.handler';
-import { DeleteRealmCommandHandler } from './application/commands/handlers/delete-realm.command.handler';
-import { GetRealmsQueryHandler } from './application/queries/handlers/get-realms.query.handler';
-import { GetRealmQueryHandler } from './application/queries/handlers/get-realm.query.handler';
+import { MongoRealmRepository } from './infrastructure/db/mongo.realm.repository';
+import { RealmController } from './interfaces/http/realm.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RealmModel, RealmSchema } from './infrastructure/persistence/models/realm-model';
-import { KafkaRealmProducerService } from './infrastructure/messaging/kafka-realm-producer.service';
+import { KafkaRealmProducerService } from './infrastructure/messaging/kafka.realm-bus.adapter';
 import { CoreModule } from '../core/core.module';
+import { CreateRealmHandler } from './application/cqrs/handlers/create-realm.handler';
+import { DeleteRealmHandler } from './application/cqrs/handlers/delete-realm.handler';
+import { GetRealmHandler } from './application/cqrs/handlers/get-realm.handler';
+import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler';
+import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler';
 
 @Module({
   imports: [
@@ -25,11 +24,11 @@ import { CoreModule } from '../core/core.module';
   ],
   controllers: [RealmController],
   providers: [
-    GetRealmQueryHandler,
-    GetRealmsQueryHandler,
-    CreateRealmCommandHandler,
-    UpdateRealmCommandHandler,
-    DeleteRealmCommandHandler,
+    GetRealmHandler,
+    GetRealmsHandler,
+    CreateRealmHandler,
+    UpdateRealmHandler,
+    DeleteRealmHandler,
     {
       provide: 'RealmRepository',
       useClass: MongoRealmRepository,

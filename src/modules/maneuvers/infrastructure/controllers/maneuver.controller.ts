@@ -6,7 +6,7 @@ import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@
 import { QueryBus } from '@nestjs/cqrs';
 
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { ErrorDto } from '../../../core/infrastructure/controllers/dto/error-dto';
+import { ErrorDto } from '../../../core/interfaces/http/dto/error-dto';
 import { PercentManeuverResultDto } from './dtos/percent-maneuver-result.dto';
 import { PercentManeuverQuery } from '../../application/queries/percent-maneuver.query';
 import { AbsoluteManeuverQuery } from '../../application/queries/absolute-maneuver.query';

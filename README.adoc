@@ -1,4 +1,4 @@
-= Rolemaster Unified Core API
+= RMU Engine Core API
 
 REST API for RMO core services such as skills or races.
 

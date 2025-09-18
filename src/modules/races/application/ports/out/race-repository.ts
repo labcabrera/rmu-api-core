@@ -1,4 +1,4 @@
-import { Race } from 'src/modules/races/domain/entities/race';
-import { Repository } from '../../../../core/application/ports/out/repository';
+import { Race } from 'src/modules/races/domain/aggregates/race';
+import { Repository } from '../../../../core/application/ports/repository';
 
 export type RaceRepository = Repository<Race>;
