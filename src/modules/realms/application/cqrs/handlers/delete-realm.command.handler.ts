@@ -4,6 +4,7 @@ import { DeleteRealmCommand } from '../commands/delete-realm.command';
 import { NotFoundError } from '../../../../core/domain/errors/errors';
 import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/out/realm-repository';
+import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';
 
 @CommandHandler(DeleteRealmCommand)
 export class DeleteRealmCommandHandler implements ICommandHandler<DeleteRealmCommand> {
@@ -20,6 +21,6 @@ export class DeleteRealmCommandHandler implements ICommandHandler<DeleteRealmCom
     if (!deleted) {
       throw new NotFoundError('Realm', command.id);
     }
-    await this.realmEventBus.deleted(deleted);
+    this.realmEventBus.publish(new RealmDeletedEvent(deleted));
   }
 }

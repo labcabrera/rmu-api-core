@@ -2,6 +2,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { RealmCreatedEvent } from '../events/realm-created.event';
 import { RealmUpdatedEvent } from '../events/realm-updated.event';
+import { randomUUID } from 'crypto';
 
 export class Realm extends AggregateRoot<DomainEvent<Realm>> {
   constructor(
@@ -14,8 +15,8 @@ export class Realm extends AggregateRoot<DomainEvent<Realm>> {
   ) {
     super();
   }
-  static create(id: string, name: string, description: string | undefined, userId: string) {
-    const realm = new Realm(id, name, description, userId, new Date(), undefined);
+  static create(name: string, description: string | undefined, userId: string) {
+    const realm = new Realm(randomUUID(), name, description, userId, new Date(), undefined);
     realm.apply(new RealmCreatedEvent(realm));
     return realm;
   }

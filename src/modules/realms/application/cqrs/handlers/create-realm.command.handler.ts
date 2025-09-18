@@ -16,12 +16,8 @@ export class CreateRealmCommandHandler implements ICommandHandler<CreateRealmCom
   ) {}
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
-    this.logger.log(`Creating realm ${command.id} for user ${command.userId}`);
-    const exists = await this.realmRepository.findById(command.id);
-    if (exists) {
-      throw new ConflictError(`Realm ${command.id} already exists`);
-    }
-    const realm = Realm.create(command.id, command.name, command.description, command.userId);
+    this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
+    const realm = Realm.create(command.name, command.description, command.userId);
     const savedRealm = await this.realmRepository.save(realm);
     realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));
     return savedRealm;

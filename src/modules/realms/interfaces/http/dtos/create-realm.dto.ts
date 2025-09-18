@@ -3,11 +3,6 @@ import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 import { CreateRealmCommand } from 'src/modules/realms/application/cqrs/commands/create-realm.command';
 
 export class CreateRealmDto {
-  @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })
-  @IsString()
-  @IsNotEmpty()
-  id: string;
-
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
   @IsString()
   @IsNotEmpty()
@@ -19,6 +14,6 @@ export class CreateRealmDto {
   description: string | undefined;
 
   static toCommand(dto: CreateRealmDto, userId: string, userRoles: string[]) {
-    return new CreateRealmCommand(dto.id, dto.name, dto.description, userId, userRoles);
+    return new CreateRealmCommand(dto.name, dto.description, userId, userRoles);
   }
 }
