@@ -21,6 +21,6 @@ export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
     if (!deleted) {
       throw new NotFoundError('Trait', command.id);
     }
-    this.traitEventBus.publish(new TraitDeletedEvent(deleted));
+    this.traitEventBus.publish(new TraitDeletedEvent(deleted.getProps()));
   }
 }

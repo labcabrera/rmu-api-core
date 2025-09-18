@@ -1,8 +1,8 @@
 import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
-import { Realm } from '../aggregates/realm';
+import { RealmProps } from '../aggregates/realm';
 
-export class RealmUpdatedEvent extends DomainEvent<Realm> {
-  constructor(data: Realm) {
+export class RealmUpdatedEvent extends DomainEvent<RealmProps> {
+  constructor(data: RealmProps) {
     super('updated', data);
   }
 }

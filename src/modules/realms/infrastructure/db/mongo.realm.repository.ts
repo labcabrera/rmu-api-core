@@ -56,6 +56,13 @@ export class MongoRealmRepository implements RealmRepository {
   }
 
   private mapToEntity(doc: RealmDocument): Realm {
-    return new Realm(doc.id as string, doc.name, doc.description, doc.owner, doc.createdAt, doc.updatedAt);
+    return Realm.fromProps({
+      id: doc.id as string,
+      name: doc.name,
+      description: doc.description,
+      owner: doc.owner,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    });
   }
 }
