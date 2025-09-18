@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 
 import * as raceRepository from '../../../../races/application/ports/out/race-repository';
-import { Race } from 'src/modules/races/domain/entities/race';
+import { Race } from 'src/modules/races/domain/aggregates/race';
 import { GetRaceQuery } from '../../../../races/application/queries/get-race.query';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 

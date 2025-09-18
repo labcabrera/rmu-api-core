@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ _id: false })
-export class RaceStatBonus {
+export class RaceStats {
   @Prop({ required: true })
   ag: number;
 
@@ -46,6 +46,15 @@ export class RaceResistances {
 
   @Prop({ required: true })
   physical: number;
+
+  @Prop({ required: true })
+  poison: number;
+
+  @Prop({ required: true })
+  disease: number;
+
+  @Prop({ required: true })
+  fear: number;
 }
 
 @Schema({ _id: false })
@@ -57,6 +66,6 @@ export class SexBasedAttribute {
   female: number;
 }
 
-export const RaceStatBonusSchema = SchemaFactory.createForClass(RaceStatBonus);
+export const RaceStatBonusSchema = SchemaFactory.createForClass(RaceStats);
 export const RaceResistancesSchema = SchemaFactory.createForClass(RaceResistances);
 export const SexBasedAttributeSchema = SchemaFactory.createForClass(SexBasedAttribute);

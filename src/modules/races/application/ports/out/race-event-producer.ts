@@ -1,4 +1,4 @@
-import { Race } from 'src/modules/races/domain/entities/race';
+import { Race } from 'src/modules/races/domain/aggregates/race';
 
 export interface RaceEventProducer {
   created(entity: Race): Promise<void>;

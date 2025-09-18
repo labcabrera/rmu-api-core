@@ -1,48 +1,45 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-
-import * as raceRepository from '../../ports/out/race-repository';
-import * as realmRepository from '../../../../realms/application/ports/out/realm-repository';
-import * as realmNotificationPortCopy from '../../ports/out/race-event-producer';
-import { Race } from '../../../domain/entities/race';
+import { Race } from '../../../domain/aggregates/race';
 import { ValidationError, ConflictError } from '../../../../core/domain/errors/errors';
 import { CreateRaceCommand } from '../create-race.command';
+import type { RaceRepository } from '../../ports/out/race-repository';
+import type { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
+import type { RaceEventProducer } from '../../ports/out/race-event-producer';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceCommandHandler implements ICommandHandler<CreateRaceCommand, Race> {
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: raceRepository.RaceRepository,
-    @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
-    @Inject('RaceEventProducer') private readonly raceNotificationPort: realmNotificationPortCopy.RaceEventProducer,
+    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
+    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
+    @Inject('RaceEventProducer') private readonly raceNotificationPort: RaceEventProducer,
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
-    const realm = await this.realmRepository.findById(command.realm);
+    const realm = await this.realmRepository.findById(command.realmId);
     if (!realm) {
-      throw new ValidationError(`Realm with id ${command.realm} does not exist`);
+      throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
     }
-    const existing = await this.raceRepository.findById(command.id);
-    if (existing) {
-      throw new ConflictError(`Race with id ${command.id} already exists`);
-    }
-    const race: Partial<Race> = {
-      id: command.id,
-      name: command.name,
-      realm: command.realm,
-      size: command.size,
-      defaultStatBonus: command.defaultStatBonus,
-      resistances: command.resistances,
-      averageHeight: command.averageHeight,
-      averageWeight: command.averageWeight,
-      strideBonus: command.strideBonus,
-      enduranceBonus: command.enduranceBonus,
-      recoveryMultiplier: command.recoveryMultiplier,
-      baseHits: command.baseHits,
-      bonusDevPoints: command.bonusDevPoints,
-      description: command.description,
-      owner: command.userId,
-      createdAt: new Date(),
-    };
+    const race = Race.create(
+      command.name,
+      command.realmId,
+      realm.name,
+      command.size,
+      command.stats,
+      command.resistances,
+      command.averageHeight,
+      command.averageWeight,
+      command.strideBonus,
+      command.enduranceBonus,
+      command.recoveryMultiplier,
+      command.baseHits,
+      command.baseDevPoints,
+      command.baseAt,
+      command.defaultLanguage,
+      command.talents,
+      command.description,
+      command.userId,
+    );
     const savedRace = await this.raceRepository.save(race);
     await this.raceNotificationPort.created(savedRace);
     return savedRace;

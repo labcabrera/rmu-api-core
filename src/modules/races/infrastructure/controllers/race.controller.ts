@@ -10,7 +10,7 @@ import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from '../../../core/infrastructure/controllers/dto/paged-rsql-query';
 import { Page } from '../../../core/domain/entities/page';
 import { GetRaceQuery } from '../../application/queries/get-race.query';
-import { Race } from '../../domain/entities/race';
+import { Race } from '../../domain/aggregates/race';
 import { GetRacesQuery } from '../../application/queries/get-races.query';
 import { RacePageDto } from '../../../core/infrastructure/controllers/dto/page.dto';
 import { RaceDto } from './dtos/race.dto';

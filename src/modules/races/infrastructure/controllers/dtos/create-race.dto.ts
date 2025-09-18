@@ -1,16 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsString, IsNotEmpty, ValidateNested, IsNumber } from 'class-validator';
-
+import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray } from 'class-validator';
 import { CreateRaceCommand } from 'src/modules/races/application/commands/create-race.command';
-import { RaceStatBonusDto, RaceResistancesDto, SexBasedAttributeDto } from './race.dto';
+import { RaceStatBonusDto, SexBasedAttributeDto } from './race.dto';
+import { RaceResistancesDto } from './race-resistances.dto';
 
 export class CreateRaceDto {
-  @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
-  @IsString()
-  @IsNotEmpty()
-  id: string;
-
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
   @IsString()
   @IsNotEmpty()
@@ -19,7 +14,7 @@ export class CreateRaceDto {
   @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
   @IsString()
   @IsNotEmpty()
-  realm: string;
+  realmId: string;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   @IsString()
@@ -29,7 +24,7 @@ export class CreateRaceDto {
   @ApiProperty({ description: 'Default stat bonus for the race' })
   @ValidateNested()
   @Type(() => RaceStatBonusDto)
-  defaultStatBonus: RaceStatBonusDto;
+  stats: RaceStatBonusDto;
 
   @ApiProperty({ description: 'Resistances of the race' })
   @ValidateNested()
@@ -62,9 +57,21 @@ export class CreateRaceDto {
   @IsNumber()
   baseHits: number;
 
-  @ApiProperty({ description: 'Bonus development points for the race' })
+  @ApiProperty({ description: 'Base development points for the race' })
   @IsNumber()
-  bonusDevPoints: number;
+  baseDevPoints: number;
+
+  @ApiProperty({ description: 'Racial armor bonus', example: 1 })
+  @IsNumber()
+  baseAt: number;
+
+  @ApiProperty({ description: 'Default language', example: 'Common', required: false })
+  defaultLanguage?: string;
+
+  @ApiProperty({ description: 'List of talents identifiers for the race' })
+  @IsArray()
+  @IsString({ each: true })
+  talents: string[];
 
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
@@ -73,19 +80,21 @@ export class CreateRaceDto {
 
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(
-      dto.id,
       dto.name,
-      dto.realm,
+      dto.realmId,
       dto.size,
-      dto.defaultStatBonus,
-      dto.resistances,
+      dto.stats,
+      RaceResistancesDto.toEntity(dto.resistances),
       dto.averageHeight,
       dto.averageWeight,
       dto.strideBonus,
       dto.enduranceBonus,
       dto.recoveryMultiplier,
       dto.baseHits,
-      dto.bonusDevPoints,
+      dto.baseDevPoints,
+      dto.baseAt,
+      dto.defaultLanguage,
+      dto.talents,
       dto.description,
       userId,
       roles,

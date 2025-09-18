@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { Race } from '../../../domain/entities/race';
+import { Race } from '../../../domain/aggregates/race';
 import { UpdateRaceCommand } from '../update-race.command';
 import * as raceNotificationPort from '../../ports/out/race-event-producer';
 import * as raceRepository from '../../ports/out/race-repository';
@@ -17,10 +17,10 @@ export class UpdateRaceCommandHandler implements ICommandHandler<UpdateRaceComma
   ) {}
 
   async execute(command: UpdateRaceCommand): Promise<Race> {
-    if (command.realm) {
-      const realm = await this.realmRepository.findById(command.realm);
+    if (command.realmId) {
+      const realm = await this.realmRepository.findById(command.realmId);
       if (!realm) {
-        throw new ValidationError(`Realm with id ${command.realm} does not exist`);
+        throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
       }
     }
     const race: Partial<Race> = { ...command, updatedAt: new Date() };

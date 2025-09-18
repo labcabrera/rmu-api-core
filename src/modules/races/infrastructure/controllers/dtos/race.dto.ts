@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
-import { Race } from 'src/modules/races/domain/entities/race';
+import { Race } from 'src/modules/races/domain/aggregates/race';
+import { RaceResistancesDto } from './race-resistances.dto';
 
 export class RaceStatBonusDto {
   @ApiProperty({ description: 'Agility bonus', example: 5 })
@@ -45,24 +46,6 @@ export class RaceStatBonusDto {
   st: number;
 }
 
-export class RaceResistancesDto {
-  @ApiProperty({ description: 'Channeling resistance', example: 0 })
-  @IsNumber()
-  channeling: number;
-
-  @ApiProperty({ description: 'Mentalism resistance', example: 0 })
-  @IsNumber()
-  mentalism: number;
-
-  @ApiProperty({ description: 'Essence resistance', example: 10 })
-  @IsNumber()
-  essence: number;
-
-  @ApiProperty({ description: 'Physical resistance', example: 0 })
-  @IsNumber()
-  physical: number;
-}
-
 export class SexBasedAttributeDto {
   @ApiProperty({ description: 'Average height for males', example: 180 })
   @IsNumber()
@@ -81,13 +64,16 @@ export class RaceDto {
   name: string;
 
   @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
-  realm: string;
+  realmId: string;
+
+  @ApiProperty({ description: 'Realm name', example: 'Middle-earth' })
+  realmName: string;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   size: string;
 
   @ApiProperty({ description: 'Default stat bonus for the race' })
-  defaultStatBonus: RaceStatBonusDto;
+  stats: RaceStatBonusDto;
 
   @ApiProperty({ description: 'Resistances of the race' })
   resistances: RaceResistancesDto;
@@ -110,8 +96,8 @@ export class RaceDto {
   @ApiProperty({ description: 'Base hits for the race' })
   baseHits: number;
 
-  @ApiProperty({ description: 'Bonus development points for the race' })
-  bonusDevPoints: number;
+  @ApiProperty({ description: 'Base development points for the race' })
+  baseDevPoints: number;
 
   @ApiProperty({ description: 'Description of the race' })
   description?: string;
@@ -120,9 +106,9 @@ export class RaceDto {
     const dto = new RaceDto();
     dto.id = entity.id;
     dto.name = entity.name;
-    dto.realm = entity.realm;
+    dto.realmId = entity.realmId;
     dto.size = entity.size;
-    dto.defaultStatBonus = entity.defaultStatBonus;
+    dto.stats = entity.stats;
     dto.resistances = entity.resistances;
     dto.averageHeight = entity.averageHeight;
     dto.averageWeight = entity.averageWeight;
@@ -130,7 +116,7 @@ export class RaceDto {
     dto.enduranceBonus = entity.enduranceBonus;
     dto.recoveryMultiplier = entity.recoveryMultiplier;
     dto.baseHits = entity.baseHits;
-    dto.bonusDevPoints = entity.bonusDevPoints;
+    dto.baseDevPoints = entity.baseDevPoints;
     dto.description = entity.description;
     return dto;
   }
