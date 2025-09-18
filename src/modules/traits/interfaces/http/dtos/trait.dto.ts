@@ -1,20 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/modules/core/interfaces/http/dto/page.dto';
+import { Trait } from 'src/modules/traits/domain/aggregates/trait';
 
-import { Realm } from 'src/modules/realms/domain/aggregates/realm';
-
-export class RealmDto {
-  @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })
+export class TraitDto {
+  @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   id: string;
 
-  @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
+  @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
   name: string;
 
   @ApiProperty({ description: 'Description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
   description?: string;
 
-  static fromEntity(entity: Realm): RealmDto {
-    const dto = new RealmDto();
+  static fromEntity(entity: Trait): TraitDto {
+    const dto = new TraitDto();
     dto.id = entity.id;
     dto.name = entity.name;
     dto.description = entity.description;
@@ -22,13 +21,13 @@ export class RealmDto {
   }
 }
 
-export class RealmPageDto {
+export class TraitPageDto {
   @ApiProperty({
-    type: [RealmDto],
-    description: 'Realms',
+    type: [TraitDto],
+    description: 'Traits',
     isArray: true,
   })
-  content: RealmDto[];
+  content: TraitDto[];
   @ApiProperty({
     type: PaginationDto,
     description: 'Pagination information',

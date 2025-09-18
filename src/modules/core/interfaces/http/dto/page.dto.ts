@@ -28,20 +28,6 @@ export class PaginationDto {
   totalPages: number;
 }
 
-export class RealmPageDto {
-  @ApiProperty({
-    type: [RealmDto],
-    description: 'Realms',
-    isArray: true,
-  })
-  content: RealmDto[];
-  @ApiProperty({
-    type: PaginationDto,
-    description: 'Pagination information',
-  })
-  pagination: PaginationDto;
-}
-
 export class RacePageDto {
   @ApiProperty({
     type: [RaceDto],

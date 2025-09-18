@@ -9,6 +9,7 @@ import { ProfessionsModule } from './modules/professions/professions.module';
 import { RacesModule } from './modules/races/races.module';
 import { RealmsModule } from './modules/realms/realms.module';
 import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
+import { TraitsModule } from './modules/traits/traits.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
     RacesModule,
     RealmsModule,
     ManeuversModule,
+    TraitsModule,
   ],
 })
 export class AppModule {}
