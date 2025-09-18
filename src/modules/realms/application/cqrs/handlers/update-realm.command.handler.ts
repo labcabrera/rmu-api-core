@@ -4,24 +4,23 @@ import { Realm } from '../../../domain/aggregates/realm';
 import { UpdateRealmCommand } from '../commands/update-realm.command';
 import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/out/realm-repository';
+import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmCommandHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RealmEventProducer') private readonly realmNotificationPort: RealmEventBusPort,
+    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {
-    const originalRealm = await this.realmRepository.findById(command.id);
-    const realm: Partial<Realm> = { ...command, updatedAt: new Date() };
-    const updatedRealm = await this.realmRepository.update(realm.id!, realm);
-    const changes: Partial<Realm> = {};
-    if (originalRealm) {
-      if (originalRealm.name !== updatedRealm.name) changes.name = updatedRealm.name;
-      if (originalRealm.description !== updatedRealm.description) changes.description = updatedRealm.description;
+    const realm = await this.realmRepository.findById(command.id);
+    if (!realm) {
+      throw new NotFoundError('Realm', command.id);
     }
-    await this.realmNotificationPort.updated(updatedRealm);
-    return updatedRealm;
+    realm.update(command.name, command.description);
+    const updated = await this.realmRepository.update(realm.id, realm);
+    realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));
+    return updated;
   }
 }

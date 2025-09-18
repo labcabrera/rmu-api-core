@@ -1,6 +1,7 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { RealmCreatedEvent } from '../events/realm-created.event';
+import { RealmUpdatedEvent } from '../events/realm-updated.event';
 
 export class Realm extends AggregateRoot<DomainEvent<Realm>> {
   constructor(
@@ -19,9 +20,10 @@ export class Realm extends AggregateRoot<DomainEvent<Realm>> {
     return realm;
   }
 
-  toPersistence(): any {
-    // const { domainEvents, ...rest } = this as any;
-    // return { ...rest };
-    return this;
+  update(name: string | undefined, description: string | undefined) {
+    if (name) this.name = name;
+    if (description) this.description = description;
+    this.updatedAt = new Date();
+    this.apply(new RealmUpdatedEvent(this));
   }
 }

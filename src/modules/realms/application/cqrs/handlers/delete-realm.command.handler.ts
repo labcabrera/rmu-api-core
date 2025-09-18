@@ -11,7 +11,7 @@ export class DeleteRealmCommandHandler implements ICommandHandler<DeleteRealmCom
 
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RealmEventProducer') private readonly realmNotificationPort: RealmEventBusPort,
+    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
   ) {}
 
   async execute(command: DeleteRealmCommand): Promise<void> {
@@ -20,6 +20,6 @@ export class DeleteRealmCommandHandler implements ICommandHandler<DeleteRealmCom
     if (!deleted) {
       throw new NotFoundError('Realm', command.id);
     }
-    await this.realmNotificationPort.deleted(deleted);
+    await this.realmEventBus.deleted(deleted);
   }
 }
