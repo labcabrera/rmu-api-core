@@ -1,16 +1,15 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-
-import { Realm } from '../../../domain/entities/realm';
-import { UpdateRealmCommand } from '../update-realm.command';
-import * as realmNotificationPort from '../../ports/out/realm-event-producer';
-import * as realmRepository from '../../ports/out/realm-repository';
+import { Realm } from '../../../domain/aggregates/realm';
+import { UpdateRealmCommand } from '../commands/update-realm.command';
+import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
+import type { RealmRepository } from '../../ports/out/realm-repository';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmCommandHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
   constructor(
-    @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
-    @Inject('RealmEventProducer') private readonly realmNotificationPort: realmNotificationPort.RealmEventProducer,
+    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
+    @Inject('RealmEventProducer') private readonly realmNotificationPort: RealmEventBusPort,
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {

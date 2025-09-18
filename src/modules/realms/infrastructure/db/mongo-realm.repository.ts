@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
 import { Page } from 'src/modules/core/domain/entities/page';
-import { Realm } from 'src/modules/realms/domain/entities/realm';
-import { RealmModel, RealmDocument } from '../models/realm-model';
-import { RsqlParser } from '../../../../core/infrastructure/persistence/repositories/rsql-parser';
-import { NotFoundError, NotModifiedError } from 'src/modules/core/domain/errors/errors';
+import { Realm } from 'src/modules/realms/domain/aggregates/realm';
+import { RealmModel, RealmDocument } from '../persistence/models/realm-model';
+import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
+import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 
@@ -31,29 +31,14 @@ export class MongoRealmRepository implements RealmRepository {
     return new Page<Realm>(content, page, size, totalElements);
   }
 
-  async save(request: Partial<Realm>): Promise<Realm> {
-    const model = new this.realmModel({ ...request, _id: request.id });
+  async save(realm: Partial<Realm>): Promise<Realm> {
+    const model = new this.realmModel({ ...realm, _id: realm.id });
     await model.save();
     return this.mapToEntity(model);
   }
 
   async update(id: string, request: Partial<Realm>): Promise<Realm> {
-    const current = await this.realmModel.findById(id);
-    if (!current) {
-      throw new NotFoundError('Realm', id);
-    }
-    const update = {};
-    if (request.name && request.name !== current.name) {
-      update['name'] = request.name;
-    }
-    if (request.description && request.description !== current.description) {
-      update['description'] = request.description;
-    }
-    if (Object.keys(update).length === 0) {
-      throw new NotModifiedError('No fields to update');
-    }
-    update['updatedAt'] = new Date();
-    const updatedRealm = await this.realmModel.findByIdAndUpdate(id, { $set: update }, { new: true });
+    const updatedRealm = await this.realmModel.findByIdAndUpdate(id, { $set: request }, { new: true });
     if (!updatedRealm) {
       throw new NotFoundError('Realm', id);
     }
@@ -71,13 +56,6 @@ export class MongoRealmRepository implements RealmRepository {
   }
 
   private mapToEntity(doc: RealmDocument): Realm {
-    return {
-      id: doc.id as string,
-      name: doc.name,
-      description: doc.description,
-      owner: doc.owner,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    };
+    return new Realm(doc.id as string, doc.name, doc.description, doc.owner, doc.createdAt, doc.updatedAt);
   }
 }

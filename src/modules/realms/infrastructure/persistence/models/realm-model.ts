@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Realm } from 'src/modules/realms/domain/entities/realm';
+import { Realm } from 'src/modules/realms/domain/aggregates/realm';
 
 export type RealmDocument = Realm & Document;
 

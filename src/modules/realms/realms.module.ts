@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { MongoRealmRepository } from './infrastructure/persistence/repositories/mongo-realm.repository';
-import { RealmController } from './infrastructure/controllers/realm.controller';
-import { CreateRealmCommandHandler } from './application/commands/handlers/create-realm.command.handler';
-import { UpdateRealmCommandHandler } from './application/commands/handlers/update-realm.command.handler';
-import { DeleteRealmCommandHandler } from './application/commands/handlers/delete-realm.command.handler';
-import { GetRealmsQueryHandler } from './application/queries/handlers/get-realms.query.handler';
-import { GetRealmQueryHandler } from './application/queries/handlers/get-realm.query.handler';
+import { MongoRealmRepository } from './infrastructure/db/mongo-realm.repository';
+import { RealmController } from './interfaces/http/realm.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RealmModel, RealmSchema } from './infrastructure/persistence/models/realm-model';
-import { KafkaRealmProducerService } from './infrastructure/messaging/kafka-realm-producer.service';
+import { KafkaRealmProducerService } from './infrastructure/messaging/kafka.realm-bus.adapter';
 import { CoreModule } from '../core/core.module';
+import { CreateRealmCommandHandler } from './application/cqrs/handlers/create-realm.command.handler';
+import { DeleteRealmCommandHandler } from './application/cqrs/handlers/delete-realm.command.handler';
+import { GetRealmQueryHandler } from './application/cqrs/handlers/get-realm.query.handler';
+import { GetRealmsQueryHandler } from './application/cqrs/handlers/get-realms.query.handler';
+import { UpdateRealmCommandHandler } from './application/cqrs/handlers/update-realm.command.handler';
 
 @Module({
   imports: [

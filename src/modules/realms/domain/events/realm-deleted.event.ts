@@ -1,8 +1,8 @@
 import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
-import { Realm } from '../../../realms/domain/entities/realm';
+import { Realm } from '../aggregates/realm';
 
 export class RealmDeletedEvent extends DomainEvent<Realm> {
   constructor(data: Realm) {
-    super('RealmDeletedEvent', data);
+    super('deleted', data);
   }
 }

@@ -1,24 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PagedQueryDto } from '../../../core/infrastructure/controllers/dto/paged-rsql-query';
-import { GetRealmQuery } from '../../application/queries/get-realm.query';
-import { GetRealmsQuery } from '../../application/queries/get-realms.query';
+import { GetRealmQuery } from '../../application/cqrs/queries/get-realm.query';
+import { GetRealmsQuery } from '../../application/cqrs/queries/get-realms.query';
 import { RealmDto } from './dtos/realm.dto';
-import { Realm } from '../../domain/entities/realm';
+import { Realm } from '../../domain/aggregates/realm';
 import { Page } from '../../../core/domain/entities/page';
 import { ErrorDto } from '../../../core/infrastructure/controllers/dto/error-dto';
 import { RealmPageDto } from '../../../core/infrastructure/controllers/dto/page.dto';
 import { CreateRealmDto } from './dtos/create-realm.dto';
 import { UpdateRealmDto } from './dtos/update-realm.dto';
-import { CreateRealmCommand } from 'src/modules/realms/application/commands/create-realm.command';
-import { DeleteRealmCommand } from 'src/modules/realms/application/commands/delete-realm.command';
-import { UpdateRealmCommand } from 'src/modules/realms/application/commands/update-realm.command';
+import { CreateRealmCommand } from '../../application/cqrs/commands/create-realm.command';
+import { DeleteRealmCommand } from '../../application/cqrs/commands/delete-realm.command';
+import { UpdateRealmCommand } from '../../application/cqrs/commands/update-realm.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')

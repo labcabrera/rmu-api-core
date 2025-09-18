@@ -5,8 +5,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from '../src/modules/auth/jwt.auth.guard';
-import { RealmController } from '../src/modules/realms/infrastructure/controllers/realm.controller';
-import { Realm } from '../src/modules/realms/domain/entities/realm';
+import { RealmController } from '../src/modules/realms/interfaces/http/realm.controller';
+import { Realm } from '../src/modules/realms/domain/aggregates/realm';
 import { Page } from '../src/modules/core/domain/entities/page';
 
 import supertest from 'supertest';

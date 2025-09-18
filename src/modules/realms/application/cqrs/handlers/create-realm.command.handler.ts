@@ -1,19 +1,18 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-
-import * as realmEventProducer from '../../ports/out/realm-event-producer';
-import * as realmRepository from '../../ports/out/realm-repository';
-import { Realm } from '../../../domain/entities/realm';
+import { Realm } from '../../../domain/aggregates/realm';
 import { ConflictError } from '../../../../core/domain/errors/errors';
-import { CreateRealmCommand } from '../create-realm.command';
+import { CreateRealmCommand } from '../commands/create-realm.command';
+import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
+import type { RealmRepository } from '../../ports/out/realm-repository';
 
 @CommandHandler(CreateRealmCommand)
 export class CreateRealmCommandHandler implements ICommandHandler<CreateRealmCommand, Realm> {
   private readonly logger = new Logger(CreateRealmCommandHandler.name);
 
   constructor(
-    @Inject('RealmRepository') private readonly realmRepository: realmRepository.RealmRepository,
-    @Inject('RealmEventProducer') private readonly realmEventProducer: realmEventProducer.RealmEventProducer,
+    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
+    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
   ) {}
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
@@ -22,15 +21,9 @@ export class CreateRealmCommandHandler implements ICommandHandler<CreateRealmCom
     if (exists) {
       throw new ConflictError(`Realm ${command.id} already exists`);
     }
-    const realm: Partial<Realm> = {
-      id: command.id,
-      name: command.name,
-      description: command.description,
-      owner: command.userId,
-      createdAt: new Date(),
-    };
+    const realm = Realm.create(command.id, command.name, command.description, command.userId);
     const savedRealm = await this.realmRepository.save(realm);
-    await this.realmEventProducer.created(savedRealm);
+    await this.realmEventBus.created(savedRealm);
     return savedRealm;
   }
 }

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional } from 'class-validator';
-
-import { UpdateRealmCommand } from 'src/modules/realms/application/commands/update-realm.command';
+import { UpdateRealmCommand } from 'src/modules/realms/application/cqrs/commands/update-realm.command';
 
 export class UpdateRealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })

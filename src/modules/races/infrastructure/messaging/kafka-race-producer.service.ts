@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Realm } from '../../../realms/domain/entities/realm';
+import { Realm } from '../../../realms/domain/aggregates/realm';
 import { KafkaProducerService } from '../../../core/infrastructure/messaging/kafka-producer.service';
 import { RealmCreatedEvent } from 'src/modules/realms/domain/events/realm-created.event';
 import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';

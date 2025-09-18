@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Realm } from 'src/modules/realms/domain/entities/realm';
+import { Realm } from 'src/modules/realms/domain/aggregates/realm';
 
 export class RealmDto {
   @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })

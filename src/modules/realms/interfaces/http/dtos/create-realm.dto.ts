@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
-import { CreateRealmCommand } from 'src/modules/realms/application/commands/create-realm.command';
+import { CreateRealmCommand } from 'src/modules/realms/application/cqrs/commands/create-realm.command';
 
 export class CreateRealmDto {
   @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })
