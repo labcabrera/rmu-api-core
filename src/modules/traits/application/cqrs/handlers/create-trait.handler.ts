@@ -25,6 +25,8 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
       id: command.id,
       isTalent: command.isTalent,
       requiresSpecialization: command.requiresSpecialization,
+      isTierBased: command.isTierBased,
+      maxTier: command.maxTier,
       cost: command.cost,
       description: command.description,
       owner: command.userId,

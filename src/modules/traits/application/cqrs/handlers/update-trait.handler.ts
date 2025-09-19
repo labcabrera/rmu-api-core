@@ -18,7 +18,14 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
     if (!trait) {
       throw new NotFoundError('Trait', command.id);
     }
-    trait.update(command.isTalent, command.requiresSpecialization, command.cost, command.description);
+    trait.update({
+      isTalent: command.isTalent,
+      requiresSpecialization: command.requiresSpecialization,
+      isTierBased: command.isTierBased,
+      maxTier: command.maxTier,
+      cost: command.cost,
+      description: command.description,
+    });
     const updated = await this.traitRepository.update(trait.id, trait);
     trait.getUncommittedEvents().forEach((event) => this.traitEventBus.publish(event));
     return updated;

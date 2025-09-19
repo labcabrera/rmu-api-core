@@ -60,6 +60,8 @@ export class MongoTraitRepository implements TraitRepository {
       id: doc.id as string,
       isTalent: doc.isTalent,
       requiresSpecialization: doc.requiresSpecialization,
+      isTierBased: doc.isTierBased,
+      maxTier: doc.maxTier,
       cost: doc.cost,
       description: doc.description,
       owner: doc.owner,

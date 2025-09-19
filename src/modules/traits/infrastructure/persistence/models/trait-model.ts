@@ -15,6 +15,12 @@ export class TraitModel {
   @Prop({ required: true })
   requiresSpecialization: boolean;
 
+  @Prop({ required: true })
+  isTierBased: boolean;
+
+  @Prop({ type: Number, required: false })
+  maxTier: number | undefined;
+
   @Prop({ type: Number, required: false })
   cost?: number;
 

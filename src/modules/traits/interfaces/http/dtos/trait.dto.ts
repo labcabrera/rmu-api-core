@@ -12,6 +12,12 @@ export class TraitDto {
   @ApiProperty({ description: 'Indicates if the trait requires specialization', example: true })
   requiresSpecialization: boolean;
 
+  @ApiProperty({ description: 'Indicates if the trait is tier based', example: false })
+  isTierBased: boolean;
+
+  @ApiProperty({ description: 'Maximum tier of the trait', example: 5, required: false })
+  maxTier: number | undefined;
+
   @ApiProperty({ description: 'Cost of the trait', example: 7, required: false })
   cost: number | undefined;
 
@@ -23,6 +29,8 @@ export class TraitDto {
     dto.id = entity.id;
     dto.isTalent = entity.isTalent;
     dto.requiresSpecialization = entity.requiresSpecialization;
+    dto.isTierBased = entity.isTierBased;
+    dto.maxTier = entity.maxTier;
     dto.cost = entity.cost;
     dto.description = entity.description;
     return dto;

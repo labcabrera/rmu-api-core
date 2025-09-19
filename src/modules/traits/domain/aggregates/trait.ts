@@ -7,6 +7,8 @@ export interface TraitProps {
   id: string;
   isTalent: boolean;
   requiresSpecialization: boolean;
+  isTierBased: boolean;
+  maxTier: number | undefined;
   cost: number | undefined;
   description: string | undefined;
   owner: string;
@@ -19,6 +21,8 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
     public id: string,
     public isTalent: boolean,
     public requiresSpecialization: boolean,
+    public isTierBased: boolean,
+    public maxTier: number | undefined,
     public cost: number | undefined,
     public description: string | undefined,
     public owner: string,
@@ -32,6 +36,8 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
       props.id.toLowerCase().replaceAll(' ', '-'),
       props.isTalent,
       props.requiresSpecialization,
+      props.isTierBased,
+      props.maxTier,
       props.cost,
       props.description,
       props.owner,
@@ -47,6 +53,8 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
       props.id,
       props.isTalent,
       props.requiresSpecialization,
+      props.isTierBased,
+      props.maxTier,
       props.cost,
       props.description,
       props.owner,
@@ -61,6 +69,8 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
       id: this.id,
       isTalent: this.isTalent,
       requiresSpecialization: this.requiresSpecialization,
+      isTierBased: this.isTierBased,
+      maxTier: this.maxTier,
       cost: this.cost,
       description: this.description,
       owner: this.owner,
@@ -69,16 +79,14 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
     };
   }
 
-  update(
-    isTalent: boolean | undefined,
-    requiresSpecialization: boolean | undefined,
-    cost: number | undefined,
-    description: string | undefined,
-  ) {
+  update(props: Partial<Omit<TraitProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>): void {
+    const { isTalent, requiresSpecialization, isTierBased, maxTier, cost, description } = props;
     if (isTalent !== undefined) this.isTalent = isTalent;
     if (requiresSpecialization !== undefined) this.requiresSpecialization = requiresSpecialization;
+    if (isTierBased !== undefined) this.isTierBased = isTierBased;
+    if (maxTier !== undefined) this.maxTier = maxTier;
     if (cost !== undefined) this.cost = cost;
-    if (description) this.description = description;
+    if (description !== undefined) this.description = description;
     this.updatedAt = new Date();
     this.apply(new TraitUpdatedEvent(this.getProps()));
   }
