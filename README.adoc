@@ -23,7 +23,10 @@ image::diagrams/c4-context.png[API Core Context System]
 |_SkillCategory_  | Static
 |_ArmorType_      | Static
 |_CharacterSize_  | Static
+|_Profession_     | Static
+|_Maneuver_       | Static
 |_Realm_          | Dynamic
 |_Race_           | Dynamic
-|_Profession_     | Static
+|_Trait_          | Dynamic
+|_Language_       | Dynamic
 |===

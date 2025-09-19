@@ -10,6 +10,9 @@ export class TraitModel {
   _id: string;
 
   @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
   category: string;
 
   @Prop({ required: true })
@@ -24,8 +27,11 @@ export class TraitModel {
   @Prop({ type: Number, required: false })
   maxTier: number | undefined;
 
+  @Prop({ type: Number, required: true })
+  adquisitionCost: number;
+
   @Prop({ type: Number, required: false })
-  cost?: number;
+  tierCost: number | undefined;
 
   @Prop({ required: false })
   description?: string;

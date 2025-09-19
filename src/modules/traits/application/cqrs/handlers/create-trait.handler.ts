@@ -16,22 +16,23 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
   ) {}
 
   async execute(command: CreateTraitCommand): Promise<Trait> {
-    this.logger.log(`Creating trait ${command.id} for user ${command.userId}`);
-    const existing = await this.traitRepository.findById(command.id);
-    if (existing) {
-      throw new ConflictError(`Trait with id ${command.id} already exists`);
-    }
+    this.logger.log(`Creating trait ${command.name} for user ${command.userId}`);
     const trait = Trait.create({
-      id: command.id,
+      name: command.name,
       category: command.category,
       isTalent: command.isTalent,
       requiresSpecialization: command.requiresSpecialization,
       isTierBased: command.isTierBased,
       maxTier: command.maxTier,
-      cost: command.cost,
+      adquisitionCost: command.adquisitionCost,
+      tierCost: command.tierCost,
       description: command.description,
       owner: command.userId,
     });
+    const existing = await this.traitRepository.findById(trait.id);
+    if (existing) {
+      throw new ConflictError(`Trait with id ${trait.id} already exists`);
+    }
     const savedTrait = await this.traitRepository.save(trait);
     trait.getUncommittedEvents().forEach((event) => this.traitEventBus.publish(event));
     return savedTrait;

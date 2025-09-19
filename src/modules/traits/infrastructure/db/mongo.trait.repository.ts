@@ -24,7 +24,7 @@ export class MongoTraitRepository implements TraitRepository {
     const skip = page * size;
     const mongoQuery = this.rsqlParser.parse(rsql);
     const [traitsDocs, totalElements] = await Promise.all([
-      this.traitModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
+      this.traitModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
       this.traitModel.countDocuments(mongoQuery),
     ]);
     const content = traitsDocs.map((doc) => this.mapToEntity(doc));
@@ -58,12 +58,14 @@ export class MongoTraitRepository implements TraitRepository {
   private mapToEntity(doc: TraitDocument): Trait {
     return Trait.fromProps({
       id: doc.id as string,
+      name: doc.name,
       category: doc.category,
       isTalent: doc.isTalent,
       requiresSpecialization: doc.requiresSpecialization,
       isTierBased: doc.isTierBased,
       maxTier: doc.maxTier,
-      cost: doc.cost,
+      adquisitionCost: doc.adquisitionCost,
+      tierCost: doc.tierCost,
       description: doc.description,
       owner: doc.owner,
       createdAt: doc.createdAt,

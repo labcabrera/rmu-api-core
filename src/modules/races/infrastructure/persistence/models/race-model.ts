@@ -13,6 +13,9 @@ export class RaceModel {
   name: string;
 
   @Prop({ required: true })
+  archetype: string;
+
+  @Prop({ required: true })
   realmId: string;
 
   @Prop({ required: true })

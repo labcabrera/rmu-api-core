@@ -11,6 +11,10 @@ export class UpdateRaceDto {
 
   @IsString()
   @IsOptional()
+  archetype?: string;
+
+  @IsString()
+  @IsOptional()
   realmId?: string;
 
   @IsString()
@@ -67,6 +71,7 @@ export class UpdateRaceDto {
     return new UpdateRaceCommand(
       id,
       dto.name,
+      dto.archetype,
       dto.sizeId,
       dto.stats,
       dto.resistances,

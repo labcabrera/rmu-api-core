@@ -10,6 +10,7 @@ import { RacesModule } from './modules/races/races.module';
 import { RealmsModule } from './modules/realms/realms.module';
 import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 import { TraitsModule } from './modules/traits/traits.module';
+import { LanguagesModule } from './modules/languages/languages.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { TraitsModule } from './modules/traits/traits.module';
     RealmsModule,
     ManeuversModule,
     TraitsModule,
+    LanguagesModule,
   ],
 })
 export class AppModule {}

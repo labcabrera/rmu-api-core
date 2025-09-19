@@ -6,6 +6,9 @@ export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   id: string;
 
+  @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
+  name: string;
+
   @ApiProperty({ description: 'Category of the trait', example: 'combat' })
   category: string;
 
@@ -22,7 +25,10 @@ export class TraitDto {
   maxTier: number | undefined;
 
   @ApiProperty({ description: 'Cost of the trait', example: 7, required: false })
-  cost: number | undefined;
+  adquisitionCost: number;
+
+  @ApiProperty({ description: 'Cost per tier of the trait', example: 3, required: false })
+  tierCost: number | undefined;
 
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   description?: string;
@@ -30,11 +36,14 @@ export class TraitDto {
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
+    dto.name = entity.name;
+    dto.category = entity.category;
     dto.isTalent = entity.isTalent;
     dto.requiresSpecialization = entity.requiresSpecialization;
     dto.isTierBased = entity.isTierBased;
     dto.maxTier = entity.maxTier;
-    dto.cost = entity.cost;
+    dto.adquisitionCost = entity.adquisitionCost;
+    dto.tierCost = entity.tierCost;
     dto.description = entity.description;
     return dto;
   }
