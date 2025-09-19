@@ -10,10 +10,19 @@ export class TraitModel {
   _id: string;
 
   @Prop({ required: true })
+  category: string;
+
+  @Prop({ required: true })
   isTalent: boolean;
 
   @Prop({ required: true })
   requiresSpecialization: boolean;
+
+  @Prop({ required: true })
+  isTierBased: boolean;
+
+  @Prop({ type: Number, required: false })
+  maxTier: number | undefined;
 
   @Prop({ type: Number, required: false })
   cost?: number;

@@ -23,8 +23,11 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
     }
     const trait = Trait.create({
       id: command.id,
+      category: command.category,
       isTalent: command.isTalent,
       requiresSpecialization: command.requiresSpecialization,
+      isTierBased: command.isTierBased,
+      maxTier: command.maxTier,
       cost: command.cost,
       description: command.description,
       owner: command.userId,
