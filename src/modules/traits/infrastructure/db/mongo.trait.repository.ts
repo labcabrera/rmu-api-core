@@ -58,12 +58,14 @@ export class MongoTraitRepository implements TraitRepository {
   private mapToEntity(doc: TraitDocument): Trait {
     return Trait.fromProps({
       id: doc.id as string,
+      name: doc.name,
       category: doc.category,
       isTalent: doc.isTalent,
       requiresSpecialization: doc.requiresSpecialization,
       isTierBased: doc.isTierBased,
       maxTier: doc.maxTier,
-      cost: doc.cost,
+      adquisitionCost: doc.adquisitionCost,
+      tierCost: doc.tierCost,
       description: doc.description,
       owner: doc.owner,
       createdAt: doc.createdAt,

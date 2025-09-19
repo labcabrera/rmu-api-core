@@ -9,6 +9,11 @@ export class CreateTraitDto {
   @IsNotEmpty()
   id: string;
 
+  @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
   @ApiProperty({
     description: 'Category of the trait',
     example: 'combat',
@@ -35,10 +40,14 @@ export class CreateTraitDto {
   @IsOptional()
   maxTier: number | undefined;
 
-  @ApiProperty({ description: 'Cost of the trait', example: 7 })
+  @ApiProperty({ description: 'Cost of the trait in development points', example: 7 })
+  @IsNumber()
+  adquisitionCost: number;
+
+  @ApiProperty({ description: 'Cost per tier of the trait in development points', required: false, example: 3 })
   @IsNumber()
   @IsOptional()
-  cost: number | undefined;
+  tierCost: number | undefined;
 
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   @IsString()
@@ -46,15 +55,18 @@ export class CreateTraitDto {
   description: string | undefined;
 
   static toCommand(dto: CreateTraitDto, userId: string, userRoles: string[]) {
-    return new CreateTraitCommand(
-      dto.id,
-      dto.category,
-      dto.isTalent,
-      dto.requiresSpecialization,
-      dto.isTierBased,
-      dto.maxTier,
-      dto.cost,
-      dto.description,
+    return CreateTraitCommand.create(
+      {
+        name: dto.name,
+        category: dto.category,
+        isTalent: dto.isTalent,
+        requiresSpecialization: dto.requiresSpecialization,
+        isTierBased: dto.isTierBased,
+        maxTier: dto.maxTier,
+        adquisitionCost: dto.adquisitionCost,
+        tierCost: dto.tierCost,
+        description: dto.description,
+      },
       userId,
       userRoles,
     );

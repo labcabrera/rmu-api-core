@@ -37,7 +37,12 @@ export class UpdateTraitDto {
   @ApiProperty({ description: 'Cost of the trait', required: false, example: 7 })
   @IsNumber()
   @IsOptional()
-  cost: number | undefined;
+  adquisitionCost: number | undefined;
+
+  @ApiProperty({ description: 'Cost per tier of the trait', required: false, example: 3 })
+  @IsNumber()
+  @IsOptional()
+  tierCost: number | undefined;
 
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   @IsString()
@@ -52,7 +57,8 @@ export class UpdateTraitDto {
       dto.requiresSpecialization,
       dto.isTierBased,
       dto.maxTier,
-      dto.cost,
+      dto.adquisitionCost,
+      dto.tierCost,
       dto.description,
       userId,
       userRoles,

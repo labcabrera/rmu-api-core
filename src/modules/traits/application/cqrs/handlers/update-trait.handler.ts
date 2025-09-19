@@ -24,7 +24,8 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       requiresSpecialization: command.requiresSpecialization,
       isTierBased: command.isTierBased,
       maxTier: command.maxTier,
-      cost: command.cost,
+      adquisitionCost: command.adquisitionCost,
+      tierCost: command.tierCost,
       description: command.description,
     });
     const updated = await this.traitRepository.update(trait.id, trait);
