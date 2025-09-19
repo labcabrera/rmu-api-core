@@ -5,6 +5,15 @@ import { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-cat
 
 export class UpdateTraitDto {
   @ApiProperty({
+    description: 'Name of the trait',
+    required: false,
+    example: 'Courage',
+  })
+  @IsString()
+  @IsOptional()
+  name: string | undefined;
+
+  @ApiProperty({
     description: 'Category of the trait',
     required: false,
     example: 'combat',
@@ -50,18 +59,17 @@ export class UpdateTraitDto {
   description: string | undefined;
 
   static toCommand(id: string, dto: UpdateTraitDto, userId: string, userRoles: string[]) {
-    return new UpdateTraitCommand(
-      id,
-      dto.category,
-      dto.isTalent,
-      dto.requiresSpecialization,
-      dto.isTierBased,
-      dto.maxTier,
-      dto.adquisitionCost,
-      dto.tierCost,
-      dto.description,
-      userId,
-      userRoles,
-    );
+    const props = {
+      name: dto.name,
+      category: dto.category,
+      isTalent: dto.isTalent,
+      requiresSpecialization: dto.requiresSpecialization,
+      isTierBased: dto.isTierBased,
+      maxTier: dto.maxTier,
+      adquisitionCost: dto.adquisitionCost,
+      tierCost: dto.tierCost,
+      description: dto.description,
+    };
+    return UpdateTraitCommand.create(id, props, userId, userRoles);
   }
 }

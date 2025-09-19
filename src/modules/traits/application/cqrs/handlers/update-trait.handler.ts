@@ -19,6 +19,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       throw new NotFoundError('Trait', command.id);
     }
     trait.update({
+      name: command.name,
       category: command.category,
       isTalent: command.isTalent,
       requiresSpecialization: command.requiresSpecialization,

@@ -36,6 +36,7 @@ export class TraitDto {
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
+    dto.name = entity.name;
     dto.category = entity.category;
     dto.isTalent = entity.isTalent;
     dto.requiresSpecialization = entity.requiresSpecialization;

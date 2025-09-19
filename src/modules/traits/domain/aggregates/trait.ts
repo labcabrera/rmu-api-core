@@ -96,7 +96,8 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
   }
 
   update(props: Partial<Omit<TraitProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>): void {
-    const { category, isTalent, requiresSpecialization, isTierBased, maxTier, adquisitionCost, tierCost, description } = props;
+    const { name, category, isTalent, requiresSpecialization, isTierBased, maxTier, adquisitionCost, tierCost, description } = props;
+    if (name !== undefined) this.name = name;
     if (category !== undefined) this.category = category;
     if (isTalent !== undefined) this.isTalent = isTalent;
     if (requiresSpecialization !== undefined) this.requiresSpecialization = requiresSpecialization;

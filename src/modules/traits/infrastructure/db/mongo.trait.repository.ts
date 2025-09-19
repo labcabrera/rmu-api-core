@@ -24,7 +24,7 @@ export class MongoTraitRepository implements TraitRepository {
     const skip = page * size;
     const mongoQuery = this.rsqlParser.parse(rsql);
     const [traitsDocs, totalElements] = await Promise.all([
-      this.traitModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
+      this.traitModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
       this.traitModel.countDocuments(mongoQuery),
     ]);
     const content = traitsDocs.map((doc) => this.mapToEntity(doc));
