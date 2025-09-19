@@ -4,7 +4,7 @@ import { Language } from '../../../domain/aggregates/language';
 import type { LanguageEventBusPort } from '../../ports/language-event-bus.port';
 import { CreateLanguageCommand } from '../commands/create-language.command';
 import type { LanguageRepository } from '../../ports/language-repository';
-import type { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
+import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
 import { ValidationError } from 'src/modules/core/domain/errors/errors';
 
 @CommandHandler(CreateLanguageCommand)

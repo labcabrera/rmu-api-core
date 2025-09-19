@@ -13,6 +13,9 @@ export class RealmModel {
   name: string;
 
   @Prop({ required: false })
+  shortDescription?: string;
+
+  @Prop({ required: false })
   description?: string;
 
   @Prop({ required: true })

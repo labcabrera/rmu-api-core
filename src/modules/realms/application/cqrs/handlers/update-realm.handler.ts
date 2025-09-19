@@ -2,8 +2,8 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Realm } from '../../../domain/aggregates/realm';
 import { UpdateRealmCommand } from '../commands/update-realm.command';
-import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
-import type { RealmRepository } from '../../ports/out/realm-repository';
+import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
+import type { RealmRepository } from '../../ports/realm-repository';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 
 @CommandHandler(UpdateRealmCommand)
@@ -18,7 +18,11 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
     if (!realm) {
       throw new NotFoundError('Realm', command.id);
     }
-    realm.update(command.name, command.description);
+    realm.update({
+      name: command.name,
+      shortDescription: command.shortDescription,
+      description: command.description,
+    });
     const updated = await this.realmRepository.update(realm.id, realm);
     realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));
     return updated;

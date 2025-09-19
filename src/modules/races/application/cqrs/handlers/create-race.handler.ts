@@ -4,7 +4,7 @@ import { Race } from '../../../domain/aggregates/race';
 import { ValidationError } from '../../../../core/domain/errors/errors';
 import { CreateRaceCommand } from '../commands/create-race.command';
 import type { RaceRepository } from '../../ports/out/race-repository';
-import type { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
+import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
 import type { RaceEventBusPort } from '../../ports/out/race-event-bus.port';
 
 @CommandHandler(CreateRaceCommand)

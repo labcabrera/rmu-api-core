@@ -2,8 +2,8 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Realm } from '../../../domain/aggregates/realm';
 import { CreateRealmCommand } from '../commands/create-realm.command';
-import type { RealmEventBusPort } from '../../ports/out/realm-event-bus.port';
-import type { RealmRepository } from '../../ports/out/realm-repository';
+import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
+import type { RealmRepository } from '../../ports/realm-repository';
 
 @CommandHandler(CreateRealmCommand)
 export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, Realm> {

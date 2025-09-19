@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
+import { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Realm } from 'src/modules/realms/domain/aggregates/realm';
 import { RealmModel, RealmDocument } from '../persistence/models/realm-model';
@@ -59,6 +59,7 @@ export class MongoRealmRepository implements RealmRepository {
     return Realm.fromProps({
       id: doc.id as string,
       name: doc.name,
+      shortDescription: doc.shortDescription,
       description: doc.description,
       owner: doc.owner,
       createdAt: doc.createdAt,

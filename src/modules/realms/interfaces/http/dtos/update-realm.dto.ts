@@ -8,12 +8,21 @@ export class UpdateRealmDto {
   @IsOptional()
   name: string | undefined;
 
-  @ApiProperty({ description: 'Description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
+  @ApiProperty({ description: 'Short description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
+  @IsString()
+  @IsOptional()
+  shortDescription: string | undefined;
+
+  @ApiProperty({
+    description: 'Description of the realm',
+    required: false,
+    example: 'A fantasy world created by J.R.R. Tolkien with too much text later',
+  })
   @IsString()
   @IsOptional()
   description: string | undefined;
 
   static toCommand(id: string, dto: UpdateRealmDto, userId: string, userRoles: string[]) {
-    return new UpdateRealmCommand(id, dto.name, dto.description, userId, userRoles);
+    return new UpdateRealmCommand(id, dto.name, dto.shortDescription, dto.description, userId, userRoles);
   }
 }
