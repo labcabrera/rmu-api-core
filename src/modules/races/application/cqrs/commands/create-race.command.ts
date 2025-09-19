@@ -5,6 +5,7 @@ import { SexBasedAttribute } from 'src/modules/races/domain/value-objects/sex-ba
 export class CreateRaceCommand {
   constructor(
     public readonly name: string,
+    public readonly archetype: string,
     public readonly realmId: string,
     public readonly sizeId: string,
     public readonly stats: RaceStats,

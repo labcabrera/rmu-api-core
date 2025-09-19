@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto';
 
 export interface RaceProps {
   id: string;
+  archetype: string;
   name: string;
   realmId: string;
   realmName: string;
@@ -34,6 +35,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
   private constructor(
     public readonly id: string,
     public name: string,
+    public archetype: string,
     public readonly realmId: string,
     public realmName: string,
     public sizeId: string,
@@ -61,6 +63,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     const race = new Race(
       randomUUID(),
       props.name,
+      props.archetype,
       props.realmId,
       props.realmName,
       props.sizeId,
@@ -89,6 +92,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     return new Race(
       props.id,
       props.name,
+      props.archetype,
       props.realmId,
       props.realmName,
       props.sizeId,
@@ -113,6 +117,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
 
   update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realmId' | 'realmName' | 'owner'>>) {
     if (props.name) this.name = props.name;
+    if (props.archetype) this.archetype = props.archetype;
     if (props.sizeId) this.sizeId = props.sizeId;
     if (props.stats) this.stats = props.stats;
     if (props.resistances) this.resistances = props.resistances;

@@ -6,6 +6,7 @@ export class UpdateRaceCommand {
   constructor(
     public readonly id: string,
     public readonly name: string | undefined,
+    public readonly archetype: string | undefined,
     public readonly sizeId: string | undefined,
     public readonly stats: RaceStats | undefined,
     public readonly resistances: RaceResistances | undefined,

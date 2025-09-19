@@ -12,6 +12,11 @@ export class CreateRaceDto {
   @IsNotEmpty()
   name: string;
 
+  @ApiProperty({ description: 'Archetype of the race', example: 'wood-elf' })
+  @IsString()
+  @IsNotEmpty()
+  archetype: string;
+
   @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
   @IsString()
   @IsNotEmpty()
@@ -82,6 +87,7 @@ export class CreateRaceDto {
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(
       dto.name,
+      dto.archetype,
       dto.realmId,
       dto.sizeId,
       dto.stats,

@@ -20,6 +20,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
     }
     race.update({
       name: command.name,
+      archetype: command.archetype,
       sizeId: command.sizeId,
       stats: command.stats,
       resistances: command.resistances,

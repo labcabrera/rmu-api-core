@@ -12,6 +12,9 @@ export class RaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
   name: string;
 
+  @ApiProperty({ description: 'Archetype of the race', example: 'wood-elf' })
+  archetype: string;
+
   @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
   realmId: string;
 
@@ -64,6 +67,7 @@ export class RaceDto {
     const dto = new RaceDto();
     dto.id = entity.id;
     dto.name = entity.name;
+    dto.archetype = entity.archetype;
     dto.realmId = entity.realmId;
     dto.realmName = entity.realmName;
     dto.sizeId = entity.sizeId;

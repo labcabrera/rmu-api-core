@@ -22,6 +22,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
     }
     const race = Race.create({
       name: command.name,
+      archetype: command.archetype,
       realmId: command.realmId,
       realmName: realm.name,
       sizeId: command.sizeId,

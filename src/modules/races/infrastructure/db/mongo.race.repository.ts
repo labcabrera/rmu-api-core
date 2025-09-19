@@ -59,6 +59,7 @@ export class MongoRaceRepository implements RaceRepository {
     return Race.fromProps({
       id: doc._id,
       name: doc.name,
+      archetype: doc.archetype,
       realmId: doc.realmId,
       realmName: doc.realmName,
       sizeId: doc.sizeId,
