@@ -1,5 +1,5 @@
-@startuml C4 Context Attack API
-title C4 Context Attack API
+@startuml RMU Engine API Core Context Diagram
+title Context RMU Engine API Core Context Diagram
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
@@ -12,14 +12,14 @@ UpdateElementStyle(boundary, $bgColor="#d1dcdfff")
 
 Person(user, "User")
 
-Boundary(frontend, "RMO Frontend") {
-    System_Ext(rmu_fe_host, "RMO Frontend Host", "Node.js / JS")
-    System_Ext(rmu_fe_strategic, "Strategic microfrontend", "Node / JS")
-    System_Ext(rmu_fe_tactical, "Tactical microfrontend", "Node / TS")
+Boundary(frontend, "RMU Engine Frontend") {
+    System_Ext(rmu_fe_host, "MFE Host", "React")
+    System_Ext(rmu_fe_strategic, "MFE Strategic", "React")
+    System_Ext(rmu_fe_tactical, "MFE Tactical", "React")
 }
 
-Boundary(apis, "RMO APIs") {
-    System(rmu_api_core, "Core API", "Node.js")
+Boundary(apis, "RMU APIs") {
+    System(rmu_api_core, "Core API", "NestJS")
 }
 
 Boundary(infrastructure, "Infrastructure") {
@@ -33,8 +33,8 @@ Rel(user, keycloak, "Login", "HTTP")
 
 ' Frontends
 
-Rel(rmu_fe_host, rmu_fe_strategic, "Load strategic microfrontend", "Module federation")
-Rel(rmu_fe_host, rmu_fe_tactical, "Load tactical microfrontend", "Module federation")
+Rel(rmu_fe_host, rmu_fe_strategic, "Federation", "Webpack")
+Rel(rmu_fe_host, rmu_fe_tactical, "Federation", "Webpack")
 Rel(rmu_fe_host, keycloak, "Authenticate user", "OIDC")
 
 Rel(rmu_fe_strategic, rmu_api_core, "Fetch data", "HTTP / JWT")
