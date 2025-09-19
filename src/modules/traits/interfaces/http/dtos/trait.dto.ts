@@ -6,6 +6,9 @@ export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   id: string;
 
+  @ApiProperty({ description: 'Category of the trait', example: 'combat' })
+  category: string;
+
   @ApiProperty({ description: 'Indicates if the trait is a talent', example: true })
   isTalent: boolean;
 

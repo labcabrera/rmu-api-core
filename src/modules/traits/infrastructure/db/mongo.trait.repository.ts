@@ -58,6 +58,7 @@ export class MongoTraitRepository implements TraitRepository {
   private mapToEntity(doc: TraitDocument): Trait {
     return Trait.fromProps({
       id: doc.id as string,
+      category: doc.category,
       isTalent: doc.isTalent,
       requiresSpecialization: doc.requiresSpecialization,
       isTierBased: doc.isTierBased,
