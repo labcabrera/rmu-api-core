@@ -59,6 +59,8 @@ export class MongoLanguageRepository implements LanguageRepository {
     return Language.fromProps({
       id: doc.id as string,
       name: doc.name,
+      realmId: doc.realmId,
+      realmName: doc.realmName,
       description: doc.description,
       owner: doc.owner,
       createdAt: doc.createdAt,

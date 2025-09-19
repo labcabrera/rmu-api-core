@@ -12,6 +12,12 @@ export class LanguageModel {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ required: true })
+  realmId: string;
+
+  @Prop({ required: true })
+  realmName: string;
+
   @Prop({ required: false })
   description?: string;
 

@@ -13,6 +13,7 @@ import { UpdateLanguageHandler } from './application/cqrs/handlers/update-langua
 import { MongoLanguageRepository } from './infrastructure/db/mongo.language.repository';
 import { KafkaLanguageProducerService } from './infrastructure/messaging/kafka.language-bus.adapter';
 import { LanguageModel, LanguageSchema } from './infrastructure/persistence/models/language-model';
+import { RealmsModule } from '../realms/realms.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { LanguageModel, LanguageSchema } from './infrastructure/persistence/mode
     MongooseModule.forFeature([{ name: LanguageModel.name, schema: LanguageSchema }]),
     AuthModule,
     CoreModule,
+    RealmsModule,
   ],
   controllers: [LanguageController],
   providers: [

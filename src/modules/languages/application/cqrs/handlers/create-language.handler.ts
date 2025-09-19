@@ -4,20 +4,29 @@ import { Language } from '../../../domain/aggregates/language';
 import type { LanguageEventBusPort } from '../../ports/language-event-bus.port';
 import { CreateLanguageCommand } from '../commands/create-language.command';
 import type { LanguageRepository } from '../../ports/language-repository';
+import type { RealmRepository } from 'src/modules/realms/application/ports/out/realm-repository';
+import { ValidationError } from 'src/modules/core/domain/errors/errors';
 
 @CommandHandler(CreateLanguageCommand)
 export class CreateLanguageHandler implements ICommandHandler<CreateLanguageCommand, Language> {
   private readonly logger = new Logger(CreateLanguageHandler.name);
 
   constructor(
+    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('LanguageRepository') private readonly languageRepository: LanguageRepository,
     @Inject('LanguageEventProducer') private readonly languageEventBus: LanguageEventBusPort,
   ) {}
 
   async execute(command: CreateLanguageCommand): Promise<Language> {
     this.logger.log(`Creating Language ${command.name} for user ${command.userId}`);
+    const realm = await this.realmRepository.findById(command.realmId);
+    if (!realm) {
+      throw new ValidationError(`Realm with id ${command.realmId} not found`);
+    }
     const language = Language.create({
       name: command.name,
+      realmId: realm.id,
+      realmName: realm.name,
       description: command.description,
       owner: command.userId,
     });
