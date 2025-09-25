@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RaceRepository } from 'src/modules/races/application/ports/out/race-repository';
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Race } from 'src/modules/races/domain/aggregates/race';
 import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
 import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { RaceDocument, RaceModel } from '../persistence/models/race-model';
+import { RaceRepository } from '../../application/ports/race-repository';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {
@@ -31,8 +31,8 @@ export class MongoRaceRepository implements RaceRepository {
     return new Page<Race>(content, page, size, totalElements);
   }
 
-  async save(race: Partial<Race>): Promise<Race> {
-    const model = new this.raceModel({ ...race, _id: race.id });
+  async save(race: Race): Promise<Race> {
+    const model = new this.raceModel({ ...race.toProps(), _id: race.id });
     await model.save();
     return this.mapToEntity(model);
   }
