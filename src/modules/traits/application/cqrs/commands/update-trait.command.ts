@@ -1,5 +1,6 @@
 import { TraitProps } from 'src/modules/traits/domain/aggregates/trait';
 import { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-category.vo';
+import { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
 export class UpdateTraitCommand {
   private constructor(
@@ -7,7 +8,7 @@ export class UpdateTraitCommand {
     public readonly name: string | undefined,
     public readonly category: TraitCategory | undefined,
     public readonly isTalent: boolean | undefined,
-    public readonly requiresSpecialization: boolean | undefined,
+    public readonly specialization: TraitSpecialization | undefined,
     public readonly isTierBased: boolean | undefined,
     public readonly adquisitionCost: number | undefined,
     public readonly tierCost: number | undefined,
@@ -23,7 +24,7 @@ export class UpdateTraitCommand {
       props.name,
       props.category,
       props.isTalent,
-      props.requiresSpecialization,
+      props.specialization,
       props.isTierBased,
       props.adquisitionCost,
       props.tierCost,

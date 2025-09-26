@@ -1,12 +1,13 @@
 import { TraitProps } from 'src/modules/traits/domain/aggregates/trait';
 import { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-category.vo';
+import { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
 export class CreateTraitCommand {
   private constructor(
     public readonly name: string,
     public readonly category: TraitCategory,
     public readonly isTalent: boolean,
-    public readonly requiresSpecialization: boolean,
+    public readonly specialization: TraitSpecialization,
     public readonly isTierBased: boolean,
     public readonly maxTier: number | undefined,
     public readonly adquisitionCost: number,
@@ -21,7 +22,7 @@ export class CreateTraitCommand {
       props.name,
       props.category,
       props.isTalent,
-      props.requiresSpecialization,
+      props.specialization,
       props.isTierBased,
       props.maxTier,
       props.adquisitionCost,

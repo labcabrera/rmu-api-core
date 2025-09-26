@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/modules/core/interfaces/http/dto/page.dto';
 import { Trait } from 'src/modules/traits/domain/aggregates/trait';
+import type { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
 export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
@@ -15,8 +16,8 @@ export class TraitDto {
   @ApiProperty({ description: 'Indicates if the trait is a talent', example: true })
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Indicates if the trait requires specialization', example: true })
-  requiresSpecialization: boolean;
+  @ApiProperty({ description: 'Indicates the specialization of the trait', example: 'combat-skill' })
+  specialization: TraitSpecialization;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', example: false })
   isTierBased: boolean;
@@ -39,7 +40,7 @@ export class TraitDto {
     dto.name = entity.name;
     dto.category = entity.category;
     dto.isTalent = entity.isTalent;
-    dto.requiresSpecialization = entity.requiresSpecialization;
+    dto.specialization = entity.specialization;
     dto.isTierBased = entity.isTierBased;
     dto.maxTier = entity.maxTier;
     dto.adquisitionCost = entity.adquisitionCost;

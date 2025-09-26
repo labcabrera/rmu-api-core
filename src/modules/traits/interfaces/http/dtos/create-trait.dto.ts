@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 import { CreateTraitCommand } from 'src/modules/traits/application/cqrs/commands/create-trait.command';
 import type { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-category.vo';
+import * as traitSpecializationVo from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
 export class CreateTraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
@@ -27,9 +28,9 @@ export class CreateTraitDto {
   @IsBoolean()
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Indicates if the trait requires specialization', required: true, example: true })
+  @ApiProperty({ description: 'Trait specialization', required: true, example: 'none' })
   @IsBoolean()
-  requiresSpecialization: boolean;
+  specialization: traitSpecializationVo.TraitSpecialization;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', required: true, example: false })
   @IsBoolean()
@@ -60,7 +61,7 @@ export class CreateTraitDto {
         name: dto.name,
         category: dto.category,
         isTalent: dto.isTalent,
-        requiresSpecialization: dto.requiresSpecialization,
+        specialization: dto.specialization,
         isTierBased: dto.isTierBased,
         maxTier: dto.maxTier,
         adquisitionCost: dto.adquisitionCost,
