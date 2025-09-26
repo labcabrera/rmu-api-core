@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { Body, Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
-
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { ErrorDto } from '../../../core/interfaces/http/dto/error-dto';
 import { PercentManeuverResultDto } from './dtos/percent-maneuver-result.dto';
@@ -13,6 +11,7 @@ import { AbsoluteManeuverQuery } from '../../application/cqrs/queries/absolute-m
 import { AbsoluteManeuverResultDto } from './dtos/absolute-maneuver-result.dto';
 import { EnduranceManeuverResultDto } from './dtos/endurance-maneuver-result.dto';
 import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query';
+import { ManeuverTableType } from '../../domain/value-objects/maneuver-table.vo';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')
@@ -38,10 +37,11 @@ export class ManeuverController {
   async absoluteManeuver(
     @Query('roll') roll: number,
     @Query('unusualEvent') unusualEvent: boolean = false,
+    @Query('table') table: ManeuverTableType | undefined,
     @Request() req,
   ): Promise<AbsoluteManeuverResultDto> {
     const user = req.user!;
-    const query = new AbsoluteManeuverQuery(roll, undefined, unusualEvent, user.id as string, user.roles as string[]);
+    const query = new AbsoluteManeuverQuery(roll, table, unusualEvent, user.id as string, user.roles as string[]);
     const entity = await this.queryBus.execute<AbsoluteManeuverQuery, AbsoluteManeuverResultDto>(query);
     return AbsoluteManeuverResultDto.fromEntity(entity);
   }

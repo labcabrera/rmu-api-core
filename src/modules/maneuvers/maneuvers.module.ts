@@ -10,6 +10,8 @@ import { PercentManeuverHandler } from './application/cqrs/handlers/percent-mane
 import { AbsoluteManeuverHandler } from './application/cqrs/handlers/absolute-maneuver.handler';
 import { EnduranceManeuverHandler } from './application/cqrs/handlers/endurance-maneuver.handler copy';
 import { EnduranceManeuverService } from './domain/services/endurance-maneuver.service';
+import { AnimalManeuverService } from './domain/services/animal-maneuver.service';
+import { AwarenessManeuverService } from './domain/services/awareness-maneuver.service';
 
 @Module({
   imports: [TerminusModule, CqrsModule, AuthModule, CoreModule],
@@ -18,6 +20,8 @@ import { EnduranceManeuverService } from './domain/services/endurance-maneuver.s
     PercentManeuverService,
     AbsoluteManeuverService,
     EnduranceManeuverService,
+    AnimalManeuverService,
+    AwarenessManeuverService,
     PercentManeuverHandler,
     AbsoluteManeuverHandler,
     EnduranceManeuverHandler,
