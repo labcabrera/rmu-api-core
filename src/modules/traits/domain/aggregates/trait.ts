@@ -41,7 +41,11 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
   }
   static create(props: Omit<TraitProps, 'id' | 'createdAt' | 'updatedAt'>): Trait {
     const trait = new Trait(
-      props.name.toLowerCase().trim().replaceAll(' ', '-'),
+      props.name
+        .trim()
+        .replaceAll(' ', '-')
+        .replace(/[^a-zA-Z0-9-]/g, '')
+        .toLowerCase(),
       props.name,
       props.category,
       props.isTalent,

@@ -22,7 +22,7 @@ export class ManeuverController {
   @ApiOperation({ operationId: 'percentManeuver', summary: 'Get percent maneuver result' })
   @ApiOkResponse({ type: PercentManeuverResultDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async percentManeuver(@Param('roll') roll: number, @Request() req) {
+  async percentManeuver(@Param('roll') roll: number, @Request() req): Promise<PercentManeuverResultDto> {
     const user = req.user!;
     const query = new PercentManeuverQuery(roll, user.id as string, user.roles as string[]);
     const entity = await this.queryBus.execute<PercentManeuverQuery, PercentManeuverResultDto>(query);
@@ -31,9 +31,9 @@ export class ManeuverController {
 
   @Get('/absolute/:roll')
   @ApiOperation({ operationId: 'absoluteManeuver', summary: 'Get absolute maneuver result' })
-  @ApiOkResponse({ type: PercentManeuverResultDto, description: 'Success' })
+  @ApiOkResponse({ type: AbsoluteManeuverResultDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async absoluteManeuver(@Param('roll') roll: number, @Request() req) {
+  async absoluteManeuver(@Param('roll') roll: number, @Request() req): Promise<AbsoluteManeuverResultDto> {
     const user = req.user!;
     const query = new AbsoluteManeuverQuery(roll, undefined, user.id as string, user.roles as string[]);
     const entity = await this.queryBus.execute<AbsoluteManeuverQuery, AbsoluteManeuverResultDto>(query);
