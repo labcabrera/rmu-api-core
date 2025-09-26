@@ -1,6 +1,6 @@
 import { ResultCode } from './maneuver-result.vo';
 
-export interface EnduranceResult {
+export interface EnduranceManeuverResult {
   result: ResultCode;
   message: string;
   fatigue: number;

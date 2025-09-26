@@ -1,6 +1,6 @@
-import { EnduranceResult } from '../value-objects/endurance-result.vo';
+import { EnduranceManeuverResult } from '../value-objects/endurance-maneuver-result.vo';
 
-const enduranceTable: { min: number; max: number; result: EnduranceResult }[] = [
+const enduranceTable: { min: number; max: number; result: EnduranceManeuverResult }[] = [
   {
     min: -Infinity,
     max: 0,
@@ -64,7 +64,7 @@ const enduranceTable: { min: number; max: number; result: EnduranceResult }[] = 
 ];
 
 export class EnduranceManeuverService {
-  execute(roll: number, unusualEvent: boolean): EnduranceResult {
+  execute(roll: number, unusualEvent: boolean): EnduranceManeuverResult {
     const entry = enduranceTable.find((row) => roll >= row.min && roll <= row.max);
     if (!entry) {
       throw new Error('Roll out of bounds');
