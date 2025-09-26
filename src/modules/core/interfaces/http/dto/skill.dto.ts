@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Skill } from 'src/modules/core/domain/entities/skill';
+import type { SkillSpecialization } from 'src/modules/core/domain/entities/skill-specialization.vo';
+import { PaginationDto } from './page.dto';
 
 export class SkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
@@ -12,14 +14,28 @@ export class SkillDto {
   bonus: string[];
 
   @ApiProperty({ description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
-  specializations: string[];
+  specialization: SkillSpecialization;
 
   static fromEntity(entity: Skill): SkillDto {
     const dto = new SkillDto();
     dto.id = entity.id;
     dto.categoryId = entity.categoryId;
     dto.bonus = entity.bonus || [];
-    dto.specializations = entity.specializations || [];
+    dto.specialization = entity.specialization;
     return dto;
   }
+}
+
+export class SkillPageDto {
+  @ApiProperty({
+    type: [SkillDto],
+    description: 'Skills',
+    isArray: true,
+  })
+  content: SkillDto[];
+  @ApiProperty({
+    type: PaginationDto,
+    description: 'Pagination information',
+  })
+  pagination: PaginationDto;
 }

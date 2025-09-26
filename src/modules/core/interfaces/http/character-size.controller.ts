@@ -1,18 +1,15 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-
-import * as characterSizeRepository from '../../application/ports/character-size-repository';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { CharacterSizeDto } from './dto/character-size.dto';
 import { NotFoundError } from '../../domain/errors/errors';
+import type { CharacterSizeRepository } from '../../application/ports/character-size-repository';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/character-sizes')
 @ApiTags('Character Sizes')
 export class CharacterSizeController {
-  constructor(
-    @Inject('CharacterSizeRepository') private readonly characterSizeRepository: characterSizeRepository.CharacterSizeRepository,
-  ) {}
+  constructor(@Inject('CharacterSizeRepository') private readonly characterSizeRepository: CharacterSizeRepository) {}
 
   @Get(':id')
   @ApiOperation({ operationId: 'findCharacterSizeById', summary: 'Find character size by id' })

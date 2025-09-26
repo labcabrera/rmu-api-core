@@ -1,16 +1,15 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
-
-import * as armorTypeRepository from '../../application/ports/armor-type-repository';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { ArmorTypeDto } from './dto/armor-type.dto';
 import { NotFoundError } from '../../domain/errors/errors';
+import type { ArmorTypeRepository } from '../../application/ports/armor-type-repository';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/armor-types')
 @ApiTags('Armor Types')
 export class ArmorTypeController {
-  constructor(@Inject('ArmorTypeRepository') private readonly armorTypeRepository: armorTypeRepository.ArmorTypeRepository) {}
+  constructor(@Inject('ArmorTypeRepository') private readonly armorTypeRepository: ArmorTypeRepository) {}
 
   @Get(':id')
   @ApiOkResponse({ type: ArmorTypeDto })

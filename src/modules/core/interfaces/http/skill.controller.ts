@@ -1,16 +1,16 @@
-import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
-
+import { Controller, Get, Inject, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import * as skillRepository from '../../application/ports/skill-repository';
-import { SkillDto } from './dto/skill.dto';
+import { SkillDto, SkillPageDto } from './dto/skill.dto';
 import { NotFoundError } from '../../domain/errors/errors';
+import type { SkillRepository } from '../../application/ports/skill-repository';
+import { PagedQueryDto } from './dto/paged-rsql-query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skills')
 @ApiTags('Skills')
 export class SkillController {
-  constructor(@Inject('SkillRepository') private readonly skillRepository: skillRepository.SkillRepository) {}
+  constructor(@Inject('SkillRepository') private readonly skillRepository: SkillRepository) {}
 
   @Get(':id')
   @ApiOperation({ operationId: 'findSkillById', summary: 'Find skill by id' })
@@ -26,9 +26,17 @@ export class SkillController {
   @Get('')
   @ApiOperation({ operationId: 'findAllSkills', summary: 'Find all skills' })
   @ApiOkResponse({ type: [SkillDto] })
-  find() {
-    const list = this.skillRepository.findAll();
-    return list.map((e) => SkillDto.fromEntity(e));
+  find(@Query() dto: PagedQueryDto): SkillPageDto {
+    const page = this.skillRepository.find(dto.q, dto.page, dto.size);
+    return {
+      content: page.content.map((e) => SkillDto.fromEntity(e)),
+      pagination: {
+        page: dto.page ?? 0,
+        size: dto.size ?? page.content.length,
+        totalElements: page.pagination.totalElements,
+        totalPages: page.pagination.totalPages,
+      },
+    };
   }
 
   @Get('/categories/:categoryId')

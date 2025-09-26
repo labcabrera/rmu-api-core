@@ -1,9 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
 import { Response } from 'express';
-
 import { DomainError } from '../../domain/errors/errors';
 
-//TODO map errors
 @Catch(DomainError)
 export class DomainExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(DomainExceptionFilter.name);
