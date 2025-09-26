@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import { Body, Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiQuery, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
 
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
@@ -18,24 +18,28 @@ import { AbsoluteManeuverResultDto } from './dtos/absolute-maneuver-result.dto';
 export class ManeuverController {
   constructor(private queryBus: QueryBus) {}
 
-  @Get('/percent/:roll')
+  @Get('/percent')
   @ApiOperation({ operationId: 'percentManeuver', summary: 'Get percent maneuver result' })
   @ApiOkResponse({ type: PercentManeuverResultDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async percentManeuver(@Param('roll') roll: number, @Request() req): Promise<PercentManeuverResultDto> {
+  async percentManeuver(@Query('roll') roll: number, @Request() req): Promise<PercentManeuverResultDto> {
     const user = req.user!;
     const query = new PercentManeuverQuery(roll, user.id as string, user.roles as string[]);
     const entity = await this.queryBus.execute<PercentManeuverQuery, PercentManeuverResultDto>(query);
     return PercentManeuverResultDto.fromEntity(entity);
   }
 
-  @Get('/absolute/:roll')
+  @Get('/absolute')
   @ApiOperation({ operationId: 'absoluteManeuver', summary: 'Get absolute maneuver result' })
   @ApiOkResponse({ type: AbsoluteManeuverResultDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async absoluteManeuver(@Param('roll') roll: number, @Request() req): Promise<AbsoluteManeuverResultDto> {
+  async absoluteManeuver(
+    @Query('roll') roll: number,
+    @Query('unusualEvent') unusualEvent: boolean = false,
+    @Request() req,
+  ): Promise<AbsoluteManeuverResultDto> {
     const user = req.user!;
-    const query = new AbsoluteManeuverQuery(roll, undefined, user.id as string, user.roles as string[]);
+    const query = new AbsoluteManeuverQuery(roll, undefined, unusualEvent, user.id as string, user.roles as string[]);
     const entity = await this.queryBus.execute<AbsoluteManeuverQuery, AbsoluteManeuverResultDto>(query);
     return AbsoluteManeuverResultDto.fromEntity(entity);
   }

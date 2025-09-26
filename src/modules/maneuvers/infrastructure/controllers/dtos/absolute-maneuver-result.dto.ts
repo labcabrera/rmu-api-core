@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import * as am from 'src/modules/maneuvers/domain/entities/absolute-maneuver-result.entity';
+import { AbsoluteManeuverResult } from 'src/modules/maneuvers/domain/value-objects/absolute-maneuver-result.vo';
+import type { ResultCode } from 'src/modules/maneuvers/domain/value-objects/maneuver-result.vo';
 
 export class AbsoluteManeuverResultDto {
   @ApiProperty({ description: 'The result value', example: 'success', required: true })
-  result: am.AbsoluteManeuverResultType;
+  result: ResultCode;
 
   @ApiProperty({ description: 'The critical severity level', example: 'A', required: false })
   message: string;
 
-  static fromEntity(entity: am.AbsoluteManeuverResult) {
+  static fromEntity(entity: AbsoluteManeuverResult) {
     const dto = new AbsoluteManeuverResultDto();
     dto.result = entity.result;
     dto.message = entity.message;
