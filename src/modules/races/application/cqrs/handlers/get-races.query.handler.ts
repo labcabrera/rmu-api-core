@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { Page } from 'src/modules/core/domain/entities/page';
 import { Race } from 'src/modules/races/domain/aggregates/race';
 import { GetRacesQuery } from '../queries/get-races.query';
-import type { RaceRepository } from '../../ports/out/race-repository';
+import type { RaceRepository } from '../../ports/race-repository';
 
 @QueryHandler(GetRacesQuery)
 export class GetRacesHandler implements IQueryHandler<GetRacesQuery, Page<Race>> {

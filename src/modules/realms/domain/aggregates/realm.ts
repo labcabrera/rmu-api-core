@@ -7,6 +7,7 @@ import { randomUUID } from 'crypto';
 export class RealmProps {
   id: string;
   name: string;
+  shortDescription?: string;
   description?: string;
   owner: string;
   createdAt: Date;
@@ -17,6 +18,7 @@ export class Realm extends AggregateRoot<DomainEvent<RealmProps>> {
   private constructor(
     public id: string,
     public name: string,
+    public shortDescription: string | undefined,
     public description: string | undefined,
     public owner: string,
     public createdAt: Date,
@@ -25,13 +27,13 @@ export class Realm extends AggregateRoot<DomainEvent<RealmProps>> {
     super();
   }
   static create(props: Omit<RealmProps, 'id' | 'createdAt' | 'updatedAt'>) {
-    const realm = new Realm(randomUUID(), props.name, props.description, props.owner, new Date(), undefined);
+    const realm = new Realm(randomUUID(), props.name, props.shortDescription, props.description, props.owner, new Date(), undefined);
     realm.apply(new RealmCreatedEvent(realm.getProps()));
     return realm;
   }
 
   static fromProps(props: RealmProps) {
-    return new Realm(props.id, props.name, props.description, props.owner, props.createdAt, props.updatedAt);
+    return new Realm(props.id, props.name, props.shortDescription, props.description, props.owner, props.createdAt, props.updatedAt);
   }
 
   getProps(): RealmProps {
@@ -45,9 +47,10 @@ export class Realm extends AggregateRoot<DomainEvent<RealmProps>> {
     };
   }
 
-  update(name: string | undefined, description: string | undefined) {
-    if (name) this.name = name;
-    if (description) this.description = description;
+  update(props: Partial<Omit<RealmProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
+    if (props.name) this.name = props.name;
+    if (props.shortDescription) this.shortDescription = props.shortDescription;
+    if (props.description) this.description = props.description;
     this.updatedAt = new Date();
     this.apply(new RealmUpdatedEvent(this.getProps()));
   }

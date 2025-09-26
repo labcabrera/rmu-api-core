@@ -1,12 +1,12 @@
 import { Inject, Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PercentManeuverQuery } from '../percent-maneuver.query';
-import { PercentManeuverResult } from 'src/modules/maneuvers/domain/entities/percent-maneuver-result.entity';
+import { PercentManeuverResult } from 'src/modules/maneuvers/domain/value-objects/percent-maneuver-result.vo';
 import { PercentManeuverService } from 'src/modules/maneuvers/domain/services/percent-maneuver.service';
+import { PercentManeuverQuery } from '../queries/percent-maneuver.query';
 
 @QueryHandler(PercentManeuverQuery)
-export class PercentManeuverQueryHandler implements IQueryHandler<PercentManeuverQuery, PercentManeuverResult> {
-  private readonly logger = new Logger(PercentManeuverQueryHandler.name);
+export class PercentManeuverHandler implements IQueryHandler<PercentManeuverQuery, PercentManeuverResult> {
+  private readonly logger = new Logger(PercentManeuverHandler.name);
 
   constructor(@Inject() private readonly percentManeuverService: PercentManeuverService) {}
 

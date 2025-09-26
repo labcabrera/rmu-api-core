@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Trait } from 'src/modules/traits/domain/aggregates/trait';
+import type { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
 export type TraitDocument = Trait & Document;
 
@@ -18,8 +19,8 @@ export class TraitModel {
   @Prop({ required: true })
   isTalent: boolean;
 
-  @Prop({ required: true })
-  requiresSpecialization: boolean;
+  @Prop({ type: String, required: true })
+  specialization: TraitSpecialization;
 
   @Prop({ required: true })
   isTierBased: boolean;

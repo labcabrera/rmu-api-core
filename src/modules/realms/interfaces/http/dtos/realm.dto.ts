@@ -10,6 +10,9 @@ export class RealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
   name: string;
 
+  @ApiProperty({ description: 'Short description of the realm', required: false, example: 'A fantasy world' })
+  shortDescription?: string;
+
   @ApiProperty({ description: 'Description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
   description?: string;
 
@@ -17,6 +20,7 @@ export class RealmDto {
     const dto = new RealmDto();
     dto.id = entity.id;
     dto.name = entity.name;
+    dto.shortDescription = entity.shortDescription;
     dto.description = entity.description;
     return dto;
   }

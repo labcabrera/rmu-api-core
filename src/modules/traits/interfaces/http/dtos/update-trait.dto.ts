@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 import { UpdateTraitCommand } from 'src/modules/traits/application/cqrs/commands/update-trait.command';
 import { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-category.vo';
+import { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
 export class UpdateTraitDto {
   @ApiProperty({
@@ -28,10 +29,10 @@ export class UpdateTraitDto {
   @IsBoolean()
   isTalent: boolean | undefined;
 
-  @ApiProperty({ description: 'Indicates if the trait requires specialization', required: false, example: true })
+  @ApiProperty({ description: 'Trait specialization', required: false, example: 'none' })
   @IsOptional()
-  @IsBoolean()
-  requiresSpecialization: boolean | undefined;
+  @IsString()
+  specialization: TraitSpecialization | undefined;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', required: false, example: true })
   @IsOptional()
@@ -63,7 +64,7 @@ export class UpdateTraitDto {
       name: dto.name,
       category: dto.category,
       isTalent: dto.isTalent,
-      requiresSpecialization: dto.requiresSpecialization,
+      specialization: dto.specialization,
       isTierBased: dto.isTierBased,
       maxTier: dto.maxTier,
       adquisitionCost: dto.adquisitionCost,

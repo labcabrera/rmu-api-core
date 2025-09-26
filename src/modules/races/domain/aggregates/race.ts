@@ -5,6 +5,7 @@ import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
+import { RaceUpdatedEvent } from '../events/race-updated.event';
 
 export interface RaceProps {
   id: string;
@@ -31,7 +32,7 @@ export interface RaceProps {
   updatedAt?: Date;
 }
 
-export class Race extends AggregateRoot<DomainEvent<Race>> {
+export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
   private constructor(
     public readonly id: string,
     public name: string,
@@ -84,7 +85,7 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
       new Date(),
       undefined,
     );
-    race.apply(new RaceCreatedEvent(race));
+    race.apply(new RaceCreatedEvent(race.toProps()));
     return race;
   }
 
@@ -133,6 +134,33 @@ export class Race extends AggregateRoot<DomainEvent<Race>> {
     if (props.talents) this.talents = props.talents;
     if (props.description !== undefined) this.description = props.description;
     this.updatedAt = new Date();
-    this.apply(new RaceCreatedEvent(this));
+    this.apply(new RaceUpdatedEvent(this.toProps()));
+  }
+
+  toProps() {
+    return {
+      id: this.id,
+      name: this.name,
+      archetype: this.archetype,
+      realmId: this.realmId,
+      realmName: this.realmName,
+      sizeId: this.sizeId,
+      stats: this.stats,
+      resistances: this.resistances,
+      averageHeight: this.averageHeight,
+      averageWeight: this.averageWeight,
+      strideBonus: this.strideBonus,
+      enduranceBonus: this.enduranceBonus,
+      recoveryMultiplier: this.recoveryMultiplier,
+      baseHits: this.baseHits,
+      baseDevPoints: this.baseDevPoints,
+      baseAt: this.baseAt,
+      defaultLanguage: this.defaultLanguage,
+      talents: this.talents,
+      description: this.description,
+      owner: this.owner,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 }

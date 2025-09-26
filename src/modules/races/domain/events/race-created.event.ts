@@ -1,8 +1,8 @@
 import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
-import { Race } from '../aggregates/race';
+import { RaceProps } from '../aggregates/race';
 
-export class RaceCreatedEvent extends DomainEvent<Race> {
-  constructor(data: Race) {
+export class RaceCreatedEvent extends DomainEvent<RaceProps> {
+  constructor(data: RaceProps) {
     super('created', data);
   }
 }

@@ -3,13 +3,14 @@ import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { TraitCreatedEvent } from '../events/trait-created.event';
 import { TraitUpdatedEvent } from '../events/trait-updated.event';
 import { TraitCategory } from '../value-objects/trait-category.vo';
+import { TraitSpecialization } from '../value-objects/trait-specialization.vo';
 
 export interface TraitProps {
   id: string;
   name: string;
   category: TraitCategory;
   isTalent: boolean;
-  requiresSpecialization: boolean;
+  specialization: TraitSpecialization;
   isTierBased: boolean;
   maxTier: number | undefined;
   adquisitionCost: number;
@@ -26,7 +27,7 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
     public name: string,
     public category: TraitCategory,
     public isTalent: boolean,
-    public requiresSpecialization: boolean,
+    public specialization: TraitSpecialization,
     public isTierBased: boolean,
     public maxTier: number | undefined,
     public adquisitionCost: number,
@@ -40,11 +41,15 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
   }
   static create(props: Omit<TraitProps, 'id' | 'createdAt' | 'updatedAt'>): Trait {
     const trait = new Trait(
-      props.name.toLowerCase().trim().replaceAll(' ', '-'),
+      props.name
+        .trim()
+        .replaceAll(' ', '-')
+        .replace(/[^a-zA-Z0-9-]/g, '')
+        .toLowerCase(),
       props.name,
       props.category,
       props.isTalent,
-      props.requiresSpecialization,
+      props.specialization,
       props.isTierBased,
       props.maxTier,
       props.adquisitionCost,
@@ -64,7 +69,7 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
       props.name,
       props.category,
       props.isTalent,
-      props.requiresSpecialization,
+      props.specialization,
       props.isTierBased,
       props.maxTier,
       props.adquisitionCost,
@@ -83,7 +88,7 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
       name: this.name,
       category: this.category,
       isTalent: this.isTalent,
-      requiresSpecialization: this.requiresSpecialization,
+      specialization: this.specialization,
       isTierBased: this.isTierBased,
       maxTier: this.maxTier,
       adquisitionCost: this.adquisitionCost,
@@ -96,11 +101,11 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
   }
 
   update(props: Partial<Omit<TraitProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>): void {
-    const { name, category, isTalent, requiresSpecialization, isTierBased, maxTier, adquisitionCost, tierCost, description } = props;
+    const { name, category, isTalent, specialization, isTierBased, maxTier, adquisitionCost, tierCost, description } = props;
     if (name !== undefined) this.name = name;
     if (category !== undefined) this.category = category;
     if (isTalent !== undefined) this.isTalent = isTalent;
-    if (requiresSpecialization !== undefined) this.requiresSpecialization = requiresSpecialization;
+    if (specialization !== undefined) this.specialization = specialization;
     if (isTierBased !== undefined) this.isTierBased = isTierBased;
     if (maxTier !== undefined) this.maxTier = maxTier;
     if (adquisitionCost !== undefined) this.adquisitionCost = adquisitionCost;
