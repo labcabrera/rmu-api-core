@@ -3,5 +3,6 @@ import { ResultCode } from './maneuver-result.vo';
 export interface AbsoluteManeuverResult {
   result: ResultCode;
   message: string;
-  penaltyUntilAbsoluteSuccess?: number | undefined;
+  penaltyUntilAbsoluteSuccess?: number;
+  bonusUntilAbsoluteFailure?: number;
 }

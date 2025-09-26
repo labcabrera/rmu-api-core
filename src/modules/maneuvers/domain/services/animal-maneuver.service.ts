@@ -44,7 +44,8 @@ const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuver
     result: {
       result: 'absolute-success',
       message:
-        "Your insight into this animal's nature has won you its lasting respect. You will receive +30 to any future Animal maneuvers versus this target (until an Absolute Failure is achieved).",
+        "Your insight into this animal's nature has won you its lasting respect. You will receive +30 to any future Animal maneuvers versus this target until an Absolute Failure is achieved.",
+      bonusUntilAbsoluteFailure: 30,
     },
   },
 ];
