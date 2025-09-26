@@ -7,6 +7,9 @@ import { ManeuverService } from 'src/modules/maneuvers/domain/services/maneuver-
 import { ValidationError } from 'src/modules/core/domain/errors/errors';
 import { AwarenessManeuverService } from 'src/modules/maneuvers/domain/services/awareness-maneuver.service';
 import { AnimalManeuverService } from 'src/modules/maneuvers/domain/services/animal-maneuver.service';
+import { AdrenalManeuverService } from 'src/modules/maneuvers/domain/services/adrenal-maneuver.service';
+import { CraftingManeuverService } from 'src/modules/maneuvers/domain/services/crafting-maneuver.service';
+import { GymnasticManeuverService } from 'src/modules/maneuvers/domain/services/gymnastic-maneuver.service';
 
 @QueryHandler(AbsoluteManeuverQuery)
 export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQuery, AbsoluteManeuverResult> {
@@ -16,6 +19,9 @@ export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQu
     @Inject() private readonly absoluteManeuverService: AbsoluteManeuverService,
     @Inject() private readonly animalManeuverService: AnimalManeuverService,
     @Inject() private readonly awarenessManeuverService: AwarenessManeuverService,
+    @Inject() private readonly adrenalManeuverService: AdrenalManeuverService,
+    @Inject() private readonly craftingManeuverService: CraftingManeuverService,
+    @Inject() private readonly gymnasticManeuverService: GymnasticManeuverService,
   ) {}
 
   execute(query: AbsoluteManeuverQuery): Promise<AbsoluteManeuverResult> {
@@ -29,10 +35,16 @@ export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQu
       return this.absoluteManeuverService;
     }
     switch (query.table) {
+      case 'adrenal':
+        return this.adrenalManeuverService;
       case 'animal':
         return this.animalManeuverService;
       case 'awareness':
         return this.awarenessManeuverService;
+      case 'crafting':
+        return this.craftingManeuverService;
+      case 'gymnastic':
+        return this.gymnasticManeuverService;
       default:
         throw new ValidationError('Invalid table type');
     }

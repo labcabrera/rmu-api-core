@@ -1,7 +1,7 @@
 import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
 import { ManeuverService } from './maneuver-service';
 
-const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
+const AWARENESS_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
   {
     min: -Infinity,
     max: 0,
@@ -49,7 +49,7 @@ const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuver
 
 export class AwarenessManeuverService implements ManeuverService {
   execute(roll: number, unusualEvent: boolean): AbsoluteManeuverResult {
-    const entry = ANIMAL_PERCENT_TABLE.find((row) => roll >= row.min && roll <= row.max);
+    const entry = AWARENESS_PERCENT_TABLE.find((row) => roll >= row.min && roll <= row.max);
     if (!entry) {
       throw new Error('Roll out of bounds');
     }

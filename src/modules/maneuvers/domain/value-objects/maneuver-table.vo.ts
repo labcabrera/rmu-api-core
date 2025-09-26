@@ -1,1 +1,1 @@
-export type ManeuverTableType = 'animal' | 'awareness';
+export type ManeuverTableType = 'adrenal' | 'animal' | 'awareness' | 'crafting' | 'gymnastic';

@@ -1,6 +1,6 @@
 import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
 
-const percentTable: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
+const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
   {
     min: -Infinity,
     max: 0,
@@ -42,7 +42,7 @@ const percentTable: { min: number; max: number; result: AbsoluteManeuverResult }
 
 export class AbsoluteManeuverService {
   execute(roll: number, unusualEvent: boolean): AbsoluteManeuverResult {
-    const entry = percentTable.find((row) => roll >= row.min && roll <= row.max);
+    const entry = PERCENT_TABLE.find((row) => roll >= row.min && roll <= row.max);
     if (!entry) {
       throw new Error('Roll out of bounds');
     }
