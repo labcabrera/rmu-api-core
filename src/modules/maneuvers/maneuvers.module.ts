@@ -8,7 +8,7 @@ import { PercentManeuverService } from './domain/services/percent-maneuver.servi
 import { AbsoluteManeuverService } from './domain/services/absolute-maneuver.service';
 import { PercentManeuverHandler } from './application/cqrs/handlers/percent-maneuver.handler';
 import { AbsoluteManeuverHandler } from './application/cqrs/handlers/absolute-maneuver.handler';
-import { EnduranceManeuverHandler } from './application/cqrs/handlers/endurance-maneuver.handler copy';
+import { EnduranceManeuverHandler } from './application/cqrs/handlers/endurance-maneuver.handler';
 import { EnduranceManeuverService } from './domain/services/endurance-maneuver.service';
 import { AnimalManeuverService } from './domain/services/animal-maneuver.service';
 import { AwarenessManeuverService } from './domain/services/awareness-maneuver.service';
