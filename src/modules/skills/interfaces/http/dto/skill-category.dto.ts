@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SkillCategory } from 'src/modules/core/domain/entities/skill-category';
+import { SkillCategory } from 'src/modules/skills/domain/aggregates/skill-category';
 
 export class SkillCategoryDto {
   @ApiProperty({ description: 'Category name', example: 'animals' })

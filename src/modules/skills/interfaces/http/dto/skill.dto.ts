@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Skill } from 'src/modules/core/domain/entities/skill';
-import type { SkillSpecialization } from 'src/modules/core/domain/entities/skill-specialization.vo';
-import { PaginationDto } from './page.dto';
+import { Skill } from 'src/modules/skills/domain/aggregates/skill';
+import type { SkillSpecialization } from 'src/modules/skills/domain/value-objects/skill-specialization.vo';
+import { PaginationDto } from '../../../../core/interfaces/http/dto/page.dto';
 
 export class SkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })

@@ -7,11 +7,11 @@ import { CharacterSizeController } from './interfaces/http/character-size.contro
 import { KafkaProducerService } from './infrastructure/messaging/kafka-producer.service';
 import { InMemoryArmorTypeRepository } from './infrastructure/db/in-memory-armor-type.repository';
 import { InMemoryCharacterSizeRepository } from './infrastructure/db/in-memory-character-size.repository';
-import { InMemorySkillCategoryRepository } from './infrastructure/db/in-memory-skill-category.repository';
-import { InMemorySkillRepository } from './infrastructure/db/in-memory-skill.repository';
+import { InMemorySkillCategoryRepository } from '../skills/infrastructure/db/in-memory-skill-category.repository';
+import { InMemorySkillRepository } from '../skills/infrastructure/db/in-memory-skill.repository';
 import { ArmorTypeController } from './interfaces/http/armor-type.controller';
-import { SkillCategoryController } from './interfaces/http/skill-categories.controller';
-import { SkillController } from './interfaces/http/skill.controller';
+import { SkillCategoryController } from '../skills/interfaces/http/skill-categories.controller';
+import { SkillController } from '../skills/interfaces/http/skill.controller';
 import { HealthController } from './interfaces/http/health.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { RsqlParser } from './infrastructure/persistence/repositories/rsql-parser';

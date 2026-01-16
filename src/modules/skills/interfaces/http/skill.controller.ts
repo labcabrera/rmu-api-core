@@ -2,9 +2,9 @@ import { Controller, Get, Inject, Param, Query, UseGuards } from '@nestjs/common
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { SkillDto, SkillPageDto } from './dto/skill.dto';
-import { NotFoundError } from '../../domain/errors/errors';
+import { NotFoundError } from '../../../core/domain/errors/errors';
 import type { SkillRepository } from '../../application/ports/skill-repository';
-import { PagedQueryDto } from './dto/paged-rsql-query';
+import { PagedQueryDto } from '../../../core/interfaces/http/dto/paged-rsql-query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skills')

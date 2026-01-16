@@ -1,4 +1,4 @@
-import { SkillSpecialization } from './skill-specialization.vo';
+import { SkillSpecialization } from '../value-objects/skill-specialization.vo';
 
 export interface Skill {
   id: string;

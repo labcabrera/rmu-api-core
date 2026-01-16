@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { SkillCategoryRepository } from 'src/modules/core/application/ports/skill-category-repository';
-import { SKILL_CATEGORIES, SkillCategory } from 'src/modules/core/domain/entities/skill-category';
+import { SkillCategoryRepository } from 'src/modules/skills/application/ports/skill-category-repository';
+import { SKILL_CATEGORIES, SkillCategory } from 'src/modules/skills/domain/aggregates/skill-category';
 
 @Injectable()
 export class InMemorySkillCategoryRepository implements SkillCategoryRepository {
