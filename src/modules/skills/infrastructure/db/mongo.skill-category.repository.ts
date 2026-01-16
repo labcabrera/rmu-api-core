@@ -30,6 +30,12 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
     return new Page<SkillCategory>(content, page, size, totalElements);
   }
 
+  async save(entity: SkillCategory): Promise<SkillCategory> {
+    const model = new this.skillCategoryModel({ ...entity });
+    await model.save();
+    return this.mapToEntity(model);
+  }
+
   private mapToEntity(doc: SkillCategoryDocument): SkillCategory {
     return {
       id: doc.id as string,

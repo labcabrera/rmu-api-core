@@ -12,18 +12,18 @@ KEYCLOAK_CLIENT_SECRET="${RMU_IAM_CLIENT_SECRET}"
 KEYCLOAK_USERNAME="${RMU_IAM_USERNAME}"
 KEYCLOAK_PASSWORD="${RMU_IAM_PASSWORD}"
 
+#TODO local values for testing
+KEYCLOAK_TOKEN_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/token
+KEYCLOAK_CLIENT_ID=rmu-client
 KEYCLOAK_CLIENT_SECRET=1tUzPc24SYJMPpX37g2eymEoS9C3Ttzw
 
 read_access_token() {
     echo "Fetching access token from Keycloak..."
-
     ACCESS_TOKEN=$(curl --silent --location "${KEYCLOAK_TOKEN_URI}" \
         --header 'Content-Type: application/x-www-form-urlencoded' \
-        --data-urlencode 'grant_type=password' \
+        --data-urlencode 'grant_type=client_credentials' \
         --data-urlencode "client_id=${KEYCLOAK_CLIENT_ID}" \
         --data-urlencode "client_secret=${KEYCLOAK_CLIENT_SECRET}" \
-        --data-urlencode "username=${KEYCLOAK_USERNAME}" \
-        --data-urlencode "password=${KEYCLOAK_PASSWORD}" -v \
         | jq -r '.access_token') \
     export ACCESS_TOKEN
 }
@@ -88,6 +88,42 @@ initialize_realms() {
     echo "Realm data initialization completed"
 }
 
+initialize_skill_categories() {
+    echo "Initializing skill categories..."   
+    for skill_category_file in skill-categories/*.json; do
+        if [ -f "$skill_category_file" ]; then
+            # If the file contains a JSON array, post each element separately
+            if jq -e 'if type=="array" then true else false end' "$skill_category_file" >/dev/null 2>&1; then
+                count=$(jq 'length' "$skill_category_file")
+                echo "Found array with $count entries in '$skill_category_file'"
+                jq -c '.[]' "$skill_category_file" | while IFS= read -r item; do
+                    curl -X POST \
+                         -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
+                         -H "Accept: application/json" \
+                         -H "Authorization: Bearer $ACCESS_TOKEN" \
+                         -d "$item" \
+                         "$DEFAULT_BASE_URL/skill-categories" \
+                         -s --show-error \
+                         -w "\nHTTP Status: %{http_code}\nTotal Time: %{time_total}s\n"
+
+                    rc=$?
+                    if [ $rc -eq 0 ]; then
+                        echo "Processed item"
+                    else
+                        echo "Failed item (exit $rc)"
+                    fi
+                    echo ""
+                done
+            else
+                send_file_to_service "$skill_category_file" "skill-categories"
+                echo ""
+            fi
+        fi
+    done
+    echo "Skill category data initialization completed"
+}
+
 read_access_token
 initialize_races
 initialize_realms
+initialize_skill_categories

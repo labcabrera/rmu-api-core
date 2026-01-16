@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { SkillCategory } from 'src/modules/skills/domain/aggregates/skill-category';
 
 export class SkillCategoryDto {
@@ -14,4 +15,18 @@ export class SkillCategoryDto {
     dto.bonus = entity.bonus || [];
     return dto;
   }
+}
+
+export class SkillCategoryPageDto {
+  @ApiProperty({
+    type: [SkillCategoryDto],
+    description: 'Skill Categories',
+    isArray: true,
+  })
+  content: SkillCategoryDto[];
+  @ApiProperty({
+    type: PaginationDto,
+    description: 'Pagination information',
+  })
+  pagination: PaginationDto;
 }

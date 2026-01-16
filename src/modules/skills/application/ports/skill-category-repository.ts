@@ -5,4 +5,6 @@ export interface SkillCategoryRepository {
   findById(id: string): Promise<SkillCategory | null>;
 
   findByRsql(rsql: string | undefined, page: number, size: number): Promise<Page<SkillCategory>>;
+
+  save(entity: SkillCategory): Promise<SkillCategory>;
 }

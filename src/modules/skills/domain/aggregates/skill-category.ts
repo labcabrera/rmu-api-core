@@ -1,6 +1,8 @@
-export interface SkillCategory {
-  id: string;
-  bonus: string[];
+export class SkillCategory {
+  constructor(
+    public readonly id: string,
+    public readonly bonus: string[],
+  ) {}
 }
 
 export const SKILL_CATEGORIES: SkillCategory[] = [

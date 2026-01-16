@@ -1,35 +1,59 @@
-import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, UseGuards, Request, Query, Post, Body } from '@nestjs/common';
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { SkillCategoryDto } from './dto/skill-category.dto';
-import type { SkillCategoryRepository } from '../../application/ports/skill-category-repository';
+import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto';
 import { Page } from 'src/modules/shared/domain/entities/page';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { GetSkillCategoryQuery } from '../../application/cqrs/queries/get-skill-category.query';
+import { SkillCategory } from '../../domain/aggregates/skill-category';
+import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
+import { GetSkillCategoriesQuery } from '../../application/cqrs/queries/get-skill-categories.query';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { CreateSkillCategoryDto } from './dto/create-skill-category.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skill-categories')
 @ApiTags('Skill Categories')
 export class SkillCategoryController {
-  constructor(@Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   @Get(':id')
   @ApiOkResponse({ type: SkillCategoryDto })
   @ApiOperation({ operationId: 'findSkillCategoryById', summary: 'Find skill category by id' })
-  async findById(@Param('id') id: string) {
-    const entity = await this.skillCategoryRepository.findById(id);
-    if (!entity) {
-      throw new Error(`Skill category with id ${id} not found`);
-    }
+  @ApiNotFoundResponse({ description: 'Skill category not found', type: ErrorDto })
+  async findById(@Param('id') id: string, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const query = new GetSkillCategoryQuery(id, userId);
+    const entity = await this.queryBus.execute<GetSkillCategoryQuery, SkillCategory>(query);
     return SkillCategoryDto.fromEntity(entity);
   }
 
   @Get('')
-  @ApiOkResponse({ type: [SkillCategoryDto] })
-  @ApiOperation({ operationId: 'findSkillCategories', summary: 'Find all skill categories' })
-  async find() {
-    //TODO cqrs
-    //const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
-    const page = await this.skillCategoryRepository.findByRsql(undefined, 0, 100);
+  @ApiOperation({ operationId: 'findSkillCategories', summary: 'Find all skill categories by RSQL' })
+  @ApiOkResponse({ type: SkillCategoryPageDto })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
+  async find(@Query() dto: PagedQueryDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const query = new GetSkillCategoriesQuery(dto.q, dto.page, dto.size, userId);
+    const page = await this.queryBus.execute<GetSkillCategoriesQuery, Page<SkillCategory>>(query);
     const mapped = page.content.map((category) => SkillCategoryDto.fromEntity(category));
     return new Page<SkillCategoryDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
+  }
+
+  @Post('')
+  @ApiOperation({ operationId: 'createSkillCategory', summary: 'Create a new skill category' })
+  @ApiOkResponse({ type: SkillCategoryDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  @ApiResponse({ status: 409, description: 'Conflict, skill category already exists', type: ErrorDto })
+  create(@Body() createSkillCategoryDto: CreateSkillCategoryDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = CreateSkillCategoryDto.toCommand(createSkillCategoryDto, userId, roles);
+    return this.commandBus.execute(command);
   }
 }

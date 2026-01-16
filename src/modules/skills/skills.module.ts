@@ -9,6 +9,9 @@ import { InMemorySkillRepository } from './infrastructure/db/in-memory-skill.rep
 import { MongoSkillCategoryRepository } from './infrastructure/db/mongo.skill-category.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SkillCategoryModel, SkillCategorySchema } from './infrastructure/persistence/skill-category.model';
+import { CreateSkillCategoryHandler } from './application/cqrs/handlers/create-skill-category.handler';
+import { GetSkillCategoriesHandler } from './application/cqrs/handlers/get-races.query.handler';
+import { GetSkillCategoryHandler } from './application/cqrs/handlers/get-skill-category.query.handler';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { SkillCategoryModel, SkillCategorySchema } from './infrastructure/persis
   ],
   controllers: [SkillController, SkillCategoryController],
   providers: [
+    CreateSkillCategoryHandler,
+    GetSkillCategoriesHandler,
+    GetSkillCategoryHandler,
     {
       provide: 'SkillCategoryRepository',
       useClass: MongoSkillCategoryRepository,
