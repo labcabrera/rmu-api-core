@@ -123,7 +123,43 @@ initialize_skill_categories() {
     echo "Skill category data initialization completed"
 }
 
+initialize_skills() {
+    echo "Initializing skills..."   
+    for skill_file in skills/*.json; do
+        if [ -f "$skill_file" ]; then
+            # If the file contains a JSON array, post each element separately
+            if jq -e 'if type=="array" then true else false end' "$skill_file" >/dev/null 2>&1; then
+                count=$(jq 'length' "$skill_file")
+                echo "Found array with $count entries in '$skill_file'"
+                jq -c '.[]' "$skill_file" | while IFS= read -r item; do
+                    curl -X POST \
+                         -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
+                         -H "Accept: application/json" \
+                         -H "Authorization: Bearer $ACCESS_TOKEN" \
+                         -d "$item" \
+                         "$DEFAULT_BASE_URL/skills" \
+                         -s --show-error \
+                         -w "\nHTTP Status: %{http_code}\nTotal Time: %{time_total}s\n"
+
+                    rc=$?
+                    if [ $rc -eq 0 ]; then
+                        echo "Processed item"
+                    else
+                        echo "Failed item (exit $rc)"
+                    fi
+                    echo ""
+                done
+            else
+                send_file_to_service "$skill_file" "skills"
+                echo ""
+            fi
+        fi
+    done
+    echo "Skill data initialization completed"
+}
+
 read_access_token
 initialize_races
 initialize_realms
 initialize_skill_categories
+initialize_skills

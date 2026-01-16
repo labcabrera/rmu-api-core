@@ -2,11 +2,9 @@ import { Page } from 'src/modules/shared/domain/entities/page';
 import { Skill } from 'src/modules/skills/domain/aggregates/skill';
 
 export interface SkillRepository {
-  findById(id: string): Skill | null;
+  findById(id: string): Promise<Skill | null>;
 
-  findAll(): Skill[];
+  findByRsql(rsql: string | undefined, page: number, size: number): Promise<Page<Skill>>;
 
-  find(rsql: string | undefined, page: number, size: number): Page<Skill>;
-
-  findByCategory(categoryId: string): Skill[];
+  save(entity: Skill): Promise<Skill>;
 }

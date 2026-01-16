@@ -10,6 +10,7 @@ import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql
 import { GetSkillCategoriesQuery } from '../../application/cqrs/queries/get-skill-categories.query';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { CreateSkillCategoryDto } from './dto/create-skill-category.dto';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skill-categories')
@@ -28,6 +29,7 @@ export class SkillCategoryController {
     const userId: string = req.user!.id as string;
     const query = new GetSkillCategoryQuery(id, userId);
     const entity = await this.queryBus.execute<GetSkillCategoryQuery, SkillCategory>(query);
+    if (!entity) throw new NotFoundError('Skill category not found', id);
     return SkillCategoryDto.fromEntity(entity);
   }
 
