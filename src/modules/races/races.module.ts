@@ -13,7 +13,7 @@ import { UpdateRaceHandler } from './application/cqrs/handlers/update-race.handl
 import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handler';
 import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler';
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
-import { CoreModule } from '../shared/core.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { CoreModule } from '../shared/core.module';
     CqrsModule,
     MongooseModule.forFeature([{ name: RaceModel.name, schema: RaceSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
     RealmsModule,
   ],
   controllers: [RaceController],

@@ -12,7 +12,7 @@ import { GetTraitsHandler } from './application/cqrs/handlers/get-realms.handler
 import { GetTraitHandler } from './application/cqrs/handlers/get-trait.handler';
 import { UpdateTraitHandler } from './application/cqrs/handlers/update-trait.handler';
 import { TraitModel, TraitSchema } from './infrastructure/persistence/models/trait-model';
-import { CoreModule } from '../shared/core.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { CoreModule } from '../shared/core.module';
     CqrsModule,
     MongooseModule.forFeature([{ name: TraitModel.name, schema: TraitSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
   ],
   controllers: [TraitController],
   providers: [

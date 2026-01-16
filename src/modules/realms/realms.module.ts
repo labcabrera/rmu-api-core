@@ -12,7 +12,7 @@ import { DeleteRealmHandler } from './application/cqrs/handlers/delete-realm.han
 import { GetRealmHandler } from './application/cqrs/handlers/get-realm.handler';
 import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler';
 import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler';
-import { CoreModule } from '../shared/core.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { CoreModule } from '../shared/core.module';
     CqrsModule,
     MongooseModule.forFeature([{ name: RealmModel.name, schema: RealmSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
   ],
   controllers: [RealmController],
   providers: [

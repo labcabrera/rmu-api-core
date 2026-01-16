@@ -13,7 +13,7 @@ import { MongoLanguageRepository } from './infrastructure/db/mongo.language.repo
 import { KafkaLanguageProducerService } from './infrastructure/messaging/kafka.language-bus.adapter';
 import { LanguageModel, LanguageSchema } from './infrastructure/persistence/models/language-model';
 import { RealmsModule } from '../realms/realms.module';
-import { CoreModule } from '../shared/core.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { CoreModule } from '../shared/core.module';
     CqrsModule,
     MongooseModule.forFeature([{ name: LanguageModel.name, schema: LanguageSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
     RealmsModule,
   ],
   controllers: [LanguageController],

@@ -1,24 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
-
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { CharacterSizeController } from './interfaces/http/character-size.controller';
 import { KafkaProducerService } from './infrastructure/messaging/kafka-producer.service';
 import { InMemoryArmorTypeRepository } from './infrastructure/db/in-memory-armor-type.repository';
 import { InMemoryCharacterSizeRepository } from './infrastructure/db/in-memory-character-size.repository';
-import { InMemorySkillCategoryRepository } from '../skills/infrastructure/db/in-memory-skill-category.repository';
-import { InMemorySkillRepository } from '../skills/infrastructure/db/in-memory-skill.repository';
 import { ArmorTypeController } from './interfaces/http/armor-type.controller';
-import { SkillCategoryController } from '../skills/interfaces/http/skill-categories.controller';
-import { SkillController } from '../skills/interfaces/http/skill.controller';
 import { HealthController } from './interfaces/http/health.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { RsqlParser } from './infrastructure/persistence/repositories/rsql-parser';
 
 @Module({
   imports: [TerminusModule, CqrsModule, ConfigModule, AuthModule],
-  controllers: [ArmorTypeController, CharacterSizeController, SkillCategoryController, SkillController, HealthController],
+  controllers: [ArmorTypeController, CharacterSizeController, HealthController],
   providers: [
     RsqlParser,
     KafkaProducerService,
@@ -30,15 +25,7 @@ import { RsqlParser } from './infrastructure/persistence/repositories/rsql-parse
       provide: 'CharacterSizeRepository',
       useClass: InMemoryCharacterSizeRepository,
     },
-    {
-      provide: 'SkillCategoryRepository',
-      useClass: InMemorySkillCategoryRepository,
-    },
-    {
-      provide: 'SkillRepository',
-      useClass: InMemorySkillRepository,
-    },
   ],
   exports: [RsqlParser, KafkaProducerService],
 })
-export class CoreModule {}
+export class SharedModule {}

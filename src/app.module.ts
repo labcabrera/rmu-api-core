@@ -9,7 +9,8 @@ import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 import { TraitsModule } from './modules/traits/traits.module';
 import { LanguagesModule } from './modules/languages/languages.module';
 import Joi from 'joi';
-import { CoreModule } from './modules/shared/core.module';
+import { SharedModule } from './modules/shared/shared.module';
+import { SkillsModule } from './modules/skills/skills.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { CoreModule } from './modules/shared/core.module';
       inject: [ConfigService],
     }),
     AuthModule,
-    CoreModule,
+    SharedModule,
+    SkillsModule,
     ProfessionsModule,
     RacesModule,
     RealmsModule,

@@ -14,10 +14,10 @@ import { AwarenessManeuverService } from './domain/services/awareness-maneuver.s
 import { AdrenalManeuverService } from './domain/services/adrenal-maneuver.service';
 import { CraftingManeuverService } from './domain/services/crafting-maneuver.service';
 import { GymnasticManeuverService } from './domain/services/gymnastic-maneuver.service';
-import { CoreModule } from '../shared/core.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TerminusModule, CqrsModule, AuthModule, CoreModule],
+  imports: [TerminusModule, CqrsModule, AuthModule, SharedModule],
   controllers: [ManeuverController],
   providers: [
     PercentManeuverService,

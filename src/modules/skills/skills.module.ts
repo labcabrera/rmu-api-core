@@ -4,7 +4,10 @@ import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from 'src/modules/auth/auth.module';
 // import { MongooseModule } from '@nestjs/mongoose';
 import { SkillController } from './interfaces/http/skill.controller';
-import { CoreModule } from '../shared/core.module';
+import { SharedModule } from '../shared/shared.module';
+import { SkillCategoryController } from './interfaces/http/skill-categories.controller';
+import { InMemorySkillCategoryRepository } from './infrastructure/db/in-memory-skill-category.repository';
+import { InMemorySkillRepository } from './infrastructure/db/in-memory-skill.repository';
 
 @Module({
   imports: [
@@ -12,23 +15,18 @@ import { CoreModule } from '../shared/core.module';
     CqrsModule,
     // MongooseModule.forFeature([{ name: RealmModel.name, schema: RealmSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
   ],
-  controllers: [SkillController],
+  controllers: [SkillController, SkillCategoryController],
   providers: [
-    // GetSkillHandler,
-    // GetSkillsHandler,
-    // CreateSkillHandler,
-    // UpdateSkillHandler,
-    // DeleteSkillHandler,
-    // {
-    //   provide: 'SkillRepository',
-    //   useClass: MongoSkillRepository,
-    // },
-    // {
-    //   provide: 'SkillEventProducer',
-    //   useClass: KafkaSkillProducerService,
-    // },
+    {
+      provide: 'SkillCategoryRepository',
+      useClass: InMemorySkillCategoryRepository,
+    },
+    {
+      provide: 'SkillRepository',
+      useClass: InMemorySkillRepository,
+    },
   ],
   exports: ['SkillRepository'],
 })
