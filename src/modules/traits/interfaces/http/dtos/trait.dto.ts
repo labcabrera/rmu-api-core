@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDto } from 'src/modules/core/interfaces/http/dto/page.dto';
+import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { Trait } from 'src/modules/traits/domain/aggregates/trait';
 import type { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 

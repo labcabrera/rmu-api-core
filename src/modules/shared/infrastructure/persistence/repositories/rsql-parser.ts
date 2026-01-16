@@ -6,8 +6,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { parse } from '@rsql/parser';
-
-import { InvalidSearchExpression } from 'src/modules/core/domain/errors/errors';
+import { InvalidSearchExpression } from 'src/modules/shared/domain/errors/errors';
 
 type MongoQuery = Record<string, any>;
 

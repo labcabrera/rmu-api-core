@@ -5,7 +5,7 @@ import type { LanguageEventBusPort } from '../../ports/language-event-bus.port';
 import { CreateLanguageCommand } from '../commands/create-language.command';
 import type { LanguageRepository } from '../../ports/language-repository';
 import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
-import { ValidationError } from 'src/modules/core/domain/errors/errors';
+import { ValidationError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(CreateLanguageCommand)
 export class CreateLanguageHandler implements ICommandHandler<CreateLanguageCommand, Language> {

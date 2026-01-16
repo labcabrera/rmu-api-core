@@ -1,4 +1,4 @@
-import { CharacterSize } from 'src/modules/core/domain/entities/character-size';
+import { CharacterSize } from '../../domain/entities/character-size';
 
 export interface CharacterSizeRepository {
   findById(id: string): CharacterSize | null;

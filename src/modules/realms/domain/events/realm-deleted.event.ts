@@ -1,4 +1,4 @@
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { RealmProps } from '../aggregates/realm';
 
 export class RealmDeletedEvent extends DomainEvent<RealmProps> {

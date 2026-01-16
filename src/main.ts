@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { DomainExceptionFilter } from 'src/modules/core/interfaces/http/domain-exception.filter';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { DomainExceptionFilter } from './modules/shared/interfaces/http/domain-exception.filter';
 
 function configureOpenApi(app: INestApplication<any>) {
   const openApiConfig = new DocumentBuilder()

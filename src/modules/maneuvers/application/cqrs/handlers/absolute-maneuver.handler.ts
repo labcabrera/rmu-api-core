@@ -4,12 +4,12 @@ import { AbsoluteManeuverResult } from 'src/modules/maneuvers/domain/value-objec
 import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
 import { AbsoluteManeuverQuery } from '../queries/absolute-maneuver.query';
 import { ManeuverService } from 'src/modules/maneuvers/domain/services/maneuver-service';
-import { ValidationError } from 'src/modules/core/domain/errors/errors';
 import { AwarenessManeuverService } from 'src/modules/maneuvers/domain/services/awareness-maneuver.service';
 import { AnimalManeuverService } from 'src/modules/maneuvers/domain/services/animal-maneuver.service';
 import { AdrenalManeuverService } from 'src/modules/maneuvers/domain/services/adrenal-maneuver.service';
 import { CraftingManeuverService } from 'src/modules/maneuvers/domain/services/crafting-maneuver.service';
 import { GymnasticManeuverService } from 'src/modules/maneuvers/domain/services/gymnastic-maneuver.service';
+import { ValidationError } from 'src/modules/shared/domain/errors/errors';
 
 @QueryHandler(AbsoluteManeuverQuery)
 export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQuery, AbsoluteManeuverResult> {

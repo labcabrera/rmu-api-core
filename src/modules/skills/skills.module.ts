@@ -3,8 +3,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from 'src/modules/auth/auth.module';
 // import { MongooseModule } from '@nestjs/mongoose';
-import { CoreModule } from '../core/core.module';
 import { SkillController } from './interfaces/http/skill.controller';
+import { CoreModule } from '../shared/core.module';
 
 @Module({
   imports: [

@@ -4,7 +4,7 @@ import { DeleteTraitCommand } from '../commands/delete-trait.command';
 import { TraitDeletedEvent } from 'src/modules/traits/domain/events/trait-deleted.event';
 import type { TraitRepository } from '../../ports/trait.repository';
 import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(DeleteTraitCommand)
 export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {

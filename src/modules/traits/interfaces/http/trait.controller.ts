@@ -4,9 +4,6 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Req
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { PagedQueryDto } from '../../../core/interfaces/http/dto/paged-rsql-query';
-import { Page } from '../../../core/domain/entities/page';
-import { ErrorDto } from '../../../core/interfaces/http/dto/error-dto';
 import { CreateTraitCommand } from '../../application/cqrs/commands/create-trait.command';
 import { DeleteTraitCommand } from '../../application/cqrs/commands/delete-trait.command';
 import { UpdateTraitCommand } from '../../application/cqrs/commands/update-trait.command';
@@ -16,6 +13,9 @@ import { TraitDto, TraitPageDto } from './dtos/trait.dto';
 import { CreateTraitDto } from './dtos/create-trait.dto';
 import { GetTraitsQuery } from '../../application/cqrs/queries/get-traits.query';
 import { GetTraitQuery } from '../../application/cqrs/queries/get-trait.query';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { Page } from 'src/modules/shared/domain/entities/page';
+import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/traits')

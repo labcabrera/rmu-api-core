@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Language } from '../../../domain/aggregates/language';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { UpdateLanguageCommand } from '../commands/update-language.command';
 import type { LanguageEventBusPort } from '../../ports/language-event-bus.port';
 import type { LanguageRepository } from '../../ports/language-repository';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(UpdateLanguageCommand)
 export class UpdateLanguageHandler implements ICommandHandler<UpdateLanguageCommand, Language> {

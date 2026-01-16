@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../core/domain/errors/errors';
 import { DeleteLanguageCommand } from '../commands/delete-language.command';
 import { LanguageDeletedEvent } from 'src/modules/languages/domain/events/language-deleted.event';
 import type { LanguageEventBusPort } from '../../ports/language-event-bus.port';
 import type { LanguageRepository } from '../../ports/language-repository';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(DeleteLanguageCommand)
 export class DeleteLanguageHandler implements ICommandHandler<DeleteLanguageCommand> {

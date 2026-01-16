@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Language } from '../../domain/aggregates/language';
-import { KafkaProducerService } from '../../../core/infrastructure/messaging/kafka-producer.service';
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { LanguageEventBusPort } from '../../application/ports/language-event-bus.port';
+import { KafkaProducerService } from 'src/modules/shared/infrastructure/messaging/kafka-producer.service';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 
 @Injectable()
 export class KafkaLanguageProducerService implements LanguageEventBusPort {

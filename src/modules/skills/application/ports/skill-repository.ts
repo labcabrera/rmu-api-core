@@ -1,5 +1,5 @@
+import { Page } from 'src/modules/shared/domain/entities/page';
 import { Skill } from 'src/modules/skills/domain/aggregates/skill';
-import { Page } from '../../../core/domain/entities/page';
 
 export interface SkillRepository {
   findById(id: string): Skill | null;

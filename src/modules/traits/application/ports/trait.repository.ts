@@ -1,4 +1,4 @@
-import { Page } from 'src/modules/core/domain/entities/page';
+import { Page } from 'src/modules/shared/domain/entities/page';
 import { Trait } from 'src/modules/traits/domain/aggregates/trait';
 
 export interface TraitRepository {

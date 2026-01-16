@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from 'joi';
-
-import { CoreModule } from './modules/core/core.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProfessionsModule } from './modules/professions/professions.module';
 import { RacesModule } from './modules/races/races.module';
@@ -11,6 +8,8 @@ import { RealmsModule } from './modules/realms/realms.module';
 import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 import { TraitsModule } from './modules/traits/traits.module';
 import { LanguagesModule } from './modules/languages/languages.module';
+import Joi from 'joi';
+import { CoreModule } from './modules/shared/core.module';
 
 @Module({
   imports: [

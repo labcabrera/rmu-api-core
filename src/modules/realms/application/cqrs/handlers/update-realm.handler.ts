@@ -4,7 +4,7 @@ import { Realm } from '../../../domain/aggregates/realm';
 import { UpdateRealmCommand } from '../commands/update-realm.command';
 import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/realm-repository';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, Realm> {

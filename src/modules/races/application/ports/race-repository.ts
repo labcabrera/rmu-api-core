@@ -1,5 +1,5 @@
-import { Page } from 'src/modules/core/domain/entities/page';
 import { Race } from 'src/modules/races/domain/aggregates/race';
+import { Page } from 'src/modules/shared/domain/entities/page';
 
 export interface RaceRepository {
   findById(id: string): Promise<Race | null>;

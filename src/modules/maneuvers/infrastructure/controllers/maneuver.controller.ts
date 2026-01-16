@@ -4,7 +4,6 @@ import { Body, Controller, Get, Query, Request, UseGuards } from '@nestjs/common
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { ErrorDto } from '../../../core/interfaces/http/dto/error-dto';
 import { PercentManeuverResultDto } from './dtos/percent-maneuver-result.dto';
 import { PercentManeuverQuery } from '../../application/cqrs/queries/percent-maneuver.query';
 import { AbsoluteManeuverQuery } from '../../application/cqrs/queries/absolute-maneuver.query';
@@ -12,6 +11,7 @@ import { AbsoluteManeuverResultDto } from './dtos/absolute-maneuver-result.dto';
 import { EnduranceManeuverResultDto } from './dtos/endurance-maneuver-result.dto';
 import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query';
 import { ManeuverTableType } from '../../domain/value-objects/maneuver-table.vo';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')

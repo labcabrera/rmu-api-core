@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Page } from 'src/modules/core/domain/entities/page';
-import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 import { LanguageRepository } from '../../application/ports/language-repository';
 import { LanguageDocument, LanguageModel } from '../persistence/models/language-model';
 import { Language } from '../../domain/aggregates/language';
+import { Page } from 'src/modules/shared/domain/entities/page';
+import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @Injectable()
 export class MongoLanguageRepository implements LanguageRepository {

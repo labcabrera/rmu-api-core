@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Realm } from '../../domain/aggregates/realm';
-import { KafkaProducerService } from '../../../core/infrastructure/messaging/kafka-producer.service';
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { RealmEventBusPort } from '../../application/ports/realm-event-bus.port';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { KafkaProducerService } from 'src/modules/shared/infrastructure/messaging/kafka-producer.service';
 
 @Injectable()
 export class KafkaRealmProducerService implements RealmEventBusPort {

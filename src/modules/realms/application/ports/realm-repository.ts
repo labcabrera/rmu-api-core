@@ -1,5 +1,5 @@
-import { Page } from 'src/modules/core/domain/entities/page';
 import { Realm } from 'src/modules/realms/domain/aggregates/realm';
+import { Page } from 'src/modules/shared/domain/entities/page';
 
 export interface RealmRepository {
   findById(id: string): Promise<Realm | null>;

@@ -1,5 +1,5 @@
-import { Page } from 'src/modules/core/domain/entities/page';
 import { Language } from 'src/modules/languages/domain/aggregates/language';
+import { Page } from 'src/modules/shared/domain/entities/page';
 
 export interface LanguageRepository {
   findById(id: string): Promise<Language | null>;

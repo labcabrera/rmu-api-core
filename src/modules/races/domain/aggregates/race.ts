@@ -1,4 +1,3 @@
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
@@ -6,6 +5,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 import { RaceUpdatedEvent } from '../events/race-updated.event';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 
 export interface RaceProps {
   id: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Page } from 'src/modules/shared/domain/entities/page';
 import { SkillRepository } from 'src/modules/skills/application/ports/skill-repository';
 import { Skill, RMU_SKILLS } from 'src/modules/skills/domain/aggregates/skill';
-import { Page } from '../../../core/domain/entities/page';
 
 @Injectable()
 export class InMemorySkillRepository implements SkillRepository {

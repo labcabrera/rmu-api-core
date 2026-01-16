@@ -1,4 +1,4 @@
-import { Page } from 'src/modules/core/domain/entities/page';
+import { Page } from '../../domain/entities/page';
 
 export interface Repository<I> {
   findById(id: string): Promise<I | null>;
