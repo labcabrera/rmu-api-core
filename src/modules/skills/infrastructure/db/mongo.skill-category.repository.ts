@@ -15,7 +15,7 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
   ) {}
 
   async findById(id: string): Promise<SkillCategory | null> {
-    const doc = await this.skillCategoryModel.findOne({ id });
+    const doc = await this.skillCategoryModel.findById(id);
     return doc ? this.mapToEntity(doc) : null;
   }
 
@@ -23,7 +23,7 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
     const skip = page * size;
     const mongoQuery = this.rsqlParser.parse(rsql || '');
     const [docs, totalElements] = await Promise.all([
-      this.skillCategoryModel.find(mongoQuery).skip(skip).limit(size).sort({ id: 1 }),
+      this.skillCategoryModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
       this.skillCategoryModel.countDocuments(mongoQuery),
     ]);
     const content = docs.map((doc) => this.mapToEntity(doc));
@@ -31,14 +31,14 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
   }
 
   async save(entity: SkillCategory): Promise<SkillCategory> {
-    const model = new this.skillCategoryModel({ ...entity });
+    const model = new this.skillCategoryModel({ ...entity, _id: entity.id });
     await model.save();
     return this.mapToEntity(model);
   }
 
   private mapToEntity(doc: SkillCategoryDocument): SkillCategory {
     return {
-      id: doc.id as string,
+      id: (doc as any)._id ? (doc as any)._id.toString() : (doc.id as string),
       bonus: doc.bonus,
     };
   }

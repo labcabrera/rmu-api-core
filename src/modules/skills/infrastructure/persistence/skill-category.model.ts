@@ -3,10 +3,10 @@ import { Document } from 'mongoose';
 
 export type SkillCategoryDocument = SkillCategoryModel & Document;
 
-@Schema({ collection: 'skillCategories', id: false, versionKey: false })
+@Schema({ collection: 'skillCategories', id: true, versionKey: false })
 export class SkillCategoryModel {
   @Prop({ type: String, required: true })
-  id: string;
+  _id: string;
 
   @Prop({ type: [String], required: true })
   bonus: string[];
