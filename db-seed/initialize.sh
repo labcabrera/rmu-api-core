@@ -5,13 +5,6 @@ set -e
 DEFAULT_BASE_URL="http://localhost:3001/v1"
 DEFAULT_CONTENT_TYPE="application/json"
 
-KEYCLOAK_TOKEN_URI="${RMU_IAM_TOKEN_URI}"
-KEYCLOAK_REALM="${RMU_IAM_REALM}"
-KEYCLOAK_CLIENT_ID="${RMU_IAM_CLIENT_ID}"
-KEYCLOAK_CLIENT_SECRET="${RMU_IAM_CLIENT_SECRET}"
-KEYCLOAK_USERNAME="${RMU_IAM_USERNAME}"
-KEYCLOAK_PASSWORD="${RMU_IAM_PASSWORD}"
-
 #TODO local values for testing
 KEYCLOAK_TOKEN_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/token
 KEYCLOAK_CLIENT_ID=rmu-client
@@ -50,17 +43,40 @@ send_file_to_service() {
          -H "Authorization: Bearer $ACCESS_TOKEN" \
          -d @"$filename" \
          "$url" \
-         -s --show-error \
-         -w "\nHTTP Status: %{http_code}\nTotal Time: %{time_total}s\n" \
+         -s --show-error
     
     local exit_code=$?
     
-    if [ $exit_code -eq 0 ]; then
-        echo "Processed '$filename'"
-    else
+    if [ ! $exit_code -eq 0 ]; then
         echo "Failed '$filename'"
     fi
     
+    return $exit_code
+}
+
+send_json_to_service() {
+    local json="$1"
+    local endpoint="$2"
+
+    if [ -z "$json" ] || [ -z "$endpoint" ]; then
+        echo "Error: json and endpoint are required"
+        return 1
+    fi
+
+    local url="$DEFAULT_BASE_URL/$endpoint"
+
+    curl -X POST \
+         -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
+         -H "Accept: application/json" \
+         -H "Authorization: Bearer $ACCESS_TOKEN" \
+         -d "$json" \
+         "$url" \
+         -s --show-error
+
+    local exit_code=$?
+    if  [ ! $exit_code -eq 0 ]; then
+        echo "Failed item (exit $exit_code)"
+    fi
     return $exit_code
 }
 
@@ -97,21 +113,7 @@ initialize_skill_categories() {
                 count=$(jq 'length' "$skill_category_file")
                 echo "Found array with $count entries in '$skill_category_file'"
                 jq -c '.[]' "$skill_category_file" | while IFS= read -r item; do
-                    curl -X POST \
-                         -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
-                         -H "Accept: application/json" \
-                         -H "Authorization: Bearer $ACCESS_TOKEN" \
-                         -d "$item" \
-                         "$DEFAULT_BASE_URL/skill-categories" \
-                         -s --show-error \
-                         -w "\nHTTP Status: %{http_code}\nTotal Time: %{time_total}s\n"
-
-                    rc=$?
-                    if [ $rc -eq 0 ]; then
-                        echo "Processed item"
-                    else
-                        echo "Failed item (exit $rc)"
-                    fi
+                    send_json_to_service "$item" "skill-categories"
                     echo ""
                 done
             else
@@ -132,21 +134,7 @@ initialize_skills() {
                 count=$(jq 'length' "$skill_file")
                 echo "Found array with $count entries in '$skill_file'"
                 jq -c '.[]' "$skill_file" | while IFS= read -r item; do
-                    curl -X POST \
-                         -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
-                         -H "Accept: application/json" \
-                         -H "Authorization: Bearer $ACCESS_TOKEN" \
-                         -d "$item" \
-                         "$DEFAULT_BASE_URL/skills" \
-                         -s --show-error \
-                         -w "\nHTTP Status: %{http_code}\nTotal Time: %{time_total}s\n"
-
-                    rc=$?
-                    if [ $rc -eq 0 ]; then
-                        echo "Processed item"
-                    else
-                        echo "Failed item (exit $rc)"
-                    fi
+                    send_json_to_service "$item" "skills"
                     echo ""
                 done
             else
