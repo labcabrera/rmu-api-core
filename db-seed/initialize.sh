@@ -2,13 +2,17 @@
 
 set -e
 
-DEFAULT_BASE_URL="http://localhost:3001/v1"
+set -a
+source .env
+set +a
+
 DEFAULT_CONTENT_TYPE="application/json"
 
 #TODO local values for testing
-KEYCLOAK_TOKEN_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/token
-KEYCLOAK_CLIENT_ID=rmu-client
-KEYCLOAK_CLIENT_SECRET=1tUzPc24SYJMPpX37g2eymEoS9C3Ttzw
+# DEFAULT_BASE_URL="http://localhost:3001/v1"
+# KEYCLOAK_TOKEN_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/token
+# KEYCLOAK_CLIENT_ID=rmu-client
+# KEYCLOAK_CLIENT_SECRET=1tUzPc24SYJMPpX37g2eymEoS9C3Ttzw
 
 read_access_token() {
     echo "Fetching access token from Keycloak..."
@@ -38,6 +42,7 @@ send_file_to_service() {
     local url="$DEFAULT_BASE_URL/$endpoint"
 
     curl -X POST \
+         -v \
          -H "Content-Type: $DEFAULT_CONTENT_TYPE" \
          -H "Accept: application/json" \
          -H "Authorization: Bearer $ACCESS_TOKEN" \
