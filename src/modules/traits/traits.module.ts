@@ -3,7 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CoreModule } from '../core/core.module';
 import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-event-bus.adapter';
 import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository';
 import { TraitController } from './interfaces/http/trait.controller';
@@ -13,6 +12,7 @@ import { GetTraitsHandler } from './application/cqrs/handlers/get-realms.handler
 import { GetTraitHandler } from './application/cqrs/handlers/get-trait.handler';
 import { UpdateTraitHandler } from './application/cqrs/handlers/update-trait.handler';
 import { TraitModel, TraitSchema } from './infrastructure/persistence/models/trait-model';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { TraitModel, TraitSchema } from './infrastructure/persistence/models/tra
     CqrsModule,
     MongooseModule.forFeature([{ name: TraitModel.name, schema: TraitSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
   ],
   controllers: [TraitController],
   providers: [

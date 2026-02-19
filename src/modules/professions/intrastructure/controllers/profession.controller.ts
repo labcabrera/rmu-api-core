@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { ProfessionDto } from './dtos/profession.dto';
 import { GetProfessionQuery } from '../../application/queries/get-profession.query';
 import { Profession } from '../../domain/entities/profession.entity';
-import { ErrorDto } from 'src/modules/core/interfaces/http/dto/error-dto';
 import { GetProfessionsQuery } from '../../application/queries/get-professions.query';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')

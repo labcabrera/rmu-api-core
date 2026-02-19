@@ -1,9 +1,9 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { TraitCreatedEvent } from '../events/trait-created.event';
 import { TraitUpdatedEvent } from '../events/trait-updated.event';
 import { TraitCategory } from '../value-objects/trait-category.vo';
 import { TraitSpecialization } from '../value-objects/trait-specialization.vo';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 
 export interface TraitProps {
   id: string;

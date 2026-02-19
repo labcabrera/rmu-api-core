@@ -26,7 +26,7 @@ const GYMNASTIC_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeu
     result: {
       result: 'partial-success',
       message:
-        'Fancy footwork, my friend! You complete the maneuver completely as expected and in fine form, and barely break a sweat. Must be the shoes.',
+        'Everything was going so well, but you cannot seem to follow through, and it takes longer. If appropriate make an additional maneuver at +10. Otherwise you fail.',
     },
   },
   {
@@ -35,7 +35,7 @@ const GYMNASTIC_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeu
     result: {
       result: 'success',
       message:
-        "You skip a light fandango, turn cartwheels 'cross the floor and complete the maneuver with the kind of precision and grace you have always dreamed about. Onlookers gawk as you make the impossible look easy.",
+        'Fancy footwork, my friend! You complete the maneuver completely as expected and in fine form, and barely break a sweat. Must be the shoes.',
     },
   },
   {
@@ -44,7 +44,7 @@ const GYMNASTIC_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeu
     result: {
       result: 'absolute-success',
       message:
-        'Your diligence is rewarded with your latest masterwork! Everyone can see the remarkable quality of your work, and your abilities will be more highly regarded than ever. Item has +10 Strength.',
+        "You skip a light fandango, turn cartwheels 'cross the floor and complete the maneuver with the kind of precision and grace you have always dreamed about. Onlookers gawk as you make the impossible look easy.",
     },
   },
 ];

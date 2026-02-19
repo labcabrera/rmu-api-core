@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDto } from 'src/modules/core/interfaces/http/dto/page.dto';
 
 import { Realm } from 'src/modules/realms/domain/aggregates/realm';
+import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 
 export class RealmDto {
   @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })

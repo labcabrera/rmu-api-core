@@ -7,13 +7,13 @@ import { RaceController } from './interfaces/http/race.controller';
 import { KafkaRaceEventBusAdapter } from './infrastructure/messaging/kafka.race-event-bus.adapter';
 import { MongoRaceRepository } from './infrastructure/db/mongo.race.repository';
 import { RealmsModule } from '../realms/realms.module';
-import { CoreModule } from '../core/core.module';
 import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race-model';
 import { DeleteRaceHandler } from './application/cqrs/handlers/delete-race.handler';
 import { UpdateRaceHandler } from './application/cqrs/handlers/update-race.handler';
 import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handler';
 import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler';
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.han
     CqrsModule,
     MongooseModule.forFeature([{ name: RaceModel.name, schema: RaceSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
     RealmsModule,
   ],
   controllers: [RaceController],

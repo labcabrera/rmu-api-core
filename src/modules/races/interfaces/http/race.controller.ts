@@ -4,16 +4,16 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Req
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { PagedQueryDto } from '../../../core/interfaces/http/dto/paged-rsql-query';
-import { Page } from '../../../core/domain/entities/page';
 import { Race } from '../../domain/aggregates/race';
 import { RaceDto, RacePageDto } from './dtos/race.dto';
 import { CreateRaceDto } from './dtos/create-race.dto';
-import { ErrorDto } from 'src/modules/core/interfaces/http/dto/error-dto';
 import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command';
 import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query';
 import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query';
 import { UpdateRaceDto } from './dtos/update-race.dto';
+import { Page } from 'src/modules/shared/domain/entities/page';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')

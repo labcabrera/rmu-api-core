@@ -1,8 +1,8 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { LanguageCreatedEvent } from '../events/language-created.event';
 import { LanguageUpdatedEvent } from '../events/language-updated.event';
 import { randomUUID } from 'crypto';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 
 export class LanguageProps {
   id: string;

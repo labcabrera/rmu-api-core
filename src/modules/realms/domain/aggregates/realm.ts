@@ -1,8 +1,8 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { DomainEvent } from 'src/modules/core/domain/events/domain-event';
 import { RealmCreatedEvent } from '../events/realm-created.event';
 import { RealmUpdatedEvent } from '../events/realm-updated.event';
 import { randomUUID } from 'crypto';
+import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 
 export class RealmProps {
   id: string;

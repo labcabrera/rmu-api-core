@@ -2,8 +2,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Realm } from 'src/modules/realms/domain/aggregates/realm';
 import { GetRealmQuery } from '../queries/get-realm.query';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import type { RealmRepository } from '../../ports/realm-repository';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @QueryHandler(GetRealmQuery)
 export class GetRealmHandler implements IQueryHandler<GetRealmQuery, Realm> {

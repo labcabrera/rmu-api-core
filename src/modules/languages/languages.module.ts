@@ -4,7 +4,6 @@ import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { LanguageController } from './interfaces/http/language.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CoreModule } from '../core/core.module';
 import { CreateLanguageHandler } from './application/cqrs/handlers/create-language.handler';
 import { DeleteLanguageHandler } from './application/cqrs/handlers/delete-language.handler';
 import { GetLanguageHandler } from './application/cqrs/handlers/get-language.handler';
@@ -14,6 +13,7 @@ import { MongoLanguageRepository } from './infrastructure/db/mongo.language.repo
 import { KafkaLanguageProducerService } from './infrastructure/messaging/kafka.language-bus.adapter';
 import { LanguageModel, LanguageSchema } from './infrastructure/persistence/models/language-model';
 import { RealmsModule } from '../realms/realms.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { RealmsModule } from '../realms/realms.module';
     CqrsModule,
     MongooseModule.forFeature([{ name: LanguageModel.name, schema: LanguageSchema }]),
     AuthModule,
-    CoreModule,
+    SharedModule,
     RealmsModule,
   ],
   controllers: [LanguageController],

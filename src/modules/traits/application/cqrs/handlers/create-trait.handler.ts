@@ -4,7 +4,7 @@ import { CreateTraitCommand } from '../commands/create-trait.command';
 import { Trait } from 'src/modules/traits/domain/aggregates/trait';
 import type { TraitRepository } from '../../ports/trait.repository';
 import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { ConflictError } from 'src/modules/core/domain/errors/errors';
+import { ConflictError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(CreateTraitCommand)
 export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, Trait> {

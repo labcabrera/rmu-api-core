@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Page } from 'src/modules/core/domain/entities/page';
 import { Race } from 'src/modules/races/domain/aggregates/race';
-import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { RaceDocument, RaceModel } from '../persistence/models/race-model';
 import { RaceRepository } from '../../application/ports/race-repository';
+import { Page } from 'src/modules/shared/domain/entities/page';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {

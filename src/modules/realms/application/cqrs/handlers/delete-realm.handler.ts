@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteRealmCommand } from '../commands/delete-realm.command';
-import { NotFoundError } from '../../../../core/domain/errors/errors';
 import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/realm-repository';
 import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(DeleteRealmCommand)
 export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {

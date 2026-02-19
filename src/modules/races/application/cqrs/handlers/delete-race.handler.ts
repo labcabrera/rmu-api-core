@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { DeleteRaceCommand } from '../commands/delete-race.command';
-import { NotFoundError } from '../../../../core/domain/errors/errors';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RaceDeletedEvent } from 'src/modules/races/domain/events/race-deleted.event';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import type { RaceRepository } from '../../ports/race-repository';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(DeleteRaceCommand)
 export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {

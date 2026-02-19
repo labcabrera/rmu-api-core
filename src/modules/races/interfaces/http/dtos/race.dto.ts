@@ -3,7 +3,7 @@ import { Race } from 'src/modules/races/domain/aggregates/race';
 import { RaceResistancesDto } from './race-resistances.dto';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
-import { PaginationDto } from 'src/modules/core/interfaces/http/dto/page.dto';
+import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })

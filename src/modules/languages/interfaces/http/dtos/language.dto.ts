@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDto } from 'src/modules/core/interfaces/http/dto/page.dto';
 import { Language } from 'src/modules/languages/domain/aggregates/language';
+import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 
 export class LanguageDto {
   @ApiProperty({ description: 'Unique identifier for the language', example: 'language-001' })

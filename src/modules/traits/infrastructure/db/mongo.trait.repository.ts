@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Page } from 'src/modules/core/domain/entities/page';
-import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 import { TraitDocument, TraitModel } from '../persistence/models/trait-model';
 import { TraitRepository } from '../../application/ports/trait.repository';
 import { Trait } from '../../domain/aggregates/trait';
+import { Page } from 'src/modules/shared/domain/entities/page';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 
 @Injectable()
 export class MongoTraitRepository implements TraitRepository {

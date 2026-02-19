@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
-import { Page } from 'src/modules/core/domain/entities/page';
 import { Realm } from 'src/modules/realms/domain/aggregates/realm';
 import { RealmModel, RealmDocument } from '../persistence/models/realm-model';
-import { RsqlParser } from '../../../core/infrastructure/persistence/repositories/rsql-parser';
-import { NotFoundError } from 'src/modules/core/domain/errors/errors';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
+import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
+import { Page } from 'src/modules/shared/domain/entities/page';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @Injectable()
 export class MongoRealmRepository implements RealmRepository {
