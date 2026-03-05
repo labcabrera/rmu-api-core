@@ -15,6 +15,8 @@ import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handl
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
 import { SharedModule } from '../shared/shared.module';
 import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
+import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler';
+import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
     CreateRaceHandler,
     UpdateRaceHandler,
     DeleteRaceHandler,
+    AddRaceTraitHandler,
+    DeleteRaceTraitHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,

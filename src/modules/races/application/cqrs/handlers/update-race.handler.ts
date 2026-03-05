@@ -34,7 +34,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       baseAt: command.baseAt,
       defaultLanguage: command.defaultLanguage,
       talents: command.talents,
-      raceTraits: command.raceTraits,
+      traits: command.traits,
       description: command.description,
       imageUrl: command.imageUrl,
     });

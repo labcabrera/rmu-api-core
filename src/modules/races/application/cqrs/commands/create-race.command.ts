@@ -21,7 +21,7 @@ export class CreateRaceCommand {
     public readonly baseAt: number,
     public readonly defaultLanguage: string | undefined,
     public readonly talents: string[],
-    public readonly raceTraits: RaceTrait[],
+    public readonly traits: RaceTrait[],
     public readonly description: string | undefined,
     public readonly imageUrl: string | undefined,
     public readonly userId: string,

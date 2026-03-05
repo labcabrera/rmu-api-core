@@ -90,7 +90,7 @@ export class RaceDto {
     dto.baseAt = entity.baseAt;
     dto.defaultLanguage = entity.defaultLanguage;
     dto.talents = entity.talents;
-    dto.traits = entity.raceTraits ? entity.raceTraits.map((t) => RaceTraitDto.fromEntity(t)) : [];
+    dto.traits = entity.traits ? entity.traits.map((t) => RaceTraitDto.fromEntity(t)) : [];
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
     return dto;

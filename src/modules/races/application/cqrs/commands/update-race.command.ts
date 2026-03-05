@@ -21,7 +21,7 @@ export class UpdateRaceCommand {
     public readonly baseAt: number | undefined,
     public readonly defaultLanguage: string | undefined,
     public readonly talents: string[] | undefined,
-    public readonly raceTraits: RaceTrait[] | undefined,
+    public readonly traits: RaceTrait[] | undefined,
     public readonly description: string | undefined,
     public readonly imageUrl: string | undefined,
     public readonly userId: string,

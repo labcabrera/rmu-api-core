@@ -27,7 +27,7 @@ export interface RaceProps {
   baseAt: number;
   defaultLanguage?: string;
   talents: string[];
-  raceTraits: RaceTrait[];
+  traits: RaceTrait[];
   description?: string;
   imageUrl?: string;
   owner: string;
@@ -55,7 +55,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public baseAt: number,
     public defaultLanguage: string | undefined,
     public talents: string[],
-    public raceTraits: RaceTrait[],
+    public traits: RaceTrait[],
     public description: string | undefined,
     public imageUrl: string | undefined,
     public owner: string,
@@ -85,7 +85,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.baseAt,
       props.defaultLanguage,
       props.talents,
-      props.raceTraits,
+      props.traits,
       props.description,
       props.imageUrl,
       props.owner,
@@ -103,14 +103,14 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     tier: number | undefined,
     description: string | undefined,
   ) {
-    this.raceTraits.push(new RaceTrait(randomUUID(), traitId, specialization, isTalent, tier, description));
+    this.traits.push(new RaceTrait(randomUUID(), traitId, specialization, isTalent, tier, description));
     this.apply(new RaceUpdatedEvent(this.toProps()));
   }
 
   removeTrait(traitId: string) {
-    const index = this.raceTraits.findIndex((trait) => trait.id === traitId);
+    const index = this.traits.findIndex((trait) => trait.id === traitId);
     if (index !== -1) {
-      this.raceTraits.splice(index, 1);
+      this.traits.splice(index, 1);
       this.apply(new RaceUpdatedEvent(this.toProps()));
     }
     this.apply(new RaceUpdatedEvent(this.toProps()));
@@ -136,7 +136,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.baseAt,
       props.defaultLanguage,
       props.talents,
-      props.raceTraits,
+      props.traits,
       props.description,
       props.imageUrl,
       props.owner,
@@ -161,7 +161,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     if (props.baseAt !== undefined) this.baseAt = props.baseAt;
     if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
     if (props.talents) this.talents = props.talents;
-    if (props.raceTraits) this.raceTraits = props.raceTraits;
+    if (props.traits) this.traits = props.traits;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
@@ -188,7 +188,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       baseAt: this.baseAt,
       defaultLanguage: this.defaultLanguage,
       talents: this.talents,
-      raceTraits: this.raceTraits,
+      traits: this.traits,
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,

@@ -81,6 +81,7 @@ export class RaceController {
   }
 
   @Post(':id/traits')
+  @HttpCode(200)
   @ApiOperation({ operationId: 'addTrait', summary: 'Add a trait to a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
@@ -92,6 +93,7 @@ export class RaceController {
   }
 
   @Delete(':id/traits/:traitId')
+  @HttpCode(200)
   @ApiOperation({ operationId: 'removeTrait', summary: 'Remove a trait from a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
