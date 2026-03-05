@@ -96,6 +96,20 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     return race;
   }
 
+  addTrait(traitId: string, modifier: string | undefined, description: string | undefined) {
+    this.raceTraits.push(new RaceTrait(randomUUID(), traitId, modifier, description));
+    this.apply(new RaceUpdatedEvent(this.toProps()));
+  }
+
+  removeTrait(traitId: string) {
+    const index = this.raceTraits.findIndex((trait) => trait.id === traitId);
+    if (index !== -1) {
+      this.raceTraits.splice(index, 1);
+      this.apply(new RaceUpdatedEvent(this.toProps()));
+    }
+    this.apply(new RaceUpdatedEvent(this.toProps()));
+  }
+
   static fromProps(props: RaceProps) {
     return new Race(
       props.id,

@@ -14,6 +14,7 @@ import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handl
 import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler';
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
 import { SharedModule } from '../shared/shared.module';
+import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
 
 @Module({
   imports: [
@@ -38,6 +39,10 @@ import { SharedModule } from '../shared/shared.module';
     {
       provide: 'RaceEventProducer',
       useClass: KafkaRaceEventBusAdapter,
+    },
+    {
+      provide: 'RaceGuardPort',
+      useClass: RaceGuardAdapter,
     },
   ],
   exports: ['RaceRepository'],
