@@ -56,7 +56,7 @@ export class UpdateRaceDto {
   @IsOptional()
   baseAt?: number;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
   defaultLanguage?: string;
 
