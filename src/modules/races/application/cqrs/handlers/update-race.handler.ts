@@ -35,6 +35,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       defaultLanguage: command.defaultLanguage,
       talents: command.talents,
       description: command.description,
+      imageUrl: command.imageUrl,
     });
     const updated = await this.raceRepository.update(command.id, race);
     race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));

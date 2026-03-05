@@ -21,6 +21,7 @@ export class CreateRaceCommand {
     public readonly defaultLanguage: string | undefined,
     public readonly talents: string[],
     public readonly description: string | undefined,
+    public readonly imageUrl: string | undefined,
     public readonly userId: string,
     public readonly roles?: string[],
   ) {}

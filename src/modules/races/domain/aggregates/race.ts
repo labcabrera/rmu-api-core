@@ -27,6 +27,7 @@ export interface RaceProps {
   defaultLanguage?: string;
   talents: string[];
   description?: string;
+  imageUrl?: string;
   owner: string;
   createdAt: Date;
   updatedAt?: Date;
@@ -53,6 +54,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public defaultLanguage: string | undefined,
     public talents: string[],
     public description: string | undefined,
+    public imageUrl: string | undefined,
     public owner: string,
     public readonly createdAt: Date,
     public updatedAt: Date | undefined,
@@ -81,6 +83,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.defaultLanguage,
       props.talents,
       props.description,
+      props.imageUrl,
       props.owner,
       new Date(),
       undefined,
@@ -110,6 +113,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.defaultLanguage,
       props.talents,
       props.description,
+      props.imageUrl,
       props.owner,
       props.createdAt,
       props.updatedAt,
@@ -133,6 +137,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
     if (props.talents) this.talents = props.talents;
     if (props.description !== undefined) this.description = props.description;
+    if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
     this.apply(new RaceUpdatedEvent(this.toProps()));
   }
@@ -158,6 +163,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       defaultLanguage: this.defaultLanguage,
       talents: this.talents,
       description: this.description,
+      imageUrl: this.imageUrl,
       owner: this.owner,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

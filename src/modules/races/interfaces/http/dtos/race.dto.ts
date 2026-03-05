@@ -63,6 +63,9 @@ export class RaceDto {
   @ApiProperty({ description: 'Description of the race' })
   description?: string;
 
+  @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  imageUrl?: string;
+
   static fromEntity(entity: Race): RaceDto {
     const dto = new RaceDto();
     dto.id = entity.id;
@@ -84,6 +87,7 @@ export class RaceDto {
     dto.defaultLanguage = entity.defaultLanguage;
     dto.talents = entity.talents;
     dto.description = entity.description;
+    dto.imageUrl = entity.imageUrl;
     return dto;
   }
 }

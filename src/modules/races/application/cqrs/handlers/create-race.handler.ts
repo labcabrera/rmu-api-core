@@ -39,6 +39,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       defaultLanguage: command.defaultLanguage,
       talents: command.talents,
       description: command.description,
+      imageUrl: command.imageUrl,
       owner: command.userId,
     });
     const savedRace = await this.raceRepository.save(race);

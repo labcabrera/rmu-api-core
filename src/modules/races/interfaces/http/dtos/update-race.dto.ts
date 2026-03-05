@@ -67,6 +67,10 @@ export class UpdateRaceDto {
   @IsOptional()
   description?: string;
 
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
+
   static toCommand(id: string, dto: UpdateRaceDto, userId: string, roles: string[]): UpdateRaceCommand {
     return new UpdateRaceCommand(
       id,
@@ -86,6 +90,7 @@ export class UpdateRaceDto {
       dto.defaultLanguage,
       dto.talents,
       dto.description,
+      dto.imageUrl,
       userId,
       roles,
     );
