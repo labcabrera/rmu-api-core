@@ -14,6 +14,8 @@ import { UpdateRaceDto } from './dtos/update-race.dto';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
+import { AddRaceTraitDto } from './dtos/add-race-trait.dto';
+import { DeleteRaceTraitCommand } from '../../application/cqrs/commands/delete-race-trait.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -76,5 +78,26 @@ export class RaceController {
   async delete(@Param('id') id: string, @Request() req) {
     const command = new DeleteRaceCommand(id, undefined, req.user!.id as string, req.user!.roles as string[]);
     await this.commandBus.execute(command);
+  }
+
+  @Post(':id/traits')
+  @ApiOperation({ operationId: 'addTrait', summary: 'Add a trait to a race' })
+  @ApiOkResponse({ type: RaceDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  @ApiResponse({ status: 409, description: 'Conflict, race already exists', type: ErrorDto })
+  addTrait(@Param('id') id: string, @Body() addRaceTraitDto: AddRaceTraitDto, @Request() req) {
+    const command = AddRaceTraitDto.toCommand(id, addRaceTraitDto, req.user!.id as string, req.user!.roles as string[]);
+    return this.commandBus.execute(command);
+  }
+
+  @Delete(':id/traits/:traitId')
+  @ApiOperation({ operationId: 'removeTrait', summary: 'Remove a trait from a race' })
+  @ApiOkResponse({ type: RaceDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Race or trait not found', type: ErrorDto })
+  removeTrait(@Param('id') id: string, @Param('traitId') traitId: string, @Request() req) {
+    const command = new DeleteRaceTraitCommand(id, traitId, req.user!.id as string, req.user!.roles as string[]);
+    return this.commandBus.execute(command);
   }
 }
