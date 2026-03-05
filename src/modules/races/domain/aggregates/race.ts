@@ -7,6 +7,7 @@ import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 import { RaceUpdatedEvent } from '../events/race-updated.event';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 export interface RaceProps {
   id: string;
@@ -25,7 +26,7 @@ export interface RaceProps {
   baseHits: number;
   baseDevPoints: number;
   baseAt: number;
-  defaultLanguage?: string;
+  defaultLanguage?: NamedEntity;
   talents: string[];
   traits: RaceTrait[];
   description?: string;
@@ -53,7 +54,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public baseHits: number,
     public baseDevPoints: number,
     public baseAt: number,
-    public defaultLanguage: string | undefined,
+    public defaultLanguage: NamedEntity | undefined,
     public talents: string[],
     public traits: RaceTrait[],
     public description: string | undefined,

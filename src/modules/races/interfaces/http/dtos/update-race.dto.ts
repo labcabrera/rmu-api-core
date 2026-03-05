@@ -1,9 +1,11 @@
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { RaceResistancesDto } from './race-resistances.dto';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { UpdateRaceCommand } from 'src/modules/races/application/cqrs/commands/update-race.command';
 import { RaceTraitDto } from './race-trait.dto';
+import { Type } from 'class-transformer';
+import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 
 export class UpdateRaceDto {
   @IsString()
@@ -56,9 +58,10 @@ export class UpdateRaceDto {
   @IsOptional()
   baseAt?: number;
 
-  @IsString()
   @IsOptional()
-  defaultLanguage?: string;
+  @ValidateNested()
+  @Type(() => NamedEntityDto)
+  defaultLanguage?: NamedEntityDto;
 
   @IsArray()
   @IsOptional()
@@ -92,7 +95,7 @@ export class UpdateRaceDto {
       dto.baseHits,
       dto.baseDevPoints,
       dto.baseAt,
-      dto.defaultLanguage,
+      NamedEntityDto.toEntity(dto.defaultLanguage),
       dto.talents,
       dto.traits?.map(RaceTraitDto.toEntity),
       dto.description,

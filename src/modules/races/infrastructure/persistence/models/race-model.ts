@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 import { RaceTrait } from './race-trait.model';
+import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
 
 export type RaceDocument = RaceModel & Document;
 
@@ -55,8 +56,8 @@ export class RaceModel {
   @Prop({ required: true })
   baseAt: number;
 
-  @Prop({ type: String, required: false })
-  defaultLanguage: string | undefined;
+  @Prop({ type: NamedEntity, required: false })
+  defaultLanguage: NamedEntity | undefined;
 
   @Prop({ type: [String], required: true })
   talents: string[] = [];

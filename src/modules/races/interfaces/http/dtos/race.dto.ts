@@ -5,6 +5,7 @@ import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { RaceTraitDto } from './race-trait.dto';
+import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -55,8 +56,8 @@ export class RaceDto {
   @ApiProperty({ description: 'Racial armor type', example: 1 })
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', example: 'Common Tongue' })
-  defaultLanguage?: string;
+  @ApiProperty({ description: 'Default language', type: NamedEntityDto, required: false })
+  defaultLanguage?: NamedEntityDto;
 
   @ApiProperty({ description: 'List of racial talents', example: ['Night Vision', 'Keen Senses'] })
   talents: string[];
@@ -88,7 +89,7 @@ export class RaceDto {
     dto.baseHits = entity.baseHits;
     dto.baseDevPoints = entity.baseDevPoints;
     dto.baseAt = entity.baseAt;
-    dto.defaultLanguage = entity.defaultLanguage;
+    dto.defaultLanguage = entity.defaultLanguage ? NamedEntityDto.fromEntity(entity.defaultLanguage) : undefined;
     dto.talents = entity.talents;
     dto.traits = entity.traits ? entity.traits.map((t) => RaceTraitDto.fromEntity(t)) : [];
     dto.description = entity.description;

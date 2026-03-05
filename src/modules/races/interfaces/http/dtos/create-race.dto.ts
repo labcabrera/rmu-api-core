@@ -6,6 +6,7 @@ import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/c
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { RaceTraitDto } from './race-trait.dto';
+import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 
 export class CreateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
@@ -72,8 +73,10 @@ export class CreateRaceDto {
   @IsNumber()
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', example: 'Common', required: false })
-  defaultLanguage?: string;
+  @ApiProperty({ description: 'Default language', required: false, type: NamedEntityDto })
+  @ValidateNested()
+  @Type(() => NamedEntityDto)
+  defaultLanguage?: NamedEntityDto;
 
   @ApiProperty({ description: 'List of talents identifiers for the race' })
   @IsArray()
@@ -112,7 +115,7 @@ export class CreateRaceDto {
       dto.baseHits,
       dto.baseDevPoints,
       dto.baseAt,
-      dto.defaultLanguage,
+      NamedEntityDto.toEntity(dto.defaultLanguage),
       dto.talents,
       dto.traits.map(RaceTraitDto.toEntity),
       dto.description,
