@@ -5,6 +5,7 @@ import { RaceResistancesDto } from './race-resistances.dto';
 import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/create-race.command';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
+import { RaceTraitDto } from './race-trait.dto';
 
 export class CreateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
@@ -79,6 +80,12 @@ export class CreateRaceDto {
   @IsString({ each: true })
   talents: string[];
 
+  @ApiProperty({ description: 'List of traits associated with the race', type: [RaceTraitDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RaceTraitDto)
+  raceTraits: RaceTraitDto[];
+
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
   @IsOptional()
@@ -107,6 +114,7 @@ export class CreateRaceDto {
       dto.baseAt,
       dto.defaultLanguage,
       dto.talents,
+      dto.raceTraits.map(RaceTraitDto.toEntity),
       dto.description,
       dto.imageUrl,
       userId,

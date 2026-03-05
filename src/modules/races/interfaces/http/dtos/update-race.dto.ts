@@ -3,6 +3,7 @@ import { RaceResistancesDto } from './race-resistances.dto';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { UpdateRaceCommand } from 'src/modules/races/application/cqrs/commands/update-race.command';
+import { RaceTraitDto } from './race-trait.dto';
 
 export class UpdateRaceDto {
   @IsString()
@@ -63,6 +64,10 @@ export class UpdateRaceDto {
   @IsOptional()
   talents?: string[];
 
+  @IsArray()
+  @IsOptional()
+  raceTraits?: RaceTraitDto[];
+
   @IsString()
   @IsOptional()
   description?: string;
@@ -89,6 +94,7 @@ export class UpdateRaceDto {
       dto.baseAt,
       dto.defaultLanguage,
       dto.talents,
+      dto.raceTraits?.map(RaceTraitDto.toEntity),
       dto.description,
       dto.imageUrl,
       userId,

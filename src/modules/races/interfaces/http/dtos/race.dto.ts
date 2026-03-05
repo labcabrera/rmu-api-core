@@ -4,6 +4,7 @@ import { RaceResistancesDto } from './race-resistances.dto';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+import { RaceTraitDto } from './race-trait.dto';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -60,6 +61,9 @@ export class RaceDto {
   @ApiProperty({ description: 'List of racial talents', example: ['Night Vision', 'Keen Senses'] })
   talents: string[];
 
+  @ApiProperty({ description: 'List of race traits', type: [RaceTraitDto] })
+  raceTraits: RaceTraitDto[];
+
   @ApiProperty({ description: 'Description of the race' })
   description?: string;
 
@@ -86,6 +90,7 @@ export class RaceDto {
     dto.baseAt = entity.baseAt;
     dto.defaultLanguage = entity.defaultLanguage;
     dto.talents = entity.talents;
+    dto.raceTraits = entity.raceTraits.map(RaceTraitDto.fromEntity);
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
     return dto;

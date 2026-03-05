@@ -1,6 +1,7 @@
 import { RaceResistances } from 'src/modules/races/domain/value-objects/race-resistances.vo';
 import { RaceStats } from 'src/modules/races/domain/value-objects/race-stats.vo';
 import { SexBasedAttribute } from 'src/modules/races/domain/value-objects/sex-based-attribute.vo';
+import { RaceTrait } from 'src/modules/races/domain/value-objects/race-trait.vo';
 
 export class UpdateRaceCommand {
   constructor(
@@ -20,6 +21,7 @@ export class UpdateRaceCommand {
     public readonly baseAt: number | undefined,
     public readonly defaultLanguage: string | undefined,
     public readonly talents: string[] | undefined,
+    public readonly raceTraits: RaceTrait[] | undefined,
     public readonly description: string | undefined,
     public readonly imageUrl: string | undefined,
     public readonly userId: string,

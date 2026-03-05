@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
+import { RaceTrait } from './race-trait.model';
 
 export type RaceDocument = RaceModel & Document;
 
@@ -59,6 +60,9 @@ export class RaceModel {
 
   @Prop({ type: [String], required: true })
   talents: string[] = [];
+
+  @Prop({ type: [RaceTrait], required: true })
+  raceTraits: RaceTrait[] = [];
 
   @Prop({ type: String, required: false })
   description: string | undefined;

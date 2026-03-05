@@ -75,6 +75,7 @@ export class MongoRaceRepository implements RaceRepository {
       baseAt: doc.baseAt,
       defaultLanguage: doc.defaultLanguage,
       talents: doc.talents,
+      raceTraits: doc.raceTraits ?? [],
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,

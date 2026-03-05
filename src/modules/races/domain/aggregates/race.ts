@@ -1,6 +1,7 @@
 import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
+import { RaceTrait } from '../value-objects/race-trait.vo';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
@@ -26,6 +27,7 @@ export interface RaceProps {
   baseAt: number;
   defaultLanguage?: string;
   talents: string[];
+  raceTraits: RaceTrait[];
   description?: string;
   imageUrl?: string;
   owner: string;
@@ -53,6 +55,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public baseAt: number,
     public defaultLanguage: string | undefined,
     public talents: string[],
+    public raceTraits: RaceTrait[],
     public description: string | undefined,
     public imageUrl: string | undefined,
     public owner: string,
@@ -82,6 +85,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.baseAt,
       props.defaultLanguage,
       props.talents,
+      props.raceTraits,
       props.description,
       props.imageUrl,
       props.owner,
@@ -112,6 +116,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.baseAt,
       props.defaultLanguage,
       props.talents,
+      props.raceTraits,
       props.description,
       props.imageUrl,
       props.owner,
@@ -136,6 +141,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     if (props.baseAt !== undefined) this.baseAt = props.baseAt;
     if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
     if (props.talents) this.talents = props.talents;
+    if (props.raceTraits) this.raceTraits = props.raceTraits;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
@@ -162,6 +168,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       baseAt: this.baseAt,
       defaultLanguage: this.defaultLanguage,
       talents: this.talents,
+      raceTraits: this.raceTraits,
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,
