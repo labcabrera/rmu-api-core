@@ -46,6 +46,14 @@ export class ManeuverController {
     return AbsoluteManeuverResultDto.fromEntity(entity);
   }
 
+  @Get('/absolute/tables')
+  @ApiOperation({ operationId: 'getAbsoluteManeuverTables', summary: 'Get absolute maneuver tables' })
+  @ApiOkResponse({ type: [String], description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  getAbsoluteManeuverTables(): string[] {
+    return ['adrenal', 'animal', 'awareness', 'composition', 'crafting', 'gymnastic', 'lore', 'medical'];
+  }
+
   @Get('/endurance')
   @ApiOperation({ operationId: 'enduranceManeuver', summary: 'Get endurance maneuver result' })
   @ApiOkResponse({ type: EnduranceManeuverResultDto, description: 'Success' })

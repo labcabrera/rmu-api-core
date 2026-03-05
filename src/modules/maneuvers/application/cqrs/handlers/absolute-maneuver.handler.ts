@@ -10,6 +10,9 @@ import { AdrenalManeuverService } from 'src/modules/maneuvers/domain/services/ad
 import { CraftingManeuverService } from 'src/modules/maneuvers/domain/services/crafting-maneuver.service';
 import { GymnasticManeuverService } from 'src/modules/maneuvers/domain/services/gymnastic-maneuver.service';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { CompositionManeuverService } from 'src/modules/maneuvers/domain/services/composition-maneuver.service';
+import { LoreManeuverService } from 'src/modules/maneuvers/domain/services/lore-maneuver.service';
+import { MedicalManeuverService } from 'src/modules/maneuvers/domain/services/medical-maneuver.service';
 
 @QueryHandler(AbsoluteManeuverQuery)
 export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQuery, AbsoluteManeuverResult> {
@@ -17,11 +20,14 @@ export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQu
 
   constructor(
     @Inject() private readonly absoluteManeuverService: AbsoluteManeuverService,
+    @Inject() private readonly adrenalManeuverService: AdrenalManeuverService,
     @Inject() private readonly animalManeuverService: AnimalManeuverService,
     @Inject() private readonly awarenessManeuverService: AwarenessManeuverService,
-    @Inject() private readonly adrenalManeuverService: AdrenalManeuverService,
+    @Inject() private readonly compositionManeuverService: CompositionManeuverService,
     @Inject() private readonly craftingManeuverService: CraftingManeuverService,
     @Inject() private readonly gymnasticManeuverService: GymnasticManeuverService,
+    @Inject() private readonly loreManeuverService: LoreManeuverService,
+    @Inject() private readonly medicalManeuverService: MedicalManeuverService,
   ) {}
 
   execute(query: AbsoluteManeuverQuery): Promise<AbsoluteManeuverResult> {
@@ -41,10 +47,16 @@ export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQu
         return this.animalManeuverService;
       case 'awareness':
         return this.awarenessManeuverService;
+      case 'composition':
+        return this.compositionManeuverService;
       case 'crafting':
         return this.craftingManeuverService;
       case 'gymnastic':
         return this.gymnasticManeuverService;
+      case 'lore':
+        return this.loreManeuverService;
+      case 'medical':
+        return this.medicalManeuverService;
       default:
         throw new ValidationError('Invalid table type');
     }
