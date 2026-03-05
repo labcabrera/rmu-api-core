@@ -32,13 +32,21 @@ export class MongoRaceRepository implements RaceRepository {
   }
 
   async save(race: Race): Promise<Race> {
-    const model = new this.raceModel({ ...race.toProps(), _id: race.id });
+    const props = race.toProps();
+    const model = new this.raceModel({ ...props, _id: race.id, traits: props.raceTraits });
     await model.save();
     return this.mapToEntity(model);
   }
 
   async update(id: string, request: Partial<Race>): Promise<Race> {
-    const updatedRace = await this.raceModel.findByIdAndUpdate(id, { $set: request }, { new: true });
+    const persistenceRequest = {
+      ...request,
+      traits: request.raceTraits,
+    };
+
+    delete (persistenceRequest as { raceTraits?: unknown }).raceTraits;
+
+    const updatedRace = await this.raceModel.findByIdAndUpdate(id, { $set: persistenceRequest }, { new: true });
     if (!updatedRace) {
       throw new NotFoundError('Race', id);
     }
@@ -75,7 +83,7 @@ export class MongoRaceRepository implements RaceRepository {
       baseAt: doc.baseAt,
       defaultLanguage: doc.defaultLanguage,
       talents: doc.talents,
-      raceTraits: doc.raceTraits ?? [],
+      raceTraits: doc.traits ?? [],
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,

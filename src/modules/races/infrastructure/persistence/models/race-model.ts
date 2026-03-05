@@ -62,7 +62,7 @@ export class RaceModel {
   talents: string[] = [];
 
   @Prop({ type: [RaceTrait], required: true })
-  raceTraits: RaceTrait[] = [];
+  traits: RaceTrait[] = [];
 
   @Prop({ type: String, required: false })
   description: string | undefined;

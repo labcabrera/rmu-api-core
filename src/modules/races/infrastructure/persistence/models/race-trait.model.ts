@@ -9,8 +9,14 @@ export class RaceTrait {
   traitId: string;
 
   @Prop({ type: String, required: false })
-  modifier: string | undefined;
+  specialization: string | undefined;
+
+  @Prop({ type: Boolean, required: true })
+  isTalent: boolean;
+
+  @Prop({ type: Number, required: false })
+  tier: number | undefined;
 
   @Prop({ type: String, required: false })
-  description: string;
+  description: string | undefined;
 }

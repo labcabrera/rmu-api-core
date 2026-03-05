@@ -84,7 +84,7 @@ export class CreateRaceDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RaceTraitDto)
-  raceTraits: RaceTraitDto[];
+  traits: RaceTraitDto[];
 
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
@@ -114,7 +114,7 @@ export class CreateRaceDto {
       dto.baseAt,
       dto.defaultLanguage,
       dto.talents,
-      dto.raceTraits.map(RaceTraitDto.toEntity),
+      dto.traits.map(RaceTraitDto.toEntity),
       dto.description,
       dto.imageUrl,
       userId,

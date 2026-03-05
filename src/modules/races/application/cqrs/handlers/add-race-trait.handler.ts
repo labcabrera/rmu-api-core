@@ -21,7 +21,7 @@ export class AddRaceTraitHandler implements ICommandHandler<AddRaceTraitCommand,
 
     this.raceGuard.checkUpdate(race, command.userId, command.roles);
 
-    race.addTrait(command.traitId, command.modifier, command.description);
+    race.addTrait(command.traitId, command.specialization, command.isTalent, command.tier, command.description);
 
     const updated = await this.raceRepository.update(command.raceId, race);
     race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));

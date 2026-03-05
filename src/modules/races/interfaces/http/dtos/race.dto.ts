@@ -62,7 +62,7 @@ export class RaceDto {
   talents: string[];
 
   @ApiProperty({ description: 'List of race traits', type: [RaceTraitDto] })
-  raceTraits: RaceTraitDto[];
+  traits: RaceTraitDto[];
 
   @ApiProperty({ description: 'Description of the race' })
   description?: string;
@@ -90,7 +90,7 @@ export class RaceDto {
     dto.baseAt = entity.baseAt;
     dto.defaultLanguage = entity.defaultLanguage;
     dto.talents = entity.talents;
-    dto.raceTraits = entity.raceTraits.map(RaceTraitDto.fromEntity);
+    dto.traits = entity.raceTraits ? entity.raceTraits.map((t) => RaceTraitDto.fromEntity(t)) : [];
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
     return dto;

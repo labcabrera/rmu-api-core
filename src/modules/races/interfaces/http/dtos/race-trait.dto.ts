@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { RaceTrait } from 'src/modules/races/domain/value-objects/race-trait.vo';
 
 export class RaceTraitDto {
@@ -11,10 +11,19 @@ export class RaceTraitDto {
   @IsString()
   traitId: string;
 
-  @ApiProperty({ description: 'Modifier expression of the race trait', required: false, example: '+5 to initiative' })
+  @ApiProperty({ description: 'Specialization of the race trait', required: false, example: 'longbows' })
   @IsString()
   @IsOptional()
-  modifier: string | undefined;
+  specialization: string | undefined;
+
+  @ApiProperty({ description: 'Indicates if trait is a talent', example: false })
+  @IsBoolean()
+  isTalent: boolean;
+
+  @ApiProperty({ description: 'Tier level when applicable', required: false, example: 2 })
+  @IsNumber()
+  @IsOptional()
+  tier: number | undefined;
 
   @ApiProperty({ description: 'Description of the race trait', required: false, example: 'Grants improved reaction speed.' })
   @IsString()
@@ -25,12 +34,14 @@ export class RaceTraitDto {
     const dto = new RaceTraitDto();
     dto.id = entity.id;
     dto.traitId = entity.traitId;
-    dto.modifier = entity.modifier;
+    dto.specialization = entity.specialization;
+    dto.isTalent = entity.isTalent;
+    dto.tier = entity.tier;
     dto.description = entity.description;
     return dto;
   }
 
   static toEntity(dto: RaceTraitDto): RaceTrait {
-    return new RaceTrait(dto.id, dto.traitId, dto.modifier, dto.description);
+    return new RaceTrait(dto.id, dto.traitId, dto.specialization, dto.isTalent, dto.tier, dto.description);
   }
 }

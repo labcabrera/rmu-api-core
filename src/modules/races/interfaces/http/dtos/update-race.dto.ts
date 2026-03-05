@@ -66,7 +66,7 @@ export class UpdateRaceDto {
 
   @IsArray()
   @IsOptional()
-  raceTraits?: RaceTraitDto[];
+  traits?: RaceTraitDto[];
 
   @IsString()
   @IsOptional()
@@ -94,7 +94,7 @@ export class UpdateRaceDto {
       dto.baseAt,
       dto.defaultLanguage,
       dto.talents,
-      dto.raceTraits?.map(RaceTraitDto.toEntity),
+      dto.traits?.map(RaceTraitDto.toEntity),
       dto.description,
       dto.imageUrl,
       userId,

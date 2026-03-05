@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { AddRaceTraitCommand } from 'src/modules/races/application/cqrs/commands/add-race-trait.command';
 
 export class AddRaceTraitDto {
@@ -7,10 +7,19 @@ export class AddRaceTraitDto {
   @IsString()
   traitId: string;
 
-  @ApiProperty({ description: 'Optional modifier for the trait', example: '+2 to strength' })
+  @ApiProperty({ description: 'Optional specialization for the trait', example: 'longbows' })
   @IsString()
   @IsOptional()
-  modifier?: string;
+  specialization?: string;
+
+  @ApiProperty({ description: 'Indicates if the trait is talent', example: false })
+  @IsBoolean()
+  isTalent: boolean;
+
+  @ApiProperty({ description: 'Optional tier level', required: false, example: 2 })
+  @IsNumber()
+  @IsOptional()
+  tier?: number;
 
   @ApiProperty({ description: 'Optional description for the trait', example: 'Elves have keen senses' })
   @IsString()
@@ -18,6 +27,6 @@ export class AddRaceTraitDto {
   description?: string;
 
   static toCommand(raceId: string, dto: AddRaceTraitDto, userId: string, userRoles: string[]) {
-    return new AddRaceTraitCommand(raceId, dto.traitId, dto.modifier, dto.description, userId, userRoles);
+    return new AddRaceTraitCommand(raceId, dto.traitId, dto.specialization, dto.isTalent, dto.tier, dto.description, userId, userRoles);
   }
 }

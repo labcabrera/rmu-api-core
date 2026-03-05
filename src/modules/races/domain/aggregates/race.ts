@@ -96,8 +96,14 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     return race;
   }
 
-  addTrait(traitId: string, modifier: string | undefined, description: string | undefined) {
-    this.raceTraits.push(new RaceTrait(randomUUID(), traitId, modifier, description));
+  addTrait(
+    traitId: string,
+    specialization: string | undefined,
+    isTalent: boolean,
+    tier: number | undefined,
+    description: string | undefined,
+  ) {
+    this.raceTraits.push(new RaceTrait(randomUUID(), traitId, specialization, isTalent, tier, description));
     this.apply(new RaceUpdatedEvent(this.toProps()));
   }
 
