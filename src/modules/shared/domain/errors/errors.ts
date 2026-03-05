@@ -54,3 +54,21 @@ export class InvalidSearchExpression extends DomainError {
     Object.setPrototypeOf(this, InvalidSearchExpression.prototype);
   }
 }
+
+export class UnauthorizedError extends DomainError {
+  public readonly status: number = 401;
+  constructor(message: string) {
+    super(message, 401);
+    this.name = 'UnauthorizedError';
+    Object.setPrototypeOf(this, UnauthorizedError.prototype);
+  }
+}
+
+export class ForbiddenError extends DomainError {
+  public readonly status: number = 403;
+  constructor(message: string) {
+    super(message, 403);
+    this.name = 'ForbiddenError';
+    Object.setPrototypeOf(this, ForbiddenError.prototype);
+  }
+}
