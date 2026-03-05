@@ -22,7 +22,16 @@ export class CreateRealmDto {
   @IsOptional()
   description: string | undefined;
 
+  @ApiProperty({
+    description: 'Image URL of the realm',
+    required: false,
+    example: 'https://example.com/images/realms/lotr.jpg',
+  })
+  @IsString()
+  @IsOptional()
+  imageUrl: string | undefined;
+
   static toCommand(dto: CreateRealmDto, userId: string, userRoles: string[]) {
-    return new CreateRealmCommand(dto.name, dto.shortDescription, dto.description, userId, userRoles);
+    return new CreateRealmCommand(dto.name, dto.shortDescription, dto.description, dto.imageUrl, userId, userRoles);
   }
 }

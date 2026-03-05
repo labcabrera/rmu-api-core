@@ -22,7 +22,16 @@ export class UpdateRealmDto {
   @IsOptional()
   description: string | undefined;
 
+  @ApiProperty({
+    description: 'Image URL of the realm',
+    required: false,
+    example: 'https://example.com/images/realms/lotr.jpg',
+  })
+  @IsString()
+  @IsOptional()
+  fieldImageUrl: string | undefined;
+
   static toCommand(id: string, dto: UpdateRealmDto, userId: string, userRoles: string[]) {
-    return new UpdateRealmCommand(id, dto.name, dto.shortDescription, dto.description, userId, userRoles);
+    return new UpdateRealmCommand(id, dto.name, dto.shortDescription, dto.description, dto.fieldImageUrl, userId, userRoles);
   }
 }

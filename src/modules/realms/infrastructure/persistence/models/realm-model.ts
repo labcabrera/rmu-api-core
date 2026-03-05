@@ -18,6 +18,9 @@ export class RealmModel {
   @Prop({ required: false })
   description?: string;
 
+  @Prop({ type: String, required: false })
+  imageUrl: string | undefined;
+
   @Prop({ required: true })
   owner: string;
 

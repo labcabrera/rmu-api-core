@@ -18,7 +18,9 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
     this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
     const realm = Realm.create({
       name: command.name,
+      shortDescription: command.shortDescription,
       description: command.description,
+      imageUrl: command.imageUrl,
       owner: command.userId,
     });
     const savedRealm = await this.realmRepository.save(realm);
