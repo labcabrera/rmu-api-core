@@ -17,6 +17,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
 import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler';
 import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
+import { LanguagesModule } from '../languages/languages.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-
     AuthModule,
     SharedModule,
     RealmsModule,
+    LanguagesModule,
   ],
   controllers: [RaceController],
   providers: [

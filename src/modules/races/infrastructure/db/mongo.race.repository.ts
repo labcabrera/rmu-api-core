@@ -7,6 +7,7 @@ import { RaceRepository } from '../../application/ports/race-repository';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
+import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {
@@ -65,8 +66,7 @@ export class MongoRaceRepository implements RaceRepository {
       id: doc._id,
       name: doc.name,
       archetype: doc.archetype,
-      realmId: doc.realmId,
-      realmName: doc.realmName,
+      realm: new NamedEntity(doc.realm.id, doc.realm.name),
       sizeId: doc.sizeId,
       stats: doc.stats,
       resistances: doc.resistances,

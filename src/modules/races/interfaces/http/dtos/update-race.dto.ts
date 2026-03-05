@@ -16,9 +16,10 @@ export class UpdateRaceDto {
   @IsOptional()
   archetype?: string;
 
-  @IsString()
   @IsOptional()
-  realmId?: string;
+  @ValidateNested()
+  @Type(() => NamedEntityDto)
+  realm?: NamedEntityDto;
 
   @IsString()
   @IsOptional()

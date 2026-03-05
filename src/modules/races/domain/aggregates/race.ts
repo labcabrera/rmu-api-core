@@ -13,8 +13,7 @@ export interface RaceProps {
   id: string;
   archetype: string;
   name: string;
-  realmId: string;
-  realmName: string;
+  realm: NamedEntity;
   sizeId: string;
   stats: RaceStats;
   resistances: RaceResistances;
@@ -26,7 +25,7 @@ export interface RaceProps {
   baseHits: number;
   baseDevPoints: number;
   baseAt: number;
-  defaultLanguage?: NamedEntity;
+  defaultLanguage: NamedEntity | null;
   talents: string[];
   traits: RaceTrait[];
   description?: string;
@@ -41,8 +40,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public readonly id: string,
     public name: string,
     public archetype: string,
-    public readonly realmId: string,
-    public realmName: string,
+    public readonly realm: NamedEntity,
     public sizeId: string,
     public stats: RaceStats,
     public resistances: RaceResistances,
@@ -54,7 +52,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public baseHits: number,
     public baseDevPoints: number,
     public baseAt: number,
-    public defaultLanguage: NamedEntity | undefined,
+    public defaultLanguage: NamedEntity | null,
     public talents: string[],
     public traits: RaceTrait[],
     public description: string | undefined,
@@ -71,8 +69,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       randomUUID(),
       props.name,
       props.archetype,
-      props.realmId,
-      props.realmName,
+      props.realm,
       props.sizeId,
       props.stats,
       props.resistances,
@@ -122,8 +119,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.id,
       props.name,
       props.archetype,
-      props.realmId,
-      props.realmName,
+      props.realm,
       props.sizeId,
       props.stats,
       props.resistances,
@@ -146,7 +142,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     );
   }
 
-  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realmId' | 'realmName' | 'owner'>>) {
+  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realm' | 'owner'>>) {
     if (props.name) this.name = props.name;
     if (props.archetype) this.archetype = props.archetype;
     if (props.sizeId) this.sizeId = props.sizeId;
@@ -174,8 +170,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       id: this.id,
       name: this.name,
       archetype: this.archetype,
-      realmId: this.realmId,
-      realmName: this.realmName,
+      realm: this.realm,
       sizeId: this.sizeId,
       stats: this.stats,
       resistances: this.resistances,

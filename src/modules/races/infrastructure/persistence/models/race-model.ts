@@ -18,10 +18,8 @@ export class RaceModel {
   archetype: string;
 
   @Prop({ required: true })
-  realmId: string;
-
-  @Prop({ required: true })
-  realmName: string;
+  @Prop({ type: NamedEntity, required: true })
+  realm: NamedEntity;
 
   @Prop({ required: true })
   sizeId: string;
@@ -57,7 +55,7 @@ export class RaceModel {
   baseAt: number;
 
   @Prop({ type: NamedEntity, required: false })
-  defaultLanguage: NamedEntity | undefined;
+  defaultLanguage: NamedEntity | null;
 
   @Prop({ type: [String], required: true })
   talents: string[] = [];

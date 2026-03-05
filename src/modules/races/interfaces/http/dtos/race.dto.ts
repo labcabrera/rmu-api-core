@@ -18,10 +18,8 @@ export class RaceDto {
   archetype: string;
 
   @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
-  realmId: string;
-
-  @ApiProperty({ description: 'Realm name', example: 'Middle-earth' })
-  realmName: string;
+  @ApiProperty({ description: 'Realm', type: NamedEntityDto })
+  realm: NamedEntityDto;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   sizeId: string;
@@ -76,8 +74,7 @@ export class RaceDto {
     dto.id = entity.id;
     dto.name = entity.name;
     dto.archetype = entity.archetype;
-    dto.realmId = entity.realmId;
-    dto.realmName = entity.realmName;
+    dto.realm = NamedEntityDto.fromEntity(entity.realm);
     dto.sizeId = entity.sizeId;
     dto.stats = entity.stats;
     dto.resistances = entity.resistances;
