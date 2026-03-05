@@ -13,6 +13,7 @@ import { GetRealmHandler } from './application/cqrs/handlers/get-realm.handler';
 import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler';
 import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler';
 import { SharedModule } from '../shared/shared.module';
+import { RealmGuardAdapter } from './infrastructure/security/RealmGuardAdapter';
 
 @Module({
   imports: [
@@ -36,6 +37,10 @@ import { SharedModule } from '../shared/shared.module';
     {
       provide: 'RealmEventProducer',
       useClass: KafkaRealmProducerService,
+    },
+    {
+      provide: 'RealmGuardPort',
+      useClass: RealmGuardAdapter,
     },
   ],
   exports: ['RealmRepository'],

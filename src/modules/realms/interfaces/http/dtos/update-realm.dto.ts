@@ -29,9 +29,9 @@ export class UpdateRealmDto {
   })
   @IsString()
   @IsOptional()
-  fieldImageUrl: string | undefined;
+  imageUrl: string | undefined;
 
   static toCommand(id: string, dto: UpdateRealmDto, userId: string, userRoles: string[]) {
-    return new UpdateRealmCommand(id, dto.name, dto.shortDescription, dto.description, dto.fieldImageUrl, userId, userRoles);
+    return new UpdateRealmCommand(id, dto.name, dto.shortDescription, dto.description, dto.imageUrl, userId, userRoles);
   }
 }

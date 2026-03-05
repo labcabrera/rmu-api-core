@@ -4,6 +4,7 @@ import { Realm } from '../../../domain/aggregates/realm';
 import { CreateRealmCommand } from '../commands/create-realm.command';
 import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/realm-repository';
+import type { RealmGuardPort } from '../../ports/realm-guard.port';
 
 @CommandHandler(CreateRealmCommand)
 export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, Realm> {
@@ -11,11 +12,13 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
 
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
+    @Inject('RealmGuardPort') private readonly realmGuard: RealmGuardPort,
     @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
   ) {}
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
     this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
+    this.realmGuard.checkCreateRealm(command.roles);
     const realm = Realm.create({
       name: command.name,
       shortDescription: command.shortDescription,

@@ -1,3 +1,6 @@
+import { Realm } from '../../domain/aggregates/realm';
+
 export interface RealmGuardPort {
-  checkCreateRealm(userId: string, roles: string[]): Promise<boolean>;
+  checkCreateRealm(roles: string[]);
+  checkUpdateRealm(realm: Realm, userId: string, roles: string[]);
 }
