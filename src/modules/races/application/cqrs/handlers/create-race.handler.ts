@@ -20,8 +20,8 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
-    const realm = await this.realmRepository.findById(command.realm.id);
-    if (!realm) throw new ValidationError(`Realm with id ${command.realm.id} does not exist`);
+    const realm = await this.realmRepository.findById(command.realmId);
+    if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
 
     let language: Language | null = null;
     if (command.defaultLanguageId) {

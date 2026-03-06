@@ -20,9 +20,9 @@ export class CreateRaceDto {
   archetype: string;
 
   @ApiProperty({ description: 'Realm of the race', type: NamedEntityDto })
-  @ValidateNested()
-  @Type(() => NamedEntityDto)
-  realm: NamedEntityDto;
+  @IsString()
+  @IsNotEmpty()
+  realmId: string;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   @IsString()
@@ -103,7 +103,7 @@ export class CreateRaceDto {
     return new CreateRaceCommand(
       dto.name,
       dto.archetype,
-      dto.realm,
+      dto.realmId,
       dto.sizeId,
       dto.stats,
       dto.resistances,
