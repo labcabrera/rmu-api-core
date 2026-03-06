@@ -20,10 +20,10 @@ export class CreateLanguageHandler implements ICommandHandler<CreateLanguageComm
 
   async execute(command: CreateLanguageCommand): Promise<Language> {
     this.logger.log(`Creating Language ${command.name} for user ${command.userId}`);
-    const realm = await this.realmRepository.findById(command.realm.id);
-    if (!realm) {
-      throw new ValidationError(`Realm with id ${command.realm.id} not found`);
-    }
+
+    const realm = await this.realmRepository.findById(command.realmId);
+    if (!realm) throw new ValidationError(`Realm with id ${command.realmId} not found`);
+
     const language = Language.create({
       name: command.name,
       realm: new NamedEntity(realm.id, realm.name),
