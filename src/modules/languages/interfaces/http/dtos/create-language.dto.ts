@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { CreateLanguageCommand } from 'src/modules/languages/application/cqrs/commands/create-language.command';
+import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
+import { Type } from 'class-transformer';
 
 export class CreateLanguageDto {
   @ApiProperty({ description: 'Name of the language', example: 'Sindar' })
@@ -8,10 +10,10 @@ export class CreateLanguageDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Realm identifier of the language', example: 'realm-012' })
-  @IsString()
-  @IsNotEmpty()
-  realmId: string;
+  @ApiProperty({ description: 'Realm of the language', type: NamedEntityDto })
+  @ValidateNested()
+  @Type(() => NamedEntityDto)
+  realm: NamedEntityDto;
 
   @ApiProperty({ description: 'Description of the language', required: false, example: 'A fictional language created by J.R.R. Tolkien' })
   @IsString()
@@ -19,6 +21,6 @@ export class CreateLanguageDto {
   description: string | undefined;
 
   static toCommand(dto: CreateLanguageDto, userId: string, userRoles: string[]): CreateLanguageCommand {
-    return new CreateLanguageCommand(dto.name, dto.realmId, dto.description, userId, userRoles);
+    return new CreateLanguageCommand(dto.name, NamedEntityDto.toEntity(dto.realm)!, dto.description, userId, userRoles);
   }
 }

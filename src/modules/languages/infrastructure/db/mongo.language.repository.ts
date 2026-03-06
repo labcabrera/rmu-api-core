@@ -7,6 +7,7 @@ import { Language } from '../../domain/aggregates/language';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
 
 @Injectable()
 export class MongoLanguageRepository implements LanguageRepository {
@@ -59,8 +60,7 @@ export class MongoLanguageRepository implements LanguageRepository {
     return Language.fromProps({
       id: doc.id as string,
       name: doc.name,
-      realmId: doc.realmId,
-      realmName: doc.realmName,
+      realm: doc.realm,
       description: doc.description,
       owner: doc.owner,
       createdAt: doc.createdAt,

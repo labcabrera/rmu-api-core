@@ -20,8 +20,8 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
-    const realm = await this.realmRepository.findById(command.realmId);
-    if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
+    const realm = await this.realmRepository.findById(command.realm.id);
+    if (!realm) throw new ValidationError(`Realm with id ${command.realm.id} does not exist`);
 
     let language: Language | null = null;
     if (command.defaultLanguageId) {
@@ -44,7 +44,8 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       baseHits: command.baseHits,
       baseDevPoints: command.baseDevPoints,
       baseAt: command.baseAt,
-      defaultLanguage: language,
+      // map Language aggregate to NamedEntity (id,name)
+      defaultLanguage: language ? new NamedEntity(language.id, language.name) : null,
       talents: command.talents,
       traits: command.traits,
       description: command.description,

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Language } from 'src/modules/languages/domain/aggregates/language';
+import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
 
 export type LanguageDocument = Language & Document;
 
@@ -12,11 +13,8 @@ export class LanguageModel {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  realmId: string;
-
-  @Prop({ required: true })
-  realmName: string;
+  @Prop({ type: NamedEntity, required: true })
+  realm: NamedEntity;
 
   @Prop({ required: false })
   description?: string;

@@ -19,8 +19,10 @@ export class CreateRaceDto {
   @IsNotEmpty()
   archetype: string;
 
-  @ApiProperty({ description: 'Realm identifier', example: 'lotr' })
-  realmId: string;
+  @ApiProperty({ description: 'Realm of the race', type: NamedEntityDto })
+  @ValidateNested()
+  @Type(() => NamedEntityDto)
+  realm: NamedEntityDto;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   @IsString()
@@ -71,7 +73,7 @@ export class CreateRaceDto {
   @IsNumber()
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language identifier', required: false, example: 'oestron' })
+  @ApiProperty({ description: 'Default language', required: false, type: String })
   @IsString()
   @IsOptional()
   defaultLanguageId: string | null;
@@ -101,10 +103,10 @@ export class CreateRaceDto {
     return new CreateRaceCommand(
       dto.name,
       dto.archetype,
-      dto.realmId,
+      dto.realm,
       dto.sizeId,
       dto.stats,
-      RaceResistancesDto.toEntity(dto.resistances),
+      dto.resistances,
       dto.averageHeight,
       dto.averageWeight,
       dto.strideBonus,

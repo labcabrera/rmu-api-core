@@ -17,7 +17,6 @@ export class RaceModel {
   @Prop({ required: true })
   archetype: string;
 
-  @Prop({ required: true })
   @Prop({ type: NamedEntity, required: true })
   realm: NamedEntity;
 
