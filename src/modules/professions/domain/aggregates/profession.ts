@@ -25,15 +25,15 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
     super();
   }
 
-  static create(props: ProfessionProps): Profession {
+  static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
     const profession = new Profession(
       props.id,
       props.skillCosts,
       props.professionalSkills,
       props.description,
       props.owner,
-      props.createdAt,
-      props.updatedAt,
+      new Date(),
+      undefined,
     );
     //TODO apply event
     return profession;
