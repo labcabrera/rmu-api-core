@@ -12,4 +12,10 @@ export class BaseEntityGuard<E> {
     if ((entity as any).owner === userId) return;
     throw new ForbiddenError('You do not have permission to update this realm');
   }
+
+  checkDelete(entity: E, userId: string, roles: string[]) {
+    if (roles.includes('rmu-admin')) return;
+    if ((entity as any).owner === userId) return;
+    throw new ForbiddenError('You do not have permission to delete this realm');
+  }
 }

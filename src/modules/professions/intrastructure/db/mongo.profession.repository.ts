@@ -60,8 +60,7 @@ export class MongoProfessionRepository implements ProfessionRepository {
     return Profession.fromProps({
       id: doc.id.toString(),
       skillCosts: doc.skillCosts,
-      //TODO
-      professionalSkills: [],
+      professionalSkills: doc.professionalSkills,
       owner: doc.owner,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,

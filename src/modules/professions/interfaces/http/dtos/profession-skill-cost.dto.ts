@@ -99,6 +99,39 @@ export class ProfessionSkillCostsDto {
   vocation: number[];
 
   static fromEntity(entity: ProfessionSkillCosts): ProfessionSkillCostsDto {
-    return { ...entity };
+    return {
+      animal: entity.animal,
+      awareness: entity.awareness,
+      'battle-expertise': entity['battle-expertise'],
+      'body-discipline': entity['body-discipline'],
+      brawn: entity.brawn,
+      'combat-expertise': entity['combat-expertise'],
+      combat1: entity.combat1,
+      combat2: entity.combat2,
+      combat3: entity.combat3,
+      combat4: entity.combat4,
+      composition: entity.composition,
+      crafting: entity.crafting,
+      delving: entity.delving,
+      environmental: entity.environmental,
+      gymnastic: entity.gymnastic,
+      lore: entity.lore,
+      'magical-expertise': entity['magical-expertise'],
+      medical: entity.medical,
+      'mental-discipline': entity['mental-discipline'],
+      movement: entity.movement,
+      'performance-art': entity['performance-art'],
+      'power-manipulation': entity['power-manipulation'],
+      science: entity.science,
+      social: entity.social,
+      'spells-base-open': entity['spells-base-open'],
+      'spells-ritual-magic': entity['spells-ritual-magic'],
+      'spells-closed': entity['spells-closed'],
+      'spells-arcane': entity['spells-arcane'],
+      'spells-restricted': entity['spells-restricted'],
+      subterfuge: entity.subterfuge,
+      technical: entity.technical,
+      vocation: entity.vocation,
+    };
   }
 }

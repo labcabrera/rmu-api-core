@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get, Param, UseGuards, Request, Query, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
@@ -11,6 +11,7 @@ import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { CreateProfessionDto } from './dtos/create-profession.dto';
+import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-profession.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')
@@ -59,5 +60,17 @@ export class ProfessionController {
     const command = CreateProfessionDto.toCommand(createProfessionDto, userId, roles);
     const entity = await this.commandBus.execute(command);
     return ProfessionDto.fromEntity(entity);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiOperation({ operationId: 'deleteProfession', summary: 'Delete profession by id' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Profession not found', type: ErrorDto })
+  async delete(@Param('id') id: string, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = new DeleteProfessionCommand(id, userId, roles);
+    await this.commandBus.execute(command);
   }
 }

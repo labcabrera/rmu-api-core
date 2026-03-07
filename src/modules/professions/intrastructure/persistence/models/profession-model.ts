@@ -4,10 +4,10 @@ import { ProfessionSkillCosts } from './profession-skill-costs.model';
 
 export type ProfessionDocument = ProfessionModel & Document;
 
-@Schema({ collection: 'professions', _id: false, versionKey: false })
+@Schema({ collection: 'professions', id: true, versionKey: false })
 export class ProfessionModel {
   @Prop({ required: true })
-  id: string;
+  _id: string;
 
   @Prop({ required: true })
   skillCosts: ProfessionSkillCosts;

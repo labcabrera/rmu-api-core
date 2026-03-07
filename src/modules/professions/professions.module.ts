@@ -11,6 +11,7 @@ import { ProfessionModel, ProfessionSchema } from './intrastructure/persistence/
 import { SharedModule } from '../shared/shared.module';
 import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler';
 import { ProfessionGuardAdapter } from './intrastructure/security/profession-guar.addapter';
+import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-profession.handler';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ProfessionGuardAdapter } from './intrastructure/security/profession-gua
     GetProfessionHandler,
     GetProfessionsHandler,
     CreateProfessionHandler,
+    DeleteProfessionHandler,
     {
       provide: 'ProfessionRepository',
       useClass: MongoProfessionRepository,
