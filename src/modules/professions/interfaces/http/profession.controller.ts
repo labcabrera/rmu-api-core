@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get, Param, UseGuards, Request, Query } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Controller, Get, Param, UseGuards, Request, Query, Post, Body } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { ProfessionDto, ProfessionPageDto } from './dtos/profession.dto';
 import { GetProfessionQuery } from '../../application/cqrs/queries/get-profession.query';
@@ -10,12 +10,16 @@ import { GetProfessionsQuery } from '../../application/cqrs/queries/get-professi
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
 import { Page } from 'src/modules/shared/domain/entities/page';
+import { CreateProfessionDto } from './dtos/create-profession.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')
 @ApiTags('Professions')
 export class ProfessionController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Get(':id')
   @ApiOkResponse({ type: ProfessionDto })
@@ -23,9 +27,10 @@ export class ProfessionController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
-    const user = req.user!;
-    const query = new GetProfessionQuery(id, user.id as string, user.roles as string[]);
-    const profession = await this.queryBus.execute<GetProfessionQuery, ProfessionProps>(query);
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetProfessionQuery(id, userId, roles);
+    const profession = await this.queryBus.execute<GetProfessionQuery, Profession>(query);
     return ProfessionDto.fromEntity(profession);
   }
 
@@ -40,5 +45,19 @@ export class ProfessionController {
     const page = await this.queryBus.execute<GetProfessionsQuery, Page<Profession>>(query);
     const mapped = page.content.map((profession) => ProfessionDto.fromEntity(profession));
     return new Page<ProfessionDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
+  }
+
+  @Post('')
+  @ApiOperation({ operationId: 'createProfession', summary: 'Create a new profession' })
+  @ApiOkResponse({ type: ProfessionDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  @ApiResponse({ status: 409, description: 'Conflict, profession already exists', type: ErrorDto })
+  async create(@Body() createProfessionDto: CreateProfessionDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = CreateProfessionDto.toCommand(createProfessionDto, userId, roles);
+    const entity = await this.commandBus.execute(command);
+    return ProfessionDto.fromEntity(entity);
   }
 }
