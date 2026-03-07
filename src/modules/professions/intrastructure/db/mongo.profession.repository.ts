@@ -62,6 +62,7 @@ export class MongoProfessionRepository implements ProfessionRepository {
       skillCosts: doc.skillCosts,
       professionalSkills: doc.professionalSkills,
       owner: doc.owner,
+      imageUrl: doc.imageUrl,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       description: doc.description,

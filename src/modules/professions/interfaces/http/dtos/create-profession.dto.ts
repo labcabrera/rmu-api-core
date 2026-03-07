@@ -22,7 +22,12 @@ export class CreateProfessionDto {
   @IsOptional()
   description: string | undefined;
 
+  @ApiProperty({ description: 'Image URL for the profession', example: 'https://example.com/warrior.png' })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string | undefined;
+
   static toCommand(dto: CreateProfessionDto, userId: string, roles: string[]): CreateProfessionCommand {
-    return new CreateProfessionCommand(dto.id, dto.skillCosts, dto.professionalSkills, dto.description, userId, roles);
+    return new CreateProfessionCommand(dto.id, dto.skillCosts, dto.professionalSkills, dto.description, dto.imageUrl, userId, roles);
   }
 }

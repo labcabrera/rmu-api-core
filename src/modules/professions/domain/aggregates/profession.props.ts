@@ -5,6 +5,7 @@ export interface ProfessionProps {
   skillCosts: ProfessionSkillCosts;
   professionalSkills: string[];
   description: string | undefined;
+  imageUrl: string | undefined;
   owner: string;
   createdAt: Date;
   updatedAt?: Date;

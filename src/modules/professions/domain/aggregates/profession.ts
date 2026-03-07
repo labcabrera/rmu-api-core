@@ -9,6 +9,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
     public skillCosts: ProfessionSkillCosts,
     public professionalSkills: string[],
     public description: string | undefined,
+    public imageUrl: string | undefined,
     public owner: string,
     public createdAt: Date,
     public updatedAt?: Date,
@@ -22,6 +23,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
       props.skillCosts,
       props.professionalSkills,
       props.description,
+      props.imageUrl,
       props.owner,
       new Date(),
       undefined,
@@ -37,6 +39,9 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
     if (props.professionalSkills) {
       this.professionalSkills = props.professionalSkills;
     }
+    if (props.imageUrl !== undefined) {
+      this.imageUrl = props.imageUrl;
+    }
     this.updatedAt = new Date();
     //TODO apply event
   }
@@ -47,6 +52,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
       props.skillCosts,
       props.professionalSkills,
       props.description,
+      props.imageUrl,
       props.owner,
       props.createdAt,
       props.updatedAt,
@@ -59,6 +65,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
       skillCosts: this.skillCosts,
       professionalSkills: this.professionalSkills,
       description: this.description,
+      imageUrl: this.imageUrl,
       owner: this.owner,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

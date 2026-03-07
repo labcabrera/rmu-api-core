@@ -24,6 +24,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
       skillCosts: command.skillCosts,
       professionalSkills: command.professionalSkills,
       description: command.description,
+      imageUrl: command.imageUrl,
       owner: command.userId,
     });
     return await this.professionRepository.save(profession);

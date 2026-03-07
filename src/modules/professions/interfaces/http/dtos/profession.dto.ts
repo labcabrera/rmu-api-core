@@ -13,11 +13,19 @@ export class ProfessionDto {
   @ApiProperty({ description: 'List of available professional skills', required: true, example: ['riding', 'perception'] })
   professionalSkills: string[];
 
+  @ApiProperty({ description: 'Description of the profession', required: false, example: 'A brave warrior skilled in combat.' })
+  description?: string | undefined;
+
+  @ApiProperty({ description: 'Image URL for the profession', required: false, example: 'https://example.com/warrior.png' })
+  imageUrl?: string | undefined;
+
   static fromEntity(entity: Profession): ProfessionDto {
     return {
       id: entity.id,
       skillCosts: ProfessionSkillCostsDto.fromEntity(entity.skillCosts),
       professionalSkills: entity.professionalSkills,
+      description: entity.description,
+      imageUrl: entity.imageUrl,
     };
   }
 }

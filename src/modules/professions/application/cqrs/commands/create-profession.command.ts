@@ -6,6 +6,7 @@ export class CreateProfessionCommand {
     public readonly skillCosts: ProfessionSkillCosts,
     public readonly professionalSkills: string[],
     public readonly description: string | undefined,
+    public readonly imageUrl: string | undefined,
     public readonly userId: string,
     public readonly roles: string[],
   ) {}
