@@ -1,6 +1,6 @@
-import { Profession } from '../../domain/entities/profession.entity';
+import { ProfessionProps } from '../../domain/aggregates/profession';
 
-export const PROFESSIONS: Profession[] = [
+export const PROFESSIONS: ProfessionProps[] = [
   {
     id: 'rogue',
     skillCosts: {

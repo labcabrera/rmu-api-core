@@ -1,9 +1,3 @@
-export interface Profession {
-  id: string;
-  skillCosts: ProfessionSkillCosts;
-  professionalSkills: string[];
-}
-
 export interface ProfessionSkillCosts {
   animal: number[];
   awareness: number[];
