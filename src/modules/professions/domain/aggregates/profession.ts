@@ -33,15 +33,10 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   }
 
   update(props: Partial<Omit<ProfessionProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
-    if (props.skillCosts) {
-      this.skillCosts = props.skillCosts;
-    }
-    if (props.professionalSkills) {
-      this.professionalSkills = props.professionalSkills;
-    }
-    if (props.imageUrl !== undefined) {
-      this.imageUrl = props.imageUrl;
-    }
+    if (props.skillCosts) this.skillCosts = props.skillCosts;
+    if (props.professionalSkills) this.professionalSkills = props.professionalSkills;
+    if (props.description !== undefined) this.description = props.description;
+    if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
     //TODO apply event
   }
