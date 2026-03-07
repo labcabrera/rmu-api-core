@@ -1,16 +1,7 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
-
-export interface ProfessionProps {
-  id: string;
-  skillCosts: ProfessionSkillCosts;
-  professionalSkills: string[];
-  description: string | undefined;
-  owner: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
+import { ProfessionProps } from './profession.props';
 
 export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   constructor(

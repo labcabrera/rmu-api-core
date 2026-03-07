@@ -1,9 +1,5 @@
+import { BaseEntityGuard } from 'src/modules/shared/infrastructure/security/base-entity-guard';
 import { ProfessionGuardPort } from '../../application/ports/profession-guard.port';
+import { Profession } from '../../domain/aggregates/profession';
 
-export class ProfessionGuardAdapter implements ProfessionGuardPort {
-  checkCreate(roles: string[]) {
-    if (!roles.includes('rmu-admin')) {
-      throw new Error('Unauthorized');
-    }
-  }
-}
+export class ProfessionGuardAdapter extends BaseEntityGuard<Profession> implements ProfessionGuardPort {}

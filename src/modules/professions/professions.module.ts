@@ -3,12 +3,14 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { ProfessionController } from './interfaces/http/profession.controller';
-import { GetProfessionQueryHandler } from './application/cqrs/handlers/get-profession.handler';
-import { GetProfessionsQueryHandler } from './application/cqrs/handlers/get-professions.handler';
+import { GetProfessionHandler } from './application/cqrs/handlers/get-profession.handler';
+import { GetProfessionsHandler } from './application/cqrs/handlers/get-professions.handler';
 import { MongoProfessionRepository } from './intrastructure/db/mongo.profession.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProfessionModel, ProfessionSchema } from './intrastructure/persistence/models/profession-model';
 import { SharedModule } from '../shared/shared.module';
+import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler';
+import { ProfessionGuardAdapter } from './intrastructure/security/profession-guar.addapter';
 
 @Module({
   imports: [
@@ -20,11 +22,16 @@ import { SharedModule } from '../shared/shared.module';
   ],
   controllers: [ProfessionController],
   providers: [
-    GetProfessionQueryHandler,
-    GetProfessionsQueryHandler,
+    GetProfessionHandler,
+    GetProfessionsHandler,
+    CreateProfessionHandler,
     {
       provide: 'ProfessionRepository',
       useClass: MongoProfessionRepository,
+    },
+    {
+      provide: 'ProfessionGuardPort',
+      useClass: ProfessionGuardAdapter,
     },
   ],
 })

@@ -5,7 +5,7 @@ import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags,
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { ProfessionDto, ProfessionPageDto } from './dtos/profession.dto';
 import { GetProfessionQuery } from '../../application/cqrs/queries/get-profession.query';
-import { Profession, ProfessionProps } from '../../domain/aggregates/profession';
+import { Profession } from '../../domain/aggregates/profession';
 import { GetProfessionsQuery } from '../../application/cqrs/queries/get-professions.query';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';

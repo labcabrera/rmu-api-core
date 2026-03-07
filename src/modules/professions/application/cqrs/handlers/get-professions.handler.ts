@@ -6,7 +6,7 @@ import type { ProfessionRepository } from '../../ports/profession.repository';
 import { Page } from 'src/modules/shared/domain/entities/page';
 
 @QueryHandler(GetProfessionsQuery)
-export class GetProfessionsQueryHandler implements IQueryHandler<GetProfessionsQuery, Page<Profession>> {
+export class GetProfessionsHandler implements IQueryHandler<GetProfessionsQuery, Page<Profession>> {
   constructor(@Inject('ProfessionRepository') private readonly professionRepository: ProfessionRepository) {}
 
   async execute(query: GetProfessionsQuery): Promise<Page<Profession>> {

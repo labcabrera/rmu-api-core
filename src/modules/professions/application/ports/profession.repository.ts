@@ -1,4 +1,4 @@
-import { Profession, ProfessionProps } from 'src/modules/professions/domain/aggregates/profession';
+import { Profession } from 'src/modules/professions/domain/aggregates/profession';
 import { Page } from 'src/modules/shared/domain/entities/page';
 
 export interface ProfessionRepository {
@@ -8,7 +8,7 @@ export interface ProfessionRepository {
 
   save(entity: Profession): Promise<Profession>;
 
-  update(id: string, entity: Partial<ProfessionProps>): Promise<Profession>;
+  update(id: string, entity: Partial<Profession>): Promise<Profession>;
 
   deleteById(id: string): Promise<Profession | null>;
 }

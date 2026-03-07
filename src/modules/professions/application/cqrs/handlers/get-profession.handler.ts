@@ -6,7 +6,7 @@ import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import type { ProfessionRepository } from '../../ports/profession.repository';
 
 @QueryHandler(GetProfessionQuery)
-export class GetProfessionQueryHandler implements IQueryHandler<GetProfessionQuery, Profession> {
+export class GetProfessionHandler implements IQueryHandler<GetProfessionQuery, Profession> {
   constructor(@Inject('ProfessionRepository') private readonly professionRepository: ProfessionRepository) {}
 
   async execute(query: GetProfessionQuery): Promise<Profession> {
