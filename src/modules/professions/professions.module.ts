@@ -12,6 +12,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler';
 import { ProfessionGuardAdapter } from './intrastructure/security/profession-guar.addapter';
 import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-profession.handler';
+import { UpdateProfessionHandler } from './application/cqrs/handlers/update-profession.handler';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-prof
     GetProfessionHandler,
     GetProfessionsHandler,
     CreateProfessionHandler,
+    UpdateProfessionHandler,
     DeleteProfessionHandler,
     {
       provide: 'ProfessionRepository',

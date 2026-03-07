@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete, Patch } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
@@ -12,6 +12,7 @@ import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { CreateProfessionDto } from './dtos/create-profession.dto';
 import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-profession.command';
+import { UpdateProfessionDto } from './dtos/update-profession.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')
@@ -60,6 +61,19 @@ export class ProfessionController {
     const command = CreateProfessionDto.toCommand(createProfessionDto, userId, roles);
     const entity = await this.commandBus.execute(command);
     return ProfessionDto.fromEntity(entity);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ operationId: 'updateProfession', summary: 'Update profession by id' })
+  @ApiOkResponse({ type: ProfessionDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Profession not found', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  updateSettings(@Param('id') id: string, @Body() updateProfessionDto: UpdateProfessionDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = UpdateProfessionDto.toCommand(id, updateProfessionDto, userId, roles);
+    return this.commandBus.execute(command);
   }
 
   @Delete(':id')
