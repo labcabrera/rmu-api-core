@@ -21,6 +21,7 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
 
     current.update({
       skillCosts: command.skillCosts,
+      availableRealmTypes: command.availableRealmTypes,
       professionalSkills: command.professionalSkills,
       description: command.description,
       imageUrl: command.imageUrl,

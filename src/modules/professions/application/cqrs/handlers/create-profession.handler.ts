@@ -21,6 +21,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
 
     const profession = Profession.create({
       id: command.id,
+      availableRealmTypes: command.availableRealmTypes,
       skillCosts: command.skillCosts,
       professionalSkills: command.professionalSkills,
       description: command.description,

@@ -1,11 +1,13 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
+import { RealmType } from '../value-objects/realm-type.vo';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
 
 export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   constructor(
     public readonly id: string,
+    public availableRealmTypes: RealmType[],
     public skillCosts: ProfessionSkillCosts,
     public professionalSkills: string[],
     public description: string | undefined,
@@ -20,6 +22,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
     const profession = new Profession(
       props.id,
+      props.availableRealmTypes,
       props.skillCosts,
       props.professionalSkills,
       props.description,
@@ -33,8 +36,10 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   }
 
   update(props: Partial<Omit<ProfessionProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
+    if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
     if (props.skillCosts) this.skillCosts = props.skillCosts;
     if (props.professionalSkills) this.professionalSkills = props.professionalSkills;
+    if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
@@ -44,6 +49,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   static fromProps(props: ProfessionProps): Profession {
     return new Profession(
       props.id,
+      props.availableRealmTypes,
       props.skillCosts,
       props.professionalSkills,
       props.description,
@@ -57,6 +63,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   toProps(): ProfessionProps {
     return {
       id: this.id,
+      availableRealmTypes: this.availableRealmTypes,
       skillCosts: this.skillCosts,
       professionalSkills: this.professionalSkills,
       description: this.description,

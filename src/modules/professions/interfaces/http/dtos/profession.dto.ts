@@ -7,6 +7,9 @@ export class ProfessionDto {
   @ApiProperty({ description: 'Profession identifier', example: 'rogue', required: true })
   id: string;
 
+  @ApiProperty({ description: 'Available realm types for the profession', required: true, example: ['channeling'] })
+  availableRealmTypes: string[];
+
   @ApiProperty({ description: 'Skill costs associated with the profession', required: true })
   skillCosts: ProfessionSkillCostsDto;
 
@@ -22,6 +25,7 @@ export class ProfessionDto {
   static fromEntity(entity: Profession): ProfessionDto {
     return {
       id: entity.id,
+      availableRealmTypes: entity.availableRealmTypes,
       skillCosts: ProfessionSkillCostsDto.fromEntity(entity.skillCosts),
       professionalSkills: entity.professionalSkills,
       description: entity.description,

@@ -2,11 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto';
 import { CreateProfessionCommand } from 'src/modules/professions/application/cqrs/commands/create-profession.command';
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
+import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
 
 export class CreateProfessionDto {
   @ApiProperty({ description: 'Profession ID', example: 'warrior' })
   @IsString()
   id: string;
+
+  @ApiProperty({ description: 'Available realm types for the profession', required: true, example: ['channeling'] })
+  @IsArray()
+  @IsString({ each: true })
+  availableRealmTypes: RealmType[];
 
   @ApiProperty({ description: 'Skill costs associated with the profession', required: true })
   @IsObject()
@@ -28,6 +34,15 @@ export class CreateProfessionDto {
   imageUrl?: string | undefined;
 
   static toCommand(dto: CreateProfessionDto, userId: string, roles: string[]): CreateProfessionCommand {
-    return new CreateProfessionCommand(dto.id, dto.skillCosts, dto.professionalSkills, dto.description, dto.imageUrl, userId, roles);
+    return new CreateProfessionCommand(
+      dto.id,
+      dto.availableRealmTypes,
+      dto.skillCosts,
+      dto.professionalSkills,
+      dto.description,
+      dto.imageUrl,
+      userId,
+      roles,
+    );
   }
 }
