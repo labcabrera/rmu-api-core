@@ -64,11 +64,12 @@ export class MongoProfessionRepository implements ProfessionRepository {
       fixedRealmTypes: doc.fixedRealmTypes,
       skillCosts: doc.skillCosts,
       professionalSkills: doc.professionalSkills,
-      owner: doc.owner,
+      entitySource: doc.entitySource,
+      description: doc.description,
       imageUrl: doc.imageUrl,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
-      description: doc.description,
+      owner: doc.owner,
     });
   }
 }

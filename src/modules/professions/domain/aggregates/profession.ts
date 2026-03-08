@@ -5,6 +5,7 @@ import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
 import { HasOwner } from 'src/modules/shared/domain/entities/has-owner';
 import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
+import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 
 export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements HasOwner {
   constructor(
@@ -14,6 +15,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     public fixedRealmTypes: RealmType[],
     public skillCosts: ProfessionSkillCosts,
     public professionalSkills: string[],
+    public entitySource: EntitySource,
     public description: string | undefined,
     public imageUrl: string | undefined,
     public owner: string,
@@ -31,6 +33,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       props.fixedRealmTypes,
       props.skillCosts,
       props.professionalSkills,
+      props.entitySource,
       props.description,
       props.imageUrl,
       props.owner,
@@ -48,6 +51,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     if (props.skillCosts) this.skillCosts = props.skillCosts;
     if (props.professionalSkills) this.professionalSkills = props.professionalSkills;
     if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
+    if (props.entitySource) this.entitySource = props.entitySource;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
@@ -62,6 +66,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       props.fixedRealmTypes,
       props.skillCosts,
       props.professionalSkills,
+      props.entitySource,
       props.description,
       props.imageUrl,
       props.owner,
@@ -78,6 +83,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       fixedRealmTypes: this.fixedRealmTypes,
       skillCosts: this.skillCosts,
       professionalSkills: this.professionalSkills,
+      entitySource: this.entitySource,
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,
