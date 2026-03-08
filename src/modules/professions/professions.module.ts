@@ -1,22 +1,41 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { ProfessionController } from './intrastructure/controllers/profession.controller';
-import { InMemoryProfessionRepository } from './intrastructure/persistence/in-memory-profession-repository';
-import { GetProfessionQueryHandler } from './application/queries/handlers/get-profession.query.handler';
-import { GetProfessionsQueryHandler } from './application/queries/handlers/get-professions.query.handler';
+import { ProfessionController } from './interfaces/http/profession.controller';
+import { GetProfessionHandler } from './application/cqrs/handlers/get-profession.handler';
+import { GetProfessionsHandler } from './application/cqrs/handlers/get-professions.handler';
+import { MongoProfessionRepository } from './intrastructure/db/mongo.profession.repository';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ProfessionModel, ProfessionSchema } from './intrastructure/persistence/models/profession-model';
+import { SharedModule } from '../shared/shared.module';
+import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler';
+import { ProfessionGuardAdapter } from './intrastructure/security/profession-guar.addapter';
+import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-profession.handler';
+import { UpdateProfessionHandler } from './application/cqrs/handlers/update-profession.handler';
 
 @Module({
-  imports: [TerminusModule, CqrsModule, AuthModule],
+  imports: [
+    TerminusModule,
+    CqrsModule,
+    MongooseModule.forFeature([{ name: ProfessionModel.name, schema: ProfessionSchema }]),
+    AuthModule,
+    SharedModule,
+  ],
   controllers: [ProfessionController],
   providers: [
-    GetProfessionQueryHandler,
-    GetProfessionsQueryHandler,
+    GetProfessionHandler,
+    GetProfessionsHandler,
+    CreateProfessionHandler,
+    UpdateProfessionHandler,
+    DeleteProfessionHandler,
     {
       provide: 'ProfessionRepository',
-      useClass: InMemoryProfessionRepository,
+      useClass: MongoProfessionRepository,
+    },
+    {
+      provide: 'ProfessionGuardPort',
+      useClass: ProfessionGuardAdapter,
     },
   ],
 })

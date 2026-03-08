@@ -4,6 +4,8 @@ import { RaceResistancesDto } from './race-resistances.dto';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+import { RaceTraitDto } from './race-trait.dto';
+import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -16,10 +18,8 @@ export class RaceDto {
   archetype: string;
 
   @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
-  realmId: string;
-
-  @ApiProperty({ description: 'Realm name', example: 'Middle-earth' })
-  realmName: string;
+  @ApiProperty({ description: 'Realm', type: NamedEntityDto })
+  realm: NamedEntityDto;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   sizeId: string;
@@ -54,22 +54,27 @@ export class RaceDto {
   @ApiProperty({ description: 'Racial armor type', example: 1 })
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', example: 'Common Tongue' })
-  defaultLanguage?: string;
+  @ApiProperty({ description: 'Default language', type: NamedEntityDto, required: false })
+  defaultLanguage?: NamedEntityDto;
 
   @ApiProperty({ description: 'List of racial talents', example: ['Night Vision', 'Keen Senses'] })
   talents: string[];
 
+  @ApiProperty({ description: 'List of race traits', type: [RaceTraitDto] })
+  traits: RaceTraitDto[];
+
   @ApiProperty({ description: 'Description of the race' })
   description?: string;
+
+  @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  imageUrl?: string;
 
   static fromEntity(entity: Race): RaceDto {
     const dto = new RaceDto();
     dto.id = entity.id;
     dto.name = entity.name;
     dto.archetype = entity.archetype;
-    dto.realmId = entity.realmId;
-    dto.realmName = entity.realmName;
+    dto.realm = NamedEntityDto.fromEntity(entity.realm);
     dto.sizeId = entity.sizeId;
     dto.stats = entity.stats;
     dto.resistances = entity.resistances;
@@ -81,9 +86,11 @@ export class RaceDto {
     dto.baseHits = entity.baseHits;
     dto.baseDevPoints = entity.baseDevPoints;
     dto.baseAt = entity.baseAt;
-    dto.defaultLanguage = entity.defaultLanguage;
+    dto.defaultLanguage = entity.defaultLanguage ? NamedEntityDto.fromEntity(entity.defaultLanguage) : undefined;
     dto.talents = entity.talents;
+    dto.traits = entity.traits ? entity.traits.map((t) => RaceTraitDto.fromEntity(t)) : [];
     dto.description = entity.description;
+    dto.imageUrl = entity.imageUrl;
     return dto;
   }
 }

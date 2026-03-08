@@ -16,6 +16,7 @@ import { GetSkillCategoryHandler } from './application/cqrs/handlers/get-skill-c
 import { CreateSkillHandler } from './application/cqrs/handlers/create-skill.handler';
 import { GetSkillHandler } from './application/cqrs/handlers/get-skill.query.handler';
 import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.handler';
+import { SkillGuardAdapter } from './infrastructure/security/SkillGuardAdapter';
 
 @Module({
   imports: [
@@ -41,6 +42,10 @@ import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.h
     {
       provide: 'SkillRepository',
       useClass: MongoSkillRepository,
+    },
+    {
+      provide: 'SkillGuardPort',
+      useClass: SkillGuardAdapter,
     },
   ],
   exports: ['SkillRepository', 'SkillCategoryRepository'],

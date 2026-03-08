@@ -7,6 +7,6 @@ export class CreateSkillCommand {
     public readonly bonus: string[],
     public readonly specialization: SkillSpecialization | undefined,
     public readonly userId: string,
-    public readonly roles?: string[],
+    public readonly roles: string[],
   ) {}
 }

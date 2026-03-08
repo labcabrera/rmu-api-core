@@ -7,6 +7,7 @@ import { RaceRepository } from '../../application/ports/race-repository';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
+import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 @Injectable()
 export class MongoRaceRepository implements RaceRepository {
@@ -32,13 +33,18 @@ export class MongoRaceRepository implements RaceRepository {
   }
 
   async save(race: Race): Promise<Race> {
-    const model = new this.raceModel({ ...race.toProps(), _id: race.id });
+    const props = race.toProps();
+    const model = new this.raceModel({ ...props, _id: race.id });
     await model.save();
     return this.mapToEntity(model);
   }
 
   async update(id: string, request: Partial<Race>): Promise<Race> {
-    const updatedRace = await this.raceModel.findByIdAndUpdate(id, { $set: request }, { new: true });
+    const persistenceRequest = {
+      ...request,
+      traits: request.traits,
+    };
+    const updatedRace = await this.raceModel.findByIdAndUpdate(id, { $set: persistenceRequest }, { new: true });
     if (!updatedRace) {
       throw new NotFoundError('Race', id);
     }
@@ -60,8 +66,7 @@ export class MongoRaceRepository implements RaceRepository {
       id: doc._id,
       name: doc.name,
       archetype: doc.archetype,
-      realmId: doc.realmId,
-      realmName: doc.realmName,
+      realm: new NamedEntity(doc.realm.id, doc.realm.name),
       sizeId: doc.sizeId,
       stats: doc.stats,
       resistances: doc.resistances,
@@ -75,7 +80,9 @@ export class MongoRaceRepository implements RaceRepository {
       baseAt: doc.baseAt,
       defaultLanguage: doc.defaultLanguage,
       talents: doc.talents,
+      traits: doc.traits ?? [],
       description: doc.description,
+      imageUrl: doc.imageUrl,
       owner: doc.owner,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,

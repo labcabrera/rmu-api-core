@@ -5,6 +5,8 @@ import { RaceResistancesDto } from './race-resistances.dto';
 import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/create-race.command';
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
+import { RaceTraitDto } from './race-trait.dto';
+import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 
 export class CreateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
@@ -17,7 +19,7 @@ export class CreateRaceDto {
   @IsNotEmpty()
   archetype: string;
 
-  @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
+  @ApiProperty({ description: 'Realm of the race', type: NamedEntityDto })
   @IsString()
   @IsNotEmpty()
   realmId: string;
@@ -71,18 +73,31 @@ export class CreateRaceDto {
   @IsNumber()
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', example: 'Common', required: false })
-  defaultLanguage?: string;
+  @ApiProperty({ description: 'Default language', required: false, type: String })
+  @IsString()
+  @IsOptional()
+  defaultLanguageId: string | null;
 
   @ApiProperty({ description: 'List of talents identifiers for the race' })
   @IsArray()
   @IsString({ each: true })
   talents: string[];
 
+  @ApiProperty({ description: 'List of traits associated with the race', type: [RaceTraitDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RaceTraitDto)
+  traits: RaceTraitDto[];
+
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
   @IsOptional()
   description: string | undefined;
+
+  @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  @IsString()
+  @IsOptional()
+  imageUrl: string | undefined;
 
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(
@@ -91,7 +106,7 @@ export class CreateRaceDto {
       dto.realmId,
       dto.sizeId,
       dto.stats,
-      RaceResistancesDto.toEntity(dto.resistances),
+      dto.resistances,
       dto.averageHeight,
       dto.averageWeight,
       dto.strideBonus,
@@ -100,9 +115,11 @@ export class CreateRaceDto {
       dto.baseHits,
       dto.baseDevPoints,
       dto.baseAt,
-      dto.defaultLanguage,
+      dto.defaultLanguageId,
       dto.talents,
+      dto.traits.map((t) => RaceTraitDto.toEntity(t)),
       dto.description,
+      dto.imageUrl,
       userId,
       roles,
     );

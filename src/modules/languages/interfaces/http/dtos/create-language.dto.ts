@@ -8,7 +8,7 @@ export class CreateLanguageDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Realm identifier of the language', example: 'realm-012' })
+  @ApiProperty({ description: 'Realm identifier', example: 'realm-123' })
   @IsString()
   @IsNotEmpty()
   realmId: string;

@@ -14,6 +14,10 @@ import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handl
 import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler';
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
 import { SharedModule } from '../shared/shared.module';
+import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
+import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler';
+import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
+import { LanguagesModule } from '../languages/languages.module';
 
 @Module({
   imports: [
@@ -23,6 +27,7 @@ import { SharedModule } from '../shared/shared.module';
     AuthModule,
     SharedModule,
     RealmsModule,
+    LanguagesModule,
   ],
   controllers: [RaceController],
   providers: [
@@ -31,6 +36,8 @@ import { SharedModule } from '../shared/shared.module';
     CreateRaceHandler,
     UpdateRaceHandler,
     DeleteRaceHandler,
+    AddRaceTraitHandler,
+    DeleteRaceTraitHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,
@@ -38,6 +45,10 @@ import { SharedModule } from '../shared/shared.module';
     {
       provide: 'RaceEventProducer',
       useClass: KafkaRaceEventBusAdapter,
+    },
+    {
+      provide: 'RaceGuardPort',
+      useClass: RaceGuardAdapter,
     },
   ],
   exports: ['RaceRepository'],

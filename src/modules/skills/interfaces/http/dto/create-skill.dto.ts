@@ -23,7 +23,7 @@ export class CreateSkillDto {
   @IsOptional()
   specialization!: SkillSpecialization | undefined;
 
-  static toCommand(dto: CreateSkillDto, userId: string, roles?: string[]): CreateSkillCommand {
+  static toCommand(dto: CreateSkillDto, userId: string, roles: string[]): CreateSkillCommand {
     return new CreateSkillCommand(dto.id, dto.categoryId, dto.bonus, dto.specialization, userId, roles);
   }
 }

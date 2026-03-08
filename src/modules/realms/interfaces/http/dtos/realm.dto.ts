@@ -16,12 +16,16 @@ export class RealmDto {
   @ApiProperty({ description: 'Description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
   description?: string;
 
+  @ApiProperty({ description: 'Image URL of the realm', required: false, example: 'https://example.com/images/realms/lotr.jpg' })
+  imageUrl?: string;
+
   static fromEntity(entity: Realm): RealmDto {
     const dto = new RealmDto();
     dto.id = entity.id;
     dto.name = entity.name;
     dto.shortDescription = entity.shortDescription;
     dto.description = entity.description;
+    dto.imageUrl = entity.imageUrl;
     return dto;
   }
 }

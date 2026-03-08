@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
+import { RaceTrait } from './race-trait.model';
+import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
 
 export type RaceDocument = RaceModel & Document;
 
@@ -15,11 +17,8 @@ export class RaceModel {
   @Prop({ required: true })
   archetype: string;
 
-  @Prop({ required: true })
-  realmId: string;
-
-  @Prop({ required: true })
-  realmName: string;
+  @Prop({ type: NamedEntity, required: true })
+  realm: NamedEntity;
 
   @Prop({ required: true })
   sizeId: string;
@@ -54,14 +53,20 @@ export class RaceModel {
   @Prop({ required: true })
   baseAt: number;
 
-  @Prop({ type: String, required: false })
-  defaultLanguage: string | undefined;
+  @Prop({ type: NamedEntity, required: false })
+  defaultLanguage: NamedEntity | null;
 
   @Prop({ type: [String], required: true })
   talents: string[] = [];
 
+  @Prop({ type: [RaceTrait], required: true })
+  traits: RaceTrait[] = [];
+
   @Prop({ type: String, required: false })
   description: string | undefined;
+
+  @Prop({ type: String, required: false })
+  imageUrl: string | undefined;
 
   @Prop({ required: true })
   owner: string;

@@ -15,19 +15,25 @@ import { AdrenalManeuverService } from './domain/services/adrenal-maneuver.servi
 import { CraftingManeuverService } from './domain/services/crafting-maneuver.service';
 import { GymnasticManeuverService } from './domain/services/gymnastic-maneuver.service';
 import { SharedModule } from '../shared/shared.module';
+import { CompositionManeuverService } from './domain/services/composition-maneuver.service';
+import { LoreManeuverService } from './domain/services/lore-maneuver.service';
+import { MedicalManeuverService } from './domain/services/medical-maneuver.service';
 
 @Module({
   imports: [TerminusModule, CqrsModule, AuthModule, SharedModule],
   controllers: [ManeuverController],
   providers: [
-    PercentManeuverService,
     AbsoluteManeuverService,
-    EnduranceManeuverService,
     AdrenalManeuverService,
     AnimalManeuverService,
     AwarenessManeuverService,
+    CompositionManeuverService,
     CraftingManeuverService,
+    EnduranceManeuverService,
     GymnasticManeuverService,
+    LoreManeuverService,
+    MedicalManeuverService,
+    PercentManeuverService,
     PercentManeuverHandler,
     AbsoluteManeuverHandler,
     EnduranceManeuverHandler,

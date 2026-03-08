@@ -1,18 +1,19 @@
 import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
+import { RaceTrait } from '../value-objects/race-trait.vo';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 import { RaceUpdatedEvent } from '../events/race-updated.event';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 export interface RaceProps {
   id: string;
   archetype: string;
   name: string;
-  realmId: string;
-  realmName: string;
+  realm: NamedEntity;
   sizeId: string;
   stats: RaceStats;
   resistances: RaceResistances;
@@ -24,9 +25,11 @@ export interface RaceProps {
   baseHits: number;
   baseDevPoints: number;
   baseAt: number;
-  defaultLanguage?: string;
+  defaultLanguage: NamedEntity | null;
   talents: string[];
+  traits: RaceTrait[];
   description?: string;
+  imageUrl?: string;
   owner: string;
   createdAt: Date;
   updatedAt?: Date;
@@ -37,8 +40,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public readonly id: string,
     public name: string,
     public archetype: string,
-    public readonly realmId: string,
-    public realmName: string,
+    public readonly realm: NamedEntity,
     public sizeId: string,
     public stats: RaceStats,
     public resistances: RaceResistances,
@@ -50,9 +52,11 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public baseHits: number,
     public baseDevPoints: number,
     public baseAt: number,
-    public defaultLanguage: string | undefined,
+    public defaultLanguage: NamedEntity | null,
     public talents: string[],
+    public traits: RaceTrait[],
     public description: string | undefined,
+    public imageUrl: string | undefined,
     public owner: string,
     public readonly createdAt: Date,
     public updatedAt: Date | undefined,
@@ -65,8 +69,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       randomUUID(),
       props.name,
       props.archetype,
-      props.realmId,
-      props.realmName,
+      props.realm,
       props.sizeId,
       props.stats,
       props.resistances,
@@ -80,7 +83,9 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.baseAt,
       props.defaultLanguage,
       props.talents,
+      props.traits,
       props.description,
+      props.imageUrl,
       props.owner,
       new Date(),
       undefined,
@@ -89,13 +94,32 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     return race;
   }
 
+  addTrait(
+    traitId: string,
+    specialization: string | undefined,
+    isTalent: boolean,
+    tier: number | undefined,
+    description: string | undefined,
+  ) {
+    this.traits.push(new RaceTrait(randomUUID(), traitId, specialization, isTalent, tier, description));
+    this.apply(new RaceUpdatedEvent(this.toProps()));
+  }
+
+  removeTrait(traitId: string) {
+    const index = this.traits.findIndex((trait) => trait.id === traitId);
+    if (index !== -1) {
+      this.traits.splice(index, 1);
+      this.apply(new RaceUpdatedEvent(this.toProps()));
+    }
+    this.apply(new RaceUpdatedEvent(this.toProps()));
+  }
+
   static fromProps(props: RaceProps) {
     return new Race(
       props.id,
       props.name,
       props.archetype,
-      props.realmId,
-      props.realmName,
+      props.realm,
       props.sizeId,
       props.stats,
       props.resistances,
@@ -109,14 +133,16 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       props.baseAt,
       props.defaultLanguage,
       props.talents,
+      props.traits,
       props.description,
+      props.imageUrl,
       props.owner,
       props.createdAt,
       props.updatedAt,
     );
   }
 
-  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realmId' | 'realmName' | 'owner'>>) {
+  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realm' | 'owner'>>) {
     if (props.name) this.name = props.name;
     if (props.archetype) this.archetype = props.archetype;
     if (props.sizeId) this.sizeId = props.sizeId;
@@ -132,7 +158,9 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     if (props.baseAt !== undefined) this.baseAt = props.baseAt;
     if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
     if (props.talents) this.talents = props.talents;
+    if (props.traits) this.traits = props.traits;
     if (props.description !== undefined) this.description = props.description;
+    if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
     this.apply(new RaceUpdatedEvent(this.toProps()));
   }
@@ -142,8 +170,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       id: this.id,
       name: this.name,
       archetype: this.archetype,
-      realmId: this.realmId,
-      realmName: this.realmName,
+      realm: this.realm,
       sizeId: this.sizeId,
       stats: this.stats,
       resistances: this.resistances,
@@ -157,7 +184,9 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       baseAt: this.baseAt,
       defaultLanguage: this.defaultLanguage,
       talents: this.talents,
+      traits: this.traits,
       description: this.description,
+      imageUrl: this.imageUrl,
       owner: this.owner,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

@@ -6,6 +6,7 @@ import { CreateLanguageCommand } from '../commands/create-language.command';
 import type { LanguageRepository } from '../../ports/language-repository';
 import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 @CommandHandler(CreateLanguageCommand)
 export class CreateLanguageHandler implements ICommandHandler<CreateLanguageCommand, Language> {
@@ -19,14 +20,13 @@ export class CreateLanguageHandler implements ICommandHandler<CreateLanguageComm
 
   async execute(command: CreateLanguageCommand): Promise<Language> {
     this.logger.log(`Creating Language ${command.name} for user ${command.userId}`);
+
     const realm = await this.realmRepository.findById(command.realmId);
-    if (!realm) {
-      throw new ValidationError(`Realm with id ${command.realmId} not found`);
-    }
+    if (!realm) throw new ValidationError(`Realm with id ${command.realmId} not found`);
+
     const language = Language.create({
       name: command.name,
-      realmId: realm.id,
-      realmName: realm.name,
+      realm: new NamedEntity(realm.id, realm.name),
       description: command.description,
       owner: command.userId,
     });
