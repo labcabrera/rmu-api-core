@@ -3,19 +3,20 @@ import { Profession } from 'src/modules/professions/domain/aggregates/profession
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
 
 export class ProfessionDto {
   @ApiProperty({ description: 'Profession identifier', example: 'rogue', required: true })
   id: string;
+
+  @ApiProperty({ description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
+  archetype: ProfessionArchetype;
 
   @ApiProperty({ description: 'Available realm types for the profession', required: true, example: ['channeling'] })
   availableRealmTypes: string[];
 
   @ApiProperty({ description: 'Fixed realm types for the profession', required: true, example: ['channeling'] })
   fixedRealmTypes: string[];
-
-  @ApiProperty({ description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
-  archetype: string;
 
   @ApiProperty({ description: 'Skill costs associated with the profession', required: true })
   skillCosts: ProfessionSkillCostsDto;
@@ -35,8 +36,8 @@ export class ProfessionDto {
   static fromEntity(entity: Profession): ProfessionDto {
     return {
       id: entity.id,
-      availableRealmTypes: entity.availableRealmTypes,
       archetype: entity.archetype,
+      availableRealmTypes: entity.availableRealmTypes,
       fixedRealmTypes: entity.fixedRealmTypes,
       skillCosts: ProfessionSkillCostsDto.fromEntity(entity.skillCosts),
       professionalSkills: entity.professionalSkills,
