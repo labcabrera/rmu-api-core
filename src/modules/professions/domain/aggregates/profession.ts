@@ -8,6 +8,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
   constructor(
     public readonly id: string,
     public availableRealmTypes: RealmType[],
+    public fixedRealmTypes: RealmType[],
     public skillCosts: ProfessionSkillCosts,
     public professionalSkills: string[],
     public description: string | undefined,
@@ -23,6 +24,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
     const profession = new Profession(
       props.id,
       props.availableRealmTypes,
+      props.fixedRealmTypes,
       props.skillCosts,
       props.professionalSkills,
       props.description,
@@ -37,6 +39,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
 
   update(props: Partial<Omit<ProfessionProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
     if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
+    if (props.fixedRealmTypes) this.fixedRealmTypes = props.fixedRealmTypes;
     if (props.skillCosts) this.skillCosts = props.skillCosts;
     if (props.professionalSkills) this.professionalSkills = props.professionalSkills;
     if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
@@ -50,6 +53,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
     return new Profession(
       props.id,
       props.availableRealmTypes,
+      props.fixedRealmTypes,
       props.skillCosts,
       props.professionalSkills,
       props.description,
@@ -64,6 +68,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
     return {
       id: this.id,
       availableRealmTypes: this.availableRealmTypes,
+      fixedRealmTypes: this.fixedRealmTypes,
       skillCosts: this.skillCosts,
       professionalSkills: this.professionalSkills,
       description: this.description,

@@ -24,7 +24,7 @@ export class MongoProfessionRepository implements ProfessionRepository {
     const skip = page * size;
     const mongoQuery = this.rsqlParser.parse(rsql);
     const [professionsDocs, totalElements] = await Promise.all([
-      this.professionModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
+      this.professionModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
       this.professionModel.countDocuments(mongoQuery),
     ]);
     const content = professionsDocs.map((doc) => this.mapToEntity(doc));
@@ -60,6 +60,7 @@ export class MongoProfessionRepository implements ProfessionRepository {
     return Profession.fromProps({
       id: doc.id.toString(),
       availableRealmTypes: doc.availableRealmTypes,
+      fixedRealmTypes: doc.fixedRealmTypes,
       skillCosts: doc.skillCosts,
       professionalSkills: doc.professionalSkills,
       owner: doc.owner,

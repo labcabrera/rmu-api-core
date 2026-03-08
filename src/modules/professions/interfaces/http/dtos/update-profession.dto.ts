@@ -11,6 +11,12 @@ export class UpdateProfessionDto {
   @IsOptional()
   availableRealmTypes: RealmType[] | undefined;
 
+  @ApiProperty({ description: 'Fixed realm types for the profession', required: false, example: ['channeling'] })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  fixedRealmTypes: RealmType[] | undefined;
+
   @ApiProperty({ description: 'Skill costs associated with the profession', required: false })
   @IsObject()
   @IsOptional()
@@ -36,6 +42,7 @@ export class UpdateProfessionDto {
     return new UpdateProfessionCommand(
       professionId,
       dto.availableRealmTypes,
+      dto.fixedRealmTypes,
       dto.skillCosts,
       dto.professionalSkills,
       dto.description,

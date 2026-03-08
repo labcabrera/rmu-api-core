@@ -13,6 +13,9 @@ export class ProfessionModel {
   @Prop({ type: [String], required: true })
   availableRealmTypes: RealmType[];
 
+  @Prop({ type: [String], required: true })
+  fixedRealmTypes: RealmType[];
+
   @Prop({ required: true })
   skillCosts: ProfessionSkillCosts;
 

@@ -5,6 +5,7 @@ export class CreateProfessionCommand {
   constructor(
     public readonly id: string,
     public readonly availableRealmTypes: RealmType[],
+    public readonly fixedRealmTypes: RealmType[],
     public readonly skillCosts: ProfessionSkillCosts,
     public readonly professionalSkills: string[],
     public readonly description: string | undefined,

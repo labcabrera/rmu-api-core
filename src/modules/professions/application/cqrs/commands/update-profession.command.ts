@@ -5,6 +5,7 @@ export class UpdateProfessionCommand {
   constructor(
     public readonly id: string,
     public readonly availableRealmTypes: RealmType[] | undefined,
+    public readonly fixedRealmTypes: RealmType[] | undefined,
     public readonly skillCosts: ProfessionSkillCosts | undefined,
     public readonly professionalSkills: string[] | undefined,
     public readonly description: string | undefined,

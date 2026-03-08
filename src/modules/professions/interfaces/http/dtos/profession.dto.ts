@@ -10,6 +10,9 @@ export class ProfessionDto {
   @ApiProperty({ description: 'Available realm types for the profession', required: true, example: ['channeling'] })
   availableRealmTypes: string[];
 
+  @ApiProperty({ description: 'Fixed realm types for the profession', required: true, example: ['channeling'] })
+  fixedRealmTypes: string[];
+
   @ApiProperty({ description: 'Skill costs associated with the profession', required: true })
   skillCosts: ProfessionSkillCostsDto;
 
@@ -26,6 +29,7 @@ export class ProfessionDto {
     return {
       id: entity.id,
       availableRealmTypes: entity.availableRealmTypes,
+      fixedRealmTypes: entity.fixedRealmTypes,
       skillCosts: ProfessionSkillCostsDto.fromEntity(entity.skillCosts),
       professionalSkills: entity.professionalSkills,
       description: entity.description,

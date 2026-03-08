@@ -14,6 +14,11 @@ export class CreateProfessionDto {
   @IsString({ each: true })
   availableRealmTypes: RealmType[];
 
+  @ApiProperty({ description: 'Fixed realm types for the profession', required: true, example: ['channeling'] })
+  @IsArray()
+  @IsString({ each: true })
+  fixedRealmTypes: RealmType[];
+
   @ApiProperty({ description: 'Skill costs associated with the profession', required: true })
   @IsObject()
   skillCosts: ProfessionSkillCostsDto;
@@ -37,6 +42,7 @@ export class CreateProfessionDto {
     return new CreateProfessionCommand(
       dto.id,
       dto.availableRealmTypes,
+      dto.fixedRealmTypes,
       dto.skillCosts,
       dto.professionalSkills,
       dto.description,
