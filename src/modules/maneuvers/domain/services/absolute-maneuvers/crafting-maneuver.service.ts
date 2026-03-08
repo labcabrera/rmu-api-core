@@ -9,7 +9,12 @@ const CRAFTING_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuv
       result: 'absolute-failure',
       message:
         'You fail miserably but are so oblivious you are convinced you have succeeded admirably. Your new misguided approach gives you -25 to this skill until an absolute success is achieved.',
-      penaltyUntilAbsoluteSuccess: -25,
+      effects: [
+        {
+          status: 'penaltyUntilAbsoluteSuccess',
+          value: 25,
+        },
+      ],
     },
   },
   {
@@ -28,6 +33,12 @@ const CRAFTING_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuv
       result: 'partial-success',
       message:
         'You know what you want to accomplish, but it just keeps falling short. Your work is functional, but deficient with increased chance of breakage (-10 Strength).',
+      effects: [
+        {
+          status: 'itemBreakage',
+          value: -10,
+        },
+      ],
     },
   },
   {
@@ -46,6 +57,12 @@ const CRAFTING_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuv
       result: 'absolute-success',
       message:
         'Your diligence is rewarded with your latest masterwork! Everyone can see the remarkable quality of your work, and your abilities will be more highly regarded than ever. Item has +10 Strength.',
+      effects: [
+        {
+          status: 'itemBreakage',
+          value: 10,
+        },
+      ],
     },
   },
 ];

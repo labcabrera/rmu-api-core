@@ -9,6 +9,12 @@ const GYMNASTIC_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeu
       result: 'absolute-failure',
       message:
         'In your zeal, you have forgotten to warm up and severely pull a major muscle (-25) and are stunned for two rounds. Good job buddy!',
+      effects: [
+        {
+          status: 'stunned',
+          rounds: 2,
+        },
+      ],
     },
   },
   {
@@ -27,6 +33,12 @@ const GYMNASTIC_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeu
       result: 'partial-success',
       message:
         'Everything was going so well, but you cannot seem to follow through, and it takes longer. If appropriate make an additional maneuver at +10. Otherwise you fail.',
+      effects: [
+        {
+          status: 'retryBonus',
+          rounds: 10,
+        },
+      ],
     },
   },
   {

@@ -26,6 +26,13 @@ const AWARENESS_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeu
     result: {
       result: 'partial-success',
       message: 'Your interest is piqued, but you glean minimal information. You may try again in 6 rounds at a +10, if appropriate.',
+      effects: [
+        {
+          status: 'retryBonus',
+          value: 10,
+          roundDelay: 6,
+        },
+      ],
     },
   },
   {

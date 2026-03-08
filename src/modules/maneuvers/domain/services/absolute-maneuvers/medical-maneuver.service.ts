@@ -9,6 +9,12 @@ const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult 
       result: 'absolute-failure',
       message:
         'The herb is not only ruined, it has become slightly toxic. If treating a patient, you manage to make things worse, increasing any injury penalty by -10.',
+      effects: [
+        {
+          status: 'injuryPenalty',
+          value: 10,
+        },
+      ],
     },
   },
   {
@@ -18,6 +24,12 @@ const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult 
       result: 'failure',
       message:
         'The herb or poison and your pride are ruined. If treating a patient, the Recovery Roll is made at -100 (as if they received no care).',
+      effects: [
+        {
+          status: 'recoveryRollModifier',
+          value: -100,
+        },
+      ],
     },
   },
   {
@@ -27,6 +39,12 @@ const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult 
       result: 'partial-success',
       message:
         'The herb or poison is half as potent. If treating a patient, your misguided care provides minimal improvement. The Recovery Roll is made at a modifier of -25.',
+      effects: [
+        {
+          status: 'recoveryRollModifier',
+          value: -25,
+        },
+      ],
     },
   },
   {
@@ -45,6 +63,12 @@ const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult 
       result: 'absolute-success',
       message:
         'The herb or poison has doubled potency. If treating a patient, you know exactly what to do and they respond miraculously to your care (add +25 to the Recovery Roll).',
+      effects: [
+        {
+          status: 'recoveryRollModifier',
+          value: 25,
+        },
+      ],
     },
   },
 ];
