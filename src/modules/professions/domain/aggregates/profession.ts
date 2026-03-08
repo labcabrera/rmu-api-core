@@ -3,8 +3,9 @@ import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo'
 import { RealmType } from '../value-objects/realm-type.vo';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
+import { HasOwner } from 'src/modules/shared/domain/entities/has-owner';
 
-export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> {
+export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements HasOwner {
   constructor(
     public readonly id: string,
     public availableRealmTypes: RealmType[],
