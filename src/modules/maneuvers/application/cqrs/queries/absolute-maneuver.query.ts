@@ -1,4 +1,4 @@
-import { ManeuverTableType } from 'src/modules/maneuvers/domain/value-objects/maneuver-table.vo';
+import { ManeuverTableType } from 'src/modules/maneuvers/domain/value-objects/maneuver-table-type.vo';
 
 export class AbsoluteManeuverQuery {
   constructor(
