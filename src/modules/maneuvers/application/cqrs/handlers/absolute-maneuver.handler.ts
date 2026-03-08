@@ -1,18 +1,18 @@
 import { Inject, Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { AbsoluteManeuverResult } from 'src/modules/maneuvers/domain/value-objects/absolute-maneuver-result.vo';
-import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
+import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/absolute-maneuver.service';
 import { AbsoluteManeuverQuery } from '../queries/absolute-maneuver.query';
-import { ManeuverService } from 'src/modules/maneuvers/domain/services/maneuver-service';
-import { AwarenessManeuverService } from 'src/modules/maneuvers/domain/services/awareness-maneuver.service';
-import { AnimalManeuverService } from 'src/modules/maneuvers/domain/services/animal-maneuver.service';
-import { AdrenalManeuverService } from 'src/modules/maneuvers/domain/services/adrenal-maneuver.service';
-import { CraftingManeuverService } from 'src/modules/maneuvers/domain/services/crafting-maneuver.service';
-import { GymnasticManeuverService } from 'src/modules/maneuvers/domain/services/gymnastic-maneuver.service';
+import { ManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/maneuver-service';
+import { AwarenessManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/awareness-maneuver.service';
+import { AnimalManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/animal-maneuver.service';
+import { AdrenalManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/adrenal-maneuver.service';
+import { CraftingManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/crafting-maneuver.service';
+import { GymnasticManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/gymnastic-maneuver.service';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
-import { CompositionManeuverService } from 'src/modules/maneuvers/domain/services/composition-maneuver.service';
-import { LoreManeuverService } from 'src/modules/maneuvers/domain/services/lore-maneuver.service';
-import { MedicalManeuverService } from 'src/modules/maneuvers/domain/services/medical-maneuver.service';
+import { CompositionManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/composition-maneuver.service';
+import { LoreManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/lore-maneuver.service';
+import { MedicalManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuvers/medical-maneuver.service';
 
 @QueryHandler(AbsoluteManeuverQuery)
 export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQuery, AbsoluteManeuverResult> {

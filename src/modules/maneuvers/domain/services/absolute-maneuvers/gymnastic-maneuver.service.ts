@@ -1,4 +1,4 @@
-import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
+import { AbsoluteManeuverResult } from '../../value-objects/absolute-maneuver-result.vo';
 import { ManeuverService } from './maneuver-service';
 
 const GYMNASTIC_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult }[] = [

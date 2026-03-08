@@ -1,7 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PercentManeuverResult } from 'src/modules/maneuvers/domain/value-objects/percent-maneuver-result.vo';
-import { PercentManeuverService } from 'src/modules/maneuvers/domain/services/percent-maneuver.service';
+import { PercentManeuverService } from 'src/modules/maneuvers/domain/services/percent-maneuvers/percent-maneuver.service';
 import { PercentManeuverQuery } from '../queries/percent-maneuver.query';
 
 @QueryHandler(PercentManeuverQuery)
