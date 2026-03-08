@@ -1,8 +1,10 @@
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
 import { RealmType } from '../value-objects/realm-type.vo';
+import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
 
 export interface ProfessionProps {
   id: string;
+  archetype: ProfessionArchetype;
   availableRealmTypes: RealmType[];
   fixedRealmTypes: RealmType[];
   skillCosts: ProfessionSkillCosts;

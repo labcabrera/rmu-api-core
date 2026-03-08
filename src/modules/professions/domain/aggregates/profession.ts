@@ -4,10 +4,12 @@ import { RealmType } from '../value-objects/realm-type.vo';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
 import { HasOwner } from 'src/modules/shared/domain/entities/has-owner';
+import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
 
 export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements HasOwner {
   constructor(
     public readonly id: string,
+    public archetype: ProfessionArchetype,
     public availableRealmTypes: RealmType[],
     public fixedRealmTypes: RealmType[],
     public skillCosts: ProfessionSkillCosts,
@@ -24,6 +26,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
   static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
     const profession = new Profession(
       props.id,
+      props.archetype,
       props.availableRealmTypes,
       props.fixedRealmTypes,
       props.skillCosts,
@@ -39,6 +42,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
   }
 
   update(props: Partial<Omit<ProfessionProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
+    if (props.archetype) this.archetype = props.archetype;
     if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
     if (props.fixedRealmTypes) this.fixedRealmTypes = props.fixedRealmTypes;
     if (props.skillCosts) this.skillCosts = props.skillCosts;
@@ -53,6 +57,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
   static fromProps(props: ProfessionProps): Profession {
     return new Profession(
       props.id,
+      props.archetype,
       props.availableRealmTypes,
       props.fixedRealmTypes,
       props.skillCosts,
@@ -68,6 +73,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
   toProps(): ProfessionProps {
     return {
       id: this.id,
+      archetype: this.archetype,
       availableRealmTypes: this.availableRealmTypes,
       fixedRealmTypes: this.fixedRealmTypes,
       skillCosts: this.skillCosts,

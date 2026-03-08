@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ProfessionSkillCosts } from './profession-skill-costs.model';
 import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
+import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
 
 export type ProfessionDocument = ProfessionModel & Document;
 
@@ -15,6 +16,9 @@ export class ProfessionModel {
 
   @Prop({ type: [String], required: true })
   fixedRealmTypes: RealmType[];
+
+  @Prop({ type: String, required: true })
+  archetype: ProfessionArchetype;
 
   @Prop({ required: true })
   skillCosts: ProfessionSkillCosts;

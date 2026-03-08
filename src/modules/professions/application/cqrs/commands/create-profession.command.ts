@@ -1,9 +1,11 @@
+import { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
 import { ProfessionSkillCosts } from 'src/modules/professions/domain/value-objects/profession-skill-cost.vo';
 import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
 
 export class CreateProfessionCommand {
   constructor(
     public readonly id: string,
+    public readonly archetype: ProfessionArchetype,
     public readonly availableRealmTypes: RealmType[],
     public readonly fixedRealmTypes: RealmType[],
     public readonly skillCosts: ProfessionSkillCosts,

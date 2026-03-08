@@ -20,6 +20,7 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
     this.professionGuard.checkUpdate(current, command.userId, command.roles);
 
     current.update({
+      archetype: command.archetype,
       skillCosts: command.skillCosts,
       availableRealmTypes: command.availableRealmTypes,
       fixedRealmTypes: command.fixedRealmTypes,

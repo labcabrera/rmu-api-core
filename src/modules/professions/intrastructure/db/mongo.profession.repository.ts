@@ -59,6 +59,7 @@ export class MongoProfessionRepository implements ProfessionRepository {
   private mapToEntity(doc: ProfessionDocument): Profession {
     return Profession.fromProps({
       id: doc.id.toString(),
+      archetype: doc.archetype,
       availableRealmTypes: doc.availableRealmTypes,
       fixedRealmTypes: doc.fixedRealmTypes,
       skillCosts: doc.skillCosts,

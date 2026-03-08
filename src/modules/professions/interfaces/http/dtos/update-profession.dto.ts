@@ -3,6 +3,7 @@ import { ProfessionSkillCostsDto } from './profession-skill-cost.dto';
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 import { UpdateProfessionCommand } from 'src/modules/professions/application/cqrs/commands/update-profession.command';
 import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
+import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
 
 export class UpdateProfessionDto {
   @ApiProperty({ description: 'Available realm types for the profession', required: false, example: ['channeling'] })
@@ -16,6 +17,11 @@ export class UpdateProfessionDto {
   @IsString({ each: true })
   @IsOptional()
   fixedRealmTypes: RealmType[] | undefined;
+
+  @ApiProperty({ description: 'Archetype for the profession', required: false, example: 'non-spellcaster' })
+  @IsString()
+  @IsOptional()
+  archetype: ProfessionArchetype | undefined;
 
   @ApiProperty({ description: 'Skill costs associated with the profession', required: false })
   @IsObject()
@@ -41,6 +47,7 @@ export class UpdateProfessionDto {
   static toCommand(professionId: string, dto: UpdateProfessionDto, userId: string, roles: string[]): UpdateProfessionCommand {
     return new UpdateProfessionCommand(
       professionId,
+      dto.archetype,
       dto.availableRealmTypes,
       dto.fixedRealmTypes,
       dto.skillCosts,
