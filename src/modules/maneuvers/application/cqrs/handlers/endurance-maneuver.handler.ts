@@ -1,7 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { EnduranceManeuverQuery } from '../queries/endurance-maneuver.query';
-import { EnduranceManeuverService } from 'src/modules/maneuvers/domain/services/endurance-maneuver.service';
+import { EnduranceManeuverService } from 'src/modules/maneuvers/domain/services/endurance-maneuvers/endurance-maneuver.service';
 import { EnduranceManeuverResult } from 'src/modules/maneuvers/domain/value-objects/endurance-maneuver-result.vo';
 
 @QueryHandler(EnduranceManeuverQuery)

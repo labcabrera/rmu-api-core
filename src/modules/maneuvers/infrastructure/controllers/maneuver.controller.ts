@@ -10,7 +10,7 @@ import { AbsoluteManeuverQuery } from '../../application/cqrs/queries/absolute-m
 import { AbsoluteManeuverResultDto } from './dtos/absolute-maneuver-result.dto';
 import { EnduranceManeuverResultDto } from './dtos/endurance-maneuver-result.dto';
 import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query';
-import { ManeuverTableType } from '../../domain/value-objects/maneuver-table.vo';
+import { ManeuverTableType } from '../../domain/value-objects/maneuver-table-type.vo';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 
 @UseGuards(JwtAuthGuard)

@@ -1,4 +1,4 @@
-import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
+import { AbsoluteManeuverResult } from '../../value-objects/absolute-maneuver-result.vo';
 
 const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
   {
@@ -8,6 +8,12 @@ const PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult 
       result: 'absolute-failure',
       message:
         'You artist types! In a fit of anger you destroy any work you have already accomplished. Your emotions get the better of you and you are -25 to this skill*.',
+      effects: [
+        {
+          status: 'skillPenalty',
+          value: 25,
+        },
+      ],
     },
   },
   {

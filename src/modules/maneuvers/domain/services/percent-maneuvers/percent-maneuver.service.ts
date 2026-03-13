@@ -1,4 +1,4 @@
-import { PercentManeuverResult } from '../value-objects/percent-maneuver-result.vo';
+import { PercentManeuverResult } from '../../value-objects/percent-maneuver-result.vo';
 
 const percentTable: { min: number; max: number; result: PercentManeuverResult }[] = [
   { min: -Infinity, max: -100, result: { percent: 0, critical: 'E', message: 'Received critical E' } },

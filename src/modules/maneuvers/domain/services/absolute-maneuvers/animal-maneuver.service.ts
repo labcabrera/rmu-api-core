@@ -1,4 +1,4 @@
-import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
+import { AbsoluteManeuverResult } from '../../value-objects/absolute-maneuver-result.vo';
 import { ManeuverService } from './maneuver-service';
 
 const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuverResult }[] = [
@@ -9,6 +9,12 @@ const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuver
       result: 'absolute-failure',
       message:
         'Your confidence breaks at a crucial moment and the animal seizes the moment to lash out (attacking at +30) before bolting in a random direction.',
+      effects: [
+        {
+          status: 'receivedAttack',
+          value: 30,
+        },
+      ],
     },
   },
   {
@@ -27,6 +33,12 @@ const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuver
       result: 'partial-success',
       message:
         'For a moment you think the animal is receptive to your guidance, but a sudden distraction breaks the moment. You may try again at +10 if appropriate.',
+      effects: [
+        {
+          status: 'retryBonus',
+          value: 10,
+        },
+      ],
     },
   },
   {
@@ -45,7 +57,12 @@ const ANIMAL_PERCENT_TABLE: { min: number; max: number; result: AbsoluteManeuver
       result: 'absolute-success',
       message:
         "Your insight into this animal's nature has won you its lasting respect. You will receive +30 to any future Animal maneuvers versus this target until an Absolute Failure is achieved.",
-      bonusUntilAbsoluteFailure: 30,
+      effects: [
+        {
+          status: 'bonusUntilAbsoluteFailure',
+          value: 30,
+        },
+      ],
     },
   },
 ];
