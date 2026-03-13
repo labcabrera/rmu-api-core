@@ -84,7 +84,7 @@ export class LanguageController {
   @ApiNotFoundResponse({ description: 'Language not found', type: ErrorDto })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
-    const command = new DeleteLanguageCommand(id, undefined, user.id as string, user.roles! as string[]);
+    const command = new DeleteLanguageCommand(id, user.id as string, user.roles! as string[]);
     await this.commandBus.execute(command);
   }
 }

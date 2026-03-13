@@ -1,6 +1,4 @@
+import { EntityGuard } from 'src/modules/shared/application/ports/entity-guard';
 import { Realm } from '../../domain/aggregates/realm';
 
-export interface RealmGuardPort {
-  checkCreateRealm(roles: string[]);
-  checkUpdateRealm(realm: Realm, userId: string, roles: string[]);
-}
+export type RealmGuardPort = EntityGuard<Realm>;

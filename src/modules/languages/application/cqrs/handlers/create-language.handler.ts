@@ -7,6 +7,7 @@ import type { LanguageRepository } from '../../ports/language-repository';
 import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
+import type { LanguageGuardPort } from '../../ports/language-guard.port';
 
 @CommandHandler(CreateLanguageCommand)
 export class CreateLanguageHandler implements ICommandHandler<CreateLanguageCommand, Language> {
@@ -15,11 +16,13 @@ export class CreateLanguageHandler implements ICommandHandler<CreateLanguageComm
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('LanguageRepository') private readonly languageRepository: LanguageRepository,
+    @Inject('LanguageGuardPort') private readonly languageGuardPort: LanguageGuardPort,
     @Inject('LanguageEventProducer') private readonly languageEventBus: LanguageEventBusPort,
   ) {}
 
   async execute(command: CreateLanguageCommand): Promise<Language> {
     this.logger.log(`Creating Language ${command.name} for user ${command.userId}`);
+    this.languageGuardPort.checkCreate(command.roles);
 
     const realm = await this.realmRepository.findById(command.realmId);
     if (!realm) throw new ValidationError(`Realm with id ${command.realmId} not found`);

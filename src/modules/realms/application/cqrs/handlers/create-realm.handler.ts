@@ -18,7 +18,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
     this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
-    this.realmGuard.checkCreateRealm(command.roles);
+    this.realmGuard.checkCreate(command.roles);
     const realm = Realm.create({
       name: command.name,
       shortDescription: command.shortDescription,

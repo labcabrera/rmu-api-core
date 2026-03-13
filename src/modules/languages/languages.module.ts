@@ -14,6 +14,7 @@ import { KafkaLanguageProducerService } from './infrastructure/messaging/kafka.l
 import { LanguageModel, LanguageSchema } from './infrastructure/persistence/models/language-model';
 import { RealmsModule } from '../realms/realms.module';
 import { SharedModule } from '../shared/shared.module';
+import { LanguageGuardAdapter } from './infrastructure/security/language-guard.adapter';
 
 @Module({
   imports: [
@@ -38,6 +39,10 @@ import { SharedModule } from '../shared/shared.module';
     {
       provide: 'LanguageEventProducer',
       useClass: KafkaLanguageProducerService,
+    },
+    {
+      provide: 'LanguageGuardPort',
+      useClass: LanguageGuardAdapter,
     },
   ],
   exports: ['LanguageRepository'],

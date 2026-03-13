@@ -84,7 +84,7 @@ export class RealmController {
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
-    const command = new DeleteRealmCommand(id, undefined, user.id as string, user.roles! as string[]);
+    const command = new DeleteRealmCommand(id, user.id as string, user.roles! as string[]);
     await this.commandBus.execute(command);
   }
 }

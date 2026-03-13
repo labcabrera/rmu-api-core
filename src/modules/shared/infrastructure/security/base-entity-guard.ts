@@ -2,7 +2,7 @@ import { ForbiddenError } from '../../domain/errors/errors';
 import { RMU_ADMIN } from '../../domain/entities/user-roles';
 import { HasOwner } from '../../domain/entities/has-owner';
 
-export class BaseEntityGuard<E extends HasOwner> {
+export abstract class BaseEntityGuard<E extends HasOwner> {
   checkCreate(roles: string[]) {
     if (!roles.includes(RMU_ADMIN)) {
       throw new ForbiddenError('You do not have permission to create a realm');
