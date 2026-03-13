@@ -16,14 +16,14 @@ export class UpdateLanguageHandler implements ICommandHandler<UpdateLanguageComm
   ) {}
 
   async execute(command: UpdateLanguageCommand): Promise<Language> {
-    const language = await this.languageRepository.findById(command.id);
-    if (!language) throw new NotFoundError('Language', command.id);
+    const current = await this.languageRepository.findById(command.id);
+    if (!current) throw new NotFoundError('Language', command.id);
 
-    this.languageGuardPort.checkUpdate(language, command.userId, command.roles);
+    this.languageGuardPort.checkUpdate(current, command.userId, command.roles);
 
-    language.update(command.name, command.description);
-    const updated = await this.languageRepository.update(language.id, language);
-    language.getUncommittedEvents().forEach((event) => this.languageEventBus.publish(event));
+    current.update(command.name, command.description);
+    const updated = await this.languageRepository.update(current.id, current);
+    current.getUncommittedEvents().forEach((event) => this.languageEventBus.publish(event));
     return updated;
   }
 }

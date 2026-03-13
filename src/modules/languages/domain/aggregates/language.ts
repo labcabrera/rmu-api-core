@@ -4,16 +4,7 @@ import { LanguageUpdatedEvent } from '../events/language-updated.event';
 import { randomUUID } from 'crypto';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
-
-export class LanguageProps {
-  id: string;
-  name: string;
-  realm: NamedEntity;
-  description?: string;
-  owner: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
+import { LanguageProps } from './language.props';
 
 export class Language extends AggregateRoot<DomainEvent<LanguageProps>> {
   private constructor(
