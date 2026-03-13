@@ -32,7 +32,9 @@ export class LanguageController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Language not found', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
-    const query = new GetLanguageQuery(id, req.user!.id as string);
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetLanguageQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetLanguageQuery, Language>(query);
     return LanguageDto.fromEntity(entity);
   }
@@ -44,7 +46,8 @@ export class LanguageController {
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
-    const query = new GetLanguagesQuery(dto.q, dto.page, dto.size, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetLanguagesQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetLanguagesQuery, Page<Language>>(query);
     const mapped = page.content.map((language) => LanguageDto.fromEntity(language));
     return new Page<LanguageDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
