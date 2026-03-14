@@ -18,7 +18,7 @@ export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
   ) {}
 
   async execute(command: DeleteRealmCommand): Promise<void> {
-    this.logger.log(`Deleting realm ${command.id}`);
+    this.logger.log(`Deleting realm ${command.id} for user ${command.userId}`);
 
     const current = await this.realmRepository.findById(command.id);
     if (!current) throw new NotFoundError('Realm', command.id);
