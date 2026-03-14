@@ -3,17 +3,7 @@ import { RealmCreatedEvent } from '../events/realm-created.event';
 import { RealmUpdatedEvent } from '../events/realm-updated.event';
 import { randomUUID } from 'crypto';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
-
-export class RealmProps {
-  id: string;
-  name: string;
-  shortDescription?: string;
-  description?: string;
-  imageUrl?: string;
-  owner: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
+import { RealmProps } from './realm-props';
 
 export class Realm extends AggregateRoot<DomainEvent<RealmProps>> {
   private constructor(
