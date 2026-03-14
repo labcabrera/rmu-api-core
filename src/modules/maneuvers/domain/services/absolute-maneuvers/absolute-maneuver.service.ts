@@ -8,6 +8,9 @@ import { AbsoluteManeuverTable } from '../../value-objects/absolute-maneuver-tab
 import { AWARENESS_MANEUVER_TABLE } from '../../value-objects/tables/awareness-maneuver.table';
 import { COMPOSITION_MANEUVER_TABLE } from '../../value-objects/tables/composition-maneuver.table';
 import { CRAFTING_MANEUVER_TABLE } from '../../value-objects/tables/crafting-maneuver.table';
+import { GYMNASTIC_MANEUVER_TABLE } from '../../value-objects/tables/gymnastic-maneuver.table';
+import { LORE_MANEUVER_TABLE } from '../../value-objects/tables/lore-maneuver.table';
+import { MEDICAL_MANEUVER_TABLE } from '../../value-objects/tables/medical-maneuver.table';
 
 @Injectable()
 export class AbsoluteManeuverService {
@@ -18,11 +21,14 @@ export class AbsoluteManeuverService {
     AWARENESS_MANEUVER_TABLE,
     COMPOSITION_MANEUVER_TABLE,
     CRAFTING_MANEUVER_TABLE,
+    GYMNASTIC_MANEUVER_TABLE,
+    LORE_MANEUVER_TABLE,
+    MEDICAL_MANEUVER_TABLE,
   ];
 
   execute(roll: number, unusualEvent: boolean, tableName?: string): AbsoluteManeuverResult {
     const table = this.getTable(tableName);
-    const entry = table.table.find((row) => roll >= (row.min || -Infinity) && roll <= (row.max || Infinity));
+    const entry = table.table.find((row) => roll >= (row.min ?? -Infinity) && roll <= (row.max ?? Infinity));
     if (!entry) throw new Error('Roll out of bounds');
 
     return {
