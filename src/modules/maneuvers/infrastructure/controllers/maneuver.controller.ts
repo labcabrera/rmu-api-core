@@ -13,7 +13,7 @@ import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance
 import { ManeuverTableType } from '../../domain/value-objects/maneuver-table-type.vo';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { AbsoluteManeuverTableDto } from './dtos/absolute-maneuver-table.dto';
-import { AbsoluteManeuverService } from '../../domain/services/absolute-maneuvers/absolute-maneuver.service';
+import { AbsoluteManeuverService } from '../../domain/services/absolute-maneuver.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')
