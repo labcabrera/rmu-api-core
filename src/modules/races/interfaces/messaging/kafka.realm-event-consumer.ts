@@ -14,14 +14,14 @@ export class KafkaRaceRealmEventConsumer {
 
   @EventPattern('internal.rmu-core.realm.updated.v1')
   async handleRealmUpdated(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
-    this.logger.log(`Received realm updated event from ${context.getTopic()}: ${JSON.stringify(event)}`);
+    this.logger.log(`Received realm ${event.data.id} updated event from ${context.getTopic()}`);
     const command = new UpdateRaceRealmNameCommand(event.data.id, event.data.name);
     await this.commandBus.execute(command);
   }
 
   @EventPattern('internal.rmu-core.realm.deleted.v1')
   async handleRealmDeleted(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
-    this.logger.log(`Received realm deleted event from ${context.getTopic()}: ${JSON.stringify(event)}`);
+    this.logger.log(`Received realm ${event.data.id} deleted event from ${context.getTopic()}`);
     const command = new DeleteRacesByRealmCommand(event.data.id);
     await this.commandBus.execute(command);
   }

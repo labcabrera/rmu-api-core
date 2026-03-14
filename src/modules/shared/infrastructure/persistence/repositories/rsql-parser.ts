@@ -18,7 +18,7 @@ export class RsqlParser {
     if (!rsql || rsql.trim() === '') {
       return {};
     }
-    this.logger.debug(`Converting RSQL to MongoDB query: ${rsql}`);
+    this.logger.verbose(`Converting RSQL to MongoDB query: ${rsql}`);
     try {
       const node: any = parse(rsql);
       const result = this.processNode(node);
