@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Race } from '../../../domain/aggregates/race';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
@@ -9,6 +9,8 @@ import type { RaceGuardPort } from '../../ports/race-guard.port';
 
 @CommandHandler(AddRaceTraitCommand)
 export class AddRaceTraitHandler implements ICommandHandler<AddRaceTraitCommand, Race> {
+  private readonly logger = new Logger(AddRaceTraitHandler.name);
+
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @Inject('RaceGuardPort') private readonly raceGuard: RaceGuardPort,
@@ -16,6 +18,8 @@ export class AddRaceTraitHandler implements ICommandHandler<AddRaceTraitCommand,
   ) {}
 
   async execute(command: AddRaceTraitCommand): Promise<Race> {
+    this.logger.log(`Adding trait ${command.traitId} to race ${command.raceId} for user ${command.userId}`);
+
     const race = await this.raceRepository.findById(command.raceId);
     if (!race) throw new NotFoundError('Race', command.raceId);
 

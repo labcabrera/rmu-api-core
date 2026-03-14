@@ -20,6 +20,8 @@ import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-
 import { LanguagesModule } from '../languages/languages.module';
 import { KafkaRaceRealmEventConsumer } from './interfaces/messaging/kafka.realm-event-consumer';
 import { UpdateRaceRealmNameHandler } from './application/cqrs/handlers/update-race-realm-name.handler';
+import { DeleteRacesByRealmCommand } from './application/cqrs/commands/delete-races-by-realm.command';
+import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-races-by-realm.handler';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { UpdateRaceRealmNameHandler } from './application/cqrs/handlers/update-r
     AddRaceTraitHandler,
     DeleteRaceTraitHandler,
     UpdateRaceRealmNameHandler,
+    DeleteRacesByRealmHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,

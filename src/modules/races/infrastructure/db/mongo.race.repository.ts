@@ -18,6 +18,11 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
     await this.model.updateMany({ 'realm.id': realmId }, { $set: { 'realm.name': realmName } }).exec();
   }
 
+  async findByRealmId(realmId: string): Promise<Race[]> {
+    const values = await this.model.find({ 'realm.id': realmId }).exec();
+    return values.map((doc) => this.mapToEntity(doc));
+  }
+
   protected mapToEntity(doc: RaceDocument): Race {
     return Race.fromProps({
       id: doc._id,

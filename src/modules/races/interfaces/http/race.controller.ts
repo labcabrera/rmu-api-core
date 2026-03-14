@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -66,8 +65,9 @@ export class RaceController {
   @ApiNotFoundResponse({ description: 'Race not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   updateSettings(@Param('id') id: string, @Body() updateRaceDto: UpdateRaceDto, @Request() req) {
-    const user = req.user!;
-    const command = UpdateRaceDto.toCommand(id, updateRaceDto, user.id as string, user.roles as string[]);
+    const userId = req.user! as string;
+    const roles = req.user!.roles as string[];
+    const command = UpdateRaceDto.toCommand(id, updateRaceDto, userId, roles);
     return this.commandBus.execute(command);
   }
 
@@ -76,7 +76,9 @@ export class RaceController {
   @ApiOperation({ operationId: 'deleteRace', summary: 'Delete race by id' })
   @ApiNotFoundResponse({ description: 'Race not found', type: ErrorDto })
   async delete(@Param('id') id: string, @Request() req) {
-    const command = new DeleteRaceCommand(id, undefined, req.user!.id as string, req.user!.roles as string[]);
+    const userId = req.user! as string;
+    const roles = req.user!.roles as string[];
+    const command = new DeleteRaceCommand(id, userId, roles);
     await this.commandBus.execute(command);
   }
 
@@ -88,7 +90,9 @@ export class RaceController {
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, race already exists', type: ErrorDto })
   addTrait(@Param('id') id: string, @Body() addRaceTraitDto: AddRaceTraitDto, @Request() req) {
-    const command = AddRaceTraitDto.toCommand(id, addRaceTraitDto, req.user!.id as string, req.user!.roles as string[]);
+    const userId = req.user! as string;
+    const roles = req.user!.roles as string[];
+    const command = AddRaceTraitDto.toCommand(id, addRaceTraitDto, userId, roles);
     return this.commandBus.execute(command);
   }
 
@@ -99,7 +103,9 @@ export class RaceController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Race or trait not found', type: ErrorDto })
   removeTrait(@Param('id') id: string, @Param('traitId') traitId: string, @Request() req) {
-    const command = new DeleteRaceTraitCommand(id, traitId, req.user!.id as string, req.user!.roles as string[]);
+    const userId = req.user! as string;
+    const roles = req.user!.roles as string[];
+    const command = new DeleteRaceTraitCommand(id, traitId, userId, roles);
     return this.commandBus.execute(command);
   }
 }

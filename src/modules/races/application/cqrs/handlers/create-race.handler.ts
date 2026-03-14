@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Race } from '../../../domain/aggregates/race';
 import { CreateRaceCommand } from '../commands/create-race.command';
@@ -12,6 +12,8 @@ import { Language } from 'src/modules/languages/domain/aggregates/language';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
+  private readonly logger = new Logger(CreateRaceHandler.name);
+
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
@@ -20,6 +22,8 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
+    this.logger.log(`Creating race ${command.name} for user ${command.userId} in realm ${command.realmId}`);
+
     const realm = await this.realmRepository.findById(command.realmId);
     if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
 

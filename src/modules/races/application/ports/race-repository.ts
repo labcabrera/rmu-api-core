@@ -13,4 +13,6 @@ export interface RaceRepository {
   deleteById(id: string): Promise<Race | null>;
 
   updateRealmName(realmId: string, realmName: string): Promise<void>;
+
+  findByRealmId(realmId: string): Promise<Race[]>;
 }

@@ -2,8 +2,9 @@ import { RaceResistances } from 'src/modules/races/domain/value-objects/race-res
 import { RaceStats } from 'src/modules/races/domain/value-objects/race-stats.vo';
 import { SexBasedAttribute } from 'src/modules/races/domain/value-objects/sex-based-attribute.vo';
 import { RaceTrait } from 'src/modules/races/domain/value-objects/race-trait.vo';
+import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
 
-export class CreateRaceCommand {
+export class CreateRaceCommand extends AuthenticatedCommand {
   constructor(
     public readonly name: string,
     public readonly archetype: string,
@@ -24,7 +25,9 @@ export class CreateRaceCommand {
     public readonly traits: RaceTrait[],
     public readonly description: string | undefined,
     public readonly imageUrl: string | undefined,
-    public readonly userId: string,
-    public readonly roles?: string[],
-  ) {}
+    userId: string,
+    roles: string[],
+  ) {
+    super(userId, roles);
+  }
 }

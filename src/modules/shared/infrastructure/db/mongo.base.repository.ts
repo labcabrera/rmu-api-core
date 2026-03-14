@@ -3,8 +3,11 @@ import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/reposi
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { BaseAggregateRoot } from '../../domain/aggregates/base-aggregate';
+import { Logger } from '@nestjs/common';
 
 export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
+  private readonly logger = new Logger(MongoBaseRepository.name);
+
   constructor(
     protected model: Model<D>,
     protected rsqlParser: RsqlParser,
@@ -27,24 +30,23 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
   }
 
   async save(entity: E): Promise<E> {
-    // If entity exposes `getProps()` use it, otherwise use the entity itself
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const props = entity.getProps();
-    // prefer id from props, fall back to entity
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const id = props?.id ?? (entity as any).id;
+    const { id, ...rest } = props;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const model = new this.model({ ...props, _id: id });
+    const model = new this.model({ ...rest, _id: id });
     await model.save();
     return this.mapToEntity(model);
   }
 
   async update(entityId: string, partialEntity: Partial<E>): Promise<E> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
-    const { id, ...rest } = partialEntity as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const props = partialEntity.getProps ? partialEntity.getProps() : partialEntity;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-unsafe-assignment
+    const { id, ...rest } = props;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const update = { $set: rest } as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const updatedEntity = await this.model.findByIdAndUpdate(entityId, update, { new: true });
     if (!updatedEntity) throw new NotFoundError('Entity', entityId);
     return this.mapToEntity(updatedEntity);
