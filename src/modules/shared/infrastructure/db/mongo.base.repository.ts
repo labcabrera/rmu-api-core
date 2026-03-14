@@ -5,12 +5,12 @@ import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 export abstract class MongoBaseRepository<E, D> {
   constructor(
-    protected realmModel: Model<D>,
+    protected model: Model<D>,
     protected rsqlParser: RsqlParser,
   ) {}
 
   async findById(id: string): Promise<E | null> {
-    const readed = await this.realmModel.findById(id);
+    const readed = await this.model.findById(id);
     return readed ? this.mapToEntity(readed) : null;
   }
 
@@ -18,42 +18,40 @@ export abstract class MongoBaseRepository<E, D> {
     const skip = page * size;
     const mongoQuery = this.rsqlParser.parse(rsql);
     const [docs, totalElements] = await Promise.all([
-      this.realmModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
-      this.realmModel.countDocuments(mongoQuery),
+      this.model.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
+      this.model.countDocuments(mongoQuery),
     ]);
     const content = docs.map((doc) => this.mapToEntity(doc));
     return new Page<E>(content, page, size, totalElements);
   }
 
-  async save(realm: Partial<E>): Promise<E> {
+  async save(partialEntity: Partial<E>): Promise<E> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-    const id = (realm as any).id;
+    const id = (partialEntity as any).id;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const model = new this.realmModel({ ...realm, _id: id });
+    const model = new this.model({ ...partialEntity, _id: id });
     await model.save();
     return this.mapToEntity(model);
   }
 
-  async update(entityId: string, request: Partial<E>): Promise<E> {
+  async update(entityId: string, partialEntity: Partial<E>): Promise<E> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
-    const { id, ...rest } = request as any;
+    const { id, ...rest } = partialEntity as any;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const update = { $set: rest } as any;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const updatedRealm = await this.realmModel.findByIdAndUpdate(entityId, update, { new: true });
-    if (!updatedRealm) {
-      throw new NotFoundError('Entity', entityId);
-    }
-    return this.mapToEntity(updatedRealm);
+    const updatedEntity = await this.model.findByIdAndUpdate(entityId, update, { new: true });
+    if (!updatedEntity) throw new NotFoundError('Entity', entityId);
+    return this.mapToEntity(updatedEntity);
   }
 
   async deleteById(id: string): Promise<E | null> {
-    const result = await this.realmModel.findByIdAndDelete(id);
+    const result = await this.model.findByIdAndDelete(id);
     return result ? this.mapToEntity(result) : null;
   }
 
   async existsById(id: string): Promise<boolean> {
-    const exists = await this.realmModel.exists({ _id: id });
+    const exists = await this.model.exists({ _id: id });
     return exists !== null;
   }
 

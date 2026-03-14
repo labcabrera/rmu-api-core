@@ -1,13 +1,12 @@
-import { AggregateRoot } from '@nestjs/cqrs';
 import { RealmCreatedEvent } from '../events/realm-created.event';
 import { RealmUpdatedEvent } from '../events/realm-updated.event';
 import { randomUUID } from 'crypto';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { RealmProps } from './realm-props';
 import { MagicPresence } from '../value-objects/realm-magic-type.vo';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 
-export class Realm extends AggregateRoot<DomainEvent<RealmProps>> {
+export class Realm extends BaseAggregateRoot<RealmProps> {
   public id: string;
   public name: string;
   public magicPresence: MagicPresence;
