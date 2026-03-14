@@ -59,10 +59,12 @@ export class MongoRealmRepository implements RealmRepository {
     return Realm.fromProps({
       id: doc.id as string,
       name: doc.name,
+      magicPresence: doc.magicPresence,
       shortDescription: doc.shortDescription,
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
+      accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

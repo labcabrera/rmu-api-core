@@ -21,10 +21,12 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
     this.realmGuard.checkCreate(command.roles);
     const realm = Realm.create({
       name: command.name,
+      magicPresence: command.magicPresence,
       shortDescription: command.shortDescription,
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,
+      accessType: command.accessType,
     });
     const savedRealm = await this.realmRepository.save(realm);
     realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));

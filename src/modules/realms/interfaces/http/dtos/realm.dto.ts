@@ -10,6 +10,9 @@ export class RealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
   name: string;
 
+  @ApiProperty({ description: 'Magic presence in the realm', example: 'limited' })
+  magicPresence: string;
+
   @ApiProperty({ description: 'Short description of the realm', required: false, example: 'A fantasy world' })
   shortDescription?: string;
 
@@ -19,13 +22,18 @@ export class RealmDto {
   @ApiProperty({ description: 'Image URL of the realm', required: false, example: 'https://example.com/images/realms/lotr.jpg' })
   imageUrl?: string;
 
+  @ApiProperty({ description: 'Is the realm public', example: true })
+  public: boolean;
+
   static fromEntity(entity: Realm): RealmDto {
     const dto = new RealmDto();
     dto.id = entity.id;
     dto.name = entity.name;
+    dto.magicPresence = entity.magicPresence;
     dto.shortDescription = entity.shortDescription;
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
+    dto.public = (entity as any).isPublic ?? (entity as any).public ?? false;
     return dto;
   }
 }
