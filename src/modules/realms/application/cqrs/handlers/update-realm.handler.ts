@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Realm } from '../../../domain/aggregates/realm';
 import { UpdateRealmCommand } from '../commands/update-realm.command';
@@ -8,16 +8,19 @@ import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
+  private readonly logger = new Logger(UpdateRealmHandler.name);
+
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {
+    this.logger.log(`Updating realm ${command.id} for user ${command.userId}`);
+
     const realm = await this.realmRepository.findById(command.id);
-    if (!realm) {
-      throw new NotFoundError('Realm', command.id);
-    }
+    if (!realm) throw new NotFoundError('Realm', command.id);
+
     realm.update({
       name: command.name,
       magicPresence: command.magicPresence,

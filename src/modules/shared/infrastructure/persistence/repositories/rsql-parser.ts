@@ -22,7 +22,7 @@ export class RsqlParser {
     try {
       const node: any = parse(rsql);
       const result = this.processNode(node);
-      this.logger.debug(`Converted MongoDB query: ${JSON.stringify(result)}`);
+      this.logger.verbose(`Converted MongoDB query: ${JSON.stringify(result)}`);
       return result;
     } catch (error) {
       throw new InvalidSearchExpression(`Invalid RSQL query: ${rsql}. ${error instanceof Error ? error.message : 'Unknown error'}`);
