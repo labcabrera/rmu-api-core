@@ -1,7 +1,7 @@
 import { AbsoluteManeuverTable } from '../absolute-maneuver-table.vo';
 
 export const ANIMAL_MANEUVER_TABLE = new AbsoluteManeuverTable(
-  'adrenal',
+  'animal',
   [
     {
       min: null,
