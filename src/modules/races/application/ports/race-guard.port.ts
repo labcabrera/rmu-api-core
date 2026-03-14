@@ -1,6 +1,4 @@
+import { EntityGuard } from 'src/modules/shared/application/ports/entity-guard';
 import { Race } from '../../domain/aggregates/race';
 
-export interface RaceGuardPort {
-  checkCreate(userId: string, roles: string[]);
-  checkUpdate(race: Race, userId: string, roles: string[]);
-}
+export type RaceGuardPort = EntityGuard<Race>;

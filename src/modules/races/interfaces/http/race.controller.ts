@@ -30,7 +30,10 @@ export class RaceController {
   @ApiOkResponse({ type: RaceDto })
   @ApiNotFoundResponse({ description: 'Race not found', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
-    const entity = await this.queryBus.execute<GetRaceQuery, Race>(new GetRaceQuery(id, req.user!.id as string));
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetRaceQuery(id, userId, roles);
+    const entity = await this.queryBus.execute<GetRaceQuery, Race>(query);
     return RaceDto.fromEntity(entity);
   }
 
@@ -41,7 +44,8 @@ export class RaceController {
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
-    const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
     const mapped = page.content.map((race) => RaceDto.fromEntity(race));
     return new Page<RaceDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);

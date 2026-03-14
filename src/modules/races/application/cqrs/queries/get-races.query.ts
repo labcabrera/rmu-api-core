@@ -1,8 +1,13 @@
-export class GetRacesQuery {
+import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
+
+export class GetRacesQuery extends AuthenticatedCommand {
   constructor(
     public readonly rsql: string | undefined,
     public readonly page: number,
     public readonly size: number,
-    public readonly userId: string,
-  ) {}
+    userId: string,
+    roles: string[],
+  ) {
+    super(userId, roles);
+  }
 }
