@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
@@ -17,10 +17,21 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
     const readed = await this.model.findById(id);
     return readed ? this.mapToEntity(readed) : null;
   }
-
-  async findByRsql(rsql: string, page: number, size: number): Promise<Page<E>> {
+  async findByRsql(rsql: string, page: number, size: number, filter?: FilterQuery<any>): Promise<Page<E>> {
     const skip = page * size;
-    const mongoQuery = this.rsqlParser.parse(rsql);
+    const rsqlParsed = this.rsqlParser.parse(rsql);
+
+    let mongoQuery: FilterQuery<any>;
+    if (!rsqlParsed || Object.keys(rsqlParsed).length === 0) {
+      mongoQuery = filter || {};
+    } else if (!filter || Object.keys(filter).length === 0) {
+      mongoQuery = rsqlParsed;
+    } else {
+      mongoQuery = { $and: [rsqlParsed, filter] };
+    }
+
+    this.logger.debug(`Executing MongoDB query: ${JSON.stringify(mongoQuery)} with pagination: page=${page}, size=${size}`);
+
     const [docs, totalElements] = await Promise.all([
       this.model.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
       this.model.countDocuments(mongoQuery),

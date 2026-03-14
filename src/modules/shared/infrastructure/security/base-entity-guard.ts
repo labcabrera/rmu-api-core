@@ -1,6 +1,7 @@
 import { ForbiddenError } from '../../domain/errors/errors';
-import { RMU_ADMIN } from '../../domain/entities/user-roles';
+import { RMU_ADMIN, RMU_USER } from '../../domain/entities/user-roles';
 import { HasOwner } from '../../domain/entities/has-owner';
+import { FilterQuery } from 'mongoose';
 
 export abstract class BaseEntityGuard<E extends HasOwner> implements BaseEntityGuard<E> {
   checkRead(entity: E, userId: string, roles: string[]) {
@@ -10,9 +11,9 @@ export abstract class BaseEntityGuard<E extends HasOwner> implements BaseEntityG
   }
 
   checkCreate(roles: string[]) {
-    if (!roles.includes(RMU_ADMIN)) {
-      throw new ForbiddenError('You do not have permission to create this entity');
-    }
+    if (roles.includes(RMU_ADMIN)) return;
+    if (roles.includes(RMU_USER)) return;
+    throw new ForbiddenError('You do not have permission to create this entity');
   }
 
   checkUpdate(entity: E, userId: string, roles: string[]) {
@@ -25,5 +26,10 @@ export abstract class BaseEntityGuard<E extends HasOwner> implements BaseEntityG
     if (roles.includes(RMU_ADMIN)) return;
     if (entity.owner === userId) return;
     throw new ForbiddenError('You do not have permission to delete this entity');
+  }
+
+  buildQueryPredicate(userId: string, roles: string[]): FilterQuery<any> {
+    if (roles.includes(RMU_ADMIN)) return {};
+    return { $or: [{ accessType: 'public' }, { owner: userId }] };
   }
 }

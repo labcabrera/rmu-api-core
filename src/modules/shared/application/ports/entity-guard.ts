@@ -1,3 +1,5 @@
+import { FilterQuery } from 'mongoose';
+
 export interface EntityGuard<E> {
   checkCreate(roles: string[]);
 
@@ -6,4 +8,6 @@ export interface EntityGuard<E> {
   checkUpdate(entity: E, userId: string, roles: string[]);
 
   checkDelete(entity: E, userId: string, roles: string[]);
+
+  buildQueryPredicate(userId: string, roles: string[]): FilterQuery<any>;
 }
