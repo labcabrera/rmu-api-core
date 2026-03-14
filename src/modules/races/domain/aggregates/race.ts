@@ -2,42 +2,16 @@ import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
 import { RaceTrait } from '../value-objects/race-trait.vo';
-import { AggregateRoot } from '@nestjs/cqrs';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 import { RaceUpdatedEvent } from '../events/race-updated.event';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
+import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import { RaceProps } from './race-props';
 
-export interface RaceProps {
-  id: string;
-  archetype: string;
-  name: string;
-  realm: NamedEntity;
-  sizeId: string;
-  stats: RaceStats;
-  resistances: RaceResistances;
-  averageHeight: SexBasedAttribute;
-  averageWeight: SexBasedAttribute;
-  strideBonus: number;
-  enduranceBonus: number;
-  recoveryMultiplier: number;
-  baseHits: number;
-  baseDevPoints: number;
-  baseAt: number;
-  defaultLanguage: NamedEntity | null;
-  talents: string[];
-  traits: RaceTrait[];
-  description?: string;
-  imageUrl?: string;
-  owner: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
-
-export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
+export class Race extends BaseAggregateRoot<RaceProps> {
   private constructor(
-    public readonly id: string,
+    id: string,
     public name: string,
     public archetype: string,
     public readonly realm: NamedEntity,
@@ -61,7 +35,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     public readonly createdAt: Date,
     public updatedAt: Date | undefined,
   ) {
-    super();
+    super(id);
   }
 
   static create(props: Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt'>) {
@@ -90,7 +64,7 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
       new Date(),
       undefined,
     );
-    race.apply(new RaceCreatedEvent(race.toProps()));
+    race.apply(new RaceCreatedEvent(race.getProps()));
     return race;
   }
 
@@ -102,16 +76,16 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     description: string | undefined,
   ) {
     this.traits.push(new RaceTrait(randomUUID(), traitId, specialization, isTalent, tier, description));
-    this.apply(new RaceUpdatedEvent(this.toProps()));
+    this.apply(new RaceUpdatedEvent(this.getProps()));
   }
 
   removeTrait(traitId: string) {
     const index = this.traits.findIndex((trait) => trait.id === traitId);
     if (index !== -1) {
       this.traits.splice(index, 1);
-      this.apply(new RaceUpdatedEvent(this.toProps()));
+      this.apply(new RaceUpdatedEvent(this.getProps()));
     }
-    this.apply(new RaceUpdatedEvent(this.toProps()));
+    this.apply(new RaceUpdatedEvent(this.getProps()));
   }
 
   static fromProps(props: RaceProps) {
@@ -162,10 +136,10 @@ export class Race extends AggregateRoot<DomainEvent<RaceProps>> {
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
     this.updatedAt = new Date();
-    this.apply(new RaceUpdatedEvent(this.toProps()));
+    this.apply(new RaceUpdatedEvent(this.getProps()));
   }
 
-  toProps() {
+  getProps() {
     return {
       id: this.id,
       name: this.name,

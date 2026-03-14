@@ -2,8 +2,9 @@ import { Model } from 'mongoose';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { BaseAggregateRoot } from '../../domain/aggregates/base-aggregate';
 
-export abstract class MongoBaseRepository<E, D> {
+export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
   constructor(
     protected model: Model<D>,
     protected rsqlParser: RsqlParser,
@@ -25,11 +26,15 @@ export abstract class MongoBaseRepository<E, D> {
     return new Page<E>(content, page, size, totalElements);
   }
 
-  async save(partialEntity: Partial<E>): Promise<E> {
+  async save(entity: E): Promise<E> {
+    // If entity exposes `getProps()` use it, otherwise use the entity itself
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-    const id = (partialEntity as any).id;
+    const props = entity.getProps();
+    // prefer id from props, fall back to entity
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const model = new this.model({ ...partialEntity, _id: id });
+    const id = props?.id ?? (entity as any).id;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const model = new this.model({ ...props, _id: id });
     await model.save();
     return this.mapToEntity(model);
   }

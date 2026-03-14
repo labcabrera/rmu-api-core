@@ -19,6 +19,6 @@ export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
       throw new NotFoundError('Race', command.id);
     }
     await this.raceRepository.deleteById(command.id);
-    this.raceEventBus.publish(new RaceDeletedEvent(race.toProps()));
+    this.raceEventBus.publish(new RaceDeletedEvent(race.getProps()));
   }
 }

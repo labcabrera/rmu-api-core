@@ -7,7 +7,6 @@ import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 
 export class Realm extends BaseAggregateRoot<RealmProps> {
-  public id: string;
   public name: string;
   public magicPresence: MagicPresence;
   public shortDescription: string | undefined;
@@ -30,8 +29,7 @@ export class Realm extends BaseAggregateRoot<RealmProps> {
     createdAt: Date,
     updatedAt: Date | undefined,
   ) {
-    super();
-    this.id = id;
+    super(id);
     this.name = name;
     this.magicPresence = magicPresence;
     this.shortDescription = shortDescription;
