@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-
 import { Realm } from 'src/modules/realms/domain/aggregates/realm';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 
 export class RealmDto {
@@ -22,8 +22,8 @@ export class RealmDto {
   @ApiProperty({ description: 'Image URL of the realm', required: false, example: 'https://example.com/images/realms/lotr.jpg' })
   imageUrl?: string;
 
-  @ApiProperty({ description: 'Is the realm public', example: true })
-  public: boolean;
+  @ApiProperty({ description: 'Access type', example: 'public' })
+  accessType: AccessType;
 
   static fromEntity(entity: Realm): RealmDto {
     const dto = new RealmDto();
@@ -33,7 +33,7 @@ export class RealmDto {
     dto.shortDescription = entity.shortDescription;
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
-    dto.public = (entity as any).isPublic ?? (entity as any).public ?? false;
+    dto.accessType = entity.accessType;
     return dto;
   }
 }

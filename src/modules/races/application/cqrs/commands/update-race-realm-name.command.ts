@@ -1,0 +1,6 @@
+export class UpdateRaceRealmNameCommand {
+  constructor(
+    public readonly realmId: string,
+    public readonly realmName: string,
+  ) {}
+}

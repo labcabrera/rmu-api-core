@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsIn, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsIn } from 'class-validator';
 import { UpdateRealmCommand } from 'src/modules/realms/application/cqrs/commands/update-realm.command';
 import { MagicPresence } from 'src/modules/realms/domain/value-objects/realm-magic-type.vo';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
@@ -40,7 +40,7 @@ export class UpdateRealmDto {
   imageUrl: string | undefined;
 
   @ApiProperty({ description: 'Is the realm public', example: true, required: false })
-  @IsBoolean()
+  @IsString()
   @IsOptional()
   accessType: AccessType | undefined;
 

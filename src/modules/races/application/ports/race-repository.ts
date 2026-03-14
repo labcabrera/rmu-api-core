@@ -11,4 +11,6 @@ export interface RaceRepository {
   update(id: string, entity: Partial<Race>): Promise<Race>;
 
   deleteById(id: string): Promise<Race | null>;
+
+  updateRealmName(realmId: string, realmName: string): Promise<void>;
 }

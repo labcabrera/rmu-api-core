@@ -61,6 +61,10 @@ export class MongoRaceRepository implements RaceRepository {
     return exists !== null;
   }
 
+  async updateRealmName(realmId: string, realmName: string): Promise<void> {
+    await this.raceModel.updateMany({ 'realm.id': realmId }, { $set: { 'realm.name': realmName } }).exec();
+  }
+
   private mapToEntity(doc: RaceDocument): Race {
     return Race.fromProps({
       id: doc._id,
