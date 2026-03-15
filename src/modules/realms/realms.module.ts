@@ -14,6 +14,7 @@ import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler
 import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler';
 import { SharedModule } from '../shared/shared.module';
 import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter';
+import { KafkaRealmEventConsumer } from './interfaces/messaging/kafka.realm-event-consumer';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter
     AuthModule,
     SharedModule,
   ],
-  controllers: [RealmController],
+  controllers: [RealmController, KafkaRealmEventConsumer],
   providers: [
     GetRealmHandler,
     GetRealmsHandler,

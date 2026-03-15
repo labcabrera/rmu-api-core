@@ -1,14 +1,15 @@
 import { Controller, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
-import { UpdateRaceRealmNameCommand } from '../../application/cqrs/commands/update-race-realm.command';
+import { UpdateRaceRealmNameCommand } from '../../../races/application/cqrs/commands/update-race-realm.command';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { RealmProps } from 'src/modules/realms/domain/aggregates/realm-props';
-import { DeleteRacesByRealmCommand } from '../../application/cqrs/commands/delete-races-by-realm.command';
+import { DeleteRacesByRealmCommand } from '../../../races/application/cqrs/commands/delete-races-by-realm.command';
+import { UpdateLanguageRealmCommand } from 'src/modules/languages/application/cqrs/commands/update-language-realm.command';
 
 @Controller()
-export class KafkaRaceEventConsumer {
-  private readonly logger = new Logger(KafkaRaceEventConsumer.name);
+export class KafkaRealmEventConsumer {
+  private readonly logger = new Logger(KafkaRealmEventConsumer.name);
 
   constructor(private readonly commandBus: CommandBus) {}
 
@@ -16,8 +17,9 @@ export class KafkaRaceEventConsumer {
   async handleRealmUpdated(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
     this.logger.log(`Received realm ${event.data.id} updated event from ${context.getTopic()}`);
     const realm = event.data;
-    const command = new UpdateRaceRealmNameCommand(realm.id, realm.name, realm.owner, realm.accessType);
-    await this.commandBus.execute(command);
+    const commandRaces = new UpdateRaceRealmNameCommand(realm.id, realm.name, realm.owner, realm.accessType);
+    const commandLanguages = new UpdateLanguageRealmCommand(realm.id, realm.name, realm.owner, realm.accessType);
+    await Promise.all([this.commandBus.execute(commandRaces), this.commandBus.execute(commandLanguages)]);
   }
 
   @EventPattern('internal.rmu-core.realm.deleted.v1')

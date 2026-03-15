@@ -18,9 +18,7 @@ import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
 import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler';
 import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
 import { LanguagesModule } from '../languages/languages.module';
-import { KafkaRaceEventConsumer } from './interfaces/messaging/kafka.race-event-consumer';
 import { UpdateRaceRealmHandler } from './application/cqrs/handlers/update-race-realm.handler';
-import { DeleteRacesByRealmCommand } from './application/cqrs/commands/delete-races-by-realm.command';
 import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-races-by-realm.handler';
 
 @Module({
@@ -33,7 +31,7 @@ import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-ra
     RealmsModule,
     LanguagesModule,
   ],
-  controllers: [RaceController, KafkaRaceEventConsumer],
+  controllers: [RaceController],
   providers: [
     GetRaceHandler,
     GetRacesHandler,

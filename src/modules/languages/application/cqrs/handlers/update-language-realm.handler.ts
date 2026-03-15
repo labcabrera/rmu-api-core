@@ -17,6 +17,6 @@ export class UpdateLanguageRealmHandler implements ICommandHandler<UpdateLanguag
 
   async execute(command: UpdateLanguageRealmCommand): Promise<void> {
     this.logger.log(`Updating realm ${command.realmId} language info`);
-    await this.languageRepository.updateRealmInfo(command.realmId, command.realmName, command.accessType);
+    await this.languageRepository.updateRealmInfo(command.realmId, command.realmName, command.realmOwner, command.realmAccessType);
   }
 }

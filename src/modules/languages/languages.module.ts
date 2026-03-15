@@ -16,7 +16,6 @@ import { RealmsModule } from '../realms/realms.module';
 import { SharedModule } from '../shared/shared.module';
 import { LanguageGuardAdapter } from './infrastructure/security/language-guard.adapter';
 import { UpdateLanguageRealmHandler } from './application/cqrs/handlers/update-language-realm.handler';
-import { KafkaLanguageEventConsumer } from './interfaces/messaging/kafka.language-event-consumer';
 
 @Module({
   imports: [
@@ -27,7 +26,7 @@ import { KafkaLanguageEventConsumer } from './interfaces/messaging/kafka.languag
     SharedModule,
     RealmsModule,
   ],
-  controllers: [LanguageController, KafkaLanguageEventConsumer],
+  controllers: [LanguageController],
   providers: [
     GetLanguageHandler,
     GetLanguagesHandler,
