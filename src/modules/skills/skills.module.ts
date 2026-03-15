@@ -10,7 +10,7 @@ import { SkillModel, SkillSchema } from './infrastructure/persistence/models/ski
 import { CreateSkillHandler } from './application/cqrs/handlers/create-skill.handler';
 import { GetSkillHandler } from './application/cqrs/handlers/get-skill.query.handler';
 import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.handler';
-import { SkillGuardAdapter } from './infrastructure/security/SkillGuardAdapter';
+import { SkillGuardAdapter } from './infrastructure/security/skill-guard.adapter';
 import { SkillCategoriesModule } from '../skill-categories/skill-categories.module';
 
 @Module({

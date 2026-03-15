@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ConflictError, ValidationError } from 'src/modules/shared/domain/errors/errors';
 import { CreateSkillCommand } from '../commands/create-skill.command';
@@ -9,6 +9,8 @@ import type { SkillGuardPort } from '../../ports/skill-guard';
 
 @CommandHandler(CreateSkillCommand)
 export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, Skill> {
+  private readonly logger = new Logger(CreateSkillHandler.name);
+
   constructor(
     @Inject('SkillRepository') private readonly skillRepository: SkillRepository,
     @Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository,
@@ -16,12 +18,11 @@ export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, S
   ) {}
 
   async execute(command: CreateSkillCommand): Promise<Skill> {
+    this.logger.log(`Creating skill ${command.id} for user ${command.userId}`);
     this.skillGuard.checkCreate(command.roles);
 
     const current = await this.skillRepository.findById(command.id);
     if (current) throw new ConflictError(`Skill with id ${command.id} already exists`);
-
-    console.log('command.roles:', command.roles);
 
     const category = await this.skillCategoryRepository.findById(command.categoryId);
     if (!category) throw new ValidationError(`Skill category with id ${command.categoryId} does not exist`);
