@@ -22,6 +22,9 @@ export class RealmDto {
   @ApiProperty({ description: 'Image URL of the realm', required: false, example: 'https://example.com/images/realms/lotr.jpg' })
   imageUrl?: string;
 
+  @ApiProperty({ description: 'Owner of the realm', example: 'user123' })
+  owner: string;
+
   @ApiProperty({ description: 'Access type', example: 'public' })
   accessType: AccessType;
 
@@ -33,6 +36,7 @@ export class RealmDto {
     dto.shortDescription = entity.shortDescription;
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
+    dto.owner = entity.owner;
     dto.accessType = entity.accessType;
     return dto;
   }

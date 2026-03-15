@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { LanguageProps } from './language.props';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class Language extends AggregateRoot<DomainEvent<LanguageProps>> {
   private constructor(
@@ -13,19 +14,38 @@ export class Language extends AggregateRoot<DomainEvent<LanguageProps>> {
     public realm: NamedEntity,
     public description: string | undefined,
     public owner: string,
+    public accessType: AccessType,
     public createdAt: Date,
     public updatedAt: Date | undefined,
   ) {
     super();
   }
   static create(props: Omit<LanguageProps, 'id' | 'createdAt' | 'updatedAt'>) {
-    const language = new Language(randomUUID(), props.name, props.realm, props.description, props.owner, new Date(), undefined);
+    const language = new Language(
+      randomUUID(),
+      props.name,
+      props.realm,
+      props.description,
+      props.owner,
+      props.accessType,
+      new Date(),
+      undefined,
+    );
     language.apply(new LanguageCreatedEvent(language.getProps()));
     return language;
   }
 
   static fromProps(props: LanguageProps) {
-    return new Language(props.id, props.name, props.realm, props.description, props.owner, props.createdAt, props.updatedAt);
+    return new Language(
+      props.id,
+      props.name,
+      props.realm,
+      props.description,
+      props.owner,
+      props.accessType,
+      props.createdAt,
+      props.updatedAt,
+    );
   }
 
   getProps(): LanguageProps {
@@ -35,6 +55,7 @@ export class Language extends AggregateRoot<DomainEvent<LanguageProps>> {
       realm: this.realm,
       description: this.description,
       owner: this.owner,
+      accessType: this.accessType,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

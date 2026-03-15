@@ -92,12 +92,12 @@ export class CreateRaceDto {
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
   @IsOptional()
-  description: string | undefined;
+  description: string | null;
 
   @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
   @IsString()
   @IsOptional()
-  imageUrl: string | undefined;
+  imageUrl: string | null;
 
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(

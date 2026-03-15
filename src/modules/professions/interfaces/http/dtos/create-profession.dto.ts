@@ -4,6 +4,7 @@ import { CreateProfessionCommand } from 'src/modules/professions/application/cqr
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
 import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class CreateProfessionDto {
   @ApiProperty({ description: 'Profession ID', example: 'warrior' })
@@ -43,6 +44,10 @@ export class CreateProfessionDto {
   @IsOptional()
   imageUrl?: string | undefined;
 
+  @ApiProperty({ description: 'Access type', required: true, example: 'public' })
+  @IsString()
+  accessType: AccessType;
+
   static toCommand(dto: CreateProfessionDto, userId: string, roles: string[]): CreateProfessionCommand {
     return new CreateProfessionCommand(
       dto.id,
@@ -53,6 +58,7 @@ export class CreateProfessionDto {
       dto.professionalSkills,
       dto.description,
       dto.imageUrl,
+      dto.accessType,
       userId,
       roles,
     );

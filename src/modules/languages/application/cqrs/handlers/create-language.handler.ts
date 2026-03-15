@@ -32,6 +32,7 @@ export class CreateLanguageHandler implements ICommandHandler<CreateLanguageComm
       realm: new NamedEntity(realm.id, realm.name),
       description: command.description,
       owner: command.userId,
+      accessType: realm.accessType,
     });
     const savedLanguage = await this.languageRepository.save(language);
     language.getUncommittedEvents().forEach((event) => this.languageEventBus.publish(event));

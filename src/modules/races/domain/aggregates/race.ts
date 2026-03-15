@@ -27,15 +27,15 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     public baseHits: number,
     public baseDevPoints: number,
     public baseAt: number,
-    public defaultLanguage: NamedEntity | null,
+    public defaultLanguageId: string | null,
     public talents: string[],
     public traits: RaceTrait[],
-    public description: string | undefined,
-    public imageUrl: string | undefined,
+    public description: string | null,
+    public imageUrl: string | null,
     public owner: string,
     public accessType: AccessType,
     public readonly createdAt: Date,
-    public updatedAt: Date | undefined,
+    public updatedAt: Date | null,
   ) {
     super(id);
   }
@@ -57,7 +57,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.baseHits,
       props.baseDevPoints,
       props.baseAt,
-      props.defaultLanguage,
+      props.defaultLanguageId,
       props.talents,
       props.traits,
       props.description,
@@ -65,7 +65,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.owner,
       props.accessType,
       new Date(),
-      undefined,
+      null,
     );
     race.apply(new RaceCreatedEvent(race.getProps()));
     return race;
@@ -108,7 +108,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.baseHits,
       props.baseDevPoints,
       props.baseAt,
-      props.defaultLanguage,
+      props.defaultLanguageId,
       props.talents,
       props.traits,
       props.description,
@@ -134,7 +134,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     if (props.baseHits !== undefined) this.baseHits = props.baseHits;
     if (props.baseDevPoints !== undefined) this.baseDevPoints = props.baseDevPoints;
     if (props.baseAt !== undefined) this.baseAt = props.baseAt;
-    if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
+    if (props.defaultLanguageId !== undefined) this.defaultLanguageId = props.defaultLanguageId;
     if (props.talents) this.talents = props.talents;
     if (props.traits) this.traits = props.traits;
     if (props.description !== undefined) this.description = props.description;
@@ -160,7 +160,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       baseHits: this.baseHits,
       baseDevPoints: this.baseDevPoints,
       baseAt: this.baseAt,
-      defaultLanguage: this.defaultLanguage,
+      defaultLanguageId: this.defaultLanguageId,
       talents: this.talents,
       traits: this.traits,
       description: this.description,

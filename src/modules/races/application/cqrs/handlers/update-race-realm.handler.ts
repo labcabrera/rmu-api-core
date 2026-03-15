@@ -17,6 +17,6 @@ export class UpdateRaceRealmHandler implements ICommandHandler<UpdateRaceRealmCo
 
   async execute(command: UpdateRaceRealmCommand): Promise<void> {
     this.logger.log(`Updating realm ${command.realmId} name to ${command.realmName}`);
-    await this.raceRepository.updateRealmInfo(command.realmId, command.realmName, command.realmOwner);
+    await this.raceRepository.updateRealmInfo(command.realmId, command.realmName, command.realmOwner, command.realmAccessType);
   }
 }

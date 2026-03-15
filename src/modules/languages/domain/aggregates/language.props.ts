@@ -1,3 +1,4 @@
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 export class LanguageProps {
@@ -6,6 +7,7 @@ export class LanguageProps {
   realm: NamedEntity;
   description?: string;
   owner: string;
+  accessType: AccessType;
   createdAt: Date;
   updatedAt?: Date;
 }

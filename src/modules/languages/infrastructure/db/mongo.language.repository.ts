@@ -20,6 +20,7 @@ export class MongoLanguageRepository extends MongoBaseRepository<Language, Langu
       realm: doc.realm,
       description: doc.description,
       owner: doc.owner,
+      accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

@@ -3,11 +3,12 @@ import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo'
 import { RealmType } from '../value-objects/realm-type.vo';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
-import { HasOwner } from 'src/modules/shared/domain/entities/has-owner';
+import { RbacEntity } from 'src/modules/shared/domain/entities/has-owner';
 import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
 import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
-export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements HasOwner {
+export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements RbacEntity {
   constructor(
     public readonly id: string,
     public archetype: ProfessionArchetype,
@@ -19,6 +20,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     public description: string | undefined,
     public imageUrl: string | undefined,
     public owner: string,
+    public accessType: AccessType,
     public createdAt: Date,
     public updatedAt?: Date,
   ) {
@@ -37,6 +39,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       props.description,
       props.imageUrl,
       props.owner,
+      props.accessType,
       new Date(),
       undefined,
     );
@@ -70,6 +73,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       props.description,
       props.imageUrl,
       props.owner,
+      props.accessType,
       props.createdAt,
       props.updatedAt,
     );
@@ -87,6 +91,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,
+      accessType: this.accessType,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

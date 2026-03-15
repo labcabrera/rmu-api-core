@@ -6,6 +6,7 @@ import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { RaceTraitDto } from './race-trait.dto';
 import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -54,8 +55,8 @@ export class RaceDto {
   @ApiProperty({ description: 'Racial armor type', example: 1 })
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', type: NamedEntityDto, required: false })
-  defaultLanguage?: NamedEntityDto;
+  @ApiProperty({ description: 'Default language identifier', type: String, required: false })
+  defaultLanguageId: string | null;
 
   @ApiProperty({ description: 'List of racial talents', example: ['Night Vision', 'Keen Senses'] })
   talents: string[];
@@ -64,10 +65,16 @@ export class RaceDto {
   traits: RaceTraitDto[];
 
   @ApiProperty({ description: 'Description of the race' })
-  description?: string;
+  description: string | null;
 
   @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
-  imageUrl?: string;
+  imageUrl: string | null;
+
+  @ApiProperty({ description: 'Owner identifier', example: 'user123' })
+  owner: string;
+
+  @ApiProperty({ description: 'Access type', required: true })
+  accessType: AccessType;
 
   static fromEntity(entity: Race): RaceDto {
     const dto = new RaceDto();
@@ -86,11 +93,13 @@ export class RaceDto {
     dto.baseHits = entity.baseHits;
     dto.baseDevPoints = entity.baseDevPoints;
     dto.baseAt = entity.baseAt;
-    dto.defaultLanguage = entity.defaultLanguage ? NamedEntityDto.fromEntity(entity.defaultLanguage) : undefined;
+    dto.defaultLanguageId = entity.defaultLanguageId;
     dto.talents = entity.talents;
     dto.traits = entity.traits ? entity.traits.map((t) => RaceTraitDto.fromEntity(t)) : [];
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
+    dto.owner = entity.owner;
+    dto.accessType = entity.accessType;
     return dto;
   }
 }

@@ -1,10 +1,11 @@
 import { ForbiddenError } from '../../domain/errors/errors';
 import { RMU_ADMIN, RMU_USER } from '../../domain/entities/user-roles';
-import { HasOwner } from '../../domain/entities/has-owner';
+import { RbacEntity } from '../../domain/entities/has-owner';
 import { FilterQuery } from 'mongoose';
 
-export abstract class BaseEntityGuard<E extends HasOwner> implements BaseEntityGuard<E> {
+export abstract class BaseEntityGuard<E extends RbacEntity> implements BaseEntityGuard<E> {
   checkRead(entity: E, userId: string, roles: string[]) {
+    if (entity.accessType === 'public') return;
     if (roles.includes(RMU_ADMIN)) return;
     if (entity.owner === userId) return;
     throw new ForbiddenError('You do not have permission to read this entity');

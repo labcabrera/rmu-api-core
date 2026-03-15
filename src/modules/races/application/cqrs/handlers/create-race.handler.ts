@@ -48,7 +48,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       baseHits: command.baseHits,
       baseDevPoints: command.baseDevPoints,
       baseAt: command.baseAt,
-      defaultLanguage: language ? new NamedEntity(language.id, language.name) : null,
+      defaultLanguageId: language?.id || null,
       talents: command.talents,
       traits: command.traits,
       description: command.description,

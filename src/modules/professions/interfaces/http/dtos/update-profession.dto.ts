@@ -4,6 +4,7 @@ import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 import { UpdateProfessionCommand } from 'src/modules/professions/application/cqrs/commands/update-profession.command';
 import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
 import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class UpdateProfessionDto {
   @ApiProperty({ description: 'Available realm types for the profession', required: false, example: ['channeling'] })
@@ -44,6 +45,11 @@ export class UpdateProfessionDto {
   @IsOptional()
   imageUrl: string | undefined;
 
+  @ApiProperty({ description: 'Access type for the profession', example: 'public', required: false })
+  @IsString()
+  @IsOptional()
+  accessType: AccessType | undefined;
+
   static toCommand(professionId: string, dto: UpdateProfessionDto, userId: string, roles: string[]): UpdateProfessionCommand {
     return new UpdateProfessionCommand(
       professionId,
@@ -54,6 +60,7 @@ export class UpdateProfessionDto {
       dto.professionalSkills,
       dto.description,
       dto.imageUrl,
+      dto.accessType,
       userId,
       roles,
     );

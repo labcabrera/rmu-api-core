@@ -33,6 +33,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,
+      accessType: command.accessType,
     });
     return await this.professionRepository.save(profession);
   }

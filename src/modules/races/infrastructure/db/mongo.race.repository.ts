@@ -7,6 +7,7 @@ import { RaceRepository } from '../../application/ports/race-repository';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 @Injectable()
 export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument> implements RaceRepository {
@@ -14,9 +15,9 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
     super(raceModel, rsqlParser);
   }
 
-  async updateRealmInfo(realmId: string, realmName: string, realmOwner: string): Promise<void> {
+  async updateRealmInfo(realmId: string, realmName: string, realmOwner: string, accessType: AccessType): Promise<void> {
     const now = new Date();
-    const update = { 'realm.name': realmName, owner: realmOwner, updatedAt: now };
+    const update = { 'realm.name': realmName, owner: realmOwner, accessType: accessType, updatedAt: now };
     await this.model.updateMany({ 'realm.id': realmId }, { $set: update }).exec();
   }
 
@@ -42,13 +43,13 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
       baseHits: doc.baseHits,
       baseDevPoints: doc.baseDevPoints,
       baseAt: doc.baseAt,
-      defaultLanguage: doc.defaultLanguage,
+      defaultLanguageId: doc.defaultLanguageId,
       talents: doc.talents,
       traits: doc.traits ?? [],
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
-      accessType: doc.acessType,
+      accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

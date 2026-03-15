@@ -70,6 +70,7 @@ export class MongoProfessionRepository implements ProfessionRepository {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       owner: doc.owner,
+      accessType: doc.accessType,
     });
   }
 }

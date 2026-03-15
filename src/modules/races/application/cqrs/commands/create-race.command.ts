@@ -23,8 +23,8 @@ export class CreateRaceCommand extends AuthenticatedCommand {
     public readonly defaultLanguageId: string | null,
     public readonly talents: string[],
     public readonly traits: RaceTrait[],
-    public readonly description: string | undefined,
-    public readonly imageUrl: string | undefined,
+    public readonly description: string | null,
+    public readonly imageUrl: string | null,
     userId: string,
     roles: string[],
   ) {

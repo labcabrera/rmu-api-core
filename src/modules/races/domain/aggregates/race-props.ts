@@ -21,13 +21,13 @@ export interface RaceProps {
   baseHits: number;
   baseDevPoints: number;
   baseAt: number;
-  defaultLanguage: NamedEntity | null;
+  defaultLanguageId: string | null;
   talents: string[];
   traits: RaceTrait[];
-  description?: string;
-  imageUrl?: string;
+  description: string | null;
+  imageUrl: string | null;
   owner: string;
   accessType: AccessType;
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date | null;
 }

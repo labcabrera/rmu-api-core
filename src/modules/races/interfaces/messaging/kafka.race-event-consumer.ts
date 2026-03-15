@@ -16,7 +16,7 @@ export class KafkaRaceEventConsumer {
   async handleRealmUpdated(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
     this.logger.log(`Received realm ${event.data.id} updated event from ${context.getTopic()}`);
     const realm = event.data;
-    const command = new UpdateRaceRealmNameCommand(realm.id, realm.name, realm.owner);
+    const command = new UpdateRaceRealmNameCommand(realm.id, realm.name, realm.owner, realm.accessType);
     await this.commandBus.execute(command);
   }
 

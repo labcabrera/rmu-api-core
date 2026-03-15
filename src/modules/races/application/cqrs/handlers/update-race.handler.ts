@@ -40,7 +40,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       baseHits: command.baseHits,
       baseDevPoints: command.baseDevPoints,
       baseAt: command.baseAt,
-      defaultLanguage: defaultLanguage,
+      defaultLanguageId: defaultLanguage?.id || null,
       talents: command.talents,
       traits: command.traits,
       description: command.description,
