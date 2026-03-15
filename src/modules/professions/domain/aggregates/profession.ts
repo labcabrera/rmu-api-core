@@ -1,16 +1,15 @@
-import { AggregateRoot } from '@nestjs/cqrs';
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
 import { RealmType } from '../value-objects/realm-type.vo';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
 import { RbacEntity } from 'src/modules/shared/domain/entities/has-owner';
 import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
 import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 
-export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements RbacEntity {
+export class Profession extends BaseAggregateRoot<ProfessionProps> implements RbacEntity {
   constructor(
-    public readonly id: string,
+    id: string,
     public archetype: ProfessionArchetype,
     public availableRealmTypes: RealmType[],
     public fixedRealmTypes: RealmType[],
@@ -24,7 +23,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     public createdAt: Date,
     public updatedAt?: Date,
   ) {
-    super();
+    super(id);
   }
 
   static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
@@ -79,7 +78,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     );
   }
 
-  toProps(): ProfessionProps {
+  getProps(): ProfessionProps {
     return {
       id: this.id,
       archetype: this.archetype,

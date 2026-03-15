@@ -15,6 +15,7 @@ export class GetRealmsHandler implements IQueryHandler<GetRealmsQuery, Page<Real
 
   async execute(query: GetRealmsQuery): Promise<Page<Realm>> {
     const predicate = this.realmGuard.buildQueryPredicate(query.userId, query.roles);
-    return await this.realmRepository.findByRsql(query.rsql, query.page, query.size, predicate);
+    const sort = { name: 1 };
+    return await this.realmRepository.findByRsql(query.rsql, query.page, query.size, predicate, sort);
   }
 }

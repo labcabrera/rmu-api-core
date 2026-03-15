@@ -1,14 +1,4 @@
 import { Profession } from 'src/modules/professions/domain/aggregates/profession';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { BaseRepository } from 'src/modules/shared/application/ports/repository';
 
-export interface ProfessionRepository {
-  findById(id: string): Promise<Profession | null>;
-
-  findByRsql(rsql: string | undefined, page: number, size: number): Promise<Page<Profession>>;
-
-  save(entity: Profession): Promise<Profession>;
-
-  update(id: string, entity: Partial<Profession>): Promise<Profession>;
-
-  deleteById(id: string): Promise<Profession | null>;
-}
+export type ProfessionRepository = BaseRepository<Profession>;

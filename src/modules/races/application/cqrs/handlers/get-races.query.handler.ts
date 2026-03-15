@@ -15,6 +15,7 @@ export class GetRacesHandler implements IQueryHandler<GetRacesQuery, Page<Race>>
 
   async execute(query: GetRacesQuery): Promise<Page<Race>> {
     const predicate = this.raceGuardPort.buildQueryPredicate(query.userId, query.roles);
-    return await this.raceRepository.findByRsql(query.rsql, query.page, query.size, predicate);
+    const sort = { name: 1 };
+    return await this.raceRepository.findByRsql(query.rsql, query.page, query.size, predicate, sort);
   }
 }

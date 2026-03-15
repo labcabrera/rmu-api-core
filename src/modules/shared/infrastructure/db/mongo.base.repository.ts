@@ -17,7 +17,7 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
     const readed = await this.model.findById(id);
     return readed ? this.mapToEntity(readed) : null;
   }
-  async findByRsql(rsql: string, page: number, size: number, filter?: FilterQuery<any>): Promise<Page<E>> {
+  async findByRsql(rsql: string, page: number, size: number, filter?: FilterQuery<any>, sort?: any): Promise<Page<E>> {
     const skip = page * size;
     const rsqlParsed = this.rsqlParser.parse(rsql);
 
@@ -33,7 +33,11 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
     this.logger.debug(`Executing MongoDB query: ${JSON.stringify(mongoQuery)} with pagination: page=${page}, size=${size}`);
 
     const [docs, totalElements] = await Promise.all([
-      this.model.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
+      this.model
+        .find(mongoQuery)
+        .skip(skip)
+        .limit(size)
+        .sort(sort || { _id: 1 }),
       this.model.countDocuments(mongoQuery),
     ]);
     const content = docs.map((doc) => this.mapToEntity(doc));
