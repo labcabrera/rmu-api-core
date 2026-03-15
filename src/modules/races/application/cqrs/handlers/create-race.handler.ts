@@ -48,13 +48,13 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       baseHits: command.baseHits,
       baseDevPoints: command.baseDevPoints,
       baseAt: command.baseAt,
-      // map Language aggregate to NamedEntity (id,name)
       defaultLanguage: language ? new NamedEntity(language.id, language.name) : null,
       talents: command.talents,
       traits: command.traits,
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,
+      accessType: realm.accessType,
     });
     const savedRace = await this.raceRepository.save(race);
     race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));

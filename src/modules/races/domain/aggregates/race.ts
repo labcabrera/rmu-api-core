@@ -8,6 +8,7 @@ import { RaceUpdatedEvent } from '../events/race-updated.event';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 import { RaceProps } from './race-props';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class Race extends BaseAggregateRoot<RaceProps> {
   private constructor(
@@ -32,6 +33,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     public description: string | undefined,
     public imageUrl: string | undefined,
     public owner: string,
+    public accessType: AccessType,
     public readonly createdAt: Date,
     public updatedAt: Date | undefined,
   ) {
@@ -61,6 +63,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.description,
       props.imageUrl,
       props.owner,
+      props.accessType,
       new Date(),
       undefined,
     );
@@ -111,6 +114,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.description,
       props.imageUrl,
       props.owner,
+      props.accessType,
       props.createdAt,
       props.updatedAt,
     );
@@ -162,6 +166,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,
+      accessType: this.accessType,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

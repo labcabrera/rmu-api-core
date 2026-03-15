@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 import { RaceTrait } from './race-trait.model';
 import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export type RaceDocument = RaceModel & Document;
 
@@ -68,13 +69,16 @@ export class RaceModel {
   @Prop({ type: String, required: false })
   imageUrl: string | undefined;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   owner: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
+  acessType: AccessType;
+
+  @Prop({ type: Date, required: true })
   createdAt: Date;
 
-  @Prop({ required: false })
+  @Prop({ type: Date, required: false })
   updatedAt?: Date;
 }
 

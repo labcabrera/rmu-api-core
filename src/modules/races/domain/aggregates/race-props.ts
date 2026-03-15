@@ -3,6 +3,7 @@ import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { RaceTrait } from '../value-objects/race-trait.vo';
 import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export interface RaceProps {
   id: string;
@@ -26,6 +27,7 @@ export interface RaceProps {
   description?: string;
   imageUrl?: string;
   owner: string;
+  accessType: AccessType;
   createdAt: Date;
   updatedAt?: Date;
 }
