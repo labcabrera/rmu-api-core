@@ -25,7 +25,8 @@ export class SkillController {
   @ApiOkResponse({ type: SkillDto })
   async findById(@Param('id') id: string, @Request() req) {
     const userId: string = req.user!.id as string;
-    const query = new GetSkillQuery(id, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetSkillQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetSkillQuery, Skill>(query);
     if (!entity) throw new NotFoundError('Skill not found', id);
     return SkillDto.fromEntity(entity);
@@ -36,7 +37,8 @@ export class SkillController {
   @ApiOkResponse({ type: SkillPageDto })
   async find(@Query() dto: PagedQueryDto, @Request() req): Promise<SkillPageDto> {
     const userId: string = req.user!.id as string;
-    const query = new GetSkillsQuery(dto.q, dto.page, dto.size, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetSkillsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetSkillsQuery, Page<Skill>>(query);
     const mapped = page.content.map((category) => SkillDto.fromEntity(category));
     return new Page<SkillDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);

@@ -1,17 +1,7 @@
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 import { SkillSpecialization } from '../value-objects/skill-specialization.vo';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-
-export interface SkillProps {
-  id: string;
-  categoryId: string;
-  bonus: string[];
-  specialization: SkillSpecialization | null;
-  owner: string;
-  accessType: AccessType;
-  createdAt: Date;
-  updatedAt?: Date;
-}
+import { SkillProps } from './skill-props';
 
 export class Skill extends BaseAggregateRoot<SkillProps> {
   private constructor(
