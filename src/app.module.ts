@@ -11,6 +11,7 @@ import { LanguagesModule } from './modules/languages/languages.module';
 import Joi from 'joi';
 import { SharedModule } from './modules/shared/shared.module';
 import { SkillsModule } from './modules/skills/skills.module';
+import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SkillsModule } from './modules/skills/skills.module';
     }),
     AuthModule,
     SharedModule,
+    SkillCategoriesModule,
     SkillsModule,
     ProfessionsModule,
     RacesModule,

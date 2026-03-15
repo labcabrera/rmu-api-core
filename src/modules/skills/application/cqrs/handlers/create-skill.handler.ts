@@ -4,7 +4,7 @@ import { ConflictError, ValidationError } from 'src/modules/shared/domain/errors
 import { CreateSkillCommand } from '../commands/create-skill.command';
 import type { SkillRepository } from '../../ports/skill-repository';
 import { Skill } from 'src/modules/skills/domain/aggregates/skill';
-import type { SkillCategoryRepository } from '../../ports/skill-category-repository';
+import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 import type { SkillGuardPort } from '../../ports/skill-guard';
 
 @CommandHandler(CreateSkillCommand)

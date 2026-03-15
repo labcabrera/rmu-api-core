@@ -1,16 +1,16 @@
 import { Controller, Get, Param, UseGuards, Request, Query, Post, Body } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetSkillCategoryQuery } from '../../application/cqrs/queries/get-skill-category.query';
-import { SkillCategory } from '../../domain/aggregates/skill-category';
+import { GetSkillCategoryQuery } from '../../../skill-categories/application/cqrs/queries/get-skill-category.query';
 import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
-import { GetSkillCategoriesQuery } from '../../application/cqrs/queries/get-skill-categories.query';
+import { GetSkillCategoriesQuery } from '../../../skill-categories/application/cqrs/queries/get-skill-categories.query';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { CreateSkillCategoryDto } from './dto/create-skill-category.dto';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto';
+import { CreateSkillCategoryDto } from './dto/create-skill-category.dto';
+import { SkillCategory } from '../../dommain/entities/skill-category';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skill-categories')

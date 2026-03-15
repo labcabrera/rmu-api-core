@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SkillRepository } from '../../application/ports/skill-repository';
 import { Skill } from '../../domain/aggregates/skill';
-import { SkillDocument, SkillModel } from '../persistence/skill.model';
+import { SkillDocument, SkillModel } from '../persistence/models/skill.model';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 

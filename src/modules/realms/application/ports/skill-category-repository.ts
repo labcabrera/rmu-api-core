@@ -1,5 +1,5 @@
 import { Page } from 'src/modules/shared/domain/entities/page';
-import { SkillCategory } from 'src/modules/skills/domain/aggregates/skill-category';
+import { SkillCategory } from 'src/modules/skill-categories/dommain/entities/skill-category';
 
 export interface SkillCategoryRepository {
   findById(id: string): Promise<SkillCategory | null>;

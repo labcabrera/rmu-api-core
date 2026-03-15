@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsArray } from 'class-validator';
-import { CreateSkillCategoryCommand } from 'src/modules/skills/application/cqrs/commands/create-skill-category.command';
+import { CreateSkillCategoryCommand } from 'src/modules/skill-categories/application/cqrs/commands/create-skill-category.command';
 
 export class CreateSkillCategoryDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })

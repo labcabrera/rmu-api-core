@@ -2,8 +2,8 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ConflictError } from 'src/modules/shared/domain/errors/errors';
 import { CreateSkillCategoryCommand } from '../commands/create-skill-category.command';
-import { SkillCategory } from 'src/modules/skills/domain/aggregates/skill-category';
-import type { SkillCategoryRepository } from '../../ports/skill-category-repository';
+import { SkillCategory } from 'src/modules/skill-categories/dommain/entities/skill-category';
+import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 
 @CommandHandler(CreateSkillCategoryCommand)
 export class CreateSkillCategoryHandler implements ICommandHandler<CreateSkillCategoryCommand, SkillCategory> {
