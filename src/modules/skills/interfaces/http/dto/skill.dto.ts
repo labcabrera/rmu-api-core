@@ -14,7 +14,7 @@ export class SkillDto {
   bonus: string[];
 
   @ApiProperty({ description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
-  specialization: SkillSpecialization | undefined;
+  specialization: SkillSpecialization | null;
 
   static fromEntity(entity: Skill): SkillDto {
     const dto = new SkillDto();

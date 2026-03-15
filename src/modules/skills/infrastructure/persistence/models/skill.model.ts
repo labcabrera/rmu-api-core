@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { SkillSpecialization } from 'src/modules/skills/domain/value-objects/skill-specialization.vo';
 
 export type SkillDocument = SkillModel & Document;
 
@@ -15,7 +17,19 @@ export class SkillModel {
   bonus: string[];
 
   @Prop({ type: String, required: false })
-  specialization: string;
+  specialization: SkillSpecialization | null;
+
+  @Prop({ type: String, required: true })
+  owner: string;
+
+  @Prop({ type: String, required: true })
+  accessType: AccessType;
+
+  @Prop({ required: true })
+  createdAt: Date;
+
+  @Prop({ required: false })
+  updatedAt?: Date;
 }
 
 export const SkillSchema = SchemaFactory.createForClass(SkillModel);

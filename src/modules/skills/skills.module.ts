@@ -11,6 +11,7 @@ import { CreateSkillHandler } from './application/cqrs/handlers/create-skill.han
 import { GetSkillHandler } from './application/cqrs/handlers/get-skill.query.handler';
 import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.handler';
 import { SkillGuardAdapter } from './infrastructure/security/SkillGuardAdapter';
+import { SkillCategoriesModule } from '../skill-categories/skill-categories.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { SkillGuardAdapter } from './infrastructure/security/SkillGuardAdapter';
     MongooseModule.forFeature([{ name: SkillModel.name, schema: SkillSchema }]),
     AuthModule,
     SharedModule,
-    SkillsModule,
+    SkillCategoriesModule,
   ],
   controllers: [SkillController],
   providers: [
