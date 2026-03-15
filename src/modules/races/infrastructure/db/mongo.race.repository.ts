@@ -14,8 +14,10 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
     super(raceModel, rsqlParser);
   }
 
-  async updateRealmName(realmId: string, realmName: string): Promise<void> {
-    await this.model.updateMany({ 'realm.id': realmId }, { $set: { 'realm.name': realmName } }).exec();
+  async updateRealmInfo(realmId: string, realmName: string, realmOwner: string): Promise<void> {
+    const now = new Date();
+    const update = { 'realm.name': realmName, owner: realmOwner, updatedAt: now };
+    await this.model.updateMany({ 'realm.id': realmId }, { $set: update }).exec();
   }
 
   async findByRealmId(realmId: string): Promise<Race[]> {

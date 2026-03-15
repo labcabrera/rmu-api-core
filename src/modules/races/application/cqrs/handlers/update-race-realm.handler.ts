@@ -3,11 +3,11 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import type { RaceRepository } from '../../ports/race-repository';
 import type { LanguageRepository } from 'src/modules/languages/application/ports/language-repository';
-import { UpdateRaceRealmNameCommand } from '../commands/update-race-realm-name.command';
+import { UpdateRaceRealmNameCommand as UpdateRaceRealmCommand } from '../commands/update-race-realm.command';
 
-@CommandHandler(UpdateRaceRealmNameCommand)
-export class UpdateRaceRealmNameHandler implements ICommandHandler<UpdateRaceRealmNameCommand, void> {
-  private readonly logger = new Logger(UpdateRaceRealmNameHandler.name);
+@CommandHandler(UpdateRaceRealmCommand)
+export class UpdateRaceRealmHandler implements ICommandHandler<UpdateRaceRealmCommand, void> {
+  private readonly logger = new Logger(UpdateRaceRealmHandler.name);
 
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
@@ -15,8 +15,8 @@ export class UpdateRaceRealmNameHandler implements ICommandHandler<UpdateRaceRea
     @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 
-  async execute(command: UpdateRaceRealmNameCommand): Promise<void> {
+  async execute(command: UpdateRaceRealmCommand): Promise<void> {
     this.logger.log(`Updating realm ${command.realmId} name to ${command.realmName}`);
-    await this.raceRepository.updateRealmName(command.realmId, command.realmName);
+    await this.raceRepository.updateRealmInfo(command.realmId, command.realmName, command.realmOwner);
   }
 }

@@ -1,21 +1,22 @@
 import { Controller, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
-import { UpdateRaceRealmNameCommand } from '../../application/cqrs/commands/update-race-realm-name.command';
+import { UpdateRaceRealmNameCommand } from '../../application/cqrs/commands/update-race-realm.command';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { RealmProps } from 'src/modules/realms/domain/aggregates/realm-props';
 import { DeleteRacesByRealmCommand } from '../../application/cqrs/commands/delete-races-by-realm.command';
 
 @Controller()
-export class KafkaRaceRealmEventConsumer {
-  private readonly logger = new Logger(KafkaRaceRealmEventConsumer.name);
+export class KafkaRaceEventConsumer {
+  private readonly logger = new Logger(KafkaRaceEventConsumer.name);
 
   constructor(private readonly commandBus: CommandBus) {}
 
   @EventPattern('internal.rmu-core.realm.updated.v1')
   async handleRealmUpdated(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
     this.logger.log(`Received realm ${event.data.id} updated event from ${context.getTopic()}`);
-    const command = new UpdateRaceRealmNameCommand(event.data.id, event.data.name);
+    const realm = event.data;
+    const command = new UpdateRaceRealmNameCommand(realm.id, realm.name, realm.owner);
     await this.commandBus.execute(command);
   }
 
