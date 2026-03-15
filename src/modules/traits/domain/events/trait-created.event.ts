@@ -1,5 +1,5 @@
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
-import { TraitProps } from '../aggregates/trait';
+import { TraitProps } from '../aggregates/trait-props';
 
 export class TraitCreatedEvent extends DomainEvent<TraitProps> {
   constructor(data: TraitProps) {

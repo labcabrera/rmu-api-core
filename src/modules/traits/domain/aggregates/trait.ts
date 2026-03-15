@@ -1,29 +1,13 @@
-import { AggregateRoot } from '@nestjs/cqrs';
 import { TraitCreatedEvent } from '../events/trait-created.event';
 import { TraitUpdatedEvent } from '../events/trait-updated.event';
 import { TraitCategory } from '../value-objects/trait-category.vo';
 import { TraitSpecialization } from '../value-objects/trait-specialization.vo';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { TraitProps } from './trait-props';
+import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 
-export interface TraitProps {
-  id: string;
-  name: string;
-  category: TraitCategory;
-  isTalent: boolean;
-  specialization: TraitSpecialization;
-  isTierBased: boolean;
-  maxTier: number | undefined;
-  adquisitionCost: number;
-  tierCost: number | undefined;
-  description: string | undefined;
-  owner: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
-
-export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
+export class Trait extends BaseAggregateRoot<TraitProps> {
   private constructor(
-    public id: string,
+    id: string,
     public name: string,
     public category: TraitCategory,
     public isTalent: boolean,
@@ -37,7 +21,7 @@ export class Trait extends AggregateRoot<DomainEvent<TraitProps>> {
     public createdAt: Date,
     public updatedAt: Date | undefined,
   ) {
-    super();
+    super(id);
   }
   static create(props: Omit<TraitProps, 'id' | 'createdAt' | 'updatedAt'>): Trait {
     const trait = new Trait(

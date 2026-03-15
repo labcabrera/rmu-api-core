@@ -1,9 +1,9 @@
-import { TraitProps } from 'src/modules/traits/domain/aggregates/trait';
+import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
 import { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-category.vo';
 import { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
 
-export class UpdateTraitCommand {
-  private constructor(
+export class UpdateTraitCommand extends AuthenticatedCommand {
+  public constructor(
     public readonly id: string,
     public readonly name: string | undefined,
     public readonly category: TraitCategory | undefined,
@@ -14,24 +14,9 @@ export class UpdateTraitCommand {
     public readonly tierCost: number | undefined,
     public readonly maxTier: number | undefined,
     public readonly description: string | undefined,
-    public readonly userId: string,
-    public readonly roles: string[],
-  ) {}
-
-  static create(id: string, props: Partial<Omit<TraitProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>, userId: string, roles: string[]) {
-    return new UpdateTraitCommand(
-      id,
-      props.name,
-      props.category,
-      props.isTalent,
-      props.specialization,
-      props.isTierBased,
-      props.adquisitionCost,
-      props.tierCost,
-      props.maxTier,
-      props.description,
-      userId,
-      roles,
-    );
+    userId: string,
+    roles: string[],
+  ) {
+    super(userId, roles);
   }
 }
