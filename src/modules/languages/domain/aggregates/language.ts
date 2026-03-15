@@ -1,15 +1,14 @@
-import { AggregateRoot } from '@nestjs/cqrs';
 import { LanguageCreatedEvent } from '../events/language-created.event';
 import { LanguageUpdatedEvent } from '../events/language-updated.event';
 import { randomUUID } from 'crypto';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { LanguageProps } from './language.props';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 
-export class Language extends AggregateRoot<DomainEvent<LanguageProps>> {
+export class Language extends BaseAggregateRoot<LanguageProps> {
   private constructor(
-    public id: string,
+    id: string,
     public name: string,
     public realm: NamedEntity,
     public description: string | undefined,
@@ -18,7 +17,7 @@ export class Language extends AggregateRoot<DomainEvent<LanguageProps>> {
     public createdAt: Date,
     public updatedAt: Date | undefined,
   ) {
-    super();
+    super(id);
   }
   static create(props: Omit<LanguageProps, 'id' | 'createdAt' | 'updatedAt'>) {
     const language = new Language(

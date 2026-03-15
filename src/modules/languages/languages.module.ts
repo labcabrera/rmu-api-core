@@ -15,6 +15,8 @@ import { LanguageModel, LanguageSchema } from './infrastructure/persistence/mode
 import { RealmsModule } from '../realms/realms.module';
 import { SharedModule } from '../shared/shared.module';
 import { LanguageGuardAdapter } from './infrastructure/security/language-guard.adapter';
+import { UpdateLanguageRealmHandler } from './application/cqrs/handlers/update-language-realm.handler';
+import { KafkaLanguageEventConsumer } from './interfaces/messaging/kafka.language-event-consumer';
 
 @Module({
   imports: [
@@ -25,13 +27,14 @@ import { LanguageGuardAdapter } from './infrastructure/security/language-guard.a
     SharedModule,
     RealmsModule,
   ],
-  controllers: [LanguageController],
+  controllers: [LanguageController, KafkaLanguageEventConsumer],
   providers: [
     GetLanguageHandler,
     GetLanguagesHandler,
     CreateLanguageHandler,
     UpdateLanguageHandler,
     DeleteLanguageHandler,
+    UpdateLanguageRealmHandler,
     {
       provide: 'LanguageRepository',
       useClass: MongoLanguageRepository,
