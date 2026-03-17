@@ -13,13 +13,23 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
     super(model, rsqlParser);
   }
 
+  findByNameCategoryAndRealm(name: string, category: string, realmId: string | null): Promise<Enumeration | null> {
+    const query = { name: name, category: category, realmId: realmId };
+    return this.model
+      .findOne(query)
+      .exec()
+      .then((doc) => (doc ? this.mapToEntity(doc) : null));
+  }
+
   protected mapToEntity(doc: EnumerationDocument): Enumeration {
     return Enumeration.fromProps({
       id: doc.id as string,
       name: doc.name,
       category: doc.category,
+      realmId: doc.realmId ?? null,
       owner: doc.owner,
       accessType: doc.accessType,
+      entitySource: doc.entitySource,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

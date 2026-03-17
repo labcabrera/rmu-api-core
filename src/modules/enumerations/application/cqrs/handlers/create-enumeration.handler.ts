@@ -5,6 +5,7 @@ import type { EnumerationRepository } from '../../ports/enumeration-repository';
 import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
 import { ConflictError } from 'src/modules/shared/domain/errors/errors';
 import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
+import { RMU_ADMIN } from 'src/modules/shared/domain/entities/user-roles';
 
 @CommandHandler(CreateEnumerationCommand)
 export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerationCommand, Enumeration> {
@@ -18,16 +19,22 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
   async execute(command: CreateEnumerationCommand): Promise<Enumeration> {
     this.guard.checkCreate(command.roles);
 
-    const page = await this.enumerationRepository.findByRsql(`name=="${command.name}";category=="${command.category}"`, 0, 1);
-    if (page.pagination.totalElements > 0) {
-      throw new ConflictError(`Enumeration with name ${command.name} and category ${command.category} already exists`);
+    const current = await this.enumerationRepository.findByNameCategoryAndRealm(command.name, command.category, command.realmId);
+    if (current) {
+      throw new ConflictError(
+        `Enumeration with name ${command.name} and category ${command.category} already exists${command.realmId ? ` for realm ${command.realmId}` : ''}.`,
+      );
     }
+
+    const entitySource = command.roles.includes(RMU_ADMIN) ? 'system' : 'user';
 
     const enumeration = Enumeration.create({
       name: command.name,
       category: command.category,
+      realmId: command.realmId,
       owner: command.userId,
       accessType: command.accessType,
+      entitySource: entitySource,
     });
     return await this.enumerationRepository.save(enumeration);
   }
