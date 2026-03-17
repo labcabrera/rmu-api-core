@@ -4,7 +4,7 @@ import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 
 export interface EnumerationProps {
   id: string;
-  name: string;
+  key: string;
   category: EnumerationCategory;
   realmId: string | null;
   owner: string;

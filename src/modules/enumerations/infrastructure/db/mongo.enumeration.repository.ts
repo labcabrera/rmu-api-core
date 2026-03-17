@@ -13,8 +13,8 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
     super(model, rsqlParser);
   }
 
-  findByNameCategoryAndRealm(name: string, category: string, realmId: string | null): Promise<Enumeration | null> {
-    const query = { name: name, category: category, realmId: realmId };
+  findByKeyCategoryAndRealm(key: string, category: string, realmId: string | null): Promise<Enumeration | null> {
+    const query = { key: key, category: category, realmId: realmId };
     return this.model
       .findOne(query)
       .exec()
@@ -24,12 +24,12 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
   protected mapToEntity(doc: EnumerationDocument): Enumeration {
     return Enumeration.fromProps({
       id: doc.id as string,
-      name: doc.name,
+      key: (doc as any).key,
       category: doc.category,
-      realmId: doc.realmId ?? null,
+      realmId: (doc as any).realmId ?? null,
       owner: doc.owner,
       accessType: doc.accessType,
-      entitySource: doc.entitySource,
+      entitySource: (doc as any).entitySource,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

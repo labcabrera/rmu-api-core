@@ -10,7 +10,7 @@ export class EnumerationDto {
   id: string;
 
   @ApiProperty({ description: 'Category ID of the skill', example: 'animal', required: true })
-  name: string;
+  key: string;
 
   @ApiProperty({
     description: 'Enumeration category',
@@ -36,7 +36,7 @@ export class EnumerationDto {
   static fromEntity(entity: Enumeration): EnumerationDto {
     const dto = new EnumerationDto();
     dto.id = entity.id;
-    dto.name = entity.name;
+    dto.key = entity.key;
     dto.category = entity.category;
     dto.realmId = entity.realmId;
     dto.owner = entity.owner;

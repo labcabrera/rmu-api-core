@@ -18,17 +18,17 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
   async execute(command: CreateEnumerationCommand): Promise<Enumeration> {
     this.guard.checkCreate(command.roles);
 
-    const current = await this.enumerationRepository.findByNameCategoryAndRealm(command.name, command.category, command.realmId);
+    const current = await this.enumerationRepository.findByKeyCategoryAndRealm(command.key, command.category, command.realmId);
     if (current) {
       throw new ConflictError(
-        `Enumeration with name ${command.name} and category ${command.category} already exists${command.realmId ? ` for realm ${command.realmId}` : ''}.`,
+        `Enumeration with key ${command.key} and category ${command.category} already exists${command.realmId ? ` for realm ${command.realmId}` : ''}.`,
       );
     }
 
     const entitySource = 'user';
 
     const enumeration = Enumeration.create({
-      name: command.name,
+      key: command.key,
       category: command.category,
       realmId: command.realmId,
       owner: command.userId,

@@ -12,7 +12,7 @@ export class EnumerationModel {
   _id: string;
 
   @Prop({ type: String, required: true })
-  name: string;
+  key: string;
 
   @Prop({ type: String, required: true })
   category: EnumerationCategory;

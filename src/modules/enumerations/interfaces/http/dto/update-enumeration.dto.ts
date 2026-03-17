@@ -5,10 +5,10 @@ import { ENUMERATION_CATEGORIES, type EnumerationCategory } from 'src/modules/en
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class UpdateEnumerationDto {
-  @ApiProperty({ description: 'Enumeration name', example: 'horse' })
+  @ApiProperty({ description: 'Enumeration key', example: 'horse' })
   @IsString()
   @IsOptional()
-  name: string | undefined;
+  key: string | undefined;
 
   @ApiProperty({
     description: 'Enumeration category',
@@ -31,6 +31,6 @@ export class UpdateEnumerationDto {
   accessType: AccessType | undefined;
 
   static toCommand(id: string, dto: UpdateEnumerationDto, userId: string, roles: string[]): UpdateEnumerationCommand {
-    return new UpdateEnumerationCommand(id, dto.name, dto.category, dto.realmId, dto.accessType, userId, roles);
+    return new UpdateEnumerationCommand(id, dto.key, dto.category, dto.realmId, dto.accessType, userId, roles);
   }
 }

@@ -4,7 +4,7 @@ import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class CreateEnumerationCommand extends AuthenticatedCommand {
   constructor(
-    public readonly name: string,
+    public readonly key: string,
     public readonly category: EnumerationCategory,
     public readonly realmId: string | null,
     public readonly accessType: AccessType,

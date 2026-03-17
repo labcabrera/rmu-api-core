@@ -5,7 +5,7 @@ import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 export class UpdateEnumerationCommand extends AuthenticatedCommand {
   constructor(
     public readonly id: string,
-    public readonly name: string | undefined,
+    public readonly key: string | undefined,
     public readonly category: EnumerationCategory | undefined,
     public readonly realmId: string | null | undefined,
     public readonly accessType: AccessType | undefined,

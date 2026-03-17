@@ -9,7 +9,7 @@ import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
   private constructor(
     id: string,
-    public name: string,
+    public key: string,
     public category: EnumerationCategory,
     public realmId: string | null,
     public owner: string,
@@ -24,7 +24,7 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
   static create(props: Omit<EnumerationProps, 'id' | 'createdAt' | 'updatedAt'>) {
     return new Enumeration(
       randomUUID(),
-      props.name,
+      props.key,
       props.category,
       props.realmId,
       props.owner,
@@ -38,7 +38,7 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
   static fromProps(props: EnumerationProps) {
     return new Enumeration(
       props.id,
-      props.name,
+      props.key,
       props.category,
       props.realmId,
       props.owner,
@@ -51,13 +51,18 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
 
   update(pros: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>) {
     let modified = false;
-    if (pros.name) {
-      modified = this.name !== pros.name;
-      this.name = pros.name;
+    if (pros.key) {
+      modified = this.key !== pros.key;
+      this.key = pros.key as string;
     }
     if (pros.category) {
       modified = modified || this.category !== pros.category;
       this.category = pros.category;
+    }
+    if (Object.prototype.hasOwnProperty.call(pros, 'key')) {
+      const newKey = pros.key as string;
+      modified = modified || this.key !== newKey;
+      this.key = newKey;
     }
     if (Object.prototype.hasOwnProperty.call(pros, 'realmId')) {
       const newRealmId = pros.realmId as string | null;
@@ -79,7 +84,7 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
   public getProps(): EnumerationProps {
     return {
       id: this.id,
-      name: this.name,
+      key: this.key,
       category: this.category,
       realmId: this.realmId,
       owner: this.owner,

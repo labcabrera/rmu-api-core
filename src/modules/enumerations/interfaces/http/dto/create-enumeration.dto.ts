@@ -5,10 +5,10 @@ import { ENUMERATION_CATEGORIES, type EnumerationCategory } from 'src/modules/en
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class CreateEnumerationDto {
-  @ApiProperty({ description: 'Enumeration name', example: 'horse' })
+  @ApiProperty({ description: 'Enumeration key', example: 'horse' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  key: string;
 
   @ApiProperty({
     description: 'Enumeration category',
@@ -31,6 +31,6 @@ export class CreateEnumerationDto {
   accessType: AccessType;
 
   static toCommand(dto: CreateEnumerationDto, userId: string, roles: string[]): CreateEnumerationCommand {
-    return new CreateEnumerationCommand(dto.name, dto.category, dto.realmId ?? null, dto.accessType, userId, roles);
+    return new CreateEnumerationCommand(dto.key, dto.category, dto.realmId ?? null, dto.accessType, userId, roles);
   }
 }
