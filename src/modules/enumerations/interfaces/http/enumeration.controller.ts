@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Request } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Delete, HttpCode } from '@nestjs/common';
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -10,6 +11,8 @@ import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumera
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { Enumeration } from '../../domain/aggregates/enumeration';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/enumerations')
@@ -21,7 +24,7 @@ export class EnumerationController {
   ) {}
 
   @Get(':id')
-  @ApiOperation({ operationId: 'findSkillById', summary: 'Find skill by id' })
+  @ApiOperation({ operationId: 'findEnumerationById', summary: 'Find enumeration by id' })
   @ApiOkResponse({ type: EnumerationDto })
   async findById(@Param('id') id: string, @Request() req) {
     const userId: string = req.user!.id as string;
@@ -33,7 +36,7 @@ export class EnumerationController {
   }
 
   @Get('')
-  @ApiOperation({ operationId: 'findAllSkills', summary: 'Find all skills' })
+  @ApiOperation({ operationId: 'findEnumerations', summary: 'Find enumerations by RSQL' })
   @ApiOkResponse({ type: EnumerationPageDto })
   async find(@Query() dto: PagedQueryDto, @Request() req): Promise<EnumerationPageDto> {
     const userId: string = req.user!.id as string;
@@ -45,10 +48,26 @@ export class EnumerationController {
   }
 
   @Post('')
-  create(@Body() createSkillDto: CreateEnumerationDto, @Request() req) {
+  @HttpCode(201)
+  @ApiOperation({ operationId: 'createEnumeration', summary: 'Create enumeration' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  async create(@Body() createSkillDto: CreateEnumerationDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = CreateEnumerationDto.toCommand(createSkillDto, userId, roles);
-    return this.commandBus.execute(command);
+    const result = await this.commandBus.execute<CreateEnumerationDto, Enumeration>(command);
+    return EnumerationDto.fromEntity(result);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiOperation({ operationId: 'deleteEnumeration', summary: 'Delete enumeration' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Enumeration not found', type: ErrorDto })
+  async delete(@Param('id') id: string, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = new DeleteEnumerationCommand(id, userId, roles);
+    await this.commandBus.execute(command);
   }
 }
