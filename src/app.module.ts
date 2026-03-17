@@ -13,6 +13,8 @@ import { SharedModule } from './modules/shared/shared.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
 import { EnumerationsModule } from './modules/enumerations/enumerations.module';
+import { CharacterSizesModule } from './modules/character-sizes/character-sizes.module';
+import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { EnumerationsModule } from './modules/enumerations/enumerations.module';
     }),
     AuthModule,
     SharedModule,
+    CharacterSizesModule,
+    ArmorTypesModule,
     SkillCategoriesModule,
     SkillsModule,
     ProfessionsModule,

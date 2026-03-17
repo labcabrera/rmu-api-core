@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArmorType } from 'src/modules/shared/domain/entities/armor-type';
+import { ArmorType } from 'src/modules/armor-types/domain/entities/armor-type';
 
 export class ArmorTypeDto {
   @ApiProperty({ description: 'Unique identifier of the armor type', example: 3 })
