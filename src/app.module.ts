@@ -12,6 +12,8 @@ import Joi from 'joi';
 import { SharedModule } from './modules/shared/shared.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
+import { Enumeration } from './modules/enumerations/domain/aggregates/enumeration';
+import { EnumerationsModule } from './modules/enumerations/enumerations.module';
 
 @Module({
   imports: [
@@ -47,6 +49,7 @@ import { SkillCategoriesModule } from './modules/skill-categories/skill-categori
     ManeuversModule,
     TraitsModule,
     LanguagesModule,
+    EnumerationsModule,
   ],
 })
 export class AppModule {}

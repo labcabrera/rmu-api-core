@@ -7,7 +7,7 @@ import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
 import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
 
 @QueryHandler(GetEnumerationsQuery)
-export class GetSkillsHandler implements IQueryHandler<GetEnumerationsQuery, Page<Enumeration>> {
+export class GetEnumerationsHandler implements IQueryHandler<GetEnumerationsQuery, Page<Enumeration>> {
   constructor(
     @Inject('EnumerationRepository') private readonly skillRepository: EnumerationRepository,
     @Inject('EnumerationGuardPort') private readonly skillGuard: EnumerationGuardPort,
