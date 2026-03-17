@@ -20,6 +20,7 @@ docker run -d -p 3001:3001 --network rmu-network --name rmu-api-core -h rmu-api-
     -e RMU_KAFKA_CLIENT_ID='rmu-api-core' \
     -e RMU_KAFKA_BROKERS='rmu-kafka-broker:9092' \
     -e RMU_KAFKA_PARTITION_COUNT='1' \
+    -e LOG_LEVEL='info' \
     labcabrera/rmu-api-core:latest
 
 docker logs -f rmu-api-core
