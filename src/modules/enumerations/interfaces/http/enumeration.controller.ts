@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Delete, HttpCode, Patch } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto';
@@ -13,6 +13,7 @@ import { Enumeration } from '../../domain/aggregates/enumeration';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { UpdateEnumerationDto } from './dto/update-enumeration.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/enumerations')
@@ -56,6 +57,17 @@ export class EnumerationController {
     const roles: string[] = req.user!.roles as string[];
     const command = CreateEnumerationDto.toCommand(createSkillDto, userId, roles);
     const result = await this.commandBus.execute<CreateEnumerationDto, Enumeration>(command);
+    return EnumerationDto.fromEntity(result);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ operationId: 'updateEnumeration', summary: 'Update enumeration' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  async update(@Param('id') id: string, @Body() dto: UpdateEnumerationDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = UpdateEnumerationDto.toCommand(id, dto, userId, roles);
+    const result = await this.commandBus.execute<UpdateEnumerationDto, Enumeration>(command);
     return EnumerationDto.fromEntity(result);
   }
 

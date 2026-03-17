@@ -5,7 +5,6 @@ import type { EnumerationRepository } from '../../ports/enumeration-repository';
 import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
 import { ConflictError } from 'src/modules/shared/domain/errors/errors';
 import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
-import { RMU_ADMIN } from 'src/modules/shared/domain/entities/user-roles';
 
 @CommandHandler(CreateEnumerationCommand)
 export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerationCommand, Enumeration> {
@@ -26,7 +25,7 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
       );
     }
 
-    const entitySource = command.roles.includes(RMU_ADMIN) ? 'system' : 'user';
+    const entitySource = 'user';
 
     const enumeration = Enumeration.create({
       name: command.name,
