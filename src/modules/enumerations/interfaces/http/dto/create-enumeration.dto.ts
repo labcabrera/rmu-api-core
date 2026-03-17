@@ -1,17 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { CreateEnumerationCommand } from 'src/modules/enumerations/application/cqrs/commands/create-enumeration.command';
-import type { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
+import { ENUMERATION_CATEGORIES, type EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class CreateEnumerationDto {
-  @ApiProperty({ description: 'Enumeration name', example: 'animal-handling' })
+  @ApiProperty({ description: 'Enumeration name', example: 'horse' })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Enumeration category', example: 'animal' })
-  @IsString()
+  @ApiProperty({
+    description: 'Enumeration category',
+    example: 'animal',
+    enum: ENUMERATION_CATEGORIES,
+    enumName: 'EnumerationCategory',
+    required: true,
+  })
+  @IsIn(ENUMERATION_CATEGORIES)
   @IsNotEmpty()
   category: EnumerationCategory;
 

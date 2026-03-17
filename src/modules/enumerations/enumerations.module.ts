@@ -13,6 +13,7 @@ import { CreateEnumerationHandler } from './application/cqrs/handlers/create-enu
 import { UpdateEnumerationHandler } from './application/cqrs/handlers/update-enumeration.handler';
 import { GetEnumerationsHandler } from './application/cqrs/handlers/get-enumerations.query.handler';
 import { DeleteEnumerationHandler } from './application/cqrs/handlers/delete-enumeration.handler';
+import { EnumerationCategoryController } from './interfaces/http/enumeration-category.controller';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { DeleteEnumerationHandler } from './application/cqrs/handlers/delete-enu
     AuthModule,
     SharedModule,
   ],
-  controllers: [EnumerationController],
+  controllers: [EnumerationController, EnumerationCategoryController],
   providers: [
     CreateEnumerationHandler,
     GetEnumerationHandler,
