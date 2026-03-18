@@ -26,11 +26,30 @@ export class CreateEnumerationDto {
   @IsOptional()
   realmId?: string | null;
 
+  @ApiProperty({ description: 'Description', example: 'A large hoofed mammal', required: false })
+  @IsString()
+  @IsOptional()
+  description?: string | null;
+
+  @ApiProperty({ description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string | null;
+
   @ApiProperty({ description: 'Access type of the skill', example: 'public' })
   @IsString()
   accessType: AccessType;
 
   static toCommand(dto: CreateEnumerationDto, userId: string, roles: string[]): CreateEnumerationCommand {
-    return new CreateEnumerationCommand(dto.key, dto.category, dto.realmId ?? null, dto.accessType, userId, roles);
+    return new CreateEnumerationCommand(
+      dto.key,
+      dto.category,
+      dto.realmId ?? null,
+      dto.description ?? null,
+      dto.imageUrl ?? null,
+      dto.accessType,
+      userId,
+      roles,
+    );
   }
 }

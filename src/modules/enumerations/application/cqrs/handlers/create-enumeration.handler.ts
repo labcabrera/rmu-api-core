@@ -31,6 +31,8 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
       key: command.key,
       category: command.category,
       realmId: command.realmId,
+      description: command.description,
+      imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: command.accessType,
       entitySource: entitySource,

@@ -20,6 +20,12 @@ export class EnumerationModel {
   @Prop({ type: String, required: false, default: null })
   realmId: string | null;
 
+  @Prop({ type: String, required: false, default: null })
+  description: string | null;
+
+  @Prop({ type: String, required: false, default: null })
+  imageUrl: string | null;
+
   @Prop({ type: String, required: true })
   owner: string;
 

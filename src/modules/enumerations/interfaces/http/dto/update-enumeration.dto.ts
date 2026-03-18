@@ -30,7 +30,27 @@ export class UpdateEnumerationDto {
   @IsOptional()
   accessType: AccessType | undefined;
 
+  @ApiProperty({ description: 'Description', example: 'A large hoofed mammal', required: false })
+  @IsString()
+  @IsOptional()
+  description?: string | null | undefined;
+
+  @ApiProperty({ description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string | null | undefined;
+
   static toCommand(id: string, dto: UpdateEnumerationDto, userId: string, roles: string[]): UpdateEnumerationCommand {
-    return new UpdateEnumerationCommand(id, dto.key, dto.category, dto.realmId, dto.accessType, userId, roles);
+    return new UpdateEnumerationCommand(
+      id,
+      dto.key,
+      dto.category,
+      dto.realmId,
+      dto.description ?? null,
+      dto.imageUrl ?? null,
+      dto.accessType,
+      userId,
+      roles,
+    );
   }
 }

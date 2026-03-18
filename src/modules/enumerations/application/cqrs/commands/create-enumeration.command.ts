@@ -7,6 +7,8 @@ export class CreateEnumerationCommand extends AuthenticatedCommand {
     public readonly key: string,
     public readonly category: EnumerationCategory,
     public readonly realmId: string | null,
+    public readonly description: string | null,
+    public readonly imageUrl: string | null,
     public readonly accessType: AccessType,
     userId: string,
     roles: string[],

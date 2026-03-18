@@ -24,12 +24,14 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
   protected mapToEntity(doc: EnumerationDocument): Enumeration {
     return Enumeration.fromProps({
       id: doc.id as string,
-      key: (doc as any).key,
+      key: doc.key,
       category: doc.category,
-      realmId: (doc as any).realmId ?? null,
+      realmId: doc.realmId ?? null,
+      description: doc.description ?? null,
+      imageUrl: doc.imageUrl ?? null,
       owner: doc.owner,
       accessType: doc.accessType,
-      entitySource: (doc as any).entitySource,
+      entitySource: doc.entitySource,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

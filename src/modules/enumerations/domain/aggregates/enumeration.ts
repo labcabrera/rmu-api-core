@@ -12,6 +12,8 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
     public key: string,
     public category: EnumerationCategory,
     public realmId: string | null,
+    public description: string | null,
+    public imageUrl: string | null,
     public owner: string,
     public accessType: AccessType,
     public entitySource: EntitySource,
@@ -27,6 +29,8 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
       props.key,
       props.category,
       props.realmId,
+      props.description,
+      props.imageUrl,
       props.owner,
       props.accessType,
       props.entitySource,
@@ -41,6 +45,8 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
       props.key,
       props.category,
       props.realmId,
+      props.description,
+      props.imageUrl,
       props.owner,
       props.accessType,
       props.entitySource,
@@ -49,33 +55,35 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
     );
   }
 
-  update(pros: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>) {
+  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>) {
     let modified = false;
-    if (pros.key) {
-      modified = this.key !== pros.key;
-      this.key = pros.key as string;
+    if (props.key) {
+      modified = this.key !== props.key;
+      this.key = props.key;
     }
-    if (pros.category) {
-      modified = modified || this.category !== pros.category;
-      this.category = pros.category;
+    if (props.category) {
+      modified = modified || this.category !== props.category;
+      this.category = props.category;
     }
-    if (Object.prototype.hasOwnProperty.call(pros, 'key')) {
-      const newKey = pros.key as string;
-      modified = modified || this.key !== newKey;
-      this.key = newKey;
+    if (props.realmId) {
+      modified = modified || this.realmId !== props.realmId;
+      this.realmId = props.realmId;
     }
-    if (Object.prototype.hasOwnProperty.call(pros, 'realmId')) {
-      const newRealmId = pros.realmId as string | null;
-      modified = modified || this.realmId !== newRealmId;
-      this.realmId = newRealmId;
+    if (props.description) {
+      modified = modified || this.description !== props.description;
+      this.description = props.description;
     }
-    if (pros.accessType) {
-      modified = modified || this.accessType !== pros.accessType;
-      this.accessType = pros.accessType;
+    if (props.imageUrl) {
+      modified = modified || this.imageUrl !== props.imageUrl;
+      this.imageUrl = props.imageUrl;
     }
-    if (pros.entitySource) {
-      modified = modified || this.entitySource !== pros.entitySource;
-      this.entitySource = pros.entitySource;
+    if (props.accessType) {
+      modified = modified || this.accessType !== props.accessType;
+      this.accessType = props.accessType;
+    }
+    if (props.entitySource) {
+      modified = modified || this.entitySource !== props.entitySource;
+      this.entitySource = props.entitySource;
     }
     if (!modified) throw new NotModifiedError('No changes detected');
     this.updatedAt = new Date();
@@ -87,6 +95,8 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
       key: this.key,
       category: this.category,
       realmId: this.realmId,
+      description: this.description,
+      imageUrl: this.imageUrl,
       owner: this.owner,
       accessType: this.accessType,
       entitySource: this.entitySource,

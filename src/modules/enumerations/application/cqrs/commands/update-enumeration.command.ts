@@ -8,6 +8,8 @@ export class UpdateEnumerationCommand extends AuthenticatedCommand {
     public readonly key: string | undefined,
     public readonly category: EnumerationCategory | undefined,
     public readonly realmId: string | null | undefined,
+    public readonly description: string | null | undefined,
+    public readonly imageUrl: string | null | undefined,
     public readonly accessType: AccessType | undefined,
     userId: string,
     roles: string[],

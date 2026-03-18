@@ -7,6 +7,8 @@ export interface EnumerationProps {
   key: string;
   category: EnumerationCategory;
   realmId: string | null;
+  description: string | null;
+  imageUrl: string | null;
   owner: string;
   accessType: AccessType;
   entitySource: EntitySource;

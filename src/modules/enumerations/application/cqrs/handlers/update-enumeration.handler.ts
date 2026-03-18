@@ -30,6 +30,8 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
       key: command.key,
       category: command.category,
       realmId: command.realmId,
+      description: command.description,
+      imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
     return await this.enumerationRepository.update(command.id, current);
