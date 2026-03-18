@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { SkillRepository } from '../../application/ports/skill-repository';
 import { Skill } from '../../domain/aggregates/skill';
 import { SkillDocument, SkillModel } from '../persistence/models/skill.model';
-import { Page } from 'src/modules/shared/domain/entities/page';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
 

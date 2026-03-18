@@ -38,7 +38,7 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
 
   private mapToEntity(doc: SkillCategoryDocument): SkillCategory {
     return {
-      id: (doc as any)._id ? (doc as any)._id.toString() : (doc.id as string),
+      id: doc.id as string,
       bonus: doc.bonus,
     };
   }

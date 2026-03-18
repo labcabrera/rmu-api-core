@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Patch, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Patch, HttpCode, Delete } from '@nestjs/common';
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { SkillDto, SkillPageDto } from './dto/skill.dto';
@@ -10,10 +10,11 @@ import { GetSkillQuery } from '../../application/cqrs/queries/get-skill.query';
 import { GetSkillsQuery } from '../../application/cqrs/queries/get-skills.query';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { Skill } from '../../domain/aggregates/skill';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { DeleteSkillCommand } from '../../application/cqrs/commands/delete-skill.command';
+import { UpdateSkillCommand } from '../../application/cqrs/commands/update-skill.command';
+import { CreateSkillCommand } from '../../application/cqrs/commands/create-skill.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skills')
@@ -34,7 +35,6 @@ export class SkillController {
     const roles: string[] = req.user!.roles as string[];
     const query = new GetSkillQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetSkillQuery, Skill>(query);
-    if (!entity) throw new NotFoundError('Skill not found', id);
     return SkillDto.fromEntity(entity);
   }
 
@@ -59,11 +59,12 @@ export class SkillController {
   @ApiOkResponse({ type: SkillDto, description: 'Success' })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, skill already exists', type: ErrorDto })
-  create(@Body() createSkillDto: CreateSkillDto, @Request() req) {
+  async create(@Body() createSkillDto: CreateSkillDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = CreateSkillDto.toCommand(createSkillDto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<CreateSkillCommand, Skill>(command);
+    return SkillDto.fromEntity(entity);
   }
 
   @Patch(':id')
@@ -72,23 +73,23 @@ export class SkillController {
   @ApiOkResponse({ type: SkillDto, description: 'Success' })
   @ApiNotFoundResponse({ description: 'Skill not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  update(@Param('id') id: string, @Body() dto: UpdateSkillDto, @Request() req) {
+  async update(@Param('id') id: string, @Body() dto: UpdateSkillDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = UpdateSkillDto.toCommand(id, dto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<UpdateSkillCommand, Skill>(command);
+    return SkillDto.fromEntity(entity);
   }
 
-  @Patch(':id')
+  @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteSkill', summary: 'Delete skill' })
   @ApiOkResponse({ type: SkillDto, description: 'Success' })
   @ApiNotFoundResponse({ description: 'Skill not found', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  delete(@Param('id') id: string, @Request() req) {
+  async delete(@Param('id') id: string, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = new DeleteSkillCommand(id, userId, roles);
-    void this.commandBus.execute(command);
+    await this.commandBus.execute(command);
   }
 }
