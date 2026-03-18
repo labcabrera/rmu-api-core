@@ -1,14 +1,15 @@
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { SkillSpecialization } from '../value-objects/skill-specialization.vo';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { SkillProps } from './skill-props';
+import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
+import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
 
 export class Skill extends BaseAggregateRoot<SkillProps> {
   private constructor(
     id: string,
     public categoryId: string,
     public bonus: string[],
-    public specialization: SkillSpecialization | null,
+    public specialization: EnumerationCategory | null,
     public owner: string,
     public accessType: AccessType,
     public createdAt: Date,
@@ -32,6 +33,30 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
       props.createdAt,
       props.updatedAt,
     );
+  }
+
+  update(props: Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
+    let modified = false;
+    if (props.categoryId) {
+      modified = props.categoryId !== this.categoryId;
+      this.categoryId = props.categoryId;
+    }
+    if (props.bonus) {
+      modified = modified || props.bonus !== this.bonus;
+      this.bonus = props.bonus;
+    }
+    if (props.specialization) {
+      modified = modified || props.specialization !== this.specialization;
+      this.specialization = props.specialization;
+    }
+    if (props.accessType) {
+      modified = modified || props.accessType !== this.accessType;
+      this.accessType = props.accessType;
+    }
+    this.updatedAt = new Date();
+    if (!modified) {
+      throw new NotModifiedError('Skill not modified');
+    }
   }
 
   public getProps(): SkillProps {

@@ -12,6 +12,8 @@ import { GetSkillHandler } from './application/cqrs/handlers/get-skill.query.han
 import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.handler';
 import { SkillGuardAdapter } from './infrastructure/security/skill-guard.adapter';
 import { SkillCategoriesModule } from '../skill-categories/skill-categories.module';
+import { UpdateSkillHandler } from './application/cqrs/handlers/update-skill.handler';
+import { DeleteSkillHandler } from './application/cqrs/handlers/delete-skill.handler';
 
 @Module({
   imports: [
@@ -24,9 +26,11 @@ import { SkillCategoriesModule } from '../skill-categories/skill-categories.modu
   ],
   controllers: [SkillController],
   providers: [
-    CreateSkillHandler,
     GetSkillHandler,
     GetSkillsHandler,
+    CreateSkillHandler,
+    UpdateSkillHandler,
+    DeleteSkillHandler,
     {
       provide: 'SkillRepository',
       useClass: MongoSkillRepository,

@@ -2,13 +2,13 @@ import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objec
 import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
-export class CreateSkillCommand extends AuthenticatedCommand {
+export class UpdateSkillCommand extends AuthenticatedCommand {
   constructor(
     public readonly id: string,
-    public readonly categoryId: string,
-    public readonly bonus: string[],
-    public readonly specialization: EnumerationCategory | null,
-    public readonly accessType: AccessType,
+    public readonly categoryId: string | undefined,
+    public readonly bonus: string[] | undefined,
+    public readonly specialization: EnumerationCategory | undefined,
+    public readonly accessType: AccessType | undefined,
     userId: string,
     roles: string[],
   ) {

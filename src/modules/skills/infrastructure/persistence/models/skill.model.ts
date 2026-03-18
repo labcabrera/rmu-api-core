@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { SkillSpecialization } from 'src/modules/skills/domain/value-objects/skill-specialization.vo';
 
 export type SkillDocument = SkillModel & Document;
 
@@ -17,7 +17,7 @@ export class SkillModel {
   bonus: string[];
 
   @Prop({ type: String, required: false })
-  specialization: SkillSpecialization | null;
+  specialization: EnumerationCategory | null;
 
   @Prop({ type: String, required: true })
   owner: string;
