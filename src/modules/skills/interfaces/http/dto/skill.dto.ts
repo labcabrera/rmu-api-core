@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { Skill } from 'src/modules/skills/domain/aggregates/skill';
 
@@ -16,12 +17,16 @@ export class SkillDto {
   @ApiProperty({ description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
   specialization: EnumerationCategory | null;
 
+  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  accessType: AccessType;
+
   static fromEntity(entity: Skill): SkillDto {
     const dto = new SkillDto();
     dto.id = entity.id;
     dto.categoryId = entity.categoryId;
     dto.bonus = entity.bonus || [];
     dto.specialization = entity.specialization;
+    dto.accessType = entity.accessType;
     return dto;
   }
 }
