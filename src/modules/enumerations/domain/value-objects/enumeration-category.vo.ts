@@ -11,6 +11,8 @@ export const ENUMERATION_CATEGORIES = [
   'religion',
   'melee-weapon-type',
   'ranged-weapon-type',
+  'skill-combat-training',
+  'spell-list',
   'skill-directed-spell',
   'skill-culinary',
   'skill-fabric-craft',
@@ -24,6 +26,7 @@ export const ENUMERATION_CATEGORIES = [
   'skill-woodcraft',
   'skill-influence',
   'skill-music',
+  'skill-magic-ritual',
 ] as const;
 
 export type EnumerationCategory = (typeof ENUMERATION_CATEGORIES)[number];
