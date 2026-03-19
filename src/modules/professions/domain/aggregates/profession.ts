@@ -42,7 +42,6 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
       new Date(),
       undefined,
     );
-    //TODO apply event
     return profession;
   }
 
@@ -56,8 +55,8 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
     if (props.entitySource) this.entitySource = props.entitySource;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
+    if (props.accessType) this.accessType = props.accessType;
     this.updatedAt = new Date();
-    //TODO apply event
   }
 
   static fromProps(props: ProfessionProps): Profession {

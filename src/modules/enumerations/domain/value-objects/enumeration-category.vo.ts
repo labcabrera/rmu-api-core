@@ -4,6 +4,7 @@ export const ENUMERATION_CATEGORIES = [
   'creature-lore',
   'historic-lore',
   'material-lore',
+  'spell-lore',
   'environment',
   'vehicle',
   'region',
@@ -17,6 +18,10 @@ export const ENUMERATION_CATEGORIES = [
   'skill-trade',
   'skill-service',
   'skill-mechanics',
+  'skill-leathercraft',
+  'skill-metalcraft',
+  'skill-stonecraft',
+  'skill-woodcraft',
   'skill-influence',
   'skill-music',
 ] as const;
