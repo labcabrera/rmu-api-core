@@ -40,6 +40,7 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
     return {
       id: doc.id as string,
       bonus: doc.bonus,
+      realmBonus: doc.realmBonus,
     };
   }
 }

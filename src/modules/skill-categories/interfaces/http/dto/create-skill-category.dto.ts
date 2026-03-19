@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, IsNumber, IsOptional } from 'class-validator';
 import { CreateSkillCategoryCommand } from 'src/modules/skill-categories/application/cqrs/commands/create-skill-category.command';
 
 export class CreateSkillCategoryDto {
@@ -12,7 +12,12 @@ export class CreateSkillCategoryDto {
   @IsArray()
   bonus: string[];
 
+  @ApiProperty({ description: 'Realm base bonus count' })
+  @IsNumber()
+  @IsOptional()
+  realmBonus: number | null;
+
   static toCommand(dto: CreateSkillCategoryDto, userId: string, roles: string[]): CreateSkillCategoryDto {
-    return new CreateSkillCategoryCommand(dto.id, dto.bonus, userId, roles);
+    return new CreateSkillCategoryCommand(dto.id, dto.bonus, dto.realmBonus, userId, roles);
   }
 }

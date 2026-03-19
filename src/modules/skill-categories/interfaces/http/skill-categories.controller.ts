@@ -24,18 +24,19 @@ export class SkillCategoryController {
 
   @Get(':id')
   @ApiOkResponse({ type: SkillCategoryDto })
-  @ApiOperation({ operationId: 'findSkillCategoryById', summary: 'Find skill category by id' })
+  @ApiOperation({ operationId: 'findSkillCategory', summary: 'Find skill category by id' })
   @ApiNotFoundResponse({ description: 'Skill category not found', type: ErrorDto })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
     const userId: string = req.user!.id as string;
     const query = new GetSkillCategoryQuery(id, userId);
     const entity = await this.queryBus.execute<GetSkillCategoryQuery, SkillCategory>(query);
-    if (!entity) throw new NotFoundError('Skill category not found', id);
+    if (!entity) throw new NotFoundError('SkillCategory', id);
     return SkillCategoryDto.fromEntity(entity);
   }
 
   @Get('')
-  @ApiOperation({ operationId: 'findSkillCategories', summary: 'Find all skill categories by RSQL' })
+  @ApiOperation({ operationId: 'findSkillCategories', summary: 'Find skill categories by RSQL' })
   @ApiOkResponse({ type: SkillCategoryPageDto })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
@@ -53,10 +54,11 @@ export class SkillCategoryController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, skill category already exists', type: ErrorDto })
-  create(@Body() createSkillCategoryDto: CreateSkillCategoryDto, @Request() req) {
+  async create(@Body() createSkillCategoryDto: CreateSkillCategoryDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = CreateSkillCategoryDto.toCommand(createSkillCategoryDto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<CreateSkillCategoryDto, SkillCategory>(command);
+    return SkillCategoryDto.fromEntity(entity);
   }
 }

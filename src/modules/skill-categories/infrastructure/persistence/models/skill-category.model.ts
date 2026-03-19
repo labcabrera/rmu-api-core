@@ -10,6 +10,9 @@ export class SkillCategoryModel {
 
   @Prop({ type: [String], required: true })
   bonus: string[];
+
+  @Prop({ type: Number, required: false })
+  realmBonus: number | null;
 }
 
 export const SkillCategorySchema = SchemaFactory.createForClass(SkillCategoryModel);

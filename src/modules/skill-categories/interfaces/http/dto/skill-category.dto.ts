@@ -9,10 +9,14 @@ export class SkillCategoryDto {
   @ApiProperty({ description: 'List of stats that apply a benefit to the skill', example: ['em', 'co'] })
   bonus: string[];
 
+  @ApiProperty({ description: 'Realm bonus count', example: 2, nullable: true })
+  realmBonus: number | null;
+
   static fromEntity(entity: SkillCategory): SkillCategoryDto {
     const dto = new SkillCategoryDto();
     dto.id = entity.id;
     dto.bonus = entity.bonus || [];
+    dto.realmBonus = entity.realmBonus;
     return dto;
   }
 }
