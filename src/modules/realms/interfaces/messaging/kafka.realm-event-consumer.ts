@@ -5,7 +5,6 @@ import { UpdateRaceRealmNameCommand } from '../../../races/application/cqrs/comm
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { RealmProps } from 'src/modules/realms/domain/aggregates/realm-props';
 import { DeleteRacesByRealmCommand } from '../../../races/application/cqrs/commands/delete-races-by-realm.command';
-import { UpdateLanguageRealmCommand } from 'src/modules/languages/application/cqrs/commands/update-language-realm.command';
 
 @Controller()
 export class KafkaRealmEventConsumer {
@@ -18,8 +17,7 @@ export class KafkaRealmEventConsumer {
     this.logger.log(`Received realm ${event.data.id} updated event from ${context.getTopic()}`);
     const realm = event.data;
     const commandRaces = new UpdateRaceRealmNameCommand(realm.id, realm.name, realm.owner, realm.accessType);
-    const commandLanguages = new UpdateLanguageRealmCommand(realm.id, realm.name, realm.owner, realm.accessType);
-    await Promise.all([this.commandBus.execute(commandRaces), this.commandBus.execute(commandLanguages)]);
+    await Promise.all([this.commandBus.execute(commandRaces)]);
   }
 
   @EventPattern('internal.rmu-core.realm.deleted.v1')

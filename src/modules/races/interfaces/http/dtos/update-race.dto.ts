@@ -76,10 +76,6 @@ export class UpdateRaceDto {
   @IsOptional()
   baseAt?: number;
 
-  @ApiProperty({ description: 'Default language identifier of the race', type: String, required: false })
-  @IsOptional()
-  defaultLanguageId?: string;
-
   @ApiProperty({ description: 'List of talents identifiers', type: [String], required: false })
   @IsArray()
   @IsOptional()
@@ -89,6 +85,10 @@ export class UpdateRaceDto {
   @IsArray()
   @IsOptional()
   traits?: RaceTraitDto[];
+
+  @ApiProperty({ description: 'Default language identifier of the race', type: String, required: false })
+  @IsOptional()
+  defaultLanguage?: string;
 
   @ApiProperty({ description: 'Description of the race', required: false })
   @IsString()
@@ -116,9 +116,9 @@ export class UpdateRaceDto {
       dto.baseHits,
       dto.baseDevPoints,
       dto.baseAt,
-      dto.defaultLanguageId,
       dto.talents,
       dto.traits?.map((t) => RaceTraitDto.toEntity(t)),
+      dto.defaultLanguage,
       dto.description,
       dto.imageUrl,
       userId,

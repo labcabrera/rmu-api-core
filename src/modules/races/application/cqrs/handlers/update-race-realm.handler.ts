@@ -2,7 +2,6 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import type { RaceRepository } from '../../ports/race-repository';
-import type { LanguageRepository } from 'src/modules/languages/application/ports/language-repository';
 import { UpdateRaceRealmNameCommand as UpdateRaceRealmCommand } from '../commands/update-race-realm.command';
 
 @CommandHandler(UpdateRaceRealmCommand)
@@ -11,7 +10,6 @@ export class UpdateRaceRealmHandler implements ICommandHandler<UpdateRaceRealmCo
 
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('LanguageRepository') private readonly languageRepository: LanguageRepository,
     @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 

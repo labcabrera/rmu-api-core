@@ -21,7 +21,7 @@ export interface RaceProps {
   baseHits: number;
   baseDevPoints: number;
   baseAt: number;
-  defaultLanguageId: string | null;
+  defaultLanguage: string | null;
   talents: string[];
   traits: RaceTrait[];
   description: string | null;

@@ -54,14 +54,14 @@ export class RaceModel {
   @Prop({ required: true })
   baseAt: number;
 
-  @Prop({ type: String, required: false })
-  defaultLanguageId: string | null;
-
   @Prop({ type: [String], required: true })
   talents: string[] = [];
 
   @Prop({ type: [RaceTrait], required: true })
   traits: RaceTrait[] = [];
+
+  @Prop({ type: String, required: false })
+  defaultLanguage: string | null;
 
   @Prop({ type: String, required: false })
   description: string | null;

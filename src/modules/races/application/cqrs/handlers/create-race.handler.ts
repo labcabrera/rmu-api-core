@@ -7,8 +7,6 @@ import type { RaceRepository } from '../../ports/race-repository';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
-import type { LanguageRepository } from 'src/modules/languages/application/ports/language-repository';
-import { Language } from 'src/modules/languages/domain/aggregates/language';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
@@ -17,7 +15,6 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('LanguageRepository') private readonly languageRepository: LanguageRepository,
     @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 
@@ -26,12 +23,6 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
 
     const realm = await this.realmRepository.findById(command.realmId);
     if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
-
-    let language: Language | null = null;
-    if (command.defaultLanguageId) {
-      language = await this.languageRepository.findById(command.defaultLanguageId);
-      if (!language) throw new ValidationError(`Language with id ${command.defaultLanguageId} does not exist`);
-    }
 
     const race = Race.create({
       name: command.name,
@@ -48,7 +39,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       baseHits: command.baseHits,
       baseDevPoints: command.baseDevPoints,
       baseAt: command.baseAt,
-      defaultLanguageId: language?.id || null,
+      defaultLanguage: command.defaultLanguage,
       talents: command.talents,
       traits: command.traits,
       description: command.description,

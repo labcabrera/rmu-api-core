@@ -27,9 +27,9 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     public baseHits: number,
     public baseDevPoints: number,
     public baseAt: number,
-    public defaultLanguageId: string | null,
     public talents: string[],
     public traits: RaceTrait[],
+    public defaultLanguage: string | null,
     public description: string | null,
     public imageUrl: string | null,
     public owner: string,
@@ -57,9 +57,9 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.baseHits,
       props.baseDevPoints,
       props.baseAt,
-      props.defaultLanguageId,
       props.talents,
       props.traits,
+      props.defaultLanguage,
       props.description,
       props.imageUrl,
       props.owner,
@@ -108,9 +108,9 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.baseHits,
       props.baseDevPoints,
       props.baseAt,
-      props.defaultLanguageId,
       props.talents,
       props.traits,
+      props.defaultLanguage,
       props.description,
       props.imageUrl,
       props.owner,
@@ -134,7 +134,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     if (props.baseHits !== undefined) this.baseHits = props.baseHits;
     if (props.baseDevPoints !== undefined) this.baseDevPoints = props.baseDevPoints;
     if (props.baseAt !== undefined) this.baseAt = props.baseAt;
-    if (props.defaultLanguageId !== undefined) this.defaultLanguageId = props.defaultLanguageId;
+    if (props.defaultLanguage !== undefined) this.defaultLanguage = props.defaultLanguage;
     if (props.talents) this.talents = props.talents;
     if (props.traits) this.traits = props.traits;
     if (props.description !== undefined) this.description = props.description;
@@ -160,9 +160,9 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       baseHits: this.baseHits,
       baseDevPoints: this.baseDevPoints,
       baseAt: this.baseAt,
-      defaultLanguageId: this.defaultLanguageId,
       talents: this.talents,
       traits: this.traits,
+      defaultLanguage: this.defaultLanguage,
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,

@@ -73,11 +73,6 @@ export class CreateRaceDto {
   @IsNumber()
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', required: false, type: String })
-  @IsString()
-  @IsOptional()
-  defaultLanguageId: string | null;
-
   @ApiProperty({ description: 'List of talents identifiers for the race' })
   @IsArray()
   @IsString({ each: true })
@@ -88,6 +83,11 @@ export class CreateRaceDto {
   @ValidateNested({ each: true })
   @Type(() => RaceTraitDto)
   traits: RaceTraitDto[];
+
+  @ApiProperty({ description: 'Default language', required: false, type: String })
+  @IsString()
+  @IsOptional()
+  defaultLanguage: string | null;
 
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
@@ -115,9 +115,9 @@ export class CreateRaceDto {
       dto.baseHits,
       dto.baseDevPoints,
       dto.baseAt,
-      dto.defaultLanguageId,
       dto.talents,
       dto.traits.map((t) => RaceTraitDto.toEntity(t)),
+      dto.defaultLanguage,
       dto.description,
       dto.imageUrl,
       userId,

@@ -55,14 +55,14 @@ export class RaceDto {
   @ApiProperty({ description: 'Racial armor type', example: 1 })
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language identifier', type: String, required: false })
-  defaultLanguageId: string | null;
-
   @ApiProperty({ description: 'List of racial talents', example: ['Night Vision', 'Keen Senses'] })
   talents: string[];
 
   @ApiProperty({ description: 'List of race traits', type: [RaceTraitDto] })
   traits: RaceTraitDto[];
+
+  @ApiProperty({ description: 'Default language identifier', type: String, required: false })
+  defaultLanguage: string | null;
 
   @ApiProperty({ description: 'Description of the race' })
   description: string | null;
@@ -93,7 +93,7 @@ export class RaceDto {
     dto.baseHits = entity.baseHits;
     dto.baseDevPoints = entity.baseDevPoints;
     dto.baseAt = entity.baseAt;
-    dto.defaultLanguageId = entity.defaultLanguageId;
+    dto.defaultLanguage = entity.defaultLanguage;
     dto.talents = entity.talents;
     dto.traits = entity.traits ? entity.traits.map((t) => RaceTraitDto.fromEntity(t)) : [];
     dto.description = entity.description;

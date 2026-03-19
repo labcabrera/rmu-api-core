@@ -17,7 +17,6 @@ import { SharedModule } from '../shared/shared.module';
 import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
 import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler';
 import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
-import { LanguagesModule } from '../languages/languages.module';
 import { UpdateRaceRealmHandler } from './application/cqrs/handlers/update-race-realm.handler';
 import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-races-by-realm.handler';
 
@@ -29,7 +28,6 @@ import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-ra
     AuthModule,
     SharedModule,
     RealmsModule,
-    LanguagesModule,
   ],
   controllers: [RaceController],
   providers: [
