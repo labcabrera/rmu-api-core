@@ -7,7 +7,6 @@ import { RacesModule } from './modules/races/races.module';
 import { RealmsModule } from './modules/realms/realms.module';
 import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 import { TraitsModule } from './modules/traits/traits.module';
-import { LanguagesModule } from './modules/languages/languages.module';
 import Joi from 'joi';
 import { SharedModule } from './modules/shared/shared.module';
 import { SkillsModule } from './modules/skills/skills.module';
@@ -51,7 +50,6 @@ import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
     RealmsModule,
     ManeuversModule,
     TraitsModule,
-    LanguagesModule,
     EnumerationsModule,
   ],
 })

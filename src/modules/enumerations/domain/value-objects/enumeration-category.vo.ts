@@ -9,6 +9,7 @@ export const ENUMERATION_CATEGORIES = [
   'vehicle',
   'region',
   'religion',
+  'language',
   'melee-weapon-type',
   'ranged-weapon-type',
   'skill-combat-training',

@@ -1,7 +1,0 @@
-import { Language } from 'src/modules/languages/domain/aggregates/language';
-import { BaseRepository } from 'src/modules/shared/application/ports/base-repository';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-
-export interface LanguageRepository extends BaseRepository<Language> {
-  updateRealmInfo(realmId: string, realmName: string, realmOwner: string, accessType: AccessType): Promise<void>;
-}
