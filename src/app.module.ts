@@ -14,6 +14,7 @@ import { SkillCategoriesModule } from './modules/skill-categories/skill-categori
 import { EnumerationsModule } from './modules/enumerations/enumerations.module';
 import { CharacterSizesModule } from './modules/character-sizes/character-sizes.module';
 import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
+import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
     ManeuversModule,
     TraitsModule,
     EnumerationsModule,
+    ResistanceRollsModule,
   ],
 })
 export class AppModule {}
