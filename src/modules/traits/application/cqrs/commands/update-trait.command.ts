@@ -8,7 +8,7 @@ export class UpdateTraitCommand extends AuthenticatedCommand {
     public readonly name: string | undefined,
     public readonly category: TraitCategory | undefined,
     public readonly isTalent: boolean | undefined,
-    public readonly specialization: TraitSpecialization | undefined,
+    public readonly specialization: TraitSpecialization | null | undefined,
     public readonly isTierBased: boolean | undefined,
     public readonly adquisitionCost: number | undefined,
     public readonly tierCost: number | undefined,

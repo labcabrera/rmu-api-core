@@ -17,7 +17,7 @@ export class TraitDto {
   isTalent: boolean;
 
   @ApiProperty({ description: 'Indicates the specialization of the trait', example: 'combat-skill' })
-  specialization: TraitSpecialization;
+  specialization: TraitSpecialization | null;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', example: false })
   isTierBased: boolean;

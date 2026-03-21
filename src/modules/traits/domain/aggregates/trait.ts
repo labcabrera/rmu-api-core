@@ -11,7 +11,7 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
     public name: string,
     public category: TraitCategory,
     public isTalent: boolean,
-    public specialization: TraitSpecialization,
+    public specialization: TraitSpecialization | null,
     public isTierBased: boolean,
     public maxTier: number | undefined,
     public adquisitionCost: number,

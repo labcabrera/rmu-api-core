@@ -19,8 +19,8 @@ export class TraitModel {
   @Prop({ required: true })
   isTalent: boolean;
 
-  @Prop({ type: String, required: true })
-  specialization: TraitSpecialization;
+  @Prop({ type: String, required: false })
+  specialization: TraitSpecialization | null;
 
   @Prop({ required: true })
   isTierBased: boolean;

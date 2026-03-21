@@ -7,7 +7,7 @@ export class CreateTraitCommand extends AuthenticatedCommand {
     public readonly name: string,
     public readonly category: TraitCategory,
     public readonly isTalent: boolean,
-    public readonly specialization: TraitSpecialization,
+    public readonly specialization: TraitSpecialization | null,
     public readonly isTierBased: boolean,
     public readonly maxTier: number | undefined,
     public readonly adquisitionCost: number,

@@ -6,7 +6,7 @@ export interface TraitProps {
   name: string;
   category: TraitCategory;
   isTalent: boolean;
-  specialization: TraitSpecialization;
+  specialization: TraitSpecialization | null;
   isTierBased: boolean;
   maxTier: number | undefined;
   adquisitionCost: number;
