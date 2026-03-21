@@ -7,5 +7,6 @@ export class ResistanceRollResult {
     public readonly result: ResistanceRollResultCode,
     public readonly modifiers: KeyValue[],
     public readonly totalResult: number,
+    public readonly failure: number,
   ) {}
 }
