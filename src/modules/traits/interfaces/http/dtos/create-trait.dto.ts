@@ -23,10 +23,10 @@ export class CreateTraitDto {
   @IsBoolean()
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Trait specialization', required: true, example: 'none' })
+  @ApiProperty({ description: 'Trait specialization', required: false, example: 'none' })
   @IsString()
-  @IsNotEmpty()
-  specialization: TraitSpecialization;
+  @IsOptional()
+  specialization: TraitSpecialization | null;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', required: true, example: false })
   @IsBoolean()

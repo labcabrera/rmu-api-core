@@ -28,6 +28,8 @@ export const ENUMERATION_CATEGORIES = [
   'skill-influence',
   'skill-music',
   'skill-magic-ritual',
+  'sense',
+  'statistic',
 ] as const;
 
 export type EnumerationCategory = (typeof ENUMERATION_CATEGORIES)[number];
