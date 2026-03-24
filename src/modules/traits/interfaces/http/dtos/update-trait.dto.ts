@@ -59,18 +59,20 @@ export class UpdateTraitDto {
   @IsOptional()
   description: string | undefined;
 
-  static toCommand(id: string, dto: UpdateTraitDto, userId: string, userRoles: string[]) {
-    const props = {
-      name: dto.name,
-      category: dto.category,
-      isTalent: dto.isTalent,
-      specialization: dto.specialization,
-      isTierBased: dto.isTierBased,
-      maxTier: dto.maxTier,
-      adquisitionCost: dto.adquisitionCost,
-      tierCost: dto.tierCost,
-      description: dto.description,
-    };
-    return UpdateTraitCommand.create(id, props, userId, userRoles);
+  static toCommand(id: string, dto: UpdateTraitDto, userId: string, roles: string[]) {
+    return new UpdateTraitCommand(
+      id,
+      dto.name,
+      dto.category,
+      dto.isTalent,
+      dto.specialization,
+      dto.isTierBased,
+      dto.adquisitionCost,
+      dto.tierCost,
+      dto.maxTier,
+      dto.description,
+      userId,
+      roles,
+    );
   }
 }

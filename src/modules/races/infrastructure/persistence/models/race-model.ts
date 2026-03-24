@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 import { RaceTrait } from './race-trait.model';
 import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export type RaceDocument = RaceModel & Document;
 
@@ -53,9 +54,6 @@ export class RaceModel {
   @Prop({ required: true })
   baseAt: number;
 
-  @Prop({ type: NamedEntity, required: false })
-  defaultLanguage: NamedEntity | null;
-
   @Prop({ type: [String], required: true })
   talents: string[] = [];
 
@@ -63,19 +61,25 @@ export class RaceModel {
   traits: RaceTrait[] = [];
 
   @Prop({ type: String, required: false })
-  description: string | undefined;
+  defaultLanguage: string | null;
 
   @Prop({ type: String, required: false })
-  imageUrl: string | undefined;
+  description: string | null;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: false })
+  imageUrl: string | null;
+
+  @Prop({ type: String, required: true })
   owner: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
+  accessType: AccessType;
+
+  @Prop({ type: Date, required: true })
   createdAt: Date;
 
-  @Prop({ required: false })
-  updatedAt?: Date;
+  @Prop({ type: Date, required: false })
+  updatedAt: Date | null;
 }
 
 export const RaceSchema = SchemaFactory.createForClass(RaceModel);

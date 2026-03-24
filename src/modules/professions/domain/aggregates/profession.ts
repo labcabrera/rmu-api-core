@@ -1,15 +1,15 @@
-import { AggregateRoot } from '@nestjs/cqrs';
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
 import { RealmType } from '../value-objects/realm-type.vo';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 import { ProfessionProps } from './profession.props';
-import { HasOwner } from 'src/modules/shared/domain/entities/has-owner';
+import { RbacEntity } from 'src/modules/shared/domain/entities/has-owner';
 import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
 import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 
-export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> implements HasOwner {
+export class Profession extends BaseAggregateRoot<ProfessionProps> implements RbacEntity {
   constructor(
-    public readonly id: string,
+    id: string,
     public archetype: ProfessionArchetype,
     public availableRealmTypes: RealmType[],
     public fixedRealmTypes: RealmType[],
@@ -19,10 +19,11 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     public description: string | undefined,
     public imageUrl: string | undefined,
     public owner: string,
+    public accessType: AccessType,
     public createdAt: Date,
     public updatedAt?: Date,
   ) {
-    super();
+    super(id);
   }
 
   static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
@@ -37,10 +38,10 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       props.description,
       props.imageUrl,
       props.owner,
+      props.accessType,
       new Date(),
       undefined,
     );
-    //TODO apply event
     return profession;
   }
 
@@ -54,8 +55,8 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
     if (props.entitySource) this.entitySource = props.entitySource;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
+    if (props.accessType) this.accessType = props.accessType;
     this.updatedAt = new Date();
-    //TODO apply event
   }
 
   static fromProps(props: ProfessionProps): Profession {
@@ -70,12 +71,13 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       props.description,
       props.imageUrl,
       props.owner,
+      props.accessType,
       props.createdAt,
       props.updatedAt,
     );
   }
 
-  toProps(): ProfessionProps {
+  getProps(): ProfessionProps {
     return {
       id: this.id,
       archetype: this.archetype,
@@ -87,6 +89,7 @@ export class Profession extends AggregateRoot<DomainEvent<ProfessionProps>> impl
       description: this.description,
       imageUrl: this.imageUrl,
       owner: this.owner,
+      accessType: this.accessType,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

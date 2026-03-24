@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { CreateSkillCommand } from 'src/modules/skills/application/cqrs/commands/create-skill.command';
-import { SkillSpecialization } from 'src/modules/skills/domain/value-objects/skill-specialization.vo';
 
 export class CreateSkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
@@ -21,9 +22,13 @@ export class CreateSkillDto {
   @ApiProperty({ description: 'Specialization of the skill', example: 'tracking' })
   @IsString()
   @IsOptional()
-  specialization!: SkillSpecialization | undefined;
+  specialization: EnumerationCategory | null;
+
+  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @IsString()
+  accessType: AccessType;
 
   static toCommand(dto: CreateSkillDto, userId: string, roles: string[]): CreateSkillCommand {
-    return new CreateSkillCommand(dto.id, dto.categoryId, dto.bonus, dto.specialization, userId, roles);
+    return new CreateSkillCommand(dto.id, dto.categoryId, dto.bonus, dto.specialization, dto.accessType, userId, roles);
   }
 }

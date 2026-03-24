@@ -7,10 +7,14 @@ import { RacesModule } from './modules/races/races.module';
 import { RealmsModule } from './modules/realms/realms.module';
 import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 import { TraitsModule } from './modules/traits/traits.module';
-import { LanguagesModule } from './modules/languages/languages.module';
 import Joi from 'joi';
 import { SharedModule } from './modules/shared/shared.module';
 import { SkillsModule } from './modules/skills/skills.module';
+import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
+import { EnumerationsModule } from './modules/enumerations/enumerations.module';
+import { CharacterSizesModule } from './modules/character-sizes/character-sizes.module';
+import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
+import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module';
 
 @Module({
   imports: [
@@ -38,13 +42,17 @@ import { SkillsModule } from './modules/skills/skills.module';
     }),
     AuthModule,
     SharedModule,
+    CharacterSizesModule,
+    ArmorTypesModule,
+    SkillCategoriesModule,
     SkillsModule,
     ProfessionsModule,
     RacesModule,
     RealmsModule,
     ManeuversModule,
     TraitsModule,
-    LanguagesModule,
+    EnumerationsModule,
+    ResistanceRollsModule,
   ],
 })
 export class AppModule {}

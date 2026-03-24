@@ -1,3 +1,4 @@
-export interface HasOwner {
+export interface RbacEntity {
   owner: string;
+  accessType: string;
 }

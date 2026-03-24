@@ -1,7 +1,11 @@
-export class DeleteProfessionCommand {
+import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
+
+export class DeleteProfessionCommand extends AuthenticatedCommand {
   constructor(
     public readonly id: string,
-    public readonly userId: string,
-    public readonly roles: string[],
-  ) {}
+    userId: string,
+    roles: string[],
+  ) {
+    super(userId, roles);
+  }
 }

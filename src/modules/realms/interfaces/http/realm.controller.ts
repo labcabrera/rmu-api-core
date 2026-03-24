@@ -44,7 +44,8 @@ export class RealmController {
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
     const userId: string = req.user!.id as string;
-    const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
     const mapped = page.content.map((realm) => RealmDto.fromEntity(realm));
     return new Page<RealmDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
@@ -84,7 +85,7 @@ export class RealmController {
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
   async delete(@Param('id') id: string, @Request() req) {
     const user = req.user!;
-    const command = new DeleteRealmCommand(id, undefined, user.id as string, user.roles! as string[]);
+    const command = new DeleteRealmCommand(id, user.id as string, user.roles! as string[]);
     await this.commandBus.execute(command);
   }
 }

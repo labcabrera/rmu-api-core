@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsIn } from 'class-validator';
 import { CreateRealmCommand } from 'src/modules/realms/application/cqrs/commands/create-realm.command';
+import type { MagicPresence } from 'src/modules/realms/domain/value-objects/realm-magic-type.vo';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class CreateRealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
@@ -12,6 +14,11 @@ export class CreateRealmDto {
   @IsString()
   @IsOptional()
   shortDescription: string | undefined;
+
+  @ApiProperty({ description: 'Magic presence in the realm', example: 'limited' })
+  @IsString()
+  @IsIn(['unlimited', 'limited', 'none'])
+  magicPresence: MagicPresence;
 
   @ApiProperty({
     description: 'Description of the realm',
@@ -31,7 +38,20 @@ export class CreateRealmDto {
   @IsOptional()
   imageUrl: string | undefined;
 
+  @ApiProperty({ description: 'Access type', example: 'public' })
+  @IsString()
+  accessType: AccessType;
+
   static toCommand(dto: CreateRealmDto, userId: string, userRoles: string[]) {
-    return new CreateRealmCommand(dto.name, dto.shortDescription, dto.description, dto.imageUrl, userId, userRoles);
+    return new CreateRealmCommand(
+      dto.name,
+      dto.shortDescription,
+      dto.description,
+      dto.imageUrl,
+      dto.magicPresence,
+      dto.accessType,
+      userId,
+      userRoles,
+    );
   }
 }

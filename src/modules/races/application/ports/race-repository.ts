@@ -1,14 +1,9 @@
 import { Race } from 'src/modules/races/domain/aggregates/race';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { BaseRepository } from 'src/modules/shared/application/ports/base-repository';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
-export interface RaceRepository {
-  findById(id: string): Promise<Race | null>;
+export interface RaceRepository extends BaseRepository<Race> {
+  updateRealmInfo(realmId: string, realmName: string, owner: string, acessType: AccessType): Promise<void>;
 
-  findByRsql(rsql: string | undefined, page: number, size: number): Promise<Page<Race>>;
-
-  save(entity: Race): Promise<Race>;
-
-  update(id: string, entity: Partial<Race>): Promise<Race>;
-
-  deleteById(id: string): Promise<Race | null>;
+  findByRealmId(realmId: string): Promise<Race[]>;
 }

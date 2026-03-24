@@ -1,4 +1,6 @@
-export class AddRaceTraitCommand {
+import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
+
+export class AddRaceTraitCommand extends AuthenticatedCommand {
   constructor(
     public readonly raceId: string,
     public readonly traitId: string,
@@ -6,7 +8,9 @@ export class AddRaceTraitCommand {
     public readonly isTalent: boolean,
     public readonly tier: number | undefined,
     public readonly description: string | undefined,
-    public readonly userId: string,
-    public readonly roles: string[],
-  ) {}
+    userId: string,
+    roles: string[],
+  ) {
+    super(userId, roles);
+  }
 }

@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete, Patch } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -13,6 +14,8 @@ import { Page } from 'src/modules/shared/domain/entities/page';
 import { CreateProfessionDto } from './dtos/create-profession.dto';
 import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-profession.command';
 import { UpdateProfessionDto } from './dtos/update-profession.dto';
+import { CreateProfessionCommand } from '../../application/cqrs/commands/create-profession.command';
+import { UpdateProfessionCommand } from '../../application/cqrs/commands/update-profession.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')
@@ -59,7 +62,7 @@ export class ProfessionController {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = CreateProfessionDto.toCommand(createProfessionDto, userId, roles);
-    const entity = await this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<CreateProfessionCommand, Profession>(command);
     return ProfessionDto.fromEntity(entity);
   }
 
@@ -69,11 +72,12 @@ export class ProfessionController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Profession not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  updateSettings(@Param('id') id: string, @Body() updateProfessionDto: UpdateProfessionDto, @Request() req) {
+  async updateSettings(@Param('id') id: string, @Body() updateProfessionDto: UpdateProfessionDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = UpdateProfessionDto.toCommand(id, updateProfessionDto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<UpdateProfessionCommand, Profession>(command);
+    return ProfessionDto.fromEntity(entity);
   }
 
   @Delete(':id')

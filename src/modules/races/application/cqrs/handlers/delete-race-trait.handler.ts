@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Race } from '../../../domain/aggregates/race';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
@@ -9,6 +9,8 @@ import { DeleteRaceTraitCommand } from '../commands/delete-race-trait.command';
 
 @CommandHandler(DeleteRaceTraitCommand)
 export class DeleteRaceTraitHandler implements ICommandHandler<DeleteRaceTraitCommand, Race> {
+  private readonly logger = new Logger(DeleteRaceTraitHandler.name);
+
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @Inject('RaceGuardPort') private readonly raceGuard: RaceGuardPort,
@@ -16,6 +18,8 @@ export class DeleteRaceTraitHandler implements ICommandHandler<DeleteRaceTraitCo
   ) {}
 
   async execute(command: DeleteRaceTraitCommand): Promise<Race> {
+    this.logger.log(`Deleting trait ${command.traitId} from race ${command.raceId} for user ${command.userId}`);
+
     const race = await this.raceRepository.findById(command.raceId);
     if (!race) throw new NotFoundError('Race', command.raceId);
 

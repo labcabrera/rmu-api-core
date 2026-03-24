@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Body, Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
@@ -12,12 +12,17 @@ import { EnduranceManeuverResultDto } from './dtos/endurance-maneuver-result.dto
 import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query';
 import { ManeuverTableType } from '../../domain/value-objects/maneuver-table-type.vo';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { AbsoluteManeuverTableDto } from './dtos/absolute-maneuver-table.dto';
+import { AbsoluteManeuverService } from '../../domain/services/absolute-maneuver.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')
 @ApiTags('Maneuvers')
 export class ManeuverController {
-  constructor(private queryBus: QueryBus) {}
+  constructor(
+    private absoluteManeuverService: AbsoluteManeuverService,
+    private queryBus: QueryBus,
+  ) {}
 
   @Get('/percent')
   @ApiOperation({ operationId: 'percentManeuver', summary: 'Get percent maneuver result' })
@@ -46,12 +51,21 @@ export class ManeuverController {
     return AbsoluteManeuverResultDto.fromEntity(entity);
   }
 
+  @Get('/absolute/tables/:tableName')
+  @ApiOperation({ operationId: 'absoluteManeuverTable', summary: 'Get absolute maneuver table' })
+  @ApiOkResponse({ type: AbsoluteManeuverTableDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  absoluteManeuverTable(@Param('tableName') tableName: string): AbsoluteManeuverTableDto {
+    const table = this.absoluteManeuverService.getTable(tableName);
+    return AbsoluteManeuverTableDto.fromEntity(table);
+  }
+
   @Get('/absolute/tables')
   @ApiOperation({ operationId: 'getAbsoluteManeuverTables', summary: 'Get absolute maneuver tables' })
   @ApiOkResponse({ type: [String], description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   getAbsoluteManeuverTables(): string[] {
-    return ['adrenal', 'animal', 'awareness', 'composition', 'crafting', 'gymnastic', 'lore', 'medical'];
+    return this.absoluteManeuverService.getTableNames();
   }
 
   @Get('/endurance')

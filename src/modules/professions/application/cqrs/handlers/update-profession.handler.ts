@@ -27,6 +27,7 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
       professionalSkills: command.professionalSkills,
       description: command.description,
       imageUrl: command.imageUrl,
+      accessType: command.accessType,
     });
     return await this.professionRepository.update(current.id, current);
   }

@@ -4,64 +4,29 @@ import { Model } from 'mongoose';
 import { Race } from 'src/modules/races/domain/aggregates/race';
 import { RaceDocument, RaceModel } from '../persistence/models/race-model';
 import { RaceRepository } from '../../application/ports/race-repository';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
+import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 @Injectable()
-export class MongoRaceRepository implements RaceRepository {
-  constructor(
-    @InjectModel(RaceModel.name) private raceModel: Model<RaceDocument>,
-    private rsqlParser: RsqlParser,
-  ) {}
-
-  async findById(id: string): Promise<Race | null> {
-    const readed = await this.raceModel.findById(id);
-    return readed ? this.mapToEntity(readed) : null;
+export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument> implements RaceRepository {
+  constructor(@InjectModel(RaceModel.name) raceModel: Model<RaceDocument>, rsqlParser: RsqlParser) {
+    super(raceModel, rsqlParser);
   }
 
-  async findByRsql(rsql: string, page: number, size: number): Promise<Page<Race>> {
-    const skip = page * size;
-    const mongoQuery = this.rsqlParser.parse(rsql);
-    const [racesDocs, totalElements] = await Promise.all([
-      this.raceModel.find(mongoQuery).skip(skip).limit(size).sort({ name: 1 }),
-      this.raceModel.countDocuments(mongoQuery),
-    ]);
-    const content = racesDocs.map((doc) => this.mapToEntity(doc));
-    return new Page<Race>(content, page, size, totalElements);
+  async updateRealmInfo(realmId: string, realmName: string, realmOwner: string, accessType: AccessType): Promise<void> {
+    const now = new Date();
+    const update = { 'realm.name': realmName, owner: realmOwner, accessType: accessType, updatedAt: now };
+    await this.model.updateMany({ 'realm.id': realmId }, { $set: update }).exec();
   }
 
-  async save(race: Race): Promise<Race> {
-    const props = race.toProps();
-    const model = new this.raceModel({ ...props, _id: race.id });
-    await model.save();
-    return this.mapToEntity(model);
+  async findByRealmId(realmId: string): Promise<Race[]> {
+    const values = await this.model.find({ 'realm.id': realmId }).exec();
+    return values.map((doc) => this.mapToEntity(doc));
   }
 
-  async update(id: string, request: Partial<Race>): Promise<Race> {
-    const persistenceRequest = {
-      ...request,
-      traits: request.traits,
-    };
-    const updatedRace = await this.raceModel.findByIdAndUpdate(id, { $set: persistenceRequest }, { new: true });
-    if (!updatedRace) {
-      throw new NotFoundError('Race', id);
-    }
-    return this.mapToEntity(updatedRace);
-  }
-
-  async deleteById(id: string): Promise<Race | null> {
-    const result = await this.raceModel.findByIdAndDelete(id);
-    return result ? this.mapToEntity(result) : null;
-  }
-
-  async existsById(id: string): Promise<boolean> {
-    const exists = await this.raceModel.exists({ _id: id });
-    return exists !== null;
-  }
-
-  private mapToEntity(doc: RaceDocument): Race {
+  protected mapToEntity(doc: RaceDocument): Race {
     return Race.fromProps({
       id: doc._id,
       name: doc.name,
@@ -84,6 +49,7 @@ export class MongoRaceRepository implements RaceRepository {
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
+      accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

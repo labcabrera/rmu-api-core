@@ -73,11 +73,6 @@ export class CreateRaceDto {
   @IsNumber()
   baseAt: number;
 
-  @ApiProperty({ description: 'Default language', required: false, type: String })
-  @IsString()
-  @IsOptional()
-  defaultLanguageId: string | null;
-
   @ApiProperty({ description: 'List of talents identifiers for the race' })
   @IsArray()
   @IsString({ each: true })
@@ -89,15 +84,20 @@ export class CreateRaceDto {
   @Type(() => RaceTraitDto)
   traits: RaceTraitDto[];
 
+  @ApiProperty({ description: 'Default language', required: false, type: String })
+  @IsString()
+  @IsOptional()
+  defaultLanguage: string | null;
+
   @ApiProperty({ description: 'Description of the race' })
   @IsString()
   @IsOptional()
-  description: string | undefined;
+  description: string | null;
 
   @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
   @IsString()
   @IsOptional()
-  imageUrl: string | undefined;
+  imageUrl: string | null;
 
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(
@@ -115,9 +115,9 @@ export class CreateRaceDto {
       dto.baseHits,
       dto.baseDevPoints,
       dto.baseAt,
-      dto.defaultLanguageId,
       dto.talents,
       dto.traits.map((t) => RaceTraitDto.toEntity(t)),
+      dto.defaultLanguage,
       dto.description,
       dto.imageUrl,
       userId,

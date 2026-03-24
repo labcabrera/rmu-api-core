@@ -4,6 +4,7 @@ import { ProfessionSkillCosts } from './profession-skill-costs.model';
 import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
 import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
 import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export type ProfessionDocument = ProfessionModel & Document;
 
@@ -36,8 +37,11 @@ export class ProfessionModel {
   @Prop({ type: String, required: false })
   imageUrl: string | undefined;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   owner: string;
+
+  @Prop({ type: String, required: true })
+  accessType: AccessType;
 
   @Prop({ required: true })
   createdAt: Date;

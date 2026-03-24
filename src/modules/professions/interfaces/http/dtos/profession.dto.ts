@@ -4,6 +4,7 @@ import { ProfessionSkillCostsDto } from './profession-skill-cost.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 import type { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
+import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export class ProfessionDto {
   @ApiProperty({ description: 'Profession identifier', example: 'rogue', required: true })
@@ -33,6 +34,12 @@ export class ProfessionDto {
   @ApiProperty({ description: 'Image URL for the profession', required: false, example: 'https://example.com/warrior.png' })
   imageUrl?: string | undefined;
 
+  @ApiProperty({ description: 'Owner of the profession', example: 'user123', required: true })
+  owner: string;
+
+  @ApiProperty({ description: 'Access type', example: 'public', required: true })
+  accessType: AccessType;
+
   static fromEntity(entity: Profession): ProfessionDto {
     return {
       id: entity.id,
@@ -44,6 +51,8 @@ export class ProfessionDto {
       entitySource: entity.entitySource,
       description: entity.description,
       imageUrl: entity.imageUrl,
+      owner: entity.owner,
+      accessType: entity.accessType,
     };
   }
 }

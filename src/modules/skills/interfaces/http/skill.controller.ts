@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Request } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Patch, HttpCode, Delete } from '@nestjs/common';
+import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { SkillDto, SkillPageDto } from './dto/skill.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -9,7 +10,11 @@ import { GetSkillQuery } from '../../application/cqrs/queries/get-skill.query';
 import { GetSkillsQuery } from '../../application/cqrs/queries/get-skills.query';
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { Skill } from '../../domain/aggregates/skill';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { UpdateSkillDto } from './dto/update-skill.dto';
+import { DeleteSkillCommand } from '../../application/cqrs/commands/delete-skill.command';
+import { UpdateSkillCommand } from '../../application/cqrs/commands/update-skill.command';
+import { CreateSkillCommand } from '../../application/cqrs/commands/create-skill.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skills')
@@ -22,31 +27,69 @@ export class SkillController {
 
   @Get(':id')
   @ApiOperation({ operationId: 'findSkillById', summary: 'Find skill by id' })
-  @ApiOkResponse({ type: SkillDto })
+  @ApiOkResponse({ type: SkillDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Skill not found', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
     const userId: string = req.user!.id as string;
-    const query = new GetSkillQuery(id, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetSkillQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetSkillQuery, Skill>(query);
-    if (!entity) throw new NotFoundError('Skill not found', id);
     return SkillDto.fromEntity(entity);
   }
 
   @Get('')
-  @ApiOperation({ operationId: 'findAllSkills', summary: 'Find all skills' })
-  @ApiOkResponse({ type: SkillPageDto })
+  @ApiOperation({ operationId: 'findSkills', summary: 'Find skills by RSQL' })
+  @ApiOkResponse({ type: SkillPageDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
   async find(@Query() dto: PagedQueryDto, @Request() req): Promise<SkillPageDto> {
     const userId: string = req.user!.id as string;
-    const query = new GetSkillsQuery(dto.q, dto.page, dto.size, userId);
+    const roles: string[] = req.user!.roles as string[];
+    const query = new GetSkillsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetSkillsQuery, Page<Skill>>(query);
     const mapped = page.content.map((category) => SkillDto.fromEntity(category));
     return new Page<SkillDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
   @Post('')
-  create(@Body() createSkillDto: CreateSkillDto, @Request() req) {
+  @HttpCode(201)
+  @ApiBody({ type: CreateSkillDto })
+  @ApiOperation({ operationId: 'createSkill', summary: 'Create skill' })
+  @ApiOkResponse({ type: SkillDto, description: 'Success' })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  @ApiResponse({ status: 409, description: 'Conflict, skill already exists', type: ErrorDto })
+  async create(@Body() createSkillDto: CreateSkillDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = CreateSkillDto.toCommand(createSkillDto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<CreateSkillCommand, Skill>(command);
+    return SkillDto.fromEntity(entity);
+  }
+
+  @Patch(':id')
+  @ApiBody({ type: UpdateSkillDto })
+  @ApiOperation({ operationId: 'updateSkill', summary: 'Update skill' })
+  @ApiOkResponse({ type: SkillDto, description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Skill not found', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  async update(@Param('id') id: string, @Body() dto: UpdateSkillDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = UpdateSkillDto.toCommand(id, dto, userId, roles);
+    const entity = await this.commandBus.execute<UpdateSkillCommand, Skill>(command);
+    return SkillDto.fromEntity(entity);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiOperation({ operationId: 'deleteSkill', summary: 'Delete skill' })
+  @ApiOkResponse({ type: SkillDto, description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Skill not found', type: ErrorDto })
+  async delete(@Param('id') id: string, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = new DeleteSkillCommand(id, userId, roles);
+    await this.commandBus.execute(command);
   }
 }

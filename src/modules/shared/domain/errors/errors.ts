@@ -72,3 +72,11 @@ export class ForbiddenError extends DomainError {
     Object.setPrototypeOf(this, ForbiddenError.prototype);
   }
 }
+
+export class BadGatewayError extends DomainError {
+  constructor(message: string) {
+    super(message, 502);
+    this.name = 'BadGatewayError';
+    Object.setPrototypeOf(this, BadGatewayError.prototype);
+  }
+}

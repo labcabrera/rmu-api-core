@@ -23,10 +23,10 @@ export class CreateTraitDto {
   @IsBoolean()
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Trait specialization', required: true, example: 'none' })
+  @ApiProperty({ description: 'Trait specialization', required: false, example: 'none' })
   @IsString()
-  @IsNotEmpty()
-  specialization: TraitSpecialization;
+  @IsOptional()
+  specialization: TraitSpecialization | null;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', required: true, example: false })
   @IsBoolean()
@@ -52,18 +52,16 @@ export class CreateTraitDto {
   description: string | undefined;
 
   static toCommand(dto: CreateTraitDto, userId: string, userRoles: string[]) {
-    return CreateTraitCommand.create(
-      {
-        name: dto.name,
-        category: dto.category,
-        isTalent: dto.isTalent,
-        specialization: dto.specialization,
-        isTierBased: dto.isTierBased,
-        maxTier: dto.maxTier,
-        adquisitionCost: dto.adquisitionCost,
-        tierCost: dto.tierCost,
-        description: dto.description,
-      },
+    return new CreateTraitCommand(
+      dto.name,
+      dto.category,
+      dto.isTalent,
+      dto.specialization,
+      dto.isTierBased,
+      dto.maxTier,
+      dto.adquisitionCost,
+      dto.tierCost,
+      dto.description,
       userId,
       userRoles,
     );
