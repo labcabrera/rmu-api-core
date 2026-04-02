@@ -30,6 +30,7 @@ export const ENUMERATION_CATEGORIES = [
   'skill-magic-ritual',
   'sense',
   'statistic',
+  'outlook-type',
 ] as const;
 
 export type EnumerationCategory = (typeof ENUMERATION_CATEGORIES)[number];
