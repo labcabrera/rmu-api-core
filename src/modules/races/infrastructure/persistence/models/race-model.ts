@@ -4,6 +4,7 @@ import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.mod
 import { RaceTrait } from './race-trait.model';
 import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { RaceSkillBonus } from './race-skill-bonus.model';
 
 export type RaceDocument = RaceModel & Document;
 
@@ -59,6 +60,9 @@ export class RaceModel {
 
   @Prop({ type: [RaceTrait], required: true })
   traits: RaceTrait[] = [];
+
+  @Prop({ type: [RaceSkillBonus], required: true })
+  skillBonuses: RaceSkillBonus[];
 
   @Prop({ type: String, required: false })
   defaultLanguage: string | null;

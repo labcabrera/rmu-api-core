@@ -42,6 +42,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       defaultLanguage: command.defaultLanguage,
       talents: command.talents,
       traits: command.traits,
+      skillBonuses: [],
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,

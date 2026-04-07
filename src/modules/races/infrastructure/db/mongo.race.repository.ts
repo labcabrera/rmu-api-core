@@ -46,6 +46,7 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
       defaultLanguage: doc.defaultLanguage,
       talents: doc.talents,
       traits: doc.traits ?? [],
+      skillBonuses: doc.skillBonuses ?? [],
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
