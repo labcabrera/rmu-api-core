@@ -103,7 +103,9 @@ export class Race extends BaseAggregateRoot<RaceProps> {
   }
 
   removeSkillBonus(skillId: string, specialization: string | null) {
-    const index = this.skillBonuses.findIndex((sb) => sb.skillId === skillId && sb.specialization === specialization);
+    const index = this.skillBonuses.findIndex(
+      (sb) => sb.skillId === skillId && (sb.specialization === specialization || (!sb.specialization && !specialization)),
+    );
     if (index !== -1) {
       this.skillBonuses.splice(index, 1);
       this.apply(new RaceUpdatedEvent(this.getProps()));
