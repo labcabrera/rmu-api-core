@@ -100,6 +100,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     } else {
       this.skillBonuses.push(new RaceSkillBonus(skillId, specialization, bonus));
     }
+    this.apply(new RaceUpdatedEvent(this.getProps()));
   }
 
   removeSkillBonus(skillId: string, specialization: string | null) {
