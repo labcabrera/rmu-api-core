@@ -77,7 +77,6 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     );
     this.updatedAt = new Date();
     this.apply(new CultureUpdatedEvent(this.getProps()));
-    throw new Error('Method not implemented.');
   }
 
   findFixedSkillRank(skillId: string, specialization: string | null): CultureSkillRank | undefined {

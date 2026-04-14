@@ -18,6 +18,7 @@ import { DeleteCultureCommand } from '../../application/cqrs/commands/delete-cul
 import { CultureSkillRankDto } from './dtos/culture-skill-rank.dto';
 import { AddCultureFixedSkillRankCommand } from '../../application/cqrs/commands/add-culture-fixed-skill-rank.command';
 import { DeleteCultureFixedSkillRankCommand } from '../../application/cqrs/commands/delete-culture-fixed-skill-rank.command';
+import { DeleteCultureFixedSkillDto } from './dtos/delete-culture-fixed-skill.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/cultures')
@@ -107,21 +108,16 @@ export class CultureController {
     return CultureDto.fromEntity(entity);
   }
 
-  @Delete(':id/fixed-skills/:skillId')
+  @Delete(':id/fixed-skills')
   @HttpCode(200)
   @ApiOperation({ operationId: 'deleteCultureFixedSkill', summary: 'Delete culture fixed skill ranks' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async deleteFixedSkill(
-    @Param('id') id: string,
-    @Param('skillId') skillId: string,
-    @Query('specialization') specialization: string | null,
-    @Request() req,
-  ) {
+  async deleteFixedSkill(@Param('id') id: string, @Body() dto: DeleteCultureFixedSkillDto, @Request() req) {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
-    const command = new DeleteCultureFixedSkillRankCommand(id, skillId, specialization, userId, roles);
+    const command = DeleteCultureFixedSkillDto.toCommand(id, dto, userId, roles);
     const entity = await this.commandBus.execute<DeleteCultureFixedSkillRankCommand, Culture>(command);
     return CultureDto.fromEntity(entity);
   }
