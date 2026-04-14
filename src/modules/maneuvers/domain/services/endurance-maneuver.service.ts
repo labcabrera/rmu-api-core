@@ -65,7 +65,7 @@ const ENDURANCE_TABLE: { min: number; max: number; result: EnduranceManeuverResu
 
 export class EnduranceManeuverService {
   execute(roll: number, unusualEvent: boolean): EnduranceManeuverResult {
-    const entry = ENDURANCE_TABLE.find((row) => roll >= row.min && roll <= row.max);
+    const entry = ENDURANCE_TABLE.find(row => roll >= row.min && roll <= row.max);
     if (!entry) {
       throw new Error('Roll out of bounds');
     }

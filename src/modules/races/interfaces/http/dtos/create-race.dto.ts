@@ -116,7 +116,7 @@ export class CreateRaceDto {
       dto.baseDevPoints,
       dto.baseAt,
       dto.talents,
-      dto.traits.map((t) => RaceTraitDto.toEntity(t)),
+      dto.traits.map(t => RaceTraitDto.toEntity(t)),
       dto.defaultLanguage,
       dto.description,
       dto.imageUrl,

@@ -28,7 +28,7 @@ export class AbsoluteManeuverService {
 
   execute(roll: number, unusualEvent: boolean, tableName?: string): AbsoluteManeuverResult {
     const table = this.getTable(tableName);
-    const entry = table.table.find((row) => roll >= (row.min ?? -Infinity) && roll <= (row.max ?? Infinity));
+    const entry = table.table.find(row => roll >= (row.min ?? -Infinity) && roll <= (row.max ?? Infinity));
     if (!entry) throw new Error('Roll out of bounds');
 
     return {
@@ -38,12 +38,12 @@ export class AbsoluteManeuverService {
   }
 
   getTable(tableName?: string) {
-    const table = this.tables.find((t) => t.name == (tableName ? tableName : 'generic'));
+    const table = this.tables.find(t => t.name == (tableName ? tableName : 'generic'));
     if (!table) throw new ValidationError('Invalid absolute maneuver table');
     return table;
   }
 
   getTableNames(): string[] {
-    return this.tables.map((t) => t.name);
+    return this.tables.map(t => t.name);
   }
 }

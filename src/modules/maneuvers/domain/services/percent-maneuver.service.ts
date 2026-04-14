@@ -28,7 +28,7 @@ const percentTable: { min: number; max: number; result: PercentManeuverResult }[
 
 export class PercentManeuverService {
   execute(roll: number): PercentManeuverResult {
-    const entry = percentTable.find((row) => roll >= row.min && roll <= row.max);
+    const entry = percentTable.find(row => roll >= row.min && roll <= row.max);
     if (!entry) {
       throw new Error('Roll out of bounds');
     }

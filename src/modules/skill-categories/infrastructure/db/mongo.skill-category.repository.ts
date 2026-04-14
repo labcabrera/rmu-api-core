@@ -26,7 +26,7 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
       this.skillCategoryModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
       this.skillCategoryModel.countDocuments(mongoQuery),
     ]);
-    const content = docs.map((doc) => this.mapToEntity(doc));
+    const content = docs.map(doc => this.mapToEntity(doc));
     return new Page<SkillCategory>(content, page, size, totalElements);
   }
 

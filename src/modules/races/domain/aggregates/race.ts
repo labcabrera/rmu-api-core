@@ -9,6 +9,7 @@ import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 import { RaceProps } from './race-props';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo';
 
 export class Race extends BaseAggregateRoot<RaceProps> {
   private constructor(
@@ -29,6 +30,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     public baseAt: number,
     public talents: string[],
     public traits: RaceTrait[],
+    public skillBonuses: RaceSkillBonus[],
     public defaultLanguage: string | null,
     public description: string | null,
     public imageUrl: string | null,
@@ -59,6 +61,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.baseAt,
       props.talents,
       props.traits,
+      props.skillBonuses,
       props.defaultLanguage,
       props.description,
       props.imageUrl,
@@ -83,12 +86,31 @@ export class Race extends BaseAggregateRoot<RaceProps> {
   }
 
   removeTrait(traitId: string) {
-    const index = this.traits.findIndex((trait) => trait.id === traitId);
+    const index = this.traits.findIndex(trait => trait.id === traitId);
     if (index !== -1) {
       this.traits.splice(index, 1);
       this.apply(new RaceUpdatedEvent(this.getProps()));
     }
     this.apply(new RaceUpdatedEvent(this.getProps()));
+  }
+  addSkillBonus(skillId: string, specialization: string | null, bonus: number) {
+    const current = this.skillBonuses.find(sb => sb.skillId === skillId && sb.specialization === specialization);
+    if (current) {
+      current.bonus = bonus;
+    } else {
+      this.skillBonuses.push(new RaceSkillBonus(skillId, specialization, bonus));
+    }
+    this.apply(new RaceUpdatedEvent(this.getProps()));
+  }
+
+  removeSkillBonus(skillId: string, specialization: string | null) {
+    const index = this.skillBonuses.findIndex(
+      sb => sb.skillId === skillId && (sb.specialization === specialization || (!sb.specialization && !specialization)),
+    );
+    if (index !== -1) {
+      this.skillBonuses.splice(index, 1);
+      this.apply(new RaceUpdatedEvent(this.getProps()));
+    }
   }
 
   static fromProps(props: RaceProps) {
@@ -110,6 +132,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.baseAt,
       props.talents,
       props.traits,
+      props.skillBonuses,
       props.defaultLanguage,
       props.description,
       props.imageUrl,
@@ -162,6 +185,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       baseAt: this.baseAt,
       talents: this.talents,
       traits: this.traits,
+      skillBonuses: this.skillBonuses,
       defaultLanguage: this.defaultLanguage,
       description: this.description,
       imageUrl: this.imageUrl,

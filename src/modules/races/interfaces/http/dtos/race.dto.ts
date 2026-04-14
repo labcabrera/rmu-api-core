@@ -7,6 +7,7 @@ import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { RaceTraitDto } from './race-trait.dto';
 import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { RaceSkillBonusDto } from './race-skill-bonus.dto';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -61,6 +62,9 @@ export class RaceDto {
   @ApiProperty({ description: 'List of race traits', type: [RaceTraitDto] })
   traits: RaceTraitDto[];
 
+  @ApiProperty({ description: 'List of racial skill bonuses', type: [RaceSkillBonusDto] })
+  skillBonuses: RaceSkillBonusDto[];
+
   @ApiProperty({ description: 'Default language identifier', type: String, required: false })
   defaultLanguage: string | null;
 
@@ -95,7 +99,8 @@ export class RaceDto {
     dto.baseAt = entity.baseAt;
     dto.defaultLanguage = entity.defaultLanguage;
     dto.talents = entity.talents;
-    dto.traits = entity.traits ? entity.traits.map((t) => RaceTraitDto.fromEntity(t)) : [];
+    dto.traits = entity.traits ? entity.traits.map(t => RaceTraitDto.fromEntity(t)) : [];
+    dto.skillBonuses = entity.skillBonuses ? entity.skillBonuses.map(b => RaceSkillBonusDto.fromEntity(b)) : [];
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;

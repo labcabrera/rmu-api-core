@@ -23,7 +23,7 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
 
   async findByRealmId(realmId: string): Promise<Race[]> {
     const values = await this.model.find({ 'realm.id': realmId }).exec();
-    return values.map((doc) => this.mapToEntity(doc));
+    return values.map(doc => this.mapToEntity(doc));
   }
 
   protected mapToEntity(doc: RaceDocument): Race {
@@ -46,6 +46,7 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
       defaultLanguage: doc.defaultLanguage,
       talents: doc.talents,
       traits: doc.traits ?? [],
+      skillBonuses: doc.skillBonuses ?? [],
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,

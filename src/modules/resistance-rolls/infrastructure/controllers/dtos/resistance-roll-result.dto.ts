@@ -21,7 +21,7 @@ export class ResistanceRollResultDto {
   static fromEntity(entity: ResistanceRollResult): ResistanceRollResultDto {
     const dto = new ResistanceRollResultDto();
     dto.result = entity.result;
-    dto.modifiers = entity.modifiers.map((mod) => ({ key: mod.key, value: mod.value }));
+    dto.modifiers = entity.modifiers.map(mod => ({ key: mod.key, value: mod.value }));
     dto.totalRoll = entity.totalResult;
     dto.failure = entity.failure;
     return dto;

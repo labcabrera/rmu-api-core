@@ -30,7 +30,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       description: command.description,
     });
     const updated = await this.traitRepository.update(trait.id, trait);
-    trait.getUncommittedEvents().forEach((event) => this.traitEventBus.publish(event));
+    trait.getUncommittedEvents().forEach(event => this.traitEventBus.publish(event));
     return updated;
   }
 }

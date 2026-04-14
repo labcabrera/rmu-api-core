@@ -19,6 +19,8 @@ import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.
 import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
 import { UpdateRaceRealmHandler } from './application/cqrs/handlers/update-race-realm.handler';
 import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-races-by-realm.handler';
+import { AddRaceSkillBonusHandler } from './application/cqrs/handlers/add-race-skill-bonus.handler';
+import { DeleteRaceSkillBonusHandler } from './application/cqrs/handlers/delete-race-skill-bonus.handler';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-ra
     DeleteRaceTraitHandler,
     UpdateRaceRealmHandler,
     DeleteRacesByRealmHandler,
+    AddRaceSkillBonusHandler,
+    DeleteRaceSkillBonusHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,

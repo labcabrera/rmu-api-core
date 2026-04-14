@@ -15,6 +15,12 @@ import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
 import { AddRaceTraitDto } from './dtos/add-race-trait.dto';
 import { DeleteRaceTraitCommand } from '../../application/cqrs/commands/delete-race-trait.command';
+import { AddRaceSkillBonusDto } from './dtos/add-race-skill-bonus.dto';
+import { AddRaceSkillBonusCommand } from '../../application/cqrs/commands/add-race-skill-bonus.command';
+import { CreateRaceCommand } from '../../application/cqrs/commands/create-race.command';
+import { AddRaceTraitCommand } from '../../application/cqrs/commands/add-race-trait.command';
+import { UpdateRaceCommand } from '../../application/cqrs/commands/update-race.command';
+import { DeleteRaceSkillBonusCommand } from '../../application/cqrs/commands/delete-race-skill-bonus.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -47,7 +53,7 @@ export class RaceController {
     const roles: string[] = req.user!.roles as string[];
     const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
-    const mapped = page.content.map((race) => RaceDto.fromEntity(race));
+    const mapped = page.content.map(race => RaceDto.fromEntity(race));
     return new Page<RaceDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
@@ -57,9 +63,12 @@ export class RaceController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, race already exists', type: ErrorDto })
-  create(@Body() createRaceDto: CreateRaceDto, @Request() req) {
-    const command = CreateRaceDto.toCommand(createRaceDto, req.user!.id as string, req.user!.roles as string[]);
-    return this.commandBus.execute(command);
+  async create(@Body() createRaceDto: CreateRaceDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = CreateRaceDto.toCommand(createRaceDto, userId, roles);
+    const entity = await this.commandBus.execute<CreateRaceCommand, Race>(command);
+    return RaceDto.fromEntity(entity);
   }
 
   @Patch(':id')
@@ -68,11 +77,12 @@ export class RaceController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Race not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  updateSettings(@Param('id') id: string, @Body() updateRaceDto: UpdateRaceDto, @Request() req) {
+  async updateSettings(@Param('id') id: string, @Body() updateRaceDto: UpdateRaceDto, @Request() req) {
     const userId = req.user! as string;
     const roles = req.user!.roles as string[];
     const command = UpdateRaceDto.toCommand(id, updateRaceDto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = this.commandBus.execute<UpdateRaceCommand, Race>(command);
+    return RaceDto.fromEntity(await entity);
   }
 
   @Delete(':id')
@@ -93,11 +103,27 @@ export class RaceController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, race already exists', type: ErrorDto })
-  addTrait(@Param('id') id: string, @Body() addRaceTraitDto: AddRaceTraitDto, @Request() req) {
+  async addTrait(@Param('id') id: string, @Body() addRaceTraitDto: AddRaceTraitDto, @Request() req) {
     const userId = req.user! as string;
     const roles = req.user!.roles as string[];
     const command = AddRaceTraitDto.toCommand(id, addRaceTraitDto, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<AddRaceTraitCommand, Race>(command);
+    return RaceDto.fromEntity(entity);
+  }
+
+  @Post(':id/skill-bonuses')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'addSkillBonus', summary: 'Add a skill bonus to a race' })
+  @ApiOkResponse({ type: RaceDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  @ApiResponse({ status: 409, description: 'Conflict, race already exists', type: ErrorDto })
+  async addSkillBonus(@Param('id') id: string, @Body() dto: AddRaceSkillBonusDto, @Request() req) {
+    const userId = req.user! as string;
+    const roles = req.user!.roles as string[];
+    const command = AddRaceSkillBonusDto.toCommand(id, dto, userId, roles);
+    const entity = await this.commandBus.execute<AddRaceSkillBonusCommand, Race>(command);
+    return RaceDto.fromEntity(entity);
   }
 
   @Delete(':id/traits/:traitId')
@@ -106,10 +132,30 @@ export class RaceController {
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Race or trait not found', type: ErrorDto })
-  removeTrait(@Param('id') id: string, @Param('traitId') traitId: string, @Request() req) {
+  async removeTrait(@Param('id') id: string, @Param('traitId') traitId: string, @Request() req) {
     const userId = req.user! as string;
     const roles = req.user!.roles as string[];
     const command = new DeleteRaceTraitCommand(id, traitId, userId, roles);
-    return this.commandBus.execute(command);
+    const entity = await this.commandBus.execute<DeleteRaceTraitCommand, Race>(command);
+    return RaceDto.fromEntity(entity);
+  }
+
+  @Delete(':id/skill-bonuses/:skillId')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'removeTrait', summary: 'Remove a trait from a race' })
+  @ApiOkResponse({ type: RaceDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Race or trait not found', type: ErrorDto })
+  async removeSkillBonus(
+    @Param('id') id: string,
+    @Param('skillId') skillId: string,
+    @Query('specialization') specialization: string | null,
+    @Request() req,
+  ) {
+    const userId = req.user! as string;
+    const roles = req.user!.roles as string[];
+    const command = new DeleteRaceSkillBonusCommand(id, skillId, specialization, userId, roles);
+    const entity = await this.commandBus.execute<DeleteRaceSkillBonusCommand, Race>(command);
+    return RaceDto.fromEntity(entity);
   }
 }

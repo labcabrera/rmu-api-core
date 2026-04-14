@@ -47,7 +47,7 @@ export class RealmController {
     const roles: string[] = req.user!.roles as string[];
     const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
-    const mapped = page.content.map((realm) => RealmDto.fromEntity(realm));
+    const mapped = page.content.map(realm => RealmDto.fromEntity(realm));
     return new Page<RealmDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 

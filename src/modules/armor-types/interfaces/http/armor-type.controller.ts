@@ -27,6 +27,6 @@ export class ArmorTypeController {
   @ApiOkResponse({ type: [ArmorTypeDto] })
   find() {
     const list = this.armorTypeRepository.find();
-    return list.map((e) => ArmorTypeDto.fromEntity(e));
+    return list.map(e => ArmorTypeDto.fromEntity(e));
   }
 }

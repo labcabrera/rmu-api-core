@@ -32,7 +32,7 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
       mongoQuery = { $and: [rsqlParsed, filter] };
     }
 
-    this.logger.debug(`Executing MongoDB query: ${JSON.stringify(mongoQuery)} with pagination: page=${page}, size=${size}`);
+    this.logger.verbose(`Executing MongoDB query: ${JSON.stringify(mongoQuery)} with pagination: page=${page}, size=${size}`);
 
     const [docs, totalElements] = await Promise.all([
       this.model
@@ -42,7 +42,7 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
         .sort(sort || { _id: 1 }),
       this.model.countDocuments(mongoQuery),
     ]);
-    const content = docs.map((doc) => this.mapToEntity(doc));
+    const content = docs.map(doc => this.mapToEntity(doc));
     return new Page<E>(content, page, size, totalElements);
   }
 

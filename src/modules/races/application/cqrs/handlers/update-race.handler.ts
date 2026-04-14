@@ -38,7 +38,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       imageUrl: command.imageUrl,
     });
     const updated = await this.raceRepository.update(command.id, race);
-    race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
+    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
     return updated;
   }
 }

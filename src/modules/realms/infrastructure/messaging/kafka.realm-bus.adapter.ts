@@ -11,7 +11,7 @@ export class KafkaRealmProducerService implements RealmEventBusPort {
   constructor(private readonly kafkaProducerService: KafkaProducerService) {}
 
   publish(event: DomainEvent<RealmProps>): void {
-    this.kafkaProducerService.emit(`internal.rmu-core.realm.${event.eventType}.v1`, event).catch((err) => {
+    this.kafkaProducerService.emit(`internal.rmu-core.realm.${event.eventType}.v1`, event).catch(err => {
       //TODO handle error properly
       this.logger.error('Error publishing event to Kafka', err);
     });

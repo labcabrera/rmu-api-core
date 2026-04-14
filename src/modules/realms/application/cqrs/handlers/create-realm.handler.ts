@@ -29,7 +29,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
       accessType: command.accessType,
     });
     const savedRealm = await this.realmRepository.save(realm);
-    realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));
+    realm.getUncommittedEvents().forEach(event => this.realmEventBus.publish(event));
     return savedRealm;
   }
 }

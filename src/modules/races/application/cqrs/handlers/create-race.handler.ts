@@ -42,13 +42,14 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       defaultLanguage: command.defaultLanguage,
       talents: command.talents,
       traits: command.traits,
+      skillBonuses: [],
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: realm.accessType,
     });
     const savedRace = await this.raceRepository.save(race);
-    race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
+    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
     return savedRace;
   }
 }

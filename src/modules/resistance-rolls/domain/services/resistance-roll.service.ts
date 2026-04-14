@@ -8,7 +8,7 @@ export class ResistanceRollService {
   execute(query: ResistanceRollQuery): ResistanceRollResult {
     const modifiers = [] as KeyValue[];
     if (query.modifiers) {
-      query.modifiers.forEach((mod) => modifiers.push({ key: mod.key, value: mod.value }));
+      query.modifiers.forEach(mod => modifiers.push({ key: mod.key, value: mod.value }));
     }
     modifiers.push({ key: 'attack-level', value: -query.attackLevel * 2 });
     modifiers.push({ key: 'target-level', value: query.targetLevel * 2 });

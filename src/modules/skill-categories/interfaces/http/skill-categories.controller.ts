@@ -44,7 +44,7 @@ export class SkillCategoryController {
     const userId: string = req.user!.id as string;
     const query = new GetSkillCategoriesQuery(dto.q, dto.page, dto.size, userId);
     const page = await this.queryBus.execute<GetSkillCategoriesQuery, Page<SkillCategory>>(query);
-    const mapped = page.content.map((category) => SkillCategoryDto.fromEntity(category));
+    const mapped = page.content.map(category => SkillCategoryDto.fromEntity(category));
     return new Page<SkillCategoryDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 

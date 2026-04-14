@@ -5,7 +5,7 @@ import { CharacterSize, CHARACTER_SIZES } from '../../../shared/domain/entities/
 @Injectable()
 export class InMemoryCharacterSizeRepository implements CharacterSizeRepository {
   findById(id: string): CharacterSize | null {
-    const characterSize = CHARACTER_SIZES.find((cs) => cs.id === id);
+    const characterSize = CHARACTER_SIZES.find(cs => cs.id === id);
     return characterSize || null;
   }
 

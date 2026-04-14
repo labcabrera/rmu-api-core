@@ -46,7 +46,7 @@ export class TraitController {
     const userId: string = req.user!.id as string;
     const query = new GetTraitsQuery(dto.q, dto.page, dto.size, userId);
     const page = await this.queryBus.execute<GetTraitsQuery, Page<Trait>>(query);
-    const mapped = page.content.map((Trait) => TraitDto.fromEntity(Trait));
+    const mapped = page.content.map(Trait => TraitDto.fromEntity(Trait));
     return new Page<TraitDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 

@@ -34,7 +34,7 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
       accessType: command.accessType,
     });
     const updated = await this.realmRepository.update(realm.id, realm);
-    realm.getUncommittedEvents().forEach((event) => this.realmEventBus.publish(event));
+    realm.getUncommittedEvents().forEach(event => this.realmEventBus.publish(event));
     return updated;
   }
 }
