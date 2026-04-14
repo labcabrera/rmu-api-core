@@ -6,7 +6,6 @@ import type { RaceRepository } from '../../ports/race-repository';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import type { RaceGuardPort } from '../../ports/race-guard.port';
 import { AddRaceSkillBonusCommand } from '../commands/add-race-skill-bonus.command';
-import { UpdateRaceDto } from 'src/modules/races/interfaces/http/dtos/update-race.dto';
 
 @CommandHandler(AddRaceSkillBonusCommand)
 export class AddRaceSkillBonusHandler implements ICommandHandler<AddRaceSkillBonusCommand, Race> {
@@ -28,7 +27,7 @@ export class AddRaceSkillBonusHandler implements ICommandHandler<AddRaceSkillBon
     race.addSkillBonus(command.skillId, command.specialization, command.bonus);
 
     const updated = await this.raceRepository.update(command.raceId, race);
-    race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
+    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
     return updated;
   }
 }

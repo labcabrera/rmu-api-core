@@ -53,7 +53,7 @@ export class RaceController {
     const roles: string[] = req.user!.roles as string[];
     const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
-    const mapped = page.content.map((race) => RaceDto.fromEntity(race));
+    const mapped = page.content.map(race => RaceDto.fromEntity(race));
     return new Page<RaceDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 

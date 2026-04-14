@@ -27,6 +27,6 @@ export class CharacterSizeController {
   @ApiOperation({ operationId: 'findCharacterSizes', summary: 'Find all character sizes' })
   find() {
     const entities = this.characterSizeRepository.find();
-    return entities.map((e) => CharacterSizeDto.fromEntity(e));
+    return entities.map(e => CharacterSizeDto.fromEntity(e));
   }
 }

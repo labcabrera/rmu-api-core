@@ -18,7 +18,7 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
     return this.model
       .findOne(query)
       .exec()
-      .then((doc) => (doc ? this.mapToEntity(doc) : null));
+      .then(doc => (doc ? this.mapToEntity(doc) : null));
   }
 
   protected mapToEntity(doc: EnumerationDocument): Enumeration {

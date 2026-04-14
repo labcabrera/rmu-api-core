@@ -11,7 +11,7 @@ export class KafkaTraitProducerService implements TraitEventBusPort {
   constructor(private readonly kafkaProducerService: KafkaProducerService) {}
 
   publish(event: DomainEvent<Trait>): void {
-    this.kafkaProducerService.emit(`internal.rmu-core.trait.${event.eventType}.v1`, event).catch((err) => {
+    this.kafkaProducerService.emit(`internal.rmu-core.trait.${event.eventType}.v1`, event).catch(err => {
       //TODO handle error properly
       this.logger.error('Error publishing event to Kafka', err);
     });

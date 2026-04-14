@@ -49,7 +49,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       accessType: realm.accessType,
     });
     const savedRace = await this.raceRepository.save(race);
-    race.getUncommittedEvents().forEach((event) => this.raceEventBus.publish(event));
+    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
     return savedRace;
   }
 }

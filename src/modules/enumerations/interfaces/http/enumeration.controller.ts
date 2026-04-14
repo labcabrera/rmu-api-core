@@ -44,7 +44,7 @@ export class EnumerationController {
     const roles: string[] = req.user!.roles as string[];
     const query = new GetEnumerationsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetEnumerationsQuery, Page<Enumeration>>(query);
-    const mapped = page.content.map((category) => EnumerationDto.fromEntity(category));
+    const mapped = page.content.map(category => EnumerationDto.fromEntity(category));
     return new Page<EnumerationDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 

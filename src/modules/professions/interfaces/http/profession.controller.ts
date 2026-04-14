@@ -48,7 +48,7 @@ export class ProfessionController {
     const roles: string[] = req.user!.roles as string[];
     const query = new GetProfessionsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetProfessionsQuery, Page<Profession>>(query);
-    const mapped = page.content.map((profession) => ProfessionDto.fromEntity(profession));
+    const mapped = page.content.map(profession => ProfessionDto.fromEntity(profession));
     return new Page<ProfessionDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 

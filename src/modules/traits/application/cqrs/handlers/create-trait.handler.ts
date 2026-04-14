@@ -34,7 +34,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
       throw new ConflictError(`Trait with id ${trait.id} already exists`);
     }
     const savedTrait = await this.traitRepository.save(trait);
-    trait.getUncommittedEvents().forEach((event) => this.traitEventBus.publish(event));
+    trait.getUncommittedEvents().forEach(event => this.traitEventBus.publish(event));
     return savedTrait;
   }
 }

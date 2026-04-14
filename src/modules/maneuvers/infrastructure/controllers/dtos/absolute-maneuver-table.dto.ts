@@ -30,7 +30,7 @@ export class AbsoluteManeuverTableDto {
   static fromEntity(entity: AbsoluteManeuverTable): AbsoluteManeuverTableDto {
     const dto = new AbsoluteManeuverTableDto();
     dto.name = entity.name;
-    dto.table = entity.table.map((entry) => {
+    dto.table = entity.table.map(entry => {
       const e = new AbsoluteManeuverTableEntryDto();
       e.min = entry.min;
       e.max = entry.max;

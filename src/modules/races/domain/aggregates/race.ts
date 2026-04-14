@@ -86,7 +86,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
   }
 
   removeTrait(traitId: string) {
-    const index = this.traits.findIndex((trait) => trait.id === traitId);
+    const index = this.traits.findIndex(trait => trait.id === traitId);
     if (index !== -1) {
       this.traits.splice(index, 1);
       this.apply(new RaceUpdatedEvent(this.getProps()));
@@ -94,7 +94,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     this.apply(new RaceUpdatedEvent(this.getProps()));
   }
   addSkillBonus(skillId: string, specialization: string | null, bonus: number) {
-    const current = this.skillBonuses.find((sb) => sb.skillId === skillId && sb.specialization === specialization);
+    const current = this.skillBonuses.find(sb => sb.skillId === skillId && sb.specialization === specialization);
     if (current) {
       current.bonus = bonus;
     } else {
@@ -105,7 +105,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
 
   removeSkillBonus(skillId: string, specialization: string | null) {
     const index = this.skillBonuses.findIndex(
-      (sb) => sb.skillId === skillId && (sb.specialization === specialization || (!sb.specialization && !specialization)),
+      sb => sb.skillId === skillId && (sb.specialization === specialization || (!sb.specialization && !specialization)),
     );
     if (index !== -1) {
       this.skillBonuses.splice(index, 1);
