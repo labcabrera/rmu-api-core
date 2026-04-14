@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { UpdateCultureCommand } from '../commands/update-culture.command';
@@ -10,6 +10,8 @@ import { CultureUpdatedEvent } from 'src/modules/cultures/domain/events/culture-
 
 @CommandHandler(UpdateCultureCommand)
 export class UpdateCultureHandler implements ICommandHandler<UpdateCultureCommand, Culture> {
+  private readonly logger = new Logger(UpdateCultureHandler.name);
+
   constructor(
     @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
     @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
@@ -17,6 +19,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
   ) {}
 
   async execute(command: UpdateCultureCommand): Promise<Culture> {
+    this.logger.log(`Updating culture ${command.id} for user ${command.userId}`);
     const culture = await this.cultureRepository.findById(command.id);
     if (!culture) throw new NotFoundError('Race', command.id);
 
