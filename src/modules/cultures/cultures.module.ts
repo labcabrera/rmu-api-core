@@ -16,6 +16,7 @@ import { UpdateCultureHandler } from './application/cqrs/handlers/update-race.ha
 import { DeleteCultureHandler } from './application/cqrs/handlers/delete-culture.handler';
 import { MongoCultureRepository } from './infrastructure/db/mongo.culture.repository';
 import { AddCultureFixedSkillRankHandler } from './application/cqrs/handlers/add-culture-fixed-skill-rank.handler';
+import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/delete-culture-fixed-skill-rank.handler';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AddCultureFixedSkillRankHandler } from './application/cqrs/handlers/add
     UpdateCultureHandler,
     DeleteCultureHandler,
     AddCultureFixedSkillRankHandler,
+    DeleteCultureFixedSkillRankHandler,
     {
       provide: 'CultureRepository',
       useClass: MongoCultureRepository,
