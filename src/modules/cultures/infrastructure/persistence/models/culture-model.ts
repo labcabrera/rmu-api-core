@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { CultureSkillRank } from './culture-skill-rank.model';
 
 export type CultureDocument = CultureModel & Document;
 
@@ -29,6 +30,9 @@ export class CultureModel {
 
   @Prop({ type: Date, required: false })
   updatedAt: Date | null;
+
+  @Prop({ type: [CultureSkillRank], required: false })
+  fixedSkillRanks?: CultureSkillRank[];
 }
 
 export const CultureSchema = SchemaFactory.createForClass(CultureModel);

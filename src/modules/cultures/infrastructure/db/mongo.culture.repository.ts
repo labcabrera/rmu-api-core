@@ -6,6 +6,7 @@ import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.
 import { CultureDocument, CultureModel } from '../persistence/models/culture-model';
 import { CultureRepository } from '../../application/ports/culture-repository';
 import { Culture } from '../../domain/aggregates/culture';
+import { CultureSkillRank } from '../../domain/value-objects/culture-skill-rank';
 
 @Injectable()
 export class MongoCultureRepository extends MongoBaseRepository<Culture, CultureDocument> implements CultureRepository {
@@ -21,6 +22,7 @@ export class MongoCultureRepository extends MongoBaseRepository<Culture, Culture
       imageUrl: doc.imageUrl,
       owner: doc.owner,
       accessType: doc.accessType,
+      fixedSkillRanks: doc.fixedSkillRanks?.map(s => new CultureSkillRank(s.skillId, s.specialization ?? null, s.ranks)) ?? [],
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

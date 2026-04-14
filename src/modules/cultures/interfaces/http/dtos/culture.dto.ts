@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
+import { CultureSkillRankDto } from './culture-skill-rank.dto';
 
 export class CultureDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -22,6 +23,9 @@ export class CultureDto {
   @ApiProperty({ description: 'Access type', required: true })
   accessType: AccessType;
 
+  @ApiProperty({ description: 'Fixed skill ranks', required: false, type: [Object] })
+  fixedSkillRanks: CultureSkillRankDto[];
+
   static fromEntity(entity: Culture): CultureDto {
     const dto = new CultureDto();
     dto.id = entity.id;
@@ -30,6 +34,7 @@ export class CultureDto {
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;
     dto.accessType = entity.accessType;
+    dto.fixedSkillRanks = entity.fixedSkillRanks?.map(f => CultureSkillRankDto.fromEntity(f)) ?? [];
     return dto;
   }
 }

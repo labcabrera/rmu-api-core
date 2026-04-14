@@ -2,6 +2,7 @@ import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UpdateCultureCommand } from 'src/modules/cultures/application/cqrs/commands/update-culture.command';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
 
 export class UpdateCultureDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf', required: false })
