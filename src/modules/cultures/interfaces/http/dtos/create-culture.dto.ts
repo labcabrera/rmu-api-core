@@ -34,7 +34,7 @@ export class CreateCultureDto {
       dto.description,
       dto.imageUrl,
       dto.accessType,
-      dto.fixedSkillRanks.map(s => CultureSkillRankDto.toEntity(s)),
+      dto.fixedSkillRanks?.map(s => CultureSkillRankDto.toEntity(s)) || [],
       userId,
       roles,
     );

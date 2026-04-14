@@ -93,6 +93,7 @@ export class CultureController {
   }
 
   @Post(':id/fixed-skills')
+  @HttpCode(200)
   @ApiOperation({ operationId: 'addCultureFixedSkill', summary: 'Add culture fixed skill ranks' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
