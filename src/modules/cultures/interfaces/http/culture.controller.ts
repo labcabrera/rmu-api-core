@@ -15,6 +15,8 @@ import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql
 import { CreateCultureCommand } from '../../application/cqrs/commands/create-culture.command';
 import { UpdateCultureCommand } from '../../application/cqrs/commands/update-culture.command';
 import { DeleteCultureCommand } from '../../application/cqrs/commands/delete-culture.command';
+import { CultureSkillRankDto } from './dtos/culture-skill-rank.dto';
+import { AddCultureFixedSkillRankCommand } from '../../application/cqrs/commands/add-culture-fixed-skill-rank.command';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/cultures')
@@ -88,5 +90,18 @@ export class CultureController {
     const roles = req.user!.roles as string[];
     const command = new DeleteCultureCommand(id, userId, roles);
     await this.commandBus.execute(command);
+  }
+
+  @Post(':id/fixed-skills')
+  @ApiOperation({ operationId: 'addCultureFixedSkill', summary: 'Add culture fixed skill ranks' })
+  @ApiOkResponse({ type: CultureDto, description: 'Success' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
+  async addFixedSkill(@Param('id') id: string, @Body() dto: CultureSkillRankDto, @Request() req) {
+    const userId: string = req.user!.id as string;
+    const roles: string[] = req.user!.roles as string[];
+    const command = new AddCultureFixedSkillRankCommand(id, dto.skillId, dto.specialization, dto.ranks, userId, roles);
+    const entity = await this.commandBus.execute<AddCultureFixedSkillRankCommand, Culture>(command);
+    return CultureDto.fromEntity(entity);
   }
 }

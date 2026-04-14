@@ -60,6 +60,23 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     this.apply(new CultureUpdatedEvent(this.getProps()));
   }
 
+  addFixedSkillRank(skillId: string, specialization: string | null, ranks: number) {
+    const existingRank = this.findFixedSkillRank(skillId, specialization);
+    if (existingRank) {
+      existingRank.ranks = ranks;
+    } else {
+      this.fixedSkillRanks.push(new CultureSkillRank(skillId, specialization, ranks));
+    }
+    this.updatedAt = new Date();
+    this.apply(new CultureUpdatedEvent(this.getProps()));
+  }
+
+  findFixedSkillRank(skillId: string, specialization: string | null): CultureSkillRank | undefined {
+    return this.fixedSkillRanks.find(
+      s => s.skillId === skillId && (s.specialization === specialization || (s.specialization === null && specialization === null)),
+    );
+  }
+
   getProps(): CultureProps {
     return {
       id: this.id,

@@ -5,36 +5,36 @@ import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
 import { CultureSkillRankDto } from './culture-skill-rank.dto';
 
 export class CultureDto {
-  @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
+  @ApiProperty({ description: 'Culture identifier', example: 'culture-001' })
   id: string;
 
-  @ApiProperty({ description: 'Name of the race', example: 'Elf' })
+  @ApiProperty({ description: 'Name of the culture', example: 'Nomad' })
   name: string;
 
-  @ApiProperty({ description: 'Description of the race' })
+  @ApiProperty({ description: 'Fixed skill ranks', required: false, type: [CultureSkillRankDto] })
+  fixedSkillRanks: CultureSkillRankDto[];
+
+  @ApiProperty({ description: 'Description of the culture' })
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  @ApiProperty({ description: 'Image URL of the culture', required: false, example: 'https://example.com/images/races/elf.jpg' })
   imageUrl: string | null;
 
-  @ApiProperty({ description: 'Owner identifier', example: 'user123' })
+  @ApiProperty({ description: 'Owner identifier', example: 'user-123' })
   owner: string;
 
-  @ApiProperty({ description: 'Access type', required: true })
+  @ApiProperty({ description: 'Access type', required: true, example: 'private' })
   accessType: AccessType;
-
-  @ApiProperty({ description: 'Fixed skill ranks', required: false, type: [Object] })
-  fixedSkillRanks: CultureSkillRankDto[];
 
   static fromEntity(entity: Culture): CultureDto {
     const dto = new CultureDto();
     dto.id = entity.id;
     dto.name = entity.name;
+    dto.fixedSkillRanks = entity.fixedSkillRanks?.map(f => CultureSkillRankDto.fromEntity(f)) ?? [];
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;
     dto.accessType = entity.accessType;
-    dto.fixedSkillRanks = entity.fixedSkillRanks?.map(f => CultureSkillRankDto.fromEntity(f)) ?? [];
     return dto;
   }
 }
