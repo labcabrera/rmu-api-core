@@ -6,7 +6,7 @@ import { CreateRaceCommand } from 'src/modules/races/application/cqrs/commands/c
 import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { RaceTraitDto } from './race-trait.dto';
-import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
+// realmId is a string identifier
 
 export class CreateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
@@ -19,7 +19,7 @@ export class CreateRaceDto {
   @IsNotEmpty()
   archetype: string;
 
-  @ApiProperty({ description: 'Realm of the race', type: NamedEntityDto })
+  @ApiProperty({ description: 'Realm identifier' })
   @IsString()
   @IsNotEmpty()
   realmId: string;

@@ -1,4 +1,3 @@
-import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { RaceTrait } from '../value-objects/race-trait.vo';
@@ -10,7 +9,7 @@ export interface RaceProps {
   id: string;
   archetype: string;
   name: string;
-  realm: NamedEntity;
+  realmId: string;
   sizeId: string;
   stats: RaceStats;
   resistances: RaceResistances;

@@ -5,7 +5,6 @@ import { Race } from 'src/modules/races/domain/aggregates/race';
 import { RaceDocument, RaceModel } from '../persistence/models/race-model';
 import { RaceRepository } from '../../application/ports/race-repository';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
@@ -17,12 +16,12 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
 
   async updateRealmInfo(realmId: string, realmName: string, realmOwner: string, accessType: AccessType): Promise<void> {
     const now = new Date();
-    const update = { 'realm.name': realmName, owner: realmOwner, accessType: accessType, updatedAt: now };
-    await this.model.updateMany({ 'realm.id': realmId }, { $set: update }).exec();
+    const update = { owner: realmOwner, accessType: accessType, updatedAt: now };
+    await this.model.updateMany({ realmId: realmId }, { $set: update }).exec();
   }
 
   async findByRealmId(realmId: string): Promise<Race[]> {
-    const values = await this.model.find({ 'realm.id': realmId }).exec();
+    const values = await this.model.find({ realmId: realmId }).exec();
     return values.map(doc => this.mapToEntity(doc));
   }
 
@@ -31,7 +30,7 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
       id: doc._id,
       name: doc.name,
       archetype: doc.archetype,
-      realm: new NamedEntity(doc.realm.id, doc.realm.name),
+      realmId: doc.realmId,
       sizeId: doc.sizeId,
       stats: doc.stats,
       resistances: doc.resistances,

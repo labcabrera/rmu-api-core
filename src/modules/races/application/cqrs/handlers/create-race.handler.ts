@@ -6,7 +6,6 @@ import type { RealmRepository } from 'src/modules/realms/application/ports/realm
 import type { RaceRepository } from '../../ports/race-repository';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
-import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
@@ -27,7 +26,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
     const race = Race.create({
       name: command.name,
       archetype: command.archetype,
-      realm: new NamedEntity(realm.id, realm.name),
+      realmId: realm.id,
       sizeId: command.sizeId,
       stats: command.stats,
       resistances: command.resistances,

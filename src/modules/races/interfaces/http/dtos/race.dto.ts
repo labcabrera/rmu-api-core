@@ -5,7 +5,6 @@ import { RaceStatsDto } from './race-stats.dto';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import { RaceTraitDto } from './race-trait.dto';
-import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { RaceSkillBonusDto } from './race-skill-bonus.dto';
 
@@ -19,9 +18,8 @@ export class RaceDto {
   @ApiProperty({ description: 'Archetype of the race', example: 'wood-elf' })
   archetype: string;
 
-  @ApiProperty({ description: 'Realm of the race', example: 'lotr' })
-  @ApiProperty({ description: 'Realm', type: NamedEntityDto })
-  realm: NamedEntityDto;
+  @ApiProperty({ description: 'Realm identifier', example: 'lotr' })
+  realmId: string;
 
   @ApiProperty({ description: 'Size of the race', example: 'Medium' })
   sizeId: string;
@@ -85,7 +83,7 @@ export class RaceDto {
     dto.id = entity.id;
     dto.name = entity.name;
     dto.archetype = entity.archetype;
-    dto.realm = NamedEntityDto.fromEntity(entity.realm);
+    dto.realmId = entity.realmId;
     dto.sizeId = entity.sizeId;
     dto.stats = entity.stats;
     dto.resistances = entity.resistances;
