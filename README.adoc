@@ -16,17 +16,6 @@ image::diagrams/c4-context.png[API Core Context System]
 
 == Entities
 
-[option="header"]
-|===
-|Entity           | Mode
-|_Skill_          | Static
-|_SkillCategory_  | Static
-|_ArmorType_      | Static
-|_CharacterSize_  | Static
-|_Profession_     | Static
-|_Maneuver_       | Static
-|_Realm_          | Dynamic
-|_Race_           | Dynamic
-|_Trait_          | Dynamic
-|_Language_       | Dynamic
-|===
+In summary, the diagram of the main aggregates is as follows:
+
+image::diagrams/class-diagram.png[Class diagram]
