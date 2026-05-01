@@ -5,7 +5,6 @@ import { RaceTrait } from '../value-objects/race-trait.vo';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 import { RaceUpdatedEvent } from '../events/race-updated.event';
-import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
 import { RaceProps } from './race-props';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
@@ -16,7 +15,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     id: string,
     public name: string,
     public archetype: string,
-    public readonly realm: NamedEntity,
+    public readonly realmId: string,
     public sizeId: string,
     public stats: RaceStats,
     public resistances: RaceResistances,
@@ -47,7 +46,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       randomUUID(),
       props.name,
       props.archetype,
-      props.realm,
+      props.realmId,
       props.sizeId,
       props.stats,
       props.resistances,
@@ -118,7 +117,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       props.id,
       props.name,
       props.archetype,
-      props.realm,
+      props.realmId,
       props.sizeId,
       props.stats,
       props.resistances,
@@ -143,7 +142,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     );
   }
 
-  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'realm' | 'owner'>>) {
+  update(props: Partial<Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt' | 'owner'>>) {
     if (props.name) this.name = props.name;
     if (props.archetype) this.archetype = props.archetype;
     if (props.sizeId) this.sizeId = props.sizeId;
@@ -171,7 +170,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
       id: this.id,
       name: this.name,
       archetype: this.archetype,
-      realm: this.realm,
+      realmId: this.realmId,
       sizeId: this.sizeId,
       stats: this.stats,
       resistances: this.resistances,

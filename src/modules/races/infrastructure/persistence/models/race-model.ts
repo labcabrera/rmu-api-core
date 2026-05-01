@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 import { RaceTrait } from './race-trait.model';
-import { NamedEntity } from 'src/modules/shared/infrastructure/persistence/models/named-entity.model';
+// realm is now stored as realmId string
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { RaceSkillBonus } from './race-skill-bonus.model';
 
@@ -19,8 +19,8 @@ export class RaceModel {
   @Prop({ required: true })
   archetype: string;
 
-  @Prop({ type: NamedEntity, required: true })
-  realm: NamedEntity;
+  @Prop({ type: String, required: true })
+  realmId: string;
 
   @Prop({ required: true })
   sizeId: string;

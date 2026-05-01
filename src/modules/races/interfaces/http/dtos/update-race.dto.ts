@@ -5,7 +5,6 @@ import { SexBasedAttributeDto } from './sex-based-attribute.dto';
 import { UpdateRaceCommand } from 'src/modules/races/application/cqrs/commands/update-race.command';
 import { RaceTraitDto } from './race-trait.dto';
 import { Type } from 'class-transformer';
-import { NamedEntityDto } from 'src/modules/shared/interfaces/http/dto/named-entity.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRaceDto {
@@ -19,11 +18,9 @@ export class UpdateRaceDto {
   @IsOptional()
   archetype?: string;
 
-  @ApiProperty({ description: 'Realm of the race', type: NamedEntityDto, required: false })
+  @ApiProperty({ description: 'Realm identifier', required: false })
   @IsOptional()
-  @ValidateNested()
-  @Type(() => NamedEntityDto)
-  realm?: NamedEntityDto;
+  realmId?: string;
 
   @ApiProperty({ description: 'Size identifier for the race', example: 'Medium', required: false })
   @IsString()

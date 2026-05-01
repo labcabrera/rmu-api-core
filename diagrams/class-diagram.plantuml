@@ -1,0 +1,69 @@
+@startuml class-diagram
+title Aggregates class diagram resume
+
+package "Aggregates" {
+  class Realm {
+    + id: string
+    + name: string
+    + ...
+  }
+
+  class Race {
+    + id: string
+    + name: string
+    + realmId: string
+    + sizeId: string
+    + ...
+  }
+
+  class SkillCategory {
+    + id: string
+    + ...
+  }
+
+  class Skill {
+    + id: string
+    + categoryId: string
+    + ...
+  }
+
+  class Trait {
+    + id: string
+    + name: string
+    + ...
+  }
+
+  class Profession {
+    + id: string
+    + archetype: string
+    + ...
+  }
+
+  class Culture {
+    + id: string
+    + name: string
+    + realmId: string?
+    + ...
+  }
+
+  class Enumeration {
+    + id: string
+    + key: string
+    + realmId: string?
+    + ...
+  }
+}
+
+Realm "1" o-- "*" Race
+Race "*" o-- "*" Trait
+Race "*" ..> "*" Skill
+Skill "*" --> "1" SkillCategory
+Profession "*" ..> "*" Skill
+Culture "*" ..> "*" Skill
+Culture "*" ..> "*" Realm
+Enumeration "0..1" ..> "1" Realm
+' ArmorType 
+
+
+
+@enduml

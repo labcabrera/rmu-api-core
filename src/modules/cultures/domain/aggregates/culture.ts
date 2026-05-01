@@ -1,9 +1,10 @@
 import { randomUUID } from 'crypto';
 import { CultureUpdatedEvent } from '../events/culture-updated.event';
 import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { CultureProps } from './culture-props';
+import { CreateCultureProps, CultureProps } from './culture-props';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { CultureCreatedEvent } from '../events/culture-created.event';
+import { CultureSkillRank } from '../value-objects/culture-skill-rank';
 
 export class Culture extends BaseAggregateRoot<CultureProps> {
   private constructor(
@@ -13,16 +14,27 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     public imageUrl: string | null,
     public owner: string,
     public accessType: AccessType,
+    public fixedSkillRanks: CultureSkillRank[],
     public readonly createdAt: Date,
     public updatedAt: Date | null,
   ) {
     super(id);
   }
 
-  static create(props: Omit<CultureProps, 'id' | 'createdAt' | 'updatedAt'>) {
-    const race = new Culture(randomUUID(), props.name, props.description, props.imageUrl, props.owner, props.accessType, new Date(), null);
-    race.apply(new CultureCreatedEvent(race.getProps()));
-    return race;
+  static create(props: CreateCultureProps): Culture {
+    const aggregate = new Culture(
+      randomUUID(),
+      props.name,
+      props.description,
+      props.imageUrl,
+      props.owner,
+      props.accessType,
+      props.fixedSkillRanks ?? [],
+      new Date(),
+      null,
+    );
+    aggregate.apply(new CultureCreatedEvent(aggregate.getProps()));
+    return aggregate;
   }
 
   static fromProps(props: CultureProps) {
@@ -33,6 +45,7 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
       props.imageUrl,
       props.owner,
       props.accessType,
+      props.fixedSkillRanks ?? [],
       props.createdAt,
       props.updatedAt,
     );
@@ -42,8 +55,34 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     if (props.name) this.name = props.name;
     if (props.description !== undefined) this.description = props.description;
     if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
+    if (props.fixedSkillRanks !== undefined) this.fixedSkillRanks = props.fixedSkillRanks;
     this.updatedAt = new Date();
     this.apply(new CultureUpdatedEvent(this.getProps()));
+  }
+
+  addFixedSkillRank(skillId: string, specialization: string | null, ranks: number) {
+    const existingRank = this.findFixedSkillRank(skillId, specialization);
+    if (existingRank) {
+      existingRank.ranks = ranks;
+    } else {
+      this.fixedSkillRanks.push(new CultureSkillRank(skillId, specialization, ranks));
+    }
+    this.updatedAt = new Date();
+    this.apply(new CultureUpdatedEvent(this.getProps()));
+  }
+
+  deleteFixedSkillRank(skillId: string, specialization: string | null) {
+    this.fixedSkillRanks = this.fixedSkillRanks.filter(
+      s => !(s.skillId === skillId && (s.specialization === specialization || (s.specialization === null && specialization === null))),
+    );
+    this.updatedAt = new Date();
+    this.apply(new CultureUpdatedEvent(this.getProps()));
+  }
+
+  findFixedSkillRank(skillId: string, specialization: string | null): CultureSkillRank | undefined {
+    return this.fixedSkillRanks.find(
+      s => s.skillId === skillId && (s.specialization === specialization || (s.specialization === null && specialization === null)),
+    );
   }
 
   getProps(): CultureProps {
@@ -54,6 +93,7 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
       imageUrl: this.imageUrl,
       owner: this.owner,
       accessType: this.accessType,
+      fixedSkillRanks: this.fixedSkillRanks,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     } as CultureProps;
