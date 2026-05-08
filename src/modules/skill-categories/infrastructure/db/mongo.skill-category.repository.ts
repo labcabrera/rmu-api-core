@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SkillCategoryRepository } from '../../../realms/application/ports/skill-category-repository';
 import { Page } from 'src/modules/shared/domain/entities/page';
-import { SkillCategory } from '../../dommain/entities/skill-category';
+import { SkillCategory } from '../../domain/entities/skill-category';
 import { SkillCategoryDocument, SkillCategoryModel } from '../persistence/models/skill-category.model';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 

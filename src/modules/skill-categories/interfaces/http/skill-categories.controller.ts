@@ -11,7 +11,7 @@ import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto';
 import { CreateSkillCategoryDto } from './dto/create-skill-category.dto';
-import { SkillCategory } from '../../dommain/entities/skill-category';
+import { SkillCategory } from '../../domain/entities/skill-category';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skill-categories')
