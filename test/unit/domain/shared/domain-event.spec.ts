@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
 
 describe('DomainEvent', () => {

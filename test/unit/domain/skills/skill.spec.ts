@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { Skill } from 'src/modules/skills/domain/aggregates/skill';
 import { SkillProps } from 'src/modules/skills/domain/aggregates/skill-props';
 import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';

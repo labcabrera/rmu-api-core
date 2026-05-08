@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { AbsoluteManeuverTable } from 'src/modules/maneuvers/domain/value-objects/absolute-maneuver-table.vo';
 import { ABSOLUTE_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/generic-maneuver.table';
 import { ADRENAL_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/adrenal-maneuver.table';

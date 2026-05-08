@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { CHARACTER_SIZES } from 'src/modules/shared/domain/entities/character-size';
 import { KeyValue } from 'src/modules/shared/domain/entities/key-value';
 import { NamedEntity } from 'src/modules/shared/domain/entities/named-entity';

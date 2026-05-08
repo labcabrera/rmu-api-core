@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { ValidationError } from 'src/modules/shared/domain/errors/errors';
 import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
 

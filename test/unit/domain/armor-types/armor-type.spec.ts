@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { ARMOR_TYPES } from 'src/modules/armor-types/domain/entities/armor-type';
 
 describe('ARMOR_TYPES', () => {

@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { CHARACTER_SIZES } from 'src/modules/shared/domain/entities/character-size';
 
 describe('CHARACTER_SIZES', () => {

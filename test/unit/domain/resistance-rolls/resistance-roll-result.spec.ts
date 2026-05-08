@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { ResistanceRollResult } from 'src/modules/resistance-rolls/domain/value-objects/resistance-roll-result';
 
 describe('ResistanceRollResult', () => {
