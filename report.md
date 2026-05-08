@@ -101,16 +101,21 @@ Recomendacion: mantener estas pruebas como regresion y extender el mismo patron 
 
 ### A2. Traits no aplica autorizacion de dominio
 
-Los handlers de `Traits` no validan permisos de lectura, actualizacion ni borrado pese a que las entidades tienen owner/acceso.
+Estado: corregido en el arbol de trabajo actual.
+
+Los handlers de `Traits` ahora validan autorizacion de dominio mediante `TraitGuardPort`. Como `Trait` tiene `owner` pero no `accessType`, la politica aplicada es owner/admin: los administradores pueden acceder a todos los traits y los usuarios no administradores solo a los suyos.
 
 Evidencia:
 
-- `src/modules/traits/application/cqrs/handlers/get-trait.handler.ts`
-- `src/modules/traits/application/cqrs/handlers/get-realms.handler.ts`
-- `src/modules/traits/application/cqrs/handlers/update-trait.handler.ts`
-- `src/modules/traits/application/cqrs/handlers/delete-trait.handler.ts`
+- `src/modules/traits/application/ports/trait-guard.port.ts`: define `TraitGuardPort`.
+- `src/modules/traits/infrastructure/security/trait-guard.adapter.ts`: implementa owner/admin para read/update/delete y predicado de listado.
+- `src/modules/traits/application/cqrs/handlers/get-trait.handler.ts`: valida `checkRead`.
+- `src/modules/traits/application/cqrs/handlers/get-realms.handler.ts`: filtra listados con `buildQueryPredicate`.
+- `src/modules/traits/application/cqrs/handlers/update-trait.handler.ts`: valida `checkUpdate`.
+- `src/modules/traits/application/cqrs/handlers/delete-trait.handler.ts`: valida `checkDelete` antes de borrar.
+- `src/modules/traits/application/cqrs/handlers/trait-authorization.handler.spec.ts`: cubre lectura, listado, actualizacion y borrado.
 
-Recomendacion: introducir `TraitGuardPort`, filtrar listados y validar read/update/delete.
+Recomendacion: si `Traits` debe soportar visibilidad publica/privada como otros agregados, anadir `accessType` al dominio y migrar la politica del guard.
 
 ### A3. Realm permite lectura directa por id sin checkRead
 

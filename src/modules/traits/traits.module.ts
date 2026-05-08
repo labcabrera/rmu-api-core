@@ -13,6 +13,7 @@ import { GetTraitHandler } from './application/cqrs/handlers/get-trait.handler';
 import { UpdateTraitHandler } from './application/cqrs/handlers/update-trait.handler';
 import { TraitModel, TraitSchema } from './infrastructure/persistence/models/trait-model';
 import { SharedModule } from '../shared/shared.module';
+import { TraitGuardAdapter } from './infrastructure/security/trait-guard.adapter';
 
 @Module({
   imports: [
@@ -36,6 +37,10 @@ import { SharedModule } from '../shared/shared.module';
     {
       provide: 'TraitEventProducer',
       useClass: KafkaTraitProducerService,
+    },
+    {
+      provide: 'TraitGuardPort',
+      useClass: TraitGuardAdapter,
     },
   ],
   exports: ['TraitRepository'],

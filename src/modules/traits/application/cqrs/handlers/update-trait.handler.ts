@@ -5,11 +5,13 @@ import { Trait } from 'src/modules/traits/domain/aggregates/trait';
 import type { TraitRepository } from '../../ports/trait.repository';
 import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import type { TraitGuardPort } from '../../ports/trait-guard.port';
 
 @CommandHandler(UpdateTraitCommand)
 export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, Trait> {
   constructor(
     @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
+    @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
     @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
   ) {}
 
@@ -18,6 +20,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
     if (!trait) {
       throw new NotFoundError('Trait', command.id);
     }
+    this.traitGuard.checkUpdate(trait, command.userId, command.roles);
     trait.update({
       name: command.name,
       category: command.category,

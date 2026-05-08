@@ -32,7 +32,8 @@ export class TraitController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Trait not found', type: ErrorDto })
   async findById(@Param('id') id: string, @Request() req) {
-    const query = new GetTraitQuery(id, req.user!.id as string);
+    const user = req.user!;
+    const query = new GetTraitQuery(id, user.id as string, user.roles as string[]);
     const entity = await this.queryBus.execute<GetTraitQuery, Trait>(query);
     return TraitDto.fromEntity(entity);
   }
@@ -43,8 +44,8 @@ export class TraitController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
   async find(@Query() dto: PagedQueryDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const query = new GetTraitsQuery(dto.q, dto.page, dto.size, userId);
+    const user = req.user!;
+    const query = new GetTraitsQuery(dto.q, dto.page, dto.size, user.id as string, user.roles as string[]);
     const page = await this.queryBus.execute<GetTraitsQuery, Page<Trait>>(query);
     const mapped = page.content.map(Trait => TraitDto.fromEntity(Trait));
     return new Page<TraitDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
