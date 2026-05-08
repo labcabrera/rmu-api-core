@@ -87,14 +87,17 @@ Recomendacion: eliminar o completar specs vacios, crear configuracion e2e valida
 
 ### A1. Bypass de autorizacion en Race
 
-`UpdateRaceHandler` y `DeleteRaceHandler` cargan la entidad, pero no aplican `RaceGuardPort.checkUpdate` ni `checkDelete`. Si un usuario autenticado conoce el id, puede modificar o borrar una raza sin validacion de owner/admin.
+Estado: corregido en el arbol de trabajo actual.
+
+`UpdateRaceHandler` y `DeleteRaceHandler` ahora inyectan `RaceGuardPort` y aplican `checkUpdate`/`checkDelete` antes de modificar o borrar la entidad. Si el guard deniega la operacion, no se persiste el cambio ni se publican eventos.
 
 Evidencia:
 
-- `src/modules/races/application/cqrs/handlers/update-race.handler.ts:16`
-- `src/modules/races/application/cqrs/handlers/delete-race.handler.ts:63`
+- `src/modules/races/application/cqrs/handlers/update-race.handler.ts`: valida `RaceGuardPort.checkUpdate`.
+- `src/modules/races/application/cqrs/handlers/delete-race.handler.ts`: valida `RaceGuardPort.checkDelete`.
+- `src/modules/races/application/cqrs/handlers/race-authorization.handler.spec.ts`: cubre update/delete permitidos y denegados.
 
-Recomendacion: inyectar `RaceGuardPort`, aplicar `checkUpdate/checkDelete` y cubrir owner, admin y usuario no propietario.
+Recomendacion: mantener estas pruebas como regresion y extender el mismo patron a otros agregados con hallazgos de autorizacion.
 
 ### A2. Traits no aplica autorizacion de dominio
 
