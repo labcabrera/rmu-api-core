@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { QueryCriteria } from '../criteria/query-criteria';
 
 export interface EntityGuard<E> {
   checkCreate(roles: string[]): void;
@@ -9,5 +9,5 @@ export interface EntityGuard<E> {
 
   checkDelete(entity: E, userId: string, roles: string[]): void;
 
-  buildQueryPredicate(userId: string, roles: string[]): FilterQuery<any>;
+  buildQueryPredicate(userId: string, roles: string[]): QueryCriteria;
 }

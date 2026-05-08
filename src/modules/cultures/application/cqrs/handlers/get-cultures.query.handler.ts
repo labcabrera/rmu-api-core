@@ -15,7 +15,7 @@ export class GetCulturesHandler implements IQueryHandler<GetCulturesQuery, Page<
 
   async execute(query: GetCulturesQuery): Promise<Page<Culture>> {
     const predicate = this.cultureGuard.buildQueryPredicate(query.userId, query.roles);
-    const sort = { name: 1 };
+    const sort = { name: 'asc' } as const;
     return await this.cultureRepository.findByRsql(query.rsql, query.page, query.size, predicate, sort);
   }
 }

@@ -6,6 +6,8 @@ import { Page } from 'src/modules/shared/domain/entities/page';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { BaseAggregateRoot } from '../../domain/aggregates/base-aggregate';
 import { Logger } from '@nestjs/common';
+import { QueryCriteria, SortCriteria } from 'src/modules/shared/application/criteria/query-criteria';
+import { MongoQueryCriteriaMapper } from '../persistence/repositories/mongo-query-criteria.mapper';
 
 export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
   private readonly logger = new Logger(MongoBaseRepository.name);
@@ -19,27 +21,24 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
     const readed = await this.model.findById(id);
     return readed ? this.mapToEntity(readed) : null;
   }
-  async findByRsql(rsql: string, page: number, size: number, filter?: FilterQuery<any>, sort?: any): Promise<Page<E>> {
+  async findByRsql(rsql: string, page: number, size: number, filter?: QueryCriteria, sort?: SortCriteria): Promise<Page<E>> {
     const skip = page * size;
     const rsqlParsed = this.rsqlParser.parse(rsql);
+    const accessFilter = MongoQueryCriteriaMapper.toFilterQuery(filter);
 
     let mongoQuery: FilterQuery<any>;
     if (!rsqlParsed || Object.keys(rsqlParsed).length === 0) {
-      mongoQuery = filter || {};
-    } else if (!filter || Object.keys(filter).length === 0) {
+      mongoQuery = accessFilter;
+    } else if (Object.keys(accessFilter).length === 0) {
       mongoQuery = rsqlParsed;
     } else {
-      mongoQuery = { $and: [rsqlParsed, filter] };
+      mongoQuery = { $and: [rsqlParsed, accessFilter] };
     }
 
     this.logger.verbose(`Executing MongoDB query: ${JSON.stringify(mongoQuery)} with pagination: page=${page}, size=${size}`);
 
     const [docs, totalElements] = await Promise.all([
-      this.model
-        .find(mongoQuery)
-        .skip(skip)
-        .limit(size)
-        .sort(sort || { _id: 1 }),
+      this.model.find(mongoQuery).skip(skip).limit(size).sort(MongoQueryCriteriaMapper.toSort(sort)),
       this.model.countDocuments(mongoQuery),
     ]);
     const content = docs.map(doc => this.mapToEntity(doc));

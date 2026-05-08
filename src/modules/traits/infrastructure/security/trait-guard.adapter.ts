@@ -1,8 +1,8 @@
-import { FilterQuery } from 'mongoose';
 import { TraitGuardPort } from '../../application/ports/trait-guard.port';
 import { Trait } from '../../domain/aggregates/trait';
 import { ForbiddenError } from 'src/modules/shared/domain/errors/errors';
 import { RMU_ADMIN, RMU_USER } from 'src/modules/shared/domain/entities/user-roles';
+import { QueryCriteria } from 'src/modules/shared/application/criteria/query-criteria';
 
 export class TraitGuardAdapter implements TraitGuardPort {
   checkRead(entity: Trait, userId: string, roles: string[]): void {
@@ -26,9 +26,9 @@ export class TraitGuardAdapter implements TraitGuardPort {
     throw new ForbiddenError('You do not have permission to delete this entity');
   }
 
-  buildQueryPredicate(userId: string, roles: string[]): FilterQuery<any> {
-    if (roles.includes(RMU_ADMIN)) return {};
-    return { owner: userId };
+  buildQueryPredicate(userId: string, roles: string[]): QueryCriteria {
+    if (roles.includes(RMU_ADMIN)) return QueryCriteria.empty();
+    return QueryCriteria.eq('owner', userId);
   }
 
   private canAccess(entity: Trait, userId: string, roles: string[]): boolean {

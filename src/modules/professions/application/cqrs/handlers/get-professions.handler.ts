@@ -10,7 +10,7 @@ export class GetProfessionsHandler implements IQueryHandler<GetProfessionsQuery,
   constructor(@Inject('ProfessionRepository') private readonly professionRepository: ProfessionRepository) {}
 
   async execute(query: GetProfessionsQuery): Promise<Page<Profession>> {
-    const sort = { _id: 1 };
+    const sort = { _id: 'asc' } as const;
     return await this.professionRepository.findByRsql(query.rsql, query.page, query.size, undefined, sort);
   }
 }
