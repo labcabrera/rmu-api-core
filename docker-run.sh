@@ -4,7 +4,7 @@ set -euo pipefail
 
 CONTAINER_NAME="${CONTAINER_NAME:-rmu-api-core}"
 IMAGE_NAME="${IMAGE_NAME:-labcabrera/rmu-api-core:latest}"
-ENV_FILE="${ENV_FILE:-.env}"
+ENV_FILE="${ENV_FILE:-.env.docker}"
 HOST_PORT="${HOST_PORT:-3001}"
 CONTAINER_PORT="${CONTAINER_PORT:-3001}"
 
