@@ -1,4 +1,15 @@
 = RMU Engine Core API
+:linkattrs:
+:icons: font
+
+image:https://img.shields.io/badge/license-GPL3.0-green.svg[License,link="https://www.gnu.org/licenses/gpl-3.0.html"]
+image:https://img.shields.io/badge/rolemaster-rmu-green.svg[Rolemaster,link="http://ironcrown.co.uk/unified-rolemaster/"]
+
+++++
+<a href="https://www.postman.com/labcabrera/workspace/rmu-engine/collection/5547717-39d04dee-7325-4251-86e5-e1f250cd99f2?action=share&creator=5547717&active-environment=5547717-f0da278a-5cc7-4d6c-8a82-8739ae0d1b0b" target="_blank">
+  <img src="https://run.pstmn.io/button.svg" alt="Run in Postman"/>
+</a>
+++++
 
 REST API for RMO core services such as skills or races.
 
@@ -9,13 +20,81 @@ WARNING: *This application is an independent project developed by fans of Rolema
 
 == Description
 
-This API exposes endpoints to manage shared data for the Rolemaster Unified Online platform, such as skills, races or realms.
+This API exposes endpoints to manage common entities used in the RMU ecosystem:
+
+- Realms
+- Races
+- Professions
+- Cultures
+- Skills (and categories)
+- Traits
+- Enumerations
+
+and other related entities.
 
 image::diagrams/c4-context.png[API Core Context System]
-
 
 == Entities
 
 In summary, the diagram of the main aggregates is as follows:
 
 image::diagrams/class-diagram.png[Class diagram]
+
+== Quick Guide
+
+This section describes the most important steps and environment variables to run and develop this API.
+
+=== Requirements
+
+- Docker (recommended 20.10+)
+- Node.js (for local development): recommended 18+
+- npm or pnpm
+
+=== Environment variables (`.env`)
+
+Configuration is loaded from the `.env` file at the repository root (used by `ConfigModule`).
+
+A sample configuration is as follows:
+
+----
+PORT=3001
+RMU_MONGO_CORE_URI=mongodb://user:pass@localhost:27017/rmu-core?authSource=admin
+RMU_KAFKA_CLIENT_ID=rmu-api-core
+RMU_KAFKA_CONSUMER_GROUP_ID=rmu-api-core-consumer
+RMU_KAFKA_DEFAULT_PARTITIONS=1
+RMU_KAFKA_BROKERS=localhost:9092
+RMU_IAM_JWK_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/certs
+RMU_IAM_TOKEN_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/token
+RMU_IAM_CLIENT_ID=rmu-client
+RMU_IAM_CLIENT_SECRET={our-clientId-secret}
+LOG_LEVEL=debug
+----
+
+=== Running with Docker
+
+This project includes `docker-run.sh` which builds the image and runs the container on the `rmu-network` Docker network.
+
+In https://github.com/labcabrera/rmu-platform/docker-compose there are some `docker-compose` files that run multiple services together such as MongoDB, Keycloak and Kafka.
+
+=== Local development
+
+Install dependencies and run in development mode (see `package.json` scripts):
+
+```bash
+npm install
+npm run start:dev
+```
+
+For production build:
+
+```bash
+npm run build
+npm run start:prod
+```
+
+== Contributing
+
+If you want to contribute:
+
+- Open an issue describing the change.
+- Create a branch with a clear name and a PR with description and tests when applicable.
