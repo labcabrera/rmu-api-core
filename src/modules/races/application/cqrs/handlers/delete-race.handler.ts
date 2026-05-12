@@ -6,6 +6,7 @@ import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import type { RaceRepository } from '../../ports/race-repository';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { CreateRaceHandler } from './create-race.handler';
+import type { RaceGuardPort } from '../../ports/race-guard.port';
 
 @CommandHandler(DeleteRaceCommand)
 export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
@@ -13,6 +14,7 @@ export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
 
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
+    @Inject('RaceGuardPort') private readonly raceGuard: RaceGuardPort,
     @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
   ) {}
 
@@ -21,6 +23,8 @@ export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
 
     const race = await this.raceRepository.findById(command.id);
     if (!race) throw new NotFoundError('Race', command.id);
+
+    this.raceGuard.checkDelete(race, command.userId, command.roles);
 
     await this.raceRepository.deleteById(command.id);
     this.raceEventBus.publish(new RaceDeletedEvent(race.getProps()));

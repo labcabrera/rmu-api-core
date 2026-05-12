@@ -5,6 +5,7 @@ import { TraitDeletedEvent } from 'src/modules/traits/domain/events/trait-delete
 import type { TraitRepository } from '../../ports/trait.repository';
 import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
 import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import type { TraitGuardPort } from '../../ports/trait-guard.port';
 
 @CommandHandler(DeleteTraitCommand)
 export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
@@ -12,11 +13,17 @@ export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
 
   constructor(
     @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
+    @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
     @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
   ) {}
 
   async execute(command: DeleteTraitCommand): Promise<void> {
     this.logger.log(`Deleting trait ${command.id}`);
+    const trait = await this.traitRepository.findById(command.id);
+    if (!trait) {
+      throw new NotFoundError('Trait', command.id);
+    }
+    this.traitGuard.checkDelete(trait, command.userId, command.roles ?? []);
     const deleted = await this.traitRepository.deleteById(command.id);
     if (!deleted) {
       throw new NotFoundError('Trait', command.id);

@@ -5,12 +5,12 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { ProfessionController } from './interfaces/http/profession.controller';
 import { GetProfessionHandler } from './application/cqrs/handlers/get-profession.handler';
 import { GetProfessionsHandler } from './application/cqrs/handlers/get-professions.handler';
-import { MongoProfessionRepository } from './intrastructure/db/mongo.profession.repository';
+import { MongoProfessionRepository } from './infrastructure/db/mongo.profession.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ProfessionModel, ProfessionSchema } from './intrastructure/persistence/models/profession-model';
+import { ProfessionModel, ProfessionSchema } from './infrastructure/persistence/models/profession-model';
 import { SharedModule } from '../shared/shared.module';
 import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler';
-import { ProfessionGuardAdapter } from './intrastructure/security/profession-guar.addapter';
+import { ProfessionGuardAdapter } from './infrastructure/security/profession-guard.adapter';
 import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-profession.handler';
 import { UpdateProfessionHandler } from './application/cqrs/handlers/update-profession.handler';
 

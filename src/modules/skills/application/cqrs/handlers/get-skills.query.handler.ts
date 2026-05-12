@@ -15,7 +15,7 @@ export class GetSkillsHandler implements IQueryHandler<GetSkillsQuery, Page<Skil
 
   async execute(query: GetSkillsQuery): Promise<Page<Skill>> {
     const filter = this.skillGuard.buildQueryPredicate(query.userId, query.roles);
-    const sort = { _id: 1 };
+    const sort = { _id: 'asc' } as const;
     return await this.skillRepository.findByRsql(query.rsql, query.page, query.size, filter, sort);
   }
 }

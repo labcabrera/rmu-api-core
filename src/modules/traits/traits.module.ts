@@ -8,11 +8,12 @@ import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository
 import { TraitController } from './interfaces/http/trait.controller';
 import { CreateTraitHandler } from './application/cqrs/handlers/create-trait.handler';
 import { DeleteTraitHandler } from './application/cqrs/handlers/delete-trait.handler';
-import { GetTraitsHandler } from './application/cqrs/handlers/get-realms.handler';
+import { GetTraitsHandler } from './application/cqrs/handlers/get-traits.handler';
 import { GetTraitHandler } from './application/cqrs/handlers/get-trait.handler';
 import { UpdateTraitHandler } from './application/cqrs/handlers/update-trait.handler';
 import { TraitModel, TraitSchema } from './infrastructure/persistence/models/trait-model';
 import { SharedModule } from '../shared/shared.module';
+import { TraitGuardAdapter } from './infrastructure/security/trait-guard.adapter';
 
 @Module({
   imports: [
@@ -36,6 +37,10 @@ import { SharedModule } from '../shared/shared.module';
     {
       provide: 'TraitEventProducer',
       useClass: KafkaTraitProducerService,
+    },
+    {
+      provide: 'TraitGuardPort',
+      useClass: TraitGuardAdapter,
     },
   ],
   exports: ['TraitRepository'],

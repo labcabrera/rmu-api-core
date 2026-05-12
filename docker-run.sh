@@ -1,26 +1,32 @@
 #!/bin/bash
 
-docker stop rmu-api-core
+set -euo pipefail
 
-docker rm rmu-api-core
+CONTAINER_NAME="${CONTAINER_NAME:-rmu-api-core}"
+IMAGE_NAME="${IMAGE_NAME:-labcabrera/rmu-api-core:latest}"
+ENV_FILE="${ENV_FILE:-.env.docker}"
+HOST_PORT="${HOST_PORT:-3001}"
+CONTAINER_PORT="${CONTAINER_PORT:-3001}"
 
-docker rmi labcabrera/rmu-api-core:latest
+if [ ! -f "${ENV_FILE}" ]; then
+    echo "Missing ${ENV_FILE}. Copy docker-run.env.example to ${ENV_FILE} and provide local secret values." >&2
+    exit 1
+fi
 
-docker build -t labcabrera/rmu-api-core:latest .
+docker stop "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
-docker run -d -p 3001:3001 --network rmu-network --name rmu-api-core -h rmu-api-core \
-    -e PORT='3001' \
-    -e RMU_MONGO_CORE_URI='mongodb://admin:admin@rmu-mongo:27017/rmu-core?authSource=admin' \
-    -e RMU_IAM_BASE_URL='http://rmu-keycloak:8080' \
-    -e RMU_IAM_JWK_URI=http://rmu-keycloak:8080/realms/rmu-local/protocol/openid-connect/certs \
-    -e RMU_IAM_TOKEN_URI=http://rmu-keycloak:8080/realms/rmu-local/protocol/openid-connect/token \
-    -e RMU_IAM_REALM='rmu-local' \
-    -e RMU_IAM_CLIENT_ID='rmu-client' \
-    -e RMU_IAM_CLIENT_SECRET='1tUzPc24SYJMPpX37g2eymEoS9C3Ttzw' \
-    -e RMU_KAFKA_CLIENT_ID='rmu-api-core' \
-    -e RMU_KAFKA_BROKERS='rmu-kafka-broker:9092' \
-    -e RMU_KAFKA_PARTITION_COUNT='1' \
-    -e LOG_LEVEL='info' \
-    labcabrera/rmu-api-core:latest
+docker rm "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
-docker logs -f rmu-api-core
+docker rmi "${IMAGE_NAME}" >/dev/null 2>&1 || true
+
+docker build -t "${IMAGE_NAME}" .
+
+docker run -d \
+    -p "${HOST_PORT}:${CONTAINER_PORT}" \
+    --network rmu-network \
+    --name "${CONTAINER_NAME}" \
+    -h "${CONTAINER_NAME}" \
+    --env-file "${ENV_FILE}" \
+    "${IMAGE_NAME}"
+
+docker logs -f "${CONTAINER_NAME}"
