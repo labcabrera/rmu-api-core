@@ -1,4 +1,6 @@
-.reports
+.reports/
+.vscode/
+.codex/
 
 # compiled output
 /dist

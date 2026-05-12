@@ -11,7 +11,7 @@ image:https://img.shields.io/badge/rolemaster-rmu-green.svg[Rolemaster,link="htt
 </a>
 ++++
 
-REST API for RMO core services such as skills or races.
+REST API for Rolemaster Unified Core services.
 
 This project is part of RMU Online: https://github.com/labcabrera/rmu-platform
 
@@ -50,7 +50,7 @@ This section describes the most important steps and environment variables to run
 - Node.js (for local development): recommended 18+
 - npm or pnpm
 
-=== Environment variables (`.env`)
+=== Local configuration
 
 Configuration is loaded from the `.env` file at the repository root (used by `ConfigModule`).
 
