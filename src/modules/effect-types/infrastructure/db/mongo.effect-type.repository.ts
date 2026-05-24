@@ -17,6 +17,7 @@ export class MongoEffectTypeRepository extends MongoBaseRepository<EffectType, E
     return EffectType.fromProps({
       id: doc.id as string,
       isPersistent: doc.isPersistent,
+      isStackable: doc.isStackable,
       value: doc.value,
       modifier: doc.modifier,
       rounds: doc.rounds,

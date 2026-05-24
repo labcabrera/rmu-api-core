@@ -26,6 +26,7 @@ export class CreateEffectTypeHandler implements ICommandHandler<CreateEffectType
     const effectType = EffectType.create({
       id: command.id,
       isPersistent: command.isPersistent,
+      isStackable: command.isStackable,
       value: command.value,
       modifier: command.modifier,
       rounds: command.rounds,

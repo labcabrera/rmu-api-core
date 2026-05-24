@@ -14,6 +14,9 @@ export class EffectTypeModel {
   @Prop({ type: Boolean, required: true })
   isPersistent: boolean;
 
+  @Prop({ type: Boolean, required: true })
+  isStackable: boolean;
+
   @Prop({ type: String, required: true })
   value: EffectPropertyRequirement;
 

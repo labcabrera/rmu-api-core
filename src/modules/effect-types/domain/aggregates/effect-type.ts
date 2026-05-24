@@ -9,6 +9,7 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
   private constructor(
     id: string,
     public isPersistent: boolean,
+    public isStackable: boolean,
     public value: EffectPropertyRequirement,
     public modifier: EffectPropertyRequirement,
     public rounds: EffectPropertyRequirement,
@@ -28,6 +29,7 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     return new EffectType(
       props.id,
       props.isPersistent,
+      props.isStackable,
       props.value,
       props.modifier,
       props.rounds,
@@ -46,6 +48,7 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     return new EffectType(
       props.id,
       props.isPersistent,
+      props.isStackable,
       props.value,
       props.modifier,
       props.rounds,
@@ -66,6 +69,10 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     if (props.isPersistent !== undefined) {
       modified = this.isPersistent !== props.isPersistent;
       this.isPersistent = props.isPersistent;
+    }
+    if (props.isStackable !== undefined) {
+      modified = modified || this.isStackable !== props.isStackable;
+      this.isStackable = props.isStackable;
     }
     if (props.value !== undefined) {
       modified = modified || this.value !== props.value;
@@ -104,6 +111,7 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     return {
       id: this.id,
       isPersistent: this.isPersistent,
+      isStackable: this.isStackable,
       value: this.value,
       modifier: this.modifier,
       rounds: this.rounds,

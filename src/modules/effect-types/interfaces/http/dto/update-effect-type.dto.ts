@@ -13,6 +13,11 @@ export class UpdateEffectTypeDto {
   @IsOptional()
   isPersistent: boolean | undefined;
 
+  @ApiProperty({ description: 'Indicates if the effect can be stacked', example: false, required: false })
+  @IsBoolean()
+  @IsOptional()
+  isStackable: boolean | undefined;
+
   @ApiProperty({ enum: EFFECT_PROPERTY_REQUIREMENTS, enumName: 'EffectPropertyRequirement', example: 'required', required: false })
   @IsIn(EFFECT_PROPERTY_REQUIREMENTS)
   @IsOptional()
@@ -52,6 +57,7 @@ export class UpdateEffectTypeDto {
     return new UpdateEffectTypeCommand(
       id,
       dto.isPersistent,
+      dto.isStackable,
       dto.value,
       dto.modifier,
       dto.rounds,

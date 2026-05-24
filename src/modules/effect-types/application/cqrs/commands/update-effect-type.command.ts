@@ -6,6 +6,7 @@ export class UpdateEffectTypeCommand extends AuthenticatedCommand {
   constructor(
     public readonly id: string,
     public readonly isPersistent: boolean | undefined,
+    public readonly isStackable: boolean | undefined,
     public readonly value: EffectPropertyRequirement | undefined,
     public readonly modifier: EffectPropertyRequirement | undefined,
     public readonly rounds: EffectPropertyRequirement | undefined,

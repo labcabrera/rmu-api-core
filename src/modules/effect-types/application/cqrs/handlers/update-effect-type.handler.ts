@@ -23,6 +23,7 @@ export class UpdateEffectTypeHandler implements ICommandHandler<UpdateEffectType
 
     current.update({
       isPersistent: command.isPersistent,
+      isStackable: command.isStackable,
       value: command.value,
       modifier: command.modifier,
       rounds: command.rounds,

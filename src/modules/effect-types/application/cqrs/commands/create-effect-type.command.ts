@@ -6,6 +6,7 @@ export class CreateEffectTypeCommand extends AuthenticatedCommand {
   constructor(
     public readonly id: string,
     public readonly isPersistent: boolean,
+    public readonly isStackable: boolean,
     public readonly value: EffectPropertyRequirement,
     public readonly modifier: EffectPropertyRequirement,
     public readonly rounds: EffectPropertyRequirement,

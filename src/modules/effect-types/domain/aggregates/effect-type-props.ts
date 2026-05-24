@@ -5,6 +5,7 @@ import { EffectPropertyRequirement } from '../value-objects/effect-property-requ
 export interface EffectTypeProps {
   id: string;
   isPersistent: boolean;
+  isStackable: boolean;
   value: EffectPropertyRequirement;
   modifier: EffectPropertyRequirement;
   rounds: EffectPropertyRequirement;

@@ -15,6 +15,9 @@ export class EffectTypeDto {
   @ApiProperty({ description: 'Indicates if the effect persists over time', example: true, required: true })
   isPersistent: boolean;
 
+  @ApiProperty({ description: 'Indicates if the effect can be stacked', example: false, required: true })
+  isStackable: boolean;
+
   @ApiProperty({ enum: EFFECT_PROPERTY_REQUIREMENTS, enumName: 'EffectPropertyRequirement', example: 'required', required: true })
   value: EffectPropertyRequirement;
 
@@ -46,6 +49,7 @@ export class EffectTypeDto {
     const dto = new EffectTypeDto();
     dto.id = entity.id;
     dto.isPersistent = entity.isPersistent;
+    dto.isStackable = entity.isStackable;
     dto.value = entity.value;
     dto.modifier = entity.modifier;
     dto.rounds = entity.rounds;
