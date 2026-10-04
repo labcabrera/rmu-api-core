@@ -1,7 +1,7 @@
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
 import { RealmType } from '../value-objects/realm-type.vo';
 import { ProfessionProps } from './profession-props';
-import { RbacEntity } from 'src/modules/shared/domain/entities/has-owner';
+import { RbacEntity } from 'src/modules/shared/domain/entities/rbac-entity';
 import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
 import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';

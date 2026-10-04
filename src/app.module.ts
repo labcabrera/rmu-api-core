@@ -16,6 +16,7 @@ import { CharacterSizesModule } from './modules/character-sizes/character-sizes.
 import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
 import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module';
 import { CulturesModule } from './modules/cultures/cultures.module';
+import { EffectTypesModule } from './modules/effect-types/effect-types.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { CulturesModule } from './modules/cultures/cultures.module';
     ManeuversModule,
     TraitsModule,
     EnumerationsModule,
+    EffectTypesModule,
     ResistanceRollsModule,
     CulturesModule,
   ],

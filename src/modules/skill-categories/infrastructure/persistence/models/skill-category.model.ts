@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type SkillCategoryDocument = SkillCategoryModel & Document;
 
-@Schema({ collection: 'skillCategories', id: true, versionKey: false })
+@Schema({ collection: 'skill-categories', id: true, versionKey: false })
 export class SkillCategoryModel {
   @Prop({ type: String, required: true })
   _id: string;
