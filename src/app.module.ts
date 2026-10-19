@@ -27,6 +27,8 @@ import { EffectTypesModule } from './modules/effect-types/effect-types.module';
         PORT: Joi.number().positive().default(3001),
         RMU_MONGO_CORE_URI: Joi.string().required(),
         RMU_IAM_JWK_URI: Joi.string().uri().required(),
+        RMU_IAM_ISSUER_URI: Joi.string().uri().required(),
+        RMU_IAM_AUDIENCE: Joi.string().required(),
         RMU_IAM_TOKEN_URI: Joi.string().uri().required(),
         RMU_IAM_CLIENT_ID: Joi.string().required(),
         RMU_IAM_CLIENT_SECRET: Joi.string().required(),
