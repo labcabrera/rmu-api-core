@@ -30,6 +30,8 @@ export const ENUMERATION_CATEGORIES = [
   'skill-magic-ritual',
   'spell-lore',
   'statistics',
+  'unarmed-ag-attack',
+  'unarmed-st-attack',
   'vehicle',
 ] as const;
 
