@@ -1,21 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { CreateCultureCommand } from 'src/modules/cultures/application/cqrs/commands/create-culture.command';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { CultureSkillRankDto } from './culture-skill-rank.dto';
 
 export class CreateCultureDto {
-  @ApiProperty({ description: 'Name of the race', example: 'Elf' })
+  @ApiProperty({ description: 'Name of the culture', example: 'Nomad' })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Description of the race' })
+  @ApiProperty({ description: 'Description of the culture', required: false })
   @IsString()
   @IsOptional()
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  @ApiProperty({ description: 'Image URL of the culture', required: false, example: 'images/cultures/nomad.png' })
   @IsString()
   @IsOptional()
   imageUrl: string | null;
@@ -24,17 +25,39 @@ export class CreateCultureDto {
   @IsString()
   accessType: AccessType;
 
-  @ApiProperty({ description: 'Fixed skill ranks', required: false, type: [Object] })
+  @ApiProperty({ description: 'Culture ranks entries', required: false, type: [CultureSkillRankDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CultureSkillRankDto)
   @IsOptional()
-  fixedSkillRanks: CultureSkillRankDto[];
+  skillRanks?: CultureSkillRankDto[];
+
+  @ApiProperty({ description: 'Languages offered by the culture. Empty or missing means all', required: false, type: [String] })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  languages?: string[];
+
+  @ApiProperty({ description: 'Free text with suggested crafts', required: false })
+  @IsString()
+  @IsOptional()
+  suggestedCrafts?: string;
+
+  @ApiProperty({ description: 'Free text with suggested vocations', required: false })
+  @IsString()
+  @IsOptional()
+  suggestedVocations?: string;
 
   static toCommand(dto: CreateCultureDto, userId: string, roles: string[]): CreateCultureCommand {
     return new CreateCultureCommand(
       dto.name,
-      dto.description,
-      dto.imageUrl,
+      dto.description ?? null,
+      dto.imageUrl ?? null,
       dto.accessType,
-      dto.fixedSkillRanks?.map(s => CultureSkillRankDto.toEntity(s)) || [],
+      dto.skillRanks?.map(s => CultureSkillRankDto.toProps(s)) ?? [],
+      dto.languages,
+      dto.suggestedCrafts,
+      dto.suggestedVocations,
       userId,
       roles,
     );

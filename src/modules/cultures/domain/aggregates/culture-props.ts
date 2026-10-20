@@ -8,11 +8,14 @@ export interface CultureProps {
   imageUrl: string | null;
   owner: string;
   accessType: AccessType;
-  fixedSkillRanks: CultureSkillRank[];
+  skillRanks: CultureSkillRank[];
+  languages?: string[];
+  suggestedCrafts?: string;
+  suggestedVocations?: string;
   createdAt: Date;
   updatedAt: Date | null;
 }
 
 export type CreateCultureProps = Omit<CultureProps, 'id' | 'createdAt' | 'updatedAt'>;
 
-export type UpdateCultureProps = Partial<Omit<CultureProps, 'id' | 'fixedSkillRanks' | 'createdAt' | 'updatedAt' | 'owner'>>;
+export type UpdateCultureProps = Partial<Omit<CultureProps, 'id' | 'createdAt' | 'updatedAt' | 'owner'>>;

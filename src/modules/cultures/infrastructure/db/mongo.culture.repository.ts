@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { CultureDocument, CultureModel } from '../persistence/models/culture-model';
 import { CultureRepository } from '../../application/ports/culture-repository';
 import { Culture } from '../../domain/aggregates/culture';
@@ -10,8 +11,18 @@ import { CultureSkillRank } from '../../domain/value-objects/culture-skill-rank'
 
 @Injectable()
 export class MongoCultureRepository extends MongoBaseRepository<Culture, CultureDocument> implements CultureRepository {
-  constructor(@InjectModel(CultureModel.name) raceModel: Model<CultureDocument>, rsqlParser: RsqlParser) {
-    super(raceModel, rsqlParser);
+  constructor(@InjectModel(CultureModel.name) cultureModel: Model<CultureDocument>, rsqlParser: RsqlParser) {
+    super(cultureModel, rsqlParser);
+  }
+
+  /** Writes only `skillRanks` and drops the old `fixedSkillRanks` field. */
+  async update(entityId: string, entity: Partial<Culture>): Promise<Culture> {
+    const props = entity.getProps ? entity.getProps() : entity;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, ...rest } = props;
+    const updated = await this.model.findByIdAndUpdate(entityId, { $set: rest, $unset: { fixedSkillRanks: 1 } }, { new: true });
+    if (!updated) throw new NotFoundError('Culture', entityId);
+    return this.mapToEntity(updated);
   }
 
   protected mapToEntity(doc: CultureDocument): Culture {
@@ -22,9 +33,35 @@ export class MongoCultureRepository extends MongoBaseRepository<Culture, Culture
       imageUrl: doc.imageUrl,
       owner: doc.owner,
       accessType: doc.accessType,
-      fixedSkillRanks: doc.fixedSkillRanks?.map(s => new CultureSkillRank(s.skillId, s.specialization ?? null, s.ranks)) ?? [],
+      skillRanks: MongoCultureRepository.mapSkillRanks(doc),
+      languages: doc.languages ? [...doc.languages] : undefined,
+      suggestedCrafts: doc.suggestedCrafts ?? undefined,
+      suggestedVocations: doc.suggestedVocations ?? undefined,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
+  }
+
+  /** Reads `skillRanks`, or the old `fixedSkillRanks` (as 'skill' entries) when it is absent. */
+  static mapSkillRanks(doc: Pick<CultureModel, 'skillRanks' | 'fixedSkillRanks'>): CultureSkillRank[] {
+    if (doc.skillRanks) {
+      return doc.skillRanks.map(s =>
+        CultureSkillRank.fromProps({
+          type: s.type,
+          skillId: s.skillId,
+          skillIds: s.skillIds ? [...s.skillIds] : undefined,
+          specialization: s.specialization,
+          categoryIds: s.categoryIds ? [...s.categoryIds] : undefined,
+          ranks: s.ranks,
+          maxRanksPerSkill: s.maxRanksPerSkill,
+          region: s.region,
+        }),
+      );
+    }
+    return (
+      doc.fixedSkillRanks?.map(s =>
+        CultureSkillRank.fromProps({ type: 'skill', skillId: s.skillId, specialization: s.specialization ?? undefined, ranks: s.ranks }),
+      ) ?? []
+    );
   }
 }

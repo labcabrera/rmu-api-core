@@ -1,11 +1,9 @@
 import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
 
-export class AddCultureFixedSkillRankCommand extends AuthenticatedCommand {
+export class DeleteCultureSkillRankCommand extends AuthenticatedCommand {
   constructor(
     public readonly cultureId: string,
-    public readonly skillId: string,
-    public readonly specialization: string | null,
-    public readonly ranks: number,
+    public readonly index: number,
     userId: string,
     roles: string[],
   ) {

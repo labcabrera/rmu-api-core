@@ -12,11 +12,13 @@ import { CultureGuardAdapter } from './infrastructure/security/culture-guard.ada
 import { GetCultureHandler } from './application/cqrs/handlers/get-culture.query.handler';
 import { GetCulturesHandler } from './application/cqrs/handlers/get-cultures.query.handler';
 import { CreateCultureHandler } from './application/cqrs/handlers/create-culture.handler';
-import { UpdateCultureHandler } from './application/cqrs/handlers/update-race.handler';
+import { UpdateCultureHandler } from './application/cqrs/handlers/update-culture.handler';
 import { DeleteCultureHandler } from './application/cqrs/handlers/delete-culture.handler';
 import { MongoCultureRepository } from './infrastructure/db/mongo.culture.repository';
-import { AddCultureFixedSkillRankHandler } from './application/cqrs/handlers/add-culture-fixed-skill-rank.handler';
-import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/delete-culture-fixed-skill-rank.handler';
+import { AddCultureSkillRankHandler } from './application/cqrs/handlers/add-culture-skill-rank.handler';
+import { DeleteCultureSkillRankHandler } from './application/cqrs/handlers/delete-culture-skill-rank.handler';
+import { CultureViewService } from './application/services/culture-view.service';
+import { SkillsModule } from '../skills/skills.module';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/
     AuthModule,
     SharedModule,
     RealmsModule,
+    SkillsModule,
   ],
   controllers: [CultureController],
   providers: [
@@ -34,8 +37,9 @@ import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/
     CreateCultureHandler,
     UpdateCultureHandler,
     DeleteCultureHandler,
-    AddCultureFixedSkillRankHandler,
-    DeleteCultureFixedSkillRankHandler,
+    AddCultureSkillRankHandler,
+    DeleteCultureSkillRankHandler,
+    CultureViewService,
     {
       provide: 'CultureRepository',
       useClass: MongoCultureRepository,

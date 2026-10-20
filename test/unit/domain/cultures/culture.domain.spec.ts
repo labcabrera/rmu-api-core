@@ -4,6 +4,10 @@ import { CultureProps } from 'src/modules/cultures/domain/aggregates/culture-pro
 import { CultureCreatedEvent } from 'src/modules/cultures/domain/events/culture-created.event';
 import { CultureUpdatedEvent } from 'src/modules/cultures/domain/events/culture-updated.event';
 import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+
+const skill = (skillId: string, ranks: number, specialization?: string) =>
+  CultureSkillRank.create({ type: 'skill', skillId, specialization, ranks });
 
 const makeCultureProps = (overrides: Partial<CultureProps> = {}): CultureProps => ({
   id: 'culture-1',
@@ -12,25 +16,28 @@ const makeCultureProps = (overrides: Partial<CultureProps> = {}): CultureProps =
   imageUrl: null,
   owner: 'owner-1',
   accessType: 'private',
-  fixedSkillRanks: [new CultureSkillRank('skill-1', null, 2)],
+  skillRanks: [skill('skill-1', 2)],
+  languages: undefined,
+  suggestedCrafts: undefined,
+  suggestedVocations: undefined,
   createdAt: new Date('2025-01-01T00:00:00.000Z'),
   updatedAt: null,
   ...overrides,
 });
 
 describe('Culture domain aggregate', () => {
-  it('creates a culture with default fixed ranks and a creation event', () => {
+  it('creates a culture with default skill ranks and a creation event', () => {
     const culture = Culture.create({
       name: 'Urban',
       description: null,
       imageUrl: null,
       owner: 'owner-1',
       accessType: 'public',
-      fixedSkillRanks: undefined,
+      skillRanks: undefined as unknown as CultureSkillRank[],
     });
 
     expect(culture.id).toEqual(expect.any(String));
-    expect(culture.fixedSkillRanks).toEqual([]);
+    expect(culture.skillRanks).toEqual([]);
     expect(culture.createdAt).toBeInstanceOf(Date);
     expect(culture.updatedAt).toBeNull();
     expect(culture.getUncommittedEvents()).toEqual([expect.any(CultureCreatedEvent)]);
@@ -41,7 +48,12 @@ describe('Culture domain aggregate', () => {
   });
 
   it('hydrates from props without domain events', () => {
-    const props = makeCultureProps({ updatedAt: new Date('2025-02-01T00:00:00.000Z') });
+    const props = makeCultureProps({
+      languages: ['lang-a'],
+      suggestedCrafts: 'any craft',
+      suggestedVocations: 'any vocation',
+      updatedAt: new Date('2025-02-01T00:00:00.000Z'),
+    });
 
     const culture = Culture.fromProps(props);
 
@@ -49,16 +61,19 @@ describe('Culture domain aggregate', () => {
     expect(culture.getUncommittedEvents()).toEqual([]);
   });
 
-  it('updates text, nullable media and fixed ranks while preserving owner', () => {
+  it('updates text, nullable media, skill ranks and the new fields while preserving owner', () => {
     const createdAt = new Date('2025-01-01T00:00:00.000Z');
     const culture = Culture.fromProps(makeCultureProps({ createdAt, owner: 'owner-1' }));
-    const fixedSkillRanks = [new CultureSkillRank('skill-2', 'desert', 0)];
+    const skillRanks = [skill('skill-2', 1, 'desert')];
 
     culture.update({
       name: 'Desert Nomad',
       description: null,
       imageUrl: null,
-      fixedSkillRanks,
+      skillRanks,
+      languages: ['lang-a', 'lang-b'],
+      suggestedCrafts: 'crafts',
+      suggestedVocations: 'vocations',
       accessType: 'public',
     });
 
@@ -66,7 +81,10 @@ describe('Culture domain aggregate', () => {
       name: 'Desert Nomad',
       description: null,
       imageUrl: null,
-      fixedSkillRanks,
+      skillRanks,
+      languages: ['lang-a', 'lang-b'],
+      suggestedCrafts: 'crafts',
+      suggestedVocations: 'vocations',
       owner: 'owner-1',
       accessType: 'private',
       createdAt,
@@ -75,19 +93,20 @@ describe('Culture domain aggregate', () => {
     expect(culture.getUncommittedEvents()).toEqual([expect.any(CultureUpdatedEvent)]);
   });
 
-  it('finds, adds, updates and deletes fixed skill ranks by nullable specialization', () => {
-    const culture = Culture.fromProps(makeCultureProps({ fixedSkillRanks: [] }));
+  it('appends skill ranks and deletes them by position', () => {
+    const culture = Culture.fromProps(makeCultureProps({ skillRanks: [] }));
+    const first = skill('skill-1', 1);
+    const pool = CultureSkillRank.create({ type: 'category-pool', categoryIds: ['cat-a'], ranks: 3 });
+    const languages = CultureSkillRank.create({ type: 'languages', ranks: 4 });
 
-    culture.addFixedSkillRank('skill-1', null, 1);
-    culture.addFixedSkillRank('skill-1', null, 3);
-    culture.addFixedSkillRank('skill-1', 'urban', 2);
+    culture.addSkillRank(first);
+    culture.addSkillRank(pool);
+    culture.addSkillRank(languages);
+    expect(culture.skillRanks).toEqual([first, pool, languages]);
 
-    expect(culture.findFixedSkillRank('skill-1', null)).toEqual(new CultureSkillRank('skill-1', null, 3));
-    expect(culture.findFixedSkillRank('skill-1', 'urban')).toEqual(new CultureSkillRank('skill-1', 'urban', 2));
+    culture.deleteSkillRank(1);
 
-    culture.deleteFixedSkillRank('skill-1', null);
-
-    expect(culture.fixedSkillRanks).toEqual([new CultureSkillRank('skill-1', 'urban', 2)]);
+    expect(culture.skillRanks).toEqual([first, languages]);
     expect(culture.getUncommittedEvents()).toEqual([
       expect.any(CultureUpdatedEvent),
       expect.any(CultureUpdatedEvent),
@@ -96,11 +115,11 @@ describe('Culture domain aggregate', () => {
     ]);
   });
 
-  it('keeps CultureSkillRank boundary values without coercion', () => {
-    const zeroRank = new CultureSkillRank('skill-1', null, 0);
-    const negativeRank = new CultureSkillRank('skill-2', 'rare', -1);
+  it('rejects deleting a skill rank position that does not exist', () => {
+    const culture = Culture.fromProps(makeCultureProps());
 
-    expect(zeroRank).toEqual({ skillId: 'skill-1', specialization: null, ranks: 0 });
-    expect(negativeRank).toEqual({ skillId: 'skill-2', specialization: 'rare', ranks: -1 });
+    expect(() => culture.deleteSkillRank(1)).toThrow(NotFoundError);
+    expect(() => culture.deleteSkillRank(-1)).toThrow(NotFoundError);
+    expect(culture.skillRanks).toHaveLength(1);
   });
 });
