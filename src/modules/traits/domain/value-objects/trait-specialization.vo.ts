@@ -5,6 +5,8 @@ export type TraitSpecialization =
   | 'combat-skill'
   | 'melee-combat-skill'
   | 'ranged-combat-skill'
+  | 'melee-weapon-type'
+  | 'ranged-weapon-type'
   | 'spell-list'
   | 'realm'
   | 'elemental-type'
