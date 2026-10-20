@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { CultureSkillRank } from './culture-skill-rank.model';
+import { CultureSkillRankModel, LegacyCultureFixedSkillRankModel } from './culture-skill-rank.model';
 
 export type CultureDocument = CultureModel & Document;
 
@@ -31,8 +31,21 @@ export class CultureModel {
   @Prop({ type: Date, required: false })
   updatedAt: Date | null;
 
-  @Prop({ type: [CultureSkillRank], required: false })
-  fixedSkillRanks?: CultureSkillRank[];
+  @Prop({ type: [CultureSkillRankModel], required: false, default: undefined })
+  skillRanks?: CultureSkillRankModel[];
+
+  @Prop({ type: [String], required: false, default: undefined })
+  languages?: string[];
+
+  @Prop({ type: String, required: false })
+  suggestedCrafts?: string;
+
+  @Prop({ type: String, required: false })
+  suggestedVocations?: string;
+
+  /** Old format, read only when `skillRanks` is absent. Never written. */
+  @Prop({ type: [LegacyCultureFixedSkillRankModel], required: false, default: undefined })
+  fixedSkillRanks?: LegacyCultureFixedSkillRankModel[];
 }
 
 export const CultureSchema = SchemaFactory.createForClass(CultureModel);

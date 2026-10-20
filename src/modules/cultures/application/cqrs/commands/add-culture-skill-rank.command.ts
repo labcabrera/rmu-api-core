@@ -1,10 +1,10 @@
 import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
+import { CultureSkillRankProps } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
 
-export class DeleteCultureFixedSkillRankCommand extends AuthenticatedCommand {
+export class AddCultureSkillRankCommand extends AuthenticatedCommand {
   constructor(
     public readonly cultureId: string,
-    public readonly skillId: string,
-    public readonly specialization: string | null,
+    public readonly skillRank: CultureSkillRankProps,
     userId: string,
     roles: string[],
   ) {

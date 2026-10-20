@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
+import { CultureView } from 'src/modules/cultures/application/read-models/culture-view';
 import { CultureSkillRankDto } from './culture-skill-rank.dto';
 
 export class CultureDto {
@@ -11,13 +11,29 @@ export class CultureDto {
   @ApiProperty({ description: 'Name of the culture', example: 'Nomad' })
   name: string;
 
-  @ApiProperty({ description: 'Fixed skill ranks', required: false, type: [CultureSkillRankDto] })
-  fixedSkillRanks: CultureSkillRankDto[];
+  @ApiProperty({ description: 'Culture ranks entries', type: [CultureSkillRankDto] })
+  skillRanks: CultureSkillRankDto[];
+
+  @ApiProperty({ description: 'Languages offered by the culture. Missing or empty means all', required: false, type: [String] })
+  languages?: string[];
+
+  @ApiProperty({ description: 'Free text with suggested crafts', required: false })
+  suggestedCrafts?: string;
+
+  @ApiProperty({ description: 'Free text with suggested vocations', required: false })
+  suggestedVocations?: string;
+
+  @ApiProperty({
+    description: 'Indicative development cost of the culture ranks (Core Law §12.6). Computed, read only',
+    readOnly: true,
+    example: 80,
+  })
+  developmentCost: number;
 
   @ApiProperty({ description: 'Description of the culture' })
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL of the culture', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  @ApiProperty({ description: 'Image URL of the culture', required: false, example: 'images/cultures/nomad.png' })
   imageUrl: string | null;
 
   @ApiProperty({ description: 'Owner identifier', example: 'user-123' })
@@ -26,11 +42,16 @@ export class CultureDto {
   @ApiProperty({ description: 'Access type', required: true, example: 'private' })
   accessType: AccessType;
 
-  static fromEntity(entity: Culture): CultureDto {
+  static fromView(view: CultureView): CultureDto {
+    const entity = view.culture;
     const dto = new CultureDto();
     dto.id = entity.id;
     dto.name = entity.name;
-    dto.fixedSkillRanks = entity.fixedSkillRanks?.map(f => CultureSkillRankDto.fromEntity(f)) ?? [];
+    dto.skillRanks = entity.skillRanks?.map(f => CultureSkillRankDto.fromEntity(f)) ?? [];
+    if (entity.languages !== undefined) dto.languages = entity.languages;
+    if (entity.suggestedCrafts !== undefined) dto.suggestedCrafts = entity.suggestedCrafts;
+    if (entity.suggestedVocations !== undefined) dto.suggestedVocations = entity.suggestedVocations;
+    dto.developmentCost = view.developmentCost;
     dto.description = entity.description;
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;

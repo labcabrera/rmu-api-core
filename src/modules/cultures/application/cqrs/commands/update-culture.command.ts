@@ -1,5 +1,6 @@
 import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { CultureSkillRankProps } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
 
 export class UpdateCultureCommand extends AuthenticatedCommand {
   constructor(
@@ -8,6 +9,10 @@ export class UpdateCultureCommand extends AuthenticatedCommand {
     public readonly description: string | undefined,
     public readonly imageUrl: string | undefined,
     public readonly accessType: AccessType | undefined,
+    public readonly skillRanks: CultureSkillRankProps[] | undefined,
+    public readonly languages: string[] | undefined,
+    public readonly suggestedCrafts: string | undefined,
+    public readonly suggestedVocations: string | undefined,
     userId: string,
     roles: string[],
   ) {
