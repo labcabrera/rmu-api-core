@@ -1,4 +1,4 @@
-import { EntityGuard } from '../../../shared/application/ports/entity-guard';
-import { Profession } from '../../domain/aggregates/profession';
+import type { EntityGuard } from '../../../shared/application/ports/entity-guard.js';
+import { Profession } from '../../domain/aggregates/profession.js';
 
 export type ProfessionGuardPort = EntityGuard<Profession>;

@@ -1,10 +1,10 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { GetTraitQuery } from '../queries/get-trait.query';
-import { Trait } from '../../../domain/aggregates/trait';
-import type { TraitRepository } from '../../ports/trait.repository';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { TraitGuardPort } from '../../ports/trait-guard.port';
+import { GetTraitQuery } from '../queries/get-trait.query.js';
+import { Trait } from '../../../domain/aggregates/trait.js';
+import type { TraitRepository } from '../../ports/trait.repository.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
 
 @QueryHandler(GetTraitQuery)
 export class GetTraitHandler implements IQueryHandler<GetTraitQuery, Trait> {

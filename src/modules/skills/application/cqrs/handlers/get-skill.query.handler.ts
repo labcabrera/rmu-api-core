@@ -1,11 +1,11 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { GetSkillQuery } from '../queries/get-skill.query';
-import type { SkillRepository } from '../../ports/skill-repository';
-import { SkillView } from '../../read-models/skill-view';
-import { SkillViewService } from '../../services/skill-view.service';
-import type { SkillGuardPort } from '../../ports/skill-guard';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
+import { GetSkillQuery } from '../queries/get-skill.query.js';
+import type { SkillRepository } from '../../ports/skill-repository.js';
+import type { SkillView } from '../../read-models/skill-view.js';
+import { SkillViewService } from '../../services/skill-view.service.js';
+import type { SkillGuardPort } from '../../ports/skill-guard.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 
 @QueryHandler(GetSkillQuery)
 export class GetSkillHandler implements IQueryHandler<GetSkillQuery, SkillView> {

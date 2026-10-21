@@ -2,25 +2,25 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { Race } from '../../domain/aggregates/race';
-import { RaceDto, RacePageDto } from './dto/race.dto';
-import { CreateRaceDto } from './dto/create-race.dto';
-import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command';
-import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query';
-import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query';
-import { UpdateRaceDto } from './dto/update-race.dto';
-import { Page } from '../../../shared/domain/entities/page';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { AddRaceTraitDto } from './dto/add-race-trait.dto';
-import { DeleteRaceTraitCommand } from '../../application/cqrs/commands/delete-race-trait.command';
-import { AddRaceSkillBonusDto } from './dto/add-race-skill-bonus.dto';
-import { AddRaceSkillBonusCommand } from '../../application/cqrs/commands/add-race-skill-bonus.command';
-import { CreateRaceCommand } from '../../application/cqrs/commands/create-race.command';
-import { AddRaceTraitCommand } from '../../application/cqrs/commands/add-race-trait.command';
-import { UpdateRaceCommand } from '../../application/cqrs/commands/update-race.command';
-import { DeleteRaceSkillBonusCommand } from '../../application/cqrs/commands/delete-race-skill-bonus.command';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { Race } from '../../domain/aggregates/race.js';
+import { RaceDto, RacePageDto } from './dto/race.dto.js';
+import { CreateRaceDto } from './dto/create-race.dto.js';
+import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command.js';
+import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query.js';
+import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query.js';
+import { UpdateRaceDto } from './dto/update-race.dto.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { AddRaceTraitDto } from './dto/add-race-trait.dto.js';
+import { DeleteRaceTraitCommand } from '../../application/cqrs/commands/delete-race-trait.command.js';
+import { AddRaceSkillBonusDto } from './dto/add-race-skill-bonus.dto.js';
+import { AddRaceSkillBonusCommand } from '../../application/cqrs/commands/add-race-skill-bonus.command.js';
+import { CreateRaceCommand } from '../../application/cqrs/commands/create-race.command.js';
+import { AddRaceTraitCommand } from '../../application/cqrs/commands/add-race-trait.command.js';
+import { UpdateRaceCommand } from '../../application/cqrs/commands/update-race.command.js';
+import { DeleteRaceSkillBonusCommand } from '../../application/cqrs/commands/delete-race-skill-bonus.command.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')

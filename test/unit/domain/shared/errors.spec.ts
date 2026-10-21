@@ -9,7 +9,7 @@ import {
   NotModifiedError,
   UnauthorizedError,
   ValidationError,
-} from '../../../../src/modules/shared/domain/errors/errors';
+} from '../../../../src/modules/shared/domain/errors/errors.js';
 
 describe('domain errors', () => {
   it('creates a generic domain error with default status code', () => {

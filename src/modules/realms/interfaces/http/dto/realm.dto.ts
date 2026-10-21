@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Realm } from '../../../domain/aggregates/realm';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
+import { Realm } from '../../../domain/aggregates/realm.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 
 export class RealmDto {
   @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })

@@ -4,9 +4,9 @@ import {
   CULTURE_REGIONS,
   CULTURE_SKILL_RANK_TYPES,
   CultureSkillRank,
-  CultureSkillRankProps,
-} from '../../../domain/value-objects/culture-skill-rank';
-import type { CultureRegion, CultureSkillRankType } from '../../../domain/value-objects/culture-skill-rank';
+  type CultureSkillRankProps,
+} from '../../../domain/value-objects/culture-skill-rank.js';
+import type { CultureRegion, CultureSkillRankType } from '../../../domain/value-objects/culture-skill-rank.js';
 
 /**
  * Culture ranks entry. The fields each type needs are checked by the domain:

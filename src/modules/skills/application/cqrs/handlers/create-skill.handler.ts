@@ -1,13 +1,13 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ConflictError, ValidationError } from '../../../../shared/domain/errors/errors';
-import { CreateSkillCommand } from '../commands/create-skill.command';
-import type { SkillRepository } from '../../ports/skill-repository';
-import { Skill } from '../../../domain/aggregates/skill';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
-import { SkillView } from '../../read-models/skill-view';
-import { SkillViewService } from '../../services/skill-view.service';
-import type { SkillGuardPort } from '../../ports/skill-guard';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ConflictError, ValidationError } from '../../../../shared/domain/errors/errors.js';
+import { CreateSkillCommand } from '../commands/create-skill.command.js';
+import type { SkillRepository } from '../../ports/skill-repository.js';
+import { Skill } from '../../../domain/aggregates/skill.js';
+import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository.js';
+import type { SkillView } from '../../read-models/skill-view.js';
+import { SkillViewService } from '../../services/skill-view.service.js';
+import type { SkillGuardPort } from '../../ports/skill-guard.js';
 
 @CommandHandler(CreateSkillCommand)
 export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, SkillView> {

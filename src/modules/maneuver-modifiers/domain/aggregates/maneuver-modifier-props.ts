@@ -1,5 +1,5 @@
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { ManeuverModifierOption, ManeuverModifierScope, ManeuverModifierType } from '../value-objects/maneuver-modifier-type.vo';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import type { ManeuverModifierOption, ManeuverModifierScope, ManeuverModifierType } from '../value-objects/maneuver-modifier-type.vo.js';
 
 export interface ManeuverModifierProps {
   id: string;

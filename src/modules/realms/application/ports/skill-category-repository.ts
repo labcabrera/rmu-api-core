@@ -1,5 +1,5 @@
-import { Page } from '../../../shared/domain/entities/page';
-import { SkillCategory } from '../../../skill-categories/domain/entities/skill-category';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { SkillCategory } from '../../../skill-categories/domain/entities/skill-category.js';
 
 export interface SkillCategoryRepository {
   findById(id: string): Promise<SkillCategory | null>;

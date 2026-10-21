@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TraitEventBusPort } from '../../application/ports/trait-event-bus.port';
-import { Trait } from '../../domain/aggregates/trait';
-import { DomainEvent } from '../../../shared/domain/events/domain-event';
-import { KafkaProducerService } from '../../../shared/infrastructure/messaging/kafka-producer.service';
+import type { TraitEventBusPort } from '../../application/ports/trait-event-bus.port.js';
+import { Trait } from '../../domain/aggregates/trait.js';
+import { DomainEvent } from '../../../shared/domain/events/domain-event.js';
+import { KafkaProducerService } from '../../../shared/infrastructure/messaging/kafka-producer.service.js';
 
 @Injectable()
 export class KafkaTraitProducerService implements TraitEventBusPort {

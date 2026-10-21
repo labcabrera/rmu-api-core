@@ -1,14 +1,14 @@
-import { RaceResistances } from '../value-objects/race-resistances.vo';
-import { RaceStats } from '../value-objects/race-stats.vo';
-import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
-import { RaceTrait } from '../value-objects/race-trait.vo';
-import { RaceCreatedEvent } from '../events/race-created.event';
+import { RaceResistances } from '../value-objects/race-resistances.vo.js';
+import { RaceStats } from '../value-objects/race-stats.vo.js';
+import type { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo.js';
+import { RaceTrait } from '../value-objects/race-trait.vo.js';
+import { RaceCreatedEvent } from '../events/race-created.event.js';
 import { randomUUID } from 'crypto';
-import { RaceUpdatedEvent } from '../events/race-updated.event';
-import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
-import { RaceProps } from './race-props';
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo';
+import { RaceUpdatedEvent } from '../events/race-updated.event.js';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import type { RaceProps } from './race-props.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo.js';
 
 export class Race extends BaseAggregateRoot<RaceProps> {
   private constructor(

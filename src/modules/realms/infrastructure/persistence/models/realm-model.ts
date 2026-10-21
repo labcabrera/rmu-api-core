@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Realm } from '../../../domain/aggregates/realm';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { Realm } from '../../../domain/aggregates/realm.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export type RealmDocument = Realm & Document;
 

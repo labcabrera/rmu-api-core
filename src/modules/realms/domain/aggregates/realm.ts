@@ -1,10 +1,10 @@
-import { RealmCreatedEvent } from '../events/realm-created.event';
-import { RealmUpdatedEvent } from '../events/realm-updated.event';
+import { RealmCreatedEvent } from '../events/realm-created.event.js';
+import { RealmUpdatedEvent } from '../events/realm-updated.event.js';
 import { randomUUID } from 'crypto';
-import { RealmProps } from './realm-props';
-import { MagicPresence } from '../value-objects/realm-magic-type.vo';
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
+import type { RealmProps } from './realm-props.js';
+import type { MagicPresence } from '../value-objects/realm-magic-type.vo.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
 
 export class Realm extends BaseAggregateRoot<RealmProps> {
   public name: string;

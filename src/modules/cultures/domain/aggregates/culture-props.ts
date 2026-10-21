@@ -1,5 +1,5 @@
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { CultureSkillRank } from '../value-objects/culture-skill-rank';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import { CultureSkillRank } from '../value-objects/culture-skill-rank.js';
 
 export interface CultureProps {
   id: string;

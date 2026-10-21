@@ -1,4 +1,4 @@
-import { AbsoluteManeuverResult } from './absolute-maneuver-result.vo';
+import type { AbsoluteManeuverResult } from './absolute-maneuver-result.vo.js';
 
 export class AbsoluteManeuverTable {
   constructor(

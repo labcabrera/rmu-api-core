@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SkillCategory } from '../../../../src/modules/skill-categories/domain/entities/skill-category';
+import { SkillCategory } from '../../../../src/modules/skill-categories/domain/entities/skill-category.js';
 
 describe('SkillCategory', () => {
   it('keeps identifier, bonuses and optional realm bonus', () => {

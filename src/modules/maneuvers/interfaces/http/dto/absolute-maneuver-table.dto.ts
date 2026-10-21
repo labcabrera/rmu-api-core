@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
-import { AbsoluteManeuverTable } from '../../../domain/value-objects/absolute-maneuver-table.vo';
-import { AbsoluteManeuverResultDto } from './absolute-maneuver-result.dto';
+import { AbsoluteManeuverTable } from '../../../domain/value-objects/absolute-maneuver-table.vo.js';
+import { AbsoluteManeuverResultDto } from './absolute-maneuver-result.dto.js';
 
 export class AbsoluteManeuverTableEntryDto {
   @ApiProperty({ description: 'Min roll', type: Number, example: '12', required: false })

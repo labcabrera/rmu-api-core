@@ -1,16 +1,16 @@
-import { NotFoundError, ValidationError } from '../../../shared/domain/errors/errors';
-import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
-import { ABSOLUTE_MANEUVER_TABLE } from '../value-objects/tables/generic-maneuver.table';
+import { NotFoundError, ValidationError } from '../../../shared/domain/errors/errors.js';
+import type { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo.js';
+import { ABSOLUTE_MANEUVER_TABLE } from '../value-objects/tables/generic-maneuver.table.js';
 import { Injectable } from '@nestjs/common';
-import { ADRENAL_MANEUVER_TABLE } from '../value-objects/tables/adrenal-maneuver.table';
-import { ANIMAL_MANEUVER_TABLE } from '../value-objects/tables/animal-maneuver.table';
-import { AbsoluteManeuverTable } from '../value-objects/absolute-maneuver-table.vo';
-import { AWARENESS_MANEUVER_TABLE } from '../value-objects/tables/awareness-maneuver.table';
-import { COMPOSITION_MANEUVER_TABLE } from '../value-objects/tables/composition-maneuver.table';
-import { CRAFTING_MANEUVER_TABLE } from '../value-objects/tables/crafting-maneuver.table';
-import { GYMNASTIC_MANEUVER_TABLE } from '../value-objects/tables/gymnastic-maneuver.table';
-import { LORE_MANEUVER_TABLE } from '../value-objects/tables/lore-maneuver.table';
-import { MEDICAL_MANEUVER_TABLE } from '../value-objects/tables/medical-maneuver.table';
+import { ADRENAL_MANEUVER_TABLE } from '../value-objects/tables/adrenal-maneuver.table.js';
+import { ANIMAL_MANEUVER_TABLE } from '../value-objects/tables/animal-maneuver.table.js';
+import { AbsoluteManeuverTable } from '../value-objects/absolute-maneuver-table.vo.js';
+import { AWARENESS_MANEUVER_TABLE } from '../value-objects/tables/awareness-maneuver.table.js';
+import { COMPOSITION_MANEUVER_TABLE } from '../value-objects/tables/composition-maneuver.table.js';
+import { CRAFTING_MANEUVER_TABLE } from '../value-objects/tables/crafting-maneuver.table.js';
+import { GYMNASTIC_MANEUVER_TABLE } from '../value-objects/tables/gymnastic-maneuver.table.js';
+import { LORE_MANEUVER_TABLE } from '../value-objects/tables/lore-maneuver.table.js';
+import { MEDICAL_MANEUVER_TABLE } from '../value-objects/tables/medical-maneuver.table.js';
 
 export const DEFAULT_ABSOLUTE_MANEUVER_TABLE = 'generic';
 

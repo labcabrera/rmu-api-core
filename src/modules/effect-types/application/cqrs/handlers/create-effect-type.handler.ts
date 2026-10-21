@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ConflictError } from '../../../../shared/domain/errors/errors';
-import { EffectType } from '../../../domain/aggregates/effect-type';
-import { CreateEffectTypeCommand } from '../commands/create-effect-type.command';
-import type { EffectTypeRepository } from '../../ports/effect-type-repository';
-import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { EffectType } from '../../../domain/aggregates/effect-type.js';
+import { CreateEffectTypeCommand } from '../commands/create-effect-type.command.js';
+import type { EffectTypeRepository } from '../../ports/effect-type-repository.js';
+import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port.js';
 
 @CommandHandler(CreateEffectTypeCommand)
 export class CreateEffectTypeHandler implements ICommandHandler<CreateEffectTypeCommand, EffectType> {

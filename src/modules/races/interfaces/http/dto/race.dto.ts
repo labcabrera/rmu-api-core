@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Race } from '../../../domain/aggregates/race';
-import { RaceResistancesDto } from './race-resistances.dto';
-import { RaceStatsDto } from './race-stats.dto';
-import { SexBasedAttributeDto } from './sex-based-attribute.dto';
-import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
-import { RaceTraitDto } from './race-trait.dto';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { RaceSkillBonusDto } from './race-skill-bonus.dto';
+import { Race } from '../../../domain/aggregates/race.js';
+import { RaceResistancesDto } from './race-resistances.dto.js';
+import { RaceStatsDto } from './race-stats.dto.js';
+import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import { RaceTraitDto } from './race-trait.dto.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { RaceSkillBonusDto } from './race-skill-bonus.dto.js';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })

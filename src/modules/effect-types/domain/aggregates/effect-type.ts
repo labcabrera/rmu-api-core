@@ -1,9 +1,9 @@
-import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
-import { NotModifiedError } from '../../../shared/domain/errors/errors';
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { EntitySource } from '../../../shared/domain/entities/entity-source';
-import { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo';
-import { EffectTypeProps } from './effect-type-props';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import { NotModifiedError } from '../../../shared/domain/errors/errors.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
+import type { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo.js';
+import type { EffectTypeProps } from './effect-type-props.js';
 
 export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
   private constructor(

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ArmorTypeRepository } from '../../application/ports/armor-type-repository';
-import { ArmorType, ARMOR_TYPES } from '../../domain/entities/armor-type';
+import type { ArmorTypeRepository } from '../../application/ports/armor-type-repository.js';
+import { type ArmorType, ARMOR_TYPES } from '../../domain/entities/armor-type.js';
 
 @Injectable()
 export class InMemoryArmorTypeRepository implements ArmorTypeRepository {

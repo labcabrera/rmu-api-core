@@ -1,5 +1,5 @@
-import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
-import { KeyValue } from '../../../../shared/domain/entities/key-value';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import { KeyValue } from '../../../../shared/domain/entities/key-value.js';
 
 export class ResistanceRollQuery extends AuthenticatedCommand {
   constructor(

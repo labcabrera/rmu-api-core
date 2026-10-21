@@ -1,7 +1,7 @@
-import { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo';
-import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
-import { ManeuverProfile } from '../../../../skill-categories/domain/value-objects/maneuver-profile.vo';
-import { AccessType } from '../../../../shared/domain/entities/access-type';
+import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { ManeuverProfile } from '../../../../skill-categories/domain/value-objects/maneuver-profile.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateSkillCommand extends AuthenticatedCommand {
   constructor(

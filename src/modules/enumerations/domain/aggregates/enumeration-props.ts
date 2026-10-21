@@ -1,6 +1,6 @@
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { EnumerationCategory } from '../value-objects/enumeration-category.vo';
-import { EntitySource } from '../../../shared/domain/entities/entity-source';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import type { EnumerationCategory } from '../value-objects/enumeration-category.vo.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 
 export interface EnumerationProps {
   id: string;

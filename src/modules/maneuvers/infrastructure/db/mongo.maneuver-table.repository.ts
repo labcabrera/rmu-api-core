@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ManeuverTableRepository } from '../../application/ports/maneuver-table-repository';
-import { AbsoluteManeuverTable } from '../../domain/value-objects/absolute-maneuver-table.vo';
-import { ManeuverTableDocument, ManeuverTableModel } from '../persistence/models/maneuver-table.model';
+import type { ManeuverTableRepository } from '../../application/ports/maneuver-table-repository.js';
+import { AbsoluteManeuverTable } from '../../domain/value-objects/absolute-maneuver-table.vo.js';
+import { type ManeuverTableDocument, ManeuverTableModel } from '../persistence/models/maneuver-table.model.js';
 
 @Injectable()
 export class MongoManeuverTableRepository implements ManeuverTableRepository {

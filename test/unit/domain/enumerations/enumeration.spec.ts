@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration';
-import { EnumerationProps } from '../../../../src/modules/enumerations/domain/aggregates/enumeration-props';
-import { ENUMERATION_CATEGORIES } from '../../../../src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors';
+import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration.js';
+import type { EnumerationProps } from '../../../../src/modules/enumerations/domain/aggregates/enumeration-props.js';
+import { ENUMERATION_CATEGORIES } from '../../../../src/modules/enumerations/domain/value-objects/enumeration-category.vo.js';
+import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const baseProps = (): EnumerationProps => ({
   id: 'enum-1',

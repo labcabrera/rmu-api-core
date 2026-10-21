@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { ResistanceRollQuery } from '../queries/resistance-roll.query';
-import { ResistanceRollService } from '../../../domain/services/resistance-roll.service';
-import { ResistanceRollResult } from '../../../domain/value-objects/resistance-roll-result';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { ResistanceRollQuery } from '../queries/resistance-roll.query.js';
+import { ResistanceRollService } from '../../../domain/services/resistance-roll.service.js';
+import { ResistanceRollResult } from '../../../domain/value-objects/resistance-roll-result.js';
 
 @QueryHandler(ResistanceRollQuery)
 export class ResistanceRollHandler implements IQueryHandler<ResistanceRollQuery, ResistanceRollResult> {

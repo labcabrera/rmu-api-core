@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CharacterSizeRepository } from '../../application/ports/character-size-repository';
-import { CharacterSize, CHARACTER_SIZES } from '../../../shared/domain/entities/character-size';
+import type { CharacterSizeRepository } from '../../application/ports/character-size-repository.js';
+import { type CharacterSize, CHARACTER_SIZES } from '../../../shared/domain/entities/character-size.js';
 
 @Injectable()
 export class InMemoryCharacterSizeRepository implements CharacterSizeRepository {

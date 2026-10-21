@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ConflictError } from '../../../../shared/domain/errors/errors';
-import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier';
-import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
-import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';
-import { CreateManeuverModifierCommand } from '../commands/create-maneuver-modifier.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
+import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.js';
+import { CreateManeuverModifierCommand } from '../commands/create-maneuver-modifier.command.js';
 
 @CommandHandler(CreateManeuverModifierCommand)
 export class CreateManeuverModifierHandler implements ICommandHandler<CreateManeuverModifierCommand, ManeuverModifier> {

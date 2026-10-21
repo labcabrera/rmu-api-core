@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsIn } from 'class-validator';
-import { CreateRealmCommand } from '../../../application/cqrs/commands/create-realm.command';
-import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { CreateRealmCommand } from '../../../application/cqrs/commands/create-realm.command.js';
+import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class CreateRealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })

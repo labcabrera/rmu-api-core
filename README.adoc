@@ -142,7 +142,9 @@ test/e2e/                    smoke test of the whole application
 
 Conventions:
 
-- Imports are relative; there is no `src/...` alias.
+- The package is ESM (`"type": "module"`). Imports are relative and end in `.js` (`'./races.module.js'`); there is no
+  `src/...` alias. `verbatimModuleSyntax` requires `import type` for anything that is only a type, but a class used as a
+  constructor parameter must stay a value import, because Nest reads it from the decorator metadata.
 - File names are kebab-case (`race-guard.adapter.ts`), with a dotted suffix for the role (`.module`, `.controller`,
   `.dto`, `.handler`, `.repository`).
 - A read-only module may skip `domain/` (`character-sizes`).

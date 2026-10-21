@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from '../shared/infrastructure/security/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { MongooseModule } from '@nestjs/mongoose';
-import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-event-bus.adapter';
-import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository';
-import { TraitController } from './interfaces/http/trait.controller';
-import { CreateTraitHandler } from './application/cqrs/handlers/create-trait.handler';
-import { DeleteTraitHandler } from './application/cqrs/handlers/delete-trait.handler';
-import { GetTraitsHandler } from './application/cqrs/handlers/get-traits.handler';
-import { GetTraitHandler } from './application/cqrs/handlers/get-trait.handler';
-import { UpdateTraitHandler } from './application/cqrs/handlers/update-trait.handler';
-import { TraitModel, TraitSchema } from './infrastructure/persistence/models/trait-model';
-import { SharedModule } from '../shared/shared.module';
-import { TraitGuardAdapter } from './infrastructure/security/trait-guard.adapter';
+import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-event-bus.adapter.js';
+import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository.js';
+import { TraitController } from './interfaces/http/trait.controller.js';
+import { CreateTraitHandler } from './application/cqrs/handlers/create-trait.handler.js';
+import { DeleteTraitHandler } from './application/cqrs/handlers/delete-trait.handler.js';
+import { GetTraitsHandler } from './application/cqrs/handlers/get-traits.handler.js';
+import { GetTraitHandler } from './application/cqrs/handlers/get-trait.handler.js';
+import { UpdateTraitHandler } from './application/cqrs/handlers/update-trait.handler.js';
+import { TraitModel, TraitSchema } from './infrastructure/persistence/models/trait-model.js';
+import { SharedModule } from '../shared/shared.module.js';
+import { TraitGuardAdapter } from './infrastructure/security/trait-guard.adapter.js';
 
 @Module({
   imports: [

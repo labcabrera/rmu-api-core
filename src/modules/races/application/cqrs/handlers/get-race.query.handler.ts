@@ -1,10 +1,10 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { Race } from '../../../domain/aggregates/race';
-import { GetRaceQuery } from '../queries/get-race.query';
-import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { RaceGuardPort } from '../../ports/race-guard.port';
+import { Race } from '../../../domain/aggregates/race.js';
+import { GetRaceQuery } from '../queries/get-race.query.js';
+import type { RaceRepository } from '../../ports/race-repository.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { RaceGuardPort } from '../../ports/race-guard.port.js';
 
 @QueryHandler(GetRaceQuery)
 export class GetRaceHandler implements IQueryHandler<GetRaceQuery, Race> {

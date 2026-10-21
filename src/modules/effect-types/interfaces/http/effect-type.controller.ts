@@ -2,17 +2,17 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { Page } from '../../../shared/domain/entities/page';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { DeleteEffectTypeCommand } from '../../application/cqrs/commands/delete-effect-type.command';
-import { GetEffectTypeQuery } from '../../application/cqrs/queries/get-effect-type.query';
-import { GetEffectTypesQuery } from '../../application/cqrs/queries/get-effect-types.query';
-import { EffectType } from '../../domain/aggregates/effect-type';
-import { CreateEffectTypeDto } from './dto/create-effect-type.dto';
-import { EffectTypeDto, EffectTypePageDto } from './dto/effect-type.dto';
-import { UpdateEffectTypeDto } from './dto/update-effect-type.dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { DeleteEffectTypeCommand } from '../../application/cqrs/commands/delete-effect-type.command.js';
+import { GetEffectTypeQuery } from '../../application/cqrs/queries/get-effect-type.query.js';
+import { GetEffectTypesQuery } from '../../application/cqrs/queries/get-effect-types.query.js';
+import { EffectType } from '../../domain/aggregates/effect-type.js';
+import { CreateEffectTypeDto } from './dto/create-effect-type.dto.js';
+import { EffectTypeDto, EffectTypePageDto } from './dto/effect-type.dto.js';
+import { UpdateEffectTypeDto } from './dto/update-effect-type.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/effect-types')

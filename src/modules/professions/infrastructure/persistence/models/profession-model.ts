@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ProfessionSkillCosts } from './profession-skill-costs.model';
-import { RealmType } from '../../../domain/value-objects/realm-type.vo';
-import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo';
-import type { EntitySource } from '../../../../shared/domain/entities/entity-source';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { ProfessionSkillCosts } from './profession-skill-costs.model.js';
+import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
+import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export type ProfessionDocument = ProfessionModel & Document;
 

@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Profession } from '../../../domain/aggregates/profession';
-import { ProfessionSkillCostsDto } from './profession-skill-cost.dto';
-import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
-import type { EntitySource } from '../../../../shared/domain/entities/entity-source';
-import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { Profession } from '../../../domain/aggregates/profession.js';
+import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class ProfessionDto {
   @ApiProperty({ description: 'Profession identifier', example: 'rogue', required: true })

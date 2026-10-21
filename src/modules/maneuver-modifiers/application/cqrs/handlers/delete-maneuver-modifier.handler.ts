@@ -1,9 +1,9 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
-import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';
-import { DeleteManeuverModifierCommand } from '../commands/delete-maneuver-modifier.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.js';
+import { DeleteManeuverModifierCommand } from '../commands/delete-maneuver-modifier.command.js';
 
 @CommandHandler(DeleteManeuverModifierCommand)
 export class DeleteManeuverModifierHandler implements ICommandHandler<DeleteManeuverModifierCommand, void> {

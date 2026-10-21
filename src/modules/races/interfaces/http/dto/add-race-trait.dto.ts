@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
-import { AddRaceTraitCommand } from '../../../application/cqrs/commands/add-race-trait.command';
+import { AddRaceTraitCommand } from '../../../application/cqrs/commands/add-race-trait.command.js';
 
 export class AddRaceTraitDto {
   @ApiProperty({ description: 'ID of the trait to add to the race', example: 'trait-123' })

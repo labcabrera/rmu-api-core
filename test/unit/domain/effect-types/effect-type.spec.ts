@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors';
-import { EffectType } from '../../../../src/modules/effect-types/domain/aggregates/effect-type';
+import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { EffectType } from '../../../../src/modules/effect-types/domain/aggregates/effect-type.js';
 
 describe('EffectType', () => {
   it('creates an effect type with caller-defined id', () => {

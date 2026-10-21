@@ -1,11 +1,11 @@
 import { randomUUID } from 'crypto';
-import { CultureUpdatedEvent } from '../events/culture-updated.event';
-import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
-import { CreateCultureProps, CultureProps, UpdateCultureProps } from './culture-props';
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { CultureCreatedEvent } from '../events/culture-created.event';
-import { CultureSkillRank } from '../value-objects/culture-skill-rank';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
+import { CultureUpdatedEvent } from '../events/culture-updated.event.js';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import type { CreateCultureProps, CultureProps, UpdateCultureProps } from './culture-props.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import { CultureCreatedEvent } from '../events/culture-created.event.js';
+import { CultureSkillRank } from '../value-objects/culture-skill-rank.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 
 export class Culture extends BaseAggregateRoot<CultureProps> {
   private constructor(

@@ -1,4 +1,4 @@
-import { ValidationError } from '../../../shared/domain/errors/errors';
+import { ValidationError } from '../../../shared/domain/errors/errors.js';
 
 export const CULTURE_SKILL_RANK_TYPES = ['skill', 'skill-choice', 'category-pool', 'languages', 'region'] as const;
 

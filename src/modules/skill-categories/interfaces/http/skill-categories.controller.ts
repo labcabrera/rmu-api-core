@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller, Get, Param, UseGuards, Request, Query, Post, Body } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { Page } from '../../../shared/domain/entities/page';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { Page } from '../../../shared/domain/entities/page.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetSkillCategoryQuery } from '../../application/cqrs/queries/get-skill-category.query';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { GetSkillCategoriesQuery } from '../../application/cqrs/queries/get-skill-categories.query';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
-import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto';
-import { CreateSkillCategoryDto } from './dto/create-skill-category.dto';
-import { SkillCategory } from '../../domain/entities/skill-category';
+import { GetSkillCategoryQuery } from '../../application/cqrs/queries/get-skill-category.query.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { GetSkillCategoriesQuery } from '../../application/cqrs/queries/get-skill-categories.query.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto.js';
+import { CreateSkillCategoryDto } from './dto/create-skill-category.dto.js';
+import { SkillCategory } from '../../domain/entities/skill-category.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skill-categories')

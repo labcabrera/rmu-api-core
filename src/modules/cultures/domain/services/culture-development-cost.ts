@@ -1,4 +1,4 @@
-import { CultureSkillRank } from '../value-objects/culture-skill-rank';
+import { CultureSkillRank } from '../value-objects/culture-skill-rank.js';
 
 /**
  * Development point cost per rank of each skill category when building a culture (Core Law §12.6).

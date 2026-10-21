@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill';
-import { SkillProps } from '../../../../src/modules/skills/domain/aggregates/skill-props';
-import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors';
+import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
+import type { SkillProps } from '../../../../src/modules/skills/domain/aggregates/skill-props.js';
+import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const baseProps = (): SkillProps => ({
   id: 'skill-1',

@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { EffectType } from '../../../domain/aggregates/effect-type';
-import { GetEffectTypeQuery } from '../queries/get-effect-type.query';
-import type { EffectTypeRepository } from '../../ports/effect-type-repository';
-import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { EffectType } from '../../../domain/aggregates/effect-type.js';
+import { GetEffectTypeQuery } from '../queries/get-effect-type.query.js';
+import type { EffectTypeRepository } from '../../ports/effect-type-repository.js';
+import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port.js';
 
 @QueryHandler(GetEffectTypeQuery)
 export class GetEffectTypeHandler implements IQueryHandler<GetEffectTypeQuery, EffectType> {

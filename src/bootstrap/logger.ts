@@ -1,4 +1,4 @@
-import { LogLevel } from '@nestjs/common';
+import type { LogLevel } from '@nestjs/common';
 
 const LEVELS: LogLevel[] = ['error', 'warn', 'log', 'debug', 'verbose'];
 const ALIASES: Record<string, LogLevel> = { info: 'log' };

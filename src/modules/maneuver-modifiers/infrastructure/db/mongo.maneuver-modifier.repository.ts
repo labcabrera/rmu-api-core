@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
-import { QueryCriteria } from '../../../shared/application/criteria/query-criteria';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
-import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
-import { MongoQueryCriteriaMapper } from '../../../shared/infrastructure/persistence/repositories/mongo-query-criteria.mapper';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
-import { ManeuverModifierRepository } from '../../application/ports/maneuver-modifier-repository';
-import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier';
-import { ManeuverModifierDocument, ManeuverModifierModel } from '../persistence/models/maneuver-modifier.model';
+import { type FilterQuery, Model } from 'mongoose';
+import { QueryCriteria } from '../../../shared/application/criteria/query-criteria.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
+import { MongoQueryCriteriaMapper } from '../../../shared/infrastructure/persistence/repositories/mongo-query-criteria.mapper.js';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import type { ManeuverModifierRepository } from '../../application/ports/maneuver-modifier-repository.js';
+import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier.js';
+import { type ManeuverModifierDocument, ManeuverModifierModel } from '../persistence/models/maneuver-modifier.model.js';
 
 const OPTIONAL_FIELDS = ['value', 'options', 'perUnit', 'min', 'max', 'description', 'updatedAt'] as const;
 

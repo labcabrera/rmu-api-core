@@ -1,4 +1,4 @@
-import { AccessType } from '../../../../shared/domain/entities/access-type';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateRaceRealmNameCommand {
   constructor(

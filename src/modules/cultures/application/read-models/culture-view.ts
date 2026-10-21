@@ -1,4 +1,4 @@
-import { Culture } from '../../domain/aggregates/culture';
+import { Culture } from '../../domain/aggregates/culture.js';
 
 /** Culture plus the values computed when it is read. */
 export interface CultureView {

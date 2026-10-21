@@ -1,6 +1,6 @@
-import { BaseRepository } from '../../../shared/application/ports/base-repository';
-import { QueryCriteria } from '../../../shared/application/criteria/query-criteria';
-import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier';
+import type { BaseRepository } from '../../../shared/application/ports/base-repository.js';
+import { QueryCriteria } from '../../../shared/application/criteria/query-criteria.js';
+import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier.js';
 
 export interface ManeuverModifierRepository extends BaseRepository<ManeuverModifier> {
   findByKey(key: string): Promise<ManeuverModifier | null>;

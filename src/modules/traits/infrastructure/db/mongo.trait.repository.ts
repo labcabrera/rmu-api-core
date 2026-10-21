@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
-import { TraitDocument, TraitModel } from '../persistence/models/trait-model';
-import { TraitRepository } from '../../application/ports/trait.repository';
-import { Trait } from '../../domain/aggregates/trait';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
+import { InjectModel } from '@nestjs/mongoose';
+import { type TraitDocument, TraitModel } from '../persistence/models/trait-model.js';
+import type { TraitRepository } from '../../application/ports/trait.repository.js';
+import { Trait } from '../../domain/aggregates/trait.js';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()
 export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocument> implements TraitRepository {

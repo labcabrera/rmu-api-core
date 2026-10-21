@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ResistanceRollResult } from '../../../../src/modules/resistance-rolls/domain/value-objects/resistance-roll-result';
+import { ResistanceRollResult } from '../../../../src/modules/resistance-rolls/domain/value-objects/resistance-roll-result.js';
 
 describe('ResistanceRollResult', () => {
   it('stores result code, modifiers, total result, and failure as immutable constructor values', () => {

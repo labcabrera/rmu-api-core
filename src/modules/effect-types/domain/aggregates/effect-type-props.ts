@@ -1,6 +1,6 @@
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { EntitySource } from '../../../shared/domain/entities/entity-source';
-import { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
+import type { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo.js';
 
 export interface EffectTypeProps {
   id: string;

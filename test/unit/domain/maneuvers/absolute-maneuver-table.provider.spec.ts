@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { AbsoluteManeuverTableProvider } from '../../../../src/modules/maneuvers/application/services/absolute-maneuver-table.provider';
-import type { ManeuverTableRepository } from '../../../../src/modules/maneuvers/application/ports/maneuver-table-repository';
-import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service';
-import { AbsoluteManeuverTable } from '../../../../src/modules/maneuvers/domain/value-objects/absolute-maneuver-table.vo';
-import { MongoManeuverTableRepository } from '../../../../src/modules/maneuvers/infrastructure/db/mongo.maneuver-table.repository';
-import { ManeuverTableModel } from '../../../../src/modules/maneuvers/infrastructure/persistence/models/maneuver-table.model';
-import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors';
+import { AbsoluteManeuverTableProvider } from '../../../../src/modules/maneuvers/application/services/absolute-maneuver-table.provider.js';
+import type { ManeuverTableRepository } from '../../../../src/modules/maneuvers/application/ports/maneuver-table-repository.js';
+import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service.js';
+import { AbsoluteManeuverTable } from '../../../../src/modules/maneuvers/domain/value-objects/absolute-maneuver-table.vo.js';
+import { MongoManeuverTableRepository } from '../../../../src/modules/maneuvers/infrastructure/db/mongo.maneuver-table.repository.js';
+import { ManeuverTableModel } from '../../../../src/modules/maneuvers/infrastructure/persistence/models/maneuver-table.model.js';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 // Invented table: not book data.
 const storedDoc: ManeuverTableModel = {

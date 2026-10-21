@@ -1,5 +1,5 @@
-import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
-import { ManeuverModifierUpdate } from '../../../domain/aggregates/maneuver-modifier';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { ManeuverModifierUpdate } from '../../../domain/aggregates/maneuver-modifier.js';
 
 export class UpdateManeuverModifierCommand extends AuthenticatedCommand {
   constructor(

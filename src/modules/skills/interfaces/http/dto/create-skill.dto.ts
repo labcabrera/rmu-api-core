@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto';
-import { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { CreateSkillCommand } from '../../../application/cqrs/commands/create-skill.command';
+import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
+import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { CreateSkillCommand } from '../../../application/cqrs/commands/create-skill.command.js';
 
 export class CreateSkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })

@@ -1,12 +1,12 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors';
-import type { SkillRepository } from '../../ports/skill-repository';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
-import { SkillView } from '../../read-models/skill-view';
-import { SkillViewService } from '../../services/skill-view.service';
-import type { SkillGuardPort } from '../../ports/skill-guard';
-import { UpdateSkillCommand } from '../commands/update-skill.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors.js';
+import type { SkillRepository } from '../../ports/skill-repository.js';
+import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository.js';
+import type { SkillView } from '../../read-models/skill-view.js';
+import { SkillViewService } from '../../services/skill-view.service.js';
+import type { SkillGuardPort } from '../../ports/skill-guard.js';
+import { UpdateSkillCommand } from '../commands/update-skill.command.js';
 
 @CommandHandler(UpdateSkillCommand)
 export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, SkillView> {

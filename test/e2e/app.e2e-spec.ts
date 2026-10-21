@@ -1,15 +1,16 @@
-import { ExecutionContext, INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import { type ExecutionContext, type INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
-import type { App } from 'supertest/types';
-import { KafkaProducerService } from '../../src/modules/shared/infrastructure/messaging/kafka-producer.service';
-import { JwtAuthGuard } from '../../src/modules/shared/infrastructure/security/jwt-auth.guard';
-import { DomainExceptionFilter } from '../../src/modules/shared/interfaces/http/domain-exception.filter';
+import { KafkaProducerService } from '../../src/modules/shared/infrastructure/messaging/kafka-producer.service.js';
+import { JwtAuthGuard } from '../../src/modules/shared/infrastructure/security/jwt-auth.guard.js';
+import { DomainExceptionFilter } from '../../src/modules/shared/interfaces/http/domain-exception.filter.js';
 
 // Boots the whole AppModule against an in-memory Mongo. Kafka and Keycloak are replaced: the producer
 // records the events and the guard accepts a fixed token. AppModule is imported after setting the
 // environment, because ConfigModule.forRoot() reads it (and .env) when the module is evaluated.
+type App = Parameters<typeof request>[0];
+
 const TOKEN = 'e2e-token';
 const USER = { id: 'e2e-user', roles: ['rmu-admin'] };
 

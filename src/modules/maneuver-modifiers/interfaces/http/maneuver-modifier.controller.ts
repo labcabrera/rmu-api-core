@@ -12,20 +12,20 @@ import {
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { Page } from '../../../shared/domain/entities/page';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { CreateManeuverModifierCommand } from '../../application/cqrs/commands/create-maneuver-modifier.command';
-import { DeleteManeuverModifierCommand } from '../../application/cqrs/commands/delete-maneuver-modifier.command';
-import { UpdateManeuverModifierCommand } from '../../application/cqrs/commands/update-maneuver-modifier.command';
-import { FindApplicableManeuverModifiersQuery } from '../../application/cqrs/queries/find-applicable-maneuver-modifiers.query';
-import { GetManeuverModifierQuery } from '../../application/cqrs/queries/get-maneuver-modifier.query';
-import { GetManeuverModifiersQuery } from '../../application/cqrs/queries/get-maneuver-modifiers.query';
-import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier';
-import { CreateManeuverModifierDto } from './dto/create-maneuver-modifier.dto';
-import { ManeuverModifierQueryDto } from './dto/maneuver-modifier-query.dto';
-import { ManeuverModifierDto, ManeuverModifierPageDto } from './dto/maneuver-modifier.dto';
-import { UpdateManeuverModifierDto } from './dto/update-maneuver-modifier.dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { CreateManeuverModifierCommand } from '../../application/cqrs/commands/create-maneuver-modifier.command.js';
+import { DeleteManeuverModifierCommand } from '../../application/cqrs/commands/delete-maneuver-modifier.command.js';
+import { UpdateManeuverModifierCommand } from '../../application/cqrs/commands/update-maneuver-modifier.command.js';
+import { FindApplicableManeuverModifiersQuery } from '../../application/cqrs/queries/find-applicable-maneuver-modifiers.query.js';
+import { GetManeuverModifierQuery } from '../../application/cqrs/queries/get-maneuver-modifier.query.js';
+import { GetManeuverModifiersQuery } from '../../application/cqrs/queries/get-maneuver-modifiers.query.js';
+import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier.js';
+import { CreateManeuverModifierDto } from './dto/create-maneuver-modifier.dto.js';
+import { ManeuverModifierQueryDto } from './dto/maneuver-modifier-query.dto.js';
+import { ManeuverModifierDto, ManeuverModifierPageDto } from './dto/maneuver-modifier.dto.js';
+import { UpdateManeuverModifierDto } from './dto/update-maneuver-modifier.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuver-modifiers')

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CharacterSize } from '../../../../shared/domain/entities/character-size';
+import type { CharacterSize } from '../../../../shared/domain/entities/character-size.js';
 
 export class CharacterSizeDto {
   @ApiProperty({ description: 'Unique identifier of the character size', example: 'medium' })

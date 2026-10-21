@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { CultureSkillRank, CultureSkillRankProps } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank';
-import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';
+import { CultureSkillRank, type CultureSkillRankProps } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank.js';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const create = (props: Partial<CultureSkillRankProps>) => () => CultureSkillRank.create({ ranks: 1, ...props } as CultureSkillRankProps);
 

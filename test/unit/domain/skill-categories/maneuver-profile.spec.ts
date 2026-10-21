@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';
-import { ManeuverProfiles } from '../../../../src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { ManeuverProfiles } from '../../../../src/modules/skill-categories/domain/value-objects/maneuver-profile.vo.js';
 
 describe('ManeuverProfiles', () => {
   it('applies the defaults when neither category nor skill define a profile', () => {

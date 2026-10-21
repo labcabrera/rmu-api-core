@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsOptional } from 'class-validator';
-import { ResistanceRollQuery } from '../../../application/cqrs/queries/resistance-roll.query';
-import { KeyValueDto } from '../../../../shared/interfaces/http/dto/key-value.dto';
+import { ResistanceRollQuery } from '../../../application/cqrs/queries/resistance-roll.query.js';
+import { KeyValueDto } from '../../../../shared/interfaces/http/dto/key-value.dto.js';
 
 export class ResistanceRollQueryDto {
   @ApiProperty({ description: 'Roll', example: 42, required: true })

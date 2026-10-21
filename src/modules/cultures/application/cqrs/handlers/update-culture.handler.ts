@@ -1,14 +1,14 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { UpdateCultureCommand } from '../commands/update-culture.command';
-import type { CultureRepository } from '../../ports/culture-repository';
-import type { CultureGuardPort } from '../../ports/culture-guard.port';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port';
-import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event';
-import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank';
-import { CultureViewService } from '../../services/culture-view.service';
-import { CultureView } from '../../read-models/culture-view';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { UpdateCultureCommand } from '../commands/update-culture.command.js';
+import type { CultureRepository } from '../../ports/culture-repository.js';
+import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
+import type { CultureEventBusPort } from '../../ports/culture-event-bus.port.js';
+import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event.js';
+import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
+import { CultureViewService } from '../../services/culture-view.service.js';
+import type { CultureView } from '../../read-models/culture-view.js';
 
 @CommandHandler(UpdateCultureCommand)
 export class UpdateCultureHandler implements ICommandHandler<UpdateCultureCommand, CultureView> {

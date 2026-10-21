@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { SkillRepository } from '../../../../skills/application/ports/skill-repository';
-import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier';
-import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
-import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';
-import { FindApplicableManeuverModifiersQuery } from '../queries/find-applicable-maneuver-modifiers.query';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { SkillRepository } from '../../../../skills/application/ports/skill-repository.js';
+import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
+import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.js';
+import { FindApplicableManeuverModifiersQuery } from '../queries/find-applicable-maneuver-modifiers.query.js';
 
 @QueryHandler(FindApplicableManeuverModifiersQuery)
 export class FindApplicableManeuverModifiersHandler implements IQueryHandler<FindApplicableManeuverModifiersQuery, ManeuverModifier[]> {

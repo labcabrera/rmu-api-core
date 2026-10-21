@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from '../shared/infrastructure/security/auth.module';
-import { ProfessionController } from './interfaces/http/profession.controller';
-import { GetProfessionHandler } from './application/cqrs/handlers/get-profession.handler';
-import { GetProfessionsHandler } from './application/cqrs/handlers/get-professions.handler';
-import { MongoProfessionRepository } from './infrastructure/db/mongo.profession.repository';
+import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
+import { ProfessionController } from './interfaces/http/profession.controller.js';
+import { GetProfessionHandler } from './application/cqrs/handlers/get-profession.handler.js';
+import { GetProfessionsHandler } from './application/cqrs/handlers/get-professions.handler.js';
+import { MongoProfessionRepository } from './infrastructure/db/mongo.profession.repository.js';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ProfessionModel, ProfessionSchema } from './infrastructure/persistence/models/profession-model';
-import { SharedModule } from '../shared/shared.module';
-import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler';
-import { ProfessionGuardAdapter } from './infrastructure/security/profession-guard.adapter';
-import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-profession.handler';
-import { UpdateProfessionHandler } from './application/cqrs/handlers/update-profession.handler';
+import { ProfessionModel, ProfessionSchema } from './infrastructure/persistence/models/profession-model.js';
+import { SharedModule } from '../shared/shared.module.js';
+import { CreateProfessionHandler } from './application/cqrs/handlers/create-profession.handler.js';
+import { ProfessionGuardAdapter } from './infrastructure/security/profession-guard.adapter.js';
+import { DeleteProfessionHandler } from './application/cqrs/handlers/delete-profession.handler.js';
+import { UpdateProfessionHandler } from './application/cqrs/handlers/update-profession.handler.js';
 
 @Module({
   imports: [

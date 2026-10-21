@@ -1,6 +1,6 @@
-import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
-import { AccessType } from '../../../../shared/domain/entities/access-type';
-import { EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo.js';
 
 export class UpdateEffectTypeCommand extends AuthenticatedCommand {
   constructor(

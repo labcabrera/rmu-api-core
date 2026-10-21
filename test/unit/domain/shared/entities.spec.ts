@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { CHARACTER_SIZES } from '../../../../src/modules/shared/domain/entities/character-size';
-import { KeyValue } from '../../../../src/modules/shared/domain/entities/key-value';
-import { NamedEntity } from '../../../../src/modules/shared/domain/entities/named-entity';
-import { Page, Pagination } from '../../../../src/modules/shared/domain/entities/page';
-import { RMU_ADMIN, RMU_USER } from '../../../../src/modules/shared/domain/entities/user-roles';
+import { CHARACTER_SIZES } from '../../../../src/modules/shared/domain/entities/character-size.js';
+import { KeyValue } from '../../../../src/modules/shared/domain/entities/key-value.js';
+import { NamedEntity } from '../../../../src/modules/shared/domain/entities/named-entity.js';
+import { Page, Pagination } from '../../../../src/modules/shared/domain/entities/page.js';
+import { RMU_ADMIN, RMU_USER } from '../../../../src/modules/shared/domain/entities/user-roles.js';
 
 describe('shared domain entities', () => {
   it('keeps key-value pairs immutable through readonly constructor fields', () => {

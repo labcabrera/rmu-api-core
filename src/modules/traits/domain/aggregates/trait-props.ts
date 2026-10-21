@@ -1,5 +1,5 @@
-import { TraitCategory } from '../value-objects/trait-category.vo';
-import { TraitSpecialization } from '../value-objects/trait-specialization.vo';
+import type { TraitCategory } from '../value-objects/trait-category.vo.js';
+import type { TraitSpecialization } from '../value-objects/trait-specialization.vo.js';
 
 export interface TraitProps {
   id: string;

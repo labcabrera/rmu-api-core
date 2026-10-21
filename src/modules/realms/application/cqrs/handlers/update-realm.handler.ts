@@ -1,11 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Realm } from '../../../domain/aggregates/realm';
-import { UpdateRealmCommand } from '../commands/update-realm.command';
-import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
-import type { RealmRepository } from '../../ports/realm-repository';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { RealmGuardPort } from '../../ports/realm-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Realm } from '../../../domain/aggregates/realm.js';
+import { UpdateRealmCommand } from '../commands/update-realm.command.js';
+import type { RealmEventBusPort } from '../../ports/realm-event-bus.port.js';
+import type { RealmRepository } from '../../ports/realm-repository.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { RealmGuardPort } from '../../ports/realm-guard.port.js';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, Realm> {

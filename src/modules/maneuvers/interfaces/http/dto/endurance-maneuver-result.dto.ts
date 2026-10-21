@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EnduranceManeuverResult } from '../../../domain/value-objects/endurance-maneuver-result.vo';
-import type { ResultCode } from '../../../domain/value-objects/maneuver-result.vo';
+import type { EnduranceManeuverResult } from '../../../domain/value-objects/endurance-maneuver-result.vo.js';
+import type { ResultCode } from '../../../domain/value-objects/maneuver-result.vo.js';
 
 export class EnduranceManeuverResultDto {
   @ApiProperty({ type: String, description: 'The result value', example: 'success', required: true })

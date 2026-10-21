@@ -1,4 +1,4 @@
-import { EnduranceManeuverResult } from '../value-objects/endurance-maneuver-result.vo';
+import type { EnduranceManeuverResult } from '../value-objects/endurance-maneuver-result.vo.js';
 
 const ENDURANCE_TABLE: { min: number; max: number; result: EnduranceManeuverResult }[] = [
   {

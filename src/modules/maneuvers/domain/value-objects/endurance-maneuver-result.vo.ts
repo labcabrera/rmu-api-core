@@ -1,4 +1,4 @@
-import { ResultCode } from './maneuver-result.vo';
+import type { ResultCode } from './maneuver-result.vo.js';
 
 export interface EnduranceManeuverResult {
   result: ResultCode;

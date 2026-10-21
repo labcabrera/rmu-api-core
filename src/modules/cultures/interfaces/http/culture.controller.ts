@@ -2,22 +2,22 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { CultureDto, CulturePageDto } from './dto/culture.dto';
-import { CreateCultureDto } from './dto/create-culture.dto';
-import { GetCultureQuery } from '../../application/cqrs/queries/get-culture.query';
-import { GetCulturesQuery } from '../../application/cqrs/queries/get-cultures.query';
-import { UpdateCultureDto } from './dto/update-culture.dto';
-import { Page } from '../../../shared/domain/entities/page';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { CreateCultureCommand } from '../../application/cqrs/commands/create-culture.command';
-import { UpdateCultureCommand } from '../../application/cqrs/commands/update-culture.command';
-import { DeleteCultureCommand } from '../../application/cqrs/commands/delete-culture.command';
-import { AddCultureSkillRankDto } from './dto/add-culture-skill-rank.dto';
-import { AddCultureSkillRankCommand } from '../../application/cqrs/commands/add-culture-skill-rank.command';
-import { DeleteCultureSkillRankCommand } from '../../application/cqrs/commands/delete-culture-skill-rank.command';
-import { CultureView } from '../../application/read-models/culture-view';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { CultureDto, CulturePageDto } from './dto/culture.dto.js';
+import { CreateCultureDto } from './dto/create-culture.dto.js';
+import { GetCultureQuery } from '../../application/cqrs/queries/get-culture.query.js';
+import { GetCulturesQuery } from '../../application/cqrs/queries/get-cultures.query.js';
+import { UpdateCultureDto } from './dto/update-culture.dto.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { CreateCultureCommand } from '../../application/cqrs/commands/create-culture.command.js';
+import { UpdateCultureCommand } from '../../application/cqrs/commands/update-culture.command.js';
+import { DeleteCultureCommand } from '../../application/cqrs/commands/delete-culture.command.js';
+import { AddCultureSkillRankDto } from './dto/add-culture-skill-rank.dto.js';
+import { AddCultureSkillRankCommand } from '../../application/cqrs/commands/add-culture-skill-rank.command.js';
+import { DeleteCultureSkillRankCommand } from '../../application/cqrs/commands/delete-culture-skill-rank.command.js';
+import type { CultureView } from '../../application/read-models/culture-view.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/cultures')

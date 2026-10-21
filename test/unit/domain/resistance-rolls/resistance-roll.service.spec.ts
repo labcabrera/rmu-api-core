@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { ResistanceRollQuery } from '../../../../src/modules/resistance-rolls/application/cqrs/queries/resistance-roll.query';
-import { ResistanceRollService } from '../../../../src/modules/resistance-rolls/domain/services/resistance-roll.service';
+import { ResistanceRollQuery } from '../../../../src/modules/resistance-rolls/application/cqrs/queries/resistance-roll.query.js';
+import { ResistanceRollService } from '../../../../src/modules/resistance-rolls/domain/services/resistance-roll.service.js';
 
 const query = (roll: number, attackLevel = 1, targetLevel = 1, modifiers: { key: string; value: number }[] | null = null) =>
   new ResistanceRollQuery(attackLevel, targetLevel, modifiers, roll, 'user-id', []);

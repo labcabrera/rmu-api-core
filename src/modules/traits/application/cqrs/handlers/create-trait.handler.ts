@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateTraitCommand } from '../commands/create-trait.command';
-import { Trait } from '../../../domain/aggregates/trait';
-import type { TraitRepository } from '../../ports/trait.repository';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { ConflictError } from '../../../../shared/domain/errors/errors';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CreateTraitCommand } from '../commands/create-trait.command.js';
+import { Trait } from '../../../domain/aggregates/trait.js';
+import type { TraitRepository } from '../../ports/trait.repository.js';
+import type { TraitEventBusPort } from '../../ports/trait-event-bus.port.js';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
 
 @CommandHandler(CreateTraitCommand)
 export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, Trait> {

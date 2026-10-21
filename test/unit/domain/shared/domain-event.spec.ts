@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DomainEvent } from '../../../../src/modules/shared/domain/events/domain-event';
+import { DomainEvent } from '../../../../src/modules/shared/domain/events/domain-event.js';
 
 describe('DomainEvent', () => {
   it('builds a versioned event with producer, timestamp and payload', () => {
