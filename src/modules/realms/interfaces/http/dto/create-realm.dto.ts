@@ -15,7 +15,7 @@ export class CreateRealmDto {
   @IsOptional()
   shortDescription: string | undefined;
 
-  @ApiProperty({ description: 'Magic presence in the realm', example: 'limited' })
+  @ApiProperty({ type: String, description: 'Magic presence in the realm', example: 'limited' })
   @IsString()
   @IsIn(['unlimited', 'limited', 'none'])
   magicPresence: MagicPresence;
@@ -38,7 +38,7 @@ export class CreateRealmDto {
   @IsOptional()
   imageUrl: string | undefined;
 
-  @ApiProperty({ description: 'Access type', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type', example: 'public' })
   @IsString()
   accessType: AccessType;
 

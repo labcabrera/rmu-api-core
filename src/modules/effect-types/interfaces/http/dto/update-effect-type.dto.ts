@@ -45,7 +45,7 @@ export class UpdateEffectTypeDto {
   @IsOptional()
   delay: EffectPropertyRequirement | undefined;
 
-  @ApiProperty({ description: 'Access type of the effect type', example: 'public', required: false })
+  @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public', required: false })
   @IsIn(['public', 'private'])
   @IsOptional()
   accessType: AccessType | undefined;

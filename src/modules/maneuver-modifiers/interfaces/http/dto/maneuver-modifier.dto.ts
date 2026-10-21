@@ -63,7 +63,7 @@ export class ManeuverModifierDto {
   @ApiProperty({ required: false })
   description?: string;
 
-  @ApiProperty({ example: 'public' })
+  @ApiProperty({ type: String, example: 'public' })
   accessType: AccessType;
 
   @ApiProperty()

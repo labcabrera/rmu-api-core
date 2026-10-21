@@ -36,10 +36,10 @@ export class EffectTypeDto {
   @ApiProperty({ description: 'Owner of the effect type', example: 'user123', required: true })
   owner: string;
 
-  @ApiProperty({ description: 'Access type of the effect type', example: 'public', required: true })
+  @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public', required: true })
   accessType: AccessType;
 
-  @ApiProperty({ description: 'Entity source', example: 'user', required: true })
+  @ApiProperty({ type: String, description: 'Entity source', example: 'user', required: true })
   entitySource: EntitySource;
 
   static fromEntity(entity: EffectType): EffectTypeDto {

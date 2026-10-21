@@ -26,7 +26,7 @@ export class CreateSkillDto {
   @IsOptional()
   specialization: EnumerationCategory | null;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   @IsString()
   accessType: AccessType;
 

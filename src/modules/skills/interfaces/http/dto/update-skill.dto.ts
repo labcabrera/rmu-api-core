@@ -22,7 +22,7 @@ export class UpdateSkillDto {
   @IsOptional()
   specialization: EnumerationCategory | undefined;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public', required: false })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public', required: false })
   @IsString()
   @IsOptional()
   accessType: AccessType;

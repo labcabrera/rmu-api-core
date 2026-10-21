@@ -10,7 +10,7 @@ export class ProfessionDto {
   @ApiProperty({ description: 'Profession identifier', example: 'rogue', required: true })
   id: string;
 
-  @ApiProperty({ description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
+  @ApiProperty({ type: String, description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
   archetype: ProfessionArchetype;
 
   @ApiProperty({ description: 'Available realm types for the profession', required: true, example: ['channeling'] })
@@ -25,7 +25,7 @@ export class ProfessionDto {
   @ApiProperty({ description: 'List of available professional skills', required: true, example: ['riding', 'perception'] })
   professionalSkills: string[];
 
-  @ApiProperty({ description: 'Entity source of the profession', required: true })
+  @ApiProperty({ type: String, description: 'Entity source of the profession', required: true })
   entitySource: EntitySource;
 
   @ApiProperty({ description: 'Description of the profession', required: false, example: 'A brave warrior skilled in combat.' })
@@ -37,7 +37,7 @@ export class ProfessionDto {
   @ApiProperty({ description: 'Owner of the profession', example: 'user123', required: true })
   owner: string;
 
-  @ApiProperty({ description: 'Access type', example: 'public', required: true })
+  @ApiProperty({ type: String, description: 'Access type', example: 'public', required: true })
   accessType: AccessType;
 
   static fromEntity(entity: Profession): ProfessionDto {

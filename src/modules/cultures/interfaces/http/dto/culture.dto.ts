@@ -39,7 +39,7 @@ export class CultureDto {
   @ApiProperty({ description: 'Owner identifier', example: 'user-123' })
   owner: string;
 
-  @ApiProperty({ description: 'Access type', required: true, example: 'private' })
+  @ApiProperty({ type: String, description: 'Access type', required: true, example: 'private' })
   accessType: AccessType;
 
   static fromView(view: CultureView): CultureDto {

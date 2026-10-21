@@ -26,7 +26,7 @@ export class UpdateEnumerationDto {
   @IsOptional()
   realmId?: string | null | undefined;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   @IsOptional()
   accessType: AccessType | undefined;
 

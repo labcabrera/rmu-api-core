@@ -6,7 +6,7 @@ FROM --platform=$BUILDPLATFORM ${NODE_IMAGE} AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --ignore-scripts
-COPY tsconfig*.json ./
+COPY tsconfig*.json nest-cli.json .swcrc ./
 COPY src ./src
 RUN npm run build
 

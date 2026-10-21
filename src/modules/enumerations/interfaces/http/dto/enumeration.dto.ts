@@ -36,10 +36,10 @@ export class EnumerationDto {
   @ApiProperty({ description: 'Owner of the skill', example: 'user123', required: true })
   owner: string;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public', required: true })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public', required: true })
   accessType: AccessType;
 
-  @ApiProperty({ description: 'Entity source', example: 'user', required: true })
+  @ApiProperty({ type: String, description: 'Entity source', example: 'user', required: true })
   entitySource: EntitySource;
 
   static fromEntity(entity: Enumeration): EnumerationDto {

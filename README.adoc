@@ -95,10 +95,11 @@ npm install
 npm run start:dev
 ```
 
-For production build:
+For production build (SWC, `dist/` holds only `.js` and source maps) and type checking:
 
 ```bash
 npm run build
+npm run typecheck
 npm run start:prod
 ```
 
@@ -131,6 +132,10 @@ Conventions:
 - File names are kebab-case (`race-guard.adapter.ts`), with a dotted suffix for the role (`.module`, `.controller`,
   `.dto`, `.handler`, `.repository`).
 - A read-only module may skip `domain/` (`character-sizes`).
+- The build uses SWC (`nest build`), which compiles file by file and cannot resolve imported type aliases in decorator
+  metadata. A property typed with a string union alias (`AccessType`) needs an explicit `type: String` in `@ApiProperty`
+  and `@Prop`, and constructor injection must not use a bare `@Inject()` (Nest would read `Function` as the token).
+  `npm run typecheck` runs `tsc --noEmit` separately.
 
 `scripts/smoke.sh [base-url]` calls one endpoint of every controller with a service-account token and fails on any
 non-2xx answer (default `http://localhost:3001`; through the gateway `http://localhost/api/core`).

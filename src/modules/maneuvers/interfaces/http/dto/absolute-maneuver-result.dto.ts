@@ -4,7 +4,7 @@ import type { ManeuverEffect, ManeuverEffectStatus } from '../../../domain/value
 import type { ResultCode } from '../../../domain/value-objects/maneuver-result.vo';
 
 export class ManeuverEffectDto {
-  @ApiProperty({ description: 'Effect status', example: 'retryBonus' })
+  @ApiProperty({ type: String, description: 'Effect status', example: 'retryBonus' })
   status: ManeuverEffectStatus;
 
   @ApiProperty({ description: 'Effect value', example: 10, required: false })
@@ -25,7 +25,7 @@ export class ManeuverEffectDto {
 }
 
 export class AbsoluteManeuverResultDto {
-  @ApiProperty({ description: 'The result value', example: 'success', required: true })
+  @ApiProperty({ type: String, description: 'The result value', example: 'success', required: true })
   result: ResultCode;
 
   @ApiProperty({ description: 'Result text (followed by the unusual event text when requested)', example: 'Success.', required: true })

@@ -16,7 +16,7 @@ export class CreateManeuverModifierDto extends ManeuverModifierDefinitionFields 
   @IsIn(MANEUVER_MODIFIER_TYPES)
   type: ManeuverModifierType;
 
-  @ApiProperty({ example: 'public' })
+  @ApiProperty({ type: String, example: 'public' })
   @IsIn(['public', 'private'])
   accessType: AccessType;
 
