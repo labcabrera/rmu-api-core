@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { Profession } from 'src/modules/professions/domain/aggregates/profession';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
+import { Profession } from '../../../domain/aggregates/profession';
 import type { ProfessionRepository } from '../../ports/profession.repository';
 import type { ProfessionGuardPort } from '../../ports/profession-guard.port';
 import { UpdateProfessionCommand } from '../commands/update-profession.command';

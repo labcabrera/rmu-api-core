@@ -3,7 +3,7 @@ import { TraitUpdatedEvent } from '../events/trait-updated.event';
 import { TraitCategory } from '../value-objects/trait-category.vo';
 import { TraitSpecialization } from '../value-objects/trait-specialization.vo';
 import { TraitProps } from './trait-props';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
 
 export class Trait extends BaseAggregateRoot<TraitProps> {
   private constructor(

@@ -1,5 +1,5 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { CultureSkillRankProps } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
+import { CultureSkillRankProps } from '../../../domain/value-objects/culture-skill-rank';
 
 export class AddCultureSkillRankCommand extends AuthenticatedCommand {
   constructor(

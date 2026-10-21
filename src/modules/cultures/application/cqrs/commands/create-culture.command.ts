@@ -1,6 +1,6 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { CultureSkillRankProps } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
+import { AccessType } from '../../../../shared/domain/entities/access-type';
+import { CultureSkillRankProps } from '../../../domain/value-objects/culture-skill-rank';
 
 export class CreateCultureCommand extends AuthenticatedCommand {
   constructor(

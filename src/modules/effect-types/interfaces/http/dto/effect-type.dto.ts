@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EffectType } from 'src/modules/effect-types/domain/aggregates/effect-type';
-import {
-  EFFECT_PROPERTY_REQUIREMENTS,
-  type EffectPropertyRequirement,
-} from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+import { EffectType } from '../../../domain/aggregates/effect-type';
+import { EFFECT_PROPERTY_REQUIREMENTS, type EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
 
 export class EffectTypeDto {
   @ApiProperty({ description: 'Effect type identifier', example: 'bleeding', required: true })

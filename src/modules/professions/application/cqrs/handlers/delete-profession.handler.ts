@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import type { ProfessionRepository } from '../../ports/profession.repository';
 import type { ProfessionGuardPort } from '../../ports/profession-guard.port';
 import { DeleteProfessionCommand } from '../commands/delete-profession.command';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 
 @CommandHandler(DeleteProfessionCommand)
 export class DeleteProfessionHandler implements ICommandHandler<DeleteProfessionCommand, void> {

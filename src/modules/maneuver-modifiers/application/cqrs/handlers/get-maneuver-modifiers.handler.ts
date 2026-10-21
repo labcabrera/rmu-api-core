@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../../shared/domain/entities/page';
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier';
 import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
 import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';

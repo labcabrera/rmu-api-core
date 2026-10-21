@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import { Profession } from 'src/modules/professions/domain/aggregates/profession';
-import { ProfessionProps } from 'src/modules/professions/domain/aggregates/profession-props';
-import { ProfessionSkillCosts } from 'src/modules/professions/domain/value-objects/profession-skill-cost.vo';
+import { Profession } from '../../../../src/modules/professions/domain/aggregates/profession';
+import { ProfessionProps } from '../../../../src/modules/professions/domain/aggregates/profession-props';
+import { ProfessionSkillCosts } from '../../../../src/modules/professions/domain/value-objects/profession-skill-cost.vo';
 
 const makeSkillCosts = (value: number[] = [2, 4]): ProfessionSkillCosts => ({
   animal: value,

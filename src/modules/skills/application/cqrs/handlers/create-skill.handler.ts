@@ -1,9 +1,9 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ConflictError, ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { ConflictError, ValidationError } from '../../../../shared/domain/errors/errors';
 import { CreateSkillCommand } from '../commands/create-skill.command';
 import type { SkillRepository } from '../../ports/skill-repository';
-import { Skill } from 'src/modules/skills/domain/aggregates/skill';
+import { Skill } from '../../../domain/aggregates/skill';
 import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 import { SkillView } from '../../read-models/skill-view';
 import { SkillViewService } from '../../services/skill-view.service';

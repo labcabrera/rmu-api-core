@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { FilterQuery, Model } from 'mongoose';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { RsqlParser } from '../persistence/repositories/rsql-parser';
+import { Page } from '../../domain/entities/page';
+import { NotFoundError } from '../../domain/errors/errors';
 import { BaseAggregateRoot } from '../../domain/aggregates/base-aggregate';
 import { Logger } from '@nestjs/common';
-import { QueryCriteria, SortCriteria } from 'src/modules/shared/application/criteria/query-criteria';
+import { QueryCriteria, SortCriteria } from '../../application/criteria/query-criteria';
 import { MongoQueryCriteriaMapper } from '../persistence/repositories/mongo-query-criteria.mapper';
 
 export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {

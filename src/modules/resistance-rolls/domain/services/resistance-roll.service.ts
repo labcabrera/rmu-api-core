@@ -1,4 +1,4 @@
-import { KeyValue } from 'src/modules/shared/domain/entities/key-value';
+import { KeyValue } from '../../../shared/domain/entities/key-value';
 import { ResistanceRollQuery } from '../../application/cqrs/queries/resistance-roll.query';
 import { ResistanceRollResult, ResistanceRollResultCode } from '../value-objects/resistance-roll-result';
 import { Injectable } from '@nestjs/common';

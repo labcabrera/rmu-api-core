@@ -1,6 +1,6 @@
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
+import { AccessType } from '../../../../shared/domain/entities/access-type';
 
 export class CreateEnumerationCommand extends AuthenticatedCommand {
   constructor(

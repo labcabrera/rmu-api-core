@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
 import { ManeuverProfileDto } from './maneuver-profile.dto';
-import { SkillCategory } from 'src/modules/skill-categories/domain/entities/skill-category';
+import { SkillCategory } from '../../../domain/entities/skill-category';
 
 export class SkillCategoryDto {
   @ApiProperty({ description: 'Category name', example: 'animals' })

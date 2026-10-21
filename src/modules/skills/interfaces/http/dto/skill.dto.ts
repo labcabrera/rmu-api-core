@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
-import { SkillView } from 'src/modules/skills/application/read-models/skill-view';
-import { EffectiveManeuverProfileDto, ManeuverProfileDto } from 'src/modules/skill-categories/interfaces/http/dto/maneuver-profile.dto';
+import { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
+import { SkillView } from '../../../application/read-models/skill-view';
+import { EffectiveManeuverProfileDto, ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto';
 
 export class SkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })

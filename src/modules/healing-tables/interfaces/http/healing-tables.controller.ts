@@ -3,11 +3,11 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
 import { GetHealingTablesQuery } from '../../application/cqrs/queries/get-healing-tables.query';
 import { HealingTables } from '../../domain/value-objects/healing-tables.vo';
-import { HealingTablesDto } from './dtos/healing-tables.dto';
+import { HealingTablesDto } from './dto/healing-tables.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/healing-tables')

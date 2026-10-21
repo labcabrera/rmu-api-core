@@ -7,8 +7,8 @@ import {
   MANEUVER_TYPES,
   ManeuverProfile,
   ManeuverProfiles,
-} from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
-import type { ManeuverLightUsage, ManeuverType } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
+} from '../../../domain/value-objects/maneuver-profile.vo';
+import type { ManeuverLightUsage, ManeuverType } from '../../../domain/value-objects/maneuver-profile.vo';
 
 export class ManeuverActionPointsDto {
   @ApiProperty({ description: 'Minimum action points', example: 1 })

@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { PercentManeuverService } from 'src/modules/maneuvers/domain/services/percent-maneuver.service';
+import { PercentManeuverService } from '../../../../src/modules/maneuvers/domain/services/percent-maneuver.service';
 
 describe('PercentManeuverService', () => {
   const service = new PercentManeuverService();

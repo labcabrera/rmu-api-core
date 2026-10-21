@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { ResistanceRollQuery } from 'src/modules/resistance-rolls/application/cqrs/queries/resistance-roll.query';
-import { ResistanceRollService } from 'src/modules/resistance-rolls/domain/services/resistance-roll.service';
+import { ResistanceRollQuery } from '../../../../src/modules/resistance-rolls/application/cqrs/queries/resistance-roll.query';
+import { ResistanceRollService } from '../../../../src/modules/resistance-rolls/domain/services/resistance-roll.service';
 
 const query = (roll: number, attackLevel = 1, targetLevel = 1, modifiers: { key: string; value: number }[] | null = null) =>
   new ResistanceRollQuery(attackLevel, targetLevel, modifiers, roll, 'user-id', []);

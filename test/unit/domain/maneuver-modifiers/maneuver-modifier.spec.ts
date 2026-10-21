@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import { ManeuverModifier } from 'src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier';
-import { ManeuverModifierDefinition } from 'src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier-props';
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { ManeuverModifier } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier';
+import { ManeuverModifierDefinition } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier-props';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';
 
 const create = (definition: Partial<ManeuverModifierDefinition>) =>
   ManeuverModifier.create({

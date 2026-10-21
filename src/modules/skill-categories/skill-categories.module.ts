@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from 'src/modules/auth/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
 import { SharedModule } from '../shared/shared.module';
 import { CreateSkillCategoryHandler } from './application/cqrs/handlers/create-skill-category.handler';
 import { GetSkillCategoriesHandler } from './application/cqrs/handlers/get-skill-categories.handler';

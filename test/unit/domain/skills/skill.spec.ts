@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import { Skill } from 'src/modules/skills/domain/aggregates/skill';
-import { SkillProps } from 'src/modules/skills/domain/aggregates/skill-props';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
+import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill';
+import { SkillProps } from '../../../../src/modules/skills/domain/aggregates/skill-props';
+import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors';
 
 const baseProps = (): SkillProps => ({
   id: 'skill-1',

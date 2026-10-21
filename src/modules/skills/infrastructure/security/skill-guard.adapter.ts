@@ -1,4 +1,4 @@
-import { BaseEntityGuard } from 'src/modules/shared/infrastructure/security/base-entity-guard';
+import { BaseEntityGuard } from '../../../shared/infrastructure/security/base-entity-guard';
 import { SkillGuardPort } from '../../application/ports/skill-guard';
 import { Skill } from '../../domain/aggregates/skill';
 

@@ -3,8 +3,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteRealmCommand } from '../commands/delete-realm.command';
 import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
 import type { RealmRepository } from '../../ports/realm-repository';
-import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { RealmDeletedEvent } from '../../../domain/events/realm-deleted.event';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { RealmGuardPort } from '../../ports/realm-guard.port';
 
 @CommandHandler(DeleteRealmCommand)

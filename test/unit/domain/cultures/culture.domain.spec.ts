@@ -1,10 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
-import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
-import { CultureProps } from 'src/modules/cultures/domain/aggregates/culture-props';
-import { CultureCreatedEvent } from 'src/modules/cultures/domain/events/culture-created.event';
-import { CultureUpdatedEvent } from 'src/modules/cultures/domain/events/culture-updated.event';
-import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { Culture } from '../../../../src/modules/cultures/domain/aggregates/culture';
+import { CultureProps } from '../../../../src/modules/cultures/domain/aggregates/culture-props';
+import { CultureCreatedEvent } from '../../../../src/modules/cultures/domain/events/culture-created.event';
+import { CultureUpdatedEvent } from '../../../../src/modules/cultures/domain/events/culture-updated.event';
+import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors';
 
 const skill = (skillId: string, ranks: number, specialization?: string) =>
   CultureSkillRank.create({ type: 'skill', skillId, specialization, ranks });

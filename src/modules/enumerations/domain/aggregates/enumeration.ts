@@ -1,10 +1,10 @@
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 import { EnumerationProps } from './enumeration-props';
 import { EnumerationCategory } from '../value-objects/enumeration-category.vo';
 import { randomUUID } from 'crypto';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import { NotModifiedError } from '../../../shared/domain/errors/errors';
+import { EntitySource } from '../../../shared/domain/entities/entity-source';
 
 export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
   private constructor(

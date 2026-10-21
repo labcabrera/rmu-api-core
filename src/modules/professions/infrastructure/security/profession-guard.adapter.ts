@@ -1,4 +1,4 @@
-import { BaseEntityGuard } from 'src/modules/shared/infrastructure/security/base-entity-guard';
+import { BaseEntityGuard } from '../../../shared/infrastructure/security/base-entity-guard';
 import { ProfessionGuardPort } from '../../application/ports/profession-guard.port';
 import { Profession } from '../../domain/aggregates/profession';
 

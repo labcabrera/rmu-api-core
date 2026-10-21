@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/shared/infrastructure/security/auth.module';
 import { ProfessionsModule } from './modules/professions/professions.module';
 import { RacesModule } from './modules/races/races.module';
 import { RealmsModule } from './modules/realms/realms.module';
 import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
 import { TraitsModule } from './modules/traits/traits.module';
-import Joi from 'joi';
+import { envSchema } from './config/env.schema';
 import { SharedModule } from './modules/shared/shared.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
@@ -25,19 +25,7 @@ import { HealingTablesModule } from './modules/healing-tables/healing-tables.mod
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      validationSchema: Joi.object({
-        PORT: Joi.number().positive().default(3001),
-        RMU_MONGO_CORE_URI: Joi.string().required(),
-        RMU_IAM_JWK_URI: Joi.string().uri().required(),
-        RMU_IAM_ISSUER_URI: Joi.string().uri().required(),
-        RMU_IAM_AUDIENCE: Joi.string().required(),
-        RMU_IAM_TOKEN_URI: Joi.string().uri().required(),
-        RMU_IAM_CLIENT_ID: Joi.string().required(),
-        RMU_IAM_CLIENT_SECRET: Joi.string().required(),
-        RMU_KAFKA_BROKERS: Joi.string().required(),
-        RMU_KAFKA_CLIENT_ID: Joi.string().required(),
-        RMU_KAFKA_DEFAULT_PARTITIONS: Joi.number().integer().min(1).default(1),
-      }),
+      validationSchema: envSchema,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

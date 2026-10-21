@@ -1,5 +1,5 @@
-import { ManeuverProfile } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
+import { ManeuverProfile } from '../../../domain/value-objects/maneuver-profile.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
 
 export class CreateSkillCategoryCommand extends AuthenticatedCommand {
   constructor(

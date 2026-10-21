@@ -1,6 +1,6 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
 import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';
 import { DeleteManeuverModifierCommand } from '../commands/delete-maneuver-modifier.command';

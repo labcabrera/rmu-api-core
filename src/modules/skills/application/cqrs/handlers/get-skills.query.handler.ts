@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { GetSkillsQuery } from '../queries/get-skills.query';
 import type { SkillRepository } from '../../ports/skill-repository';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../../shared/domain/entities/page';
 import { SkillView } from '../../read-models/skill-view';
 import { SkillViewService } from '../../services/skill-view.service';
 import type { SkillGuardPort } from '../../ports/skill-guard';

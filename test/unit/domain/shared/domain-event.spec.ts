@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { DomainEvent } from '../../../../src/modules/shared/domain/events/domain-event';
 
 describe('DomainEvent', () => {
   it('builds a versioned event with producer, timestamp and payload', () => {

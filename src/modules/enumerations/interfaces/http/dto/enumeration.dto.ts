@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
-import { ENUMERATION_CATEGORIES, type EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+import { Enumeration } from '../../../domain/aggregates/enumeration';
+import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
 
 export class EnumerationDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'enumeration-001', required: true })

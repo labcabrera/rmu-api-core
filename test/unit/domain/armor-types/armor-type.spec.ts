@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { ARMOR_TYPES } from 'src/modules/armor-types/domain/entities/armor-type';
+import { ARMOR_TYPES } from '../../../../src/modules/armor-types/domain/entities/armor-type';
 
 describe('ARMOR_TYPES', () => {
   it('defines the armor catalog from none to plate in id order', () => {

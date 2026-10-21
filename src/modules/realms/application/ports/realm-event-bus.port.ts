@@ -1,4 +1,4 @@
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { DomainEvent } from '../../../shared/domain/events/domain-event';
 import { RealmProps } from '../../domain/aggregates/realm-props';
 
 export interface RealmEventBusPort {

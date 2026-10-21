@@ -1,4 +1,4 @@
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
+import { DomainEvent } from '../../../shared/domain/events/domain-event';
 import { TraitProps } from '../aggregates/trait-props';
 
 export class TraitCreatedEvent extends DomainEvent<TraitProps> {

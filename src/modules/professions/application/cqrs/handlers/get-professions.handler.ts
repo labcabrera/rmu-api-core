@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { GetProfessionsQuery } from '../../cqrs/queries/get-professions.query';
-import { Profession } from 'src/modules/professions/domain/aggregates/profession';
+import { GetProfessionsQuery } from '../queries/get-professions.query';
+import { Profession } from '../../../domain/aggregates/profession';
 import type { ProfessionRepository } from '../../ports/profession.repository';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../../shared/domain/entities/page';
 
 @QueryHandler(GetProfessionsQuery)
 export class GetProfessionsHandler implements IQueryHandler<GetProfessionsQuery, Page<Profession>> {

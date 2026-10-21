@@ -1,6 +1,6 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError, ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors';
 import type { SkillRepository } from '../../ports/skill-repository';
 import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 import { SkillView } from '../../read-models/skill-view';

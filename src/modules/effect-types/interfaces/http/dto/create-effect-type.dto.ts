@@ -1,11 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsIn, IsNotEmpty, IsString } from 'class-validator';
-import { CreateEffectTypeCommand } from 'src/modules/effect-types/application/cqrs/commands/create-effect-type.command';
-import {
-  EFFECT_PROPERTY_REQUIREMENTS,
-  type EffectPropertyRequirement,
-} from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { CreateEffectTypeCommand } from '../../../application/cqrs/commands/create-effect-type.command';
+import { EFFECT_PROPERTY_REQUIREMENTS, type EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
 
 export class CreateEffectTypeDto {
   @ApiProperty({ description: 'Effect type identifier', example: 'bleeding' })

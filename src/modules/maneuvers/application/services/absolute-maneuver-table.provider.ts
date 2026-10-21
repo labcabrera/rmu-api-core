@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../shared/domain/errors/errors';
 import { AbsoluteManeuverService, DEFAULT_ABSOLUTE_MANEUVER_TABLE } from '../../domain/services/absolute-maneuver.service';
 import { AbsoluteManeuverTable } from '../../domain/value-objects/absolute-maneuver-table.vo';
 import type { ManeuverTableRepository } from '../ports/maneuver-table-repository';

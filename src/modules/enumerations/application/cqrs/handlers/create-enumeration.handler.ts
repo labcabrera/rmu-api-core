@@ -3,8 +3,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateEnumerationCommand } from '../commands/create-enumeration.command';
 import type { EnumerationRepository } from '../../ports/enumeration-repository';
 import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { ConflictError } from 'src/modules/shared/domain/errors/errors';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
+import { ConflictError } from '../../../../shared/domain/errors/errors';
+import { Enumeration } from '../../../domain/aggregates/enumeration';
 
 @CommandHandler(CreateEnumerationCommand)
 export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerationCommand, Enumeration> {

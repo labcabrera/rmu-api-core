@@ -5,9 +5,9 @@ import { RaceTrait } from '../value-objects/race-trait.vo';
 import { RaceCreatedEvent } from '../events/race-created.event';
 import { randomUUID } from 'crypto';
 import { RaceUpdatedEvent } from '../events/race-updated.event';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
 import { RaceProps } from './race-props';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo';
 
 export class Race extends BaseAggregateRoot<RaceProps> {

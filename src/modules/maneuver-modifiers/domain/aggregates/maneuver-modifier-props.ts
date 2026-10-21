@@ -1,4 +1,4 @@
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 import { ManeuverModifierOption, ManeuverModifierScope, ManeuverModifierType } from '../value-objects/maneuver-modifier-type.vo';
 
 export interface ManeuverModifierProps {

@@ -1,8 +1,8 @@
-import { ProfessionArchetype } from 'src/modules/professions/domain/value-objects/profession-archetype.vo';
-import { ProfessionSkillCosts } from 'src/modules/professions/domain/value-objects/profession-skill-cost.vo';
-import { RealmType } from 'src/modules/professions/domain/value-objects/realm-type.vo';
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo';
+import { ProfessionSkillCosts } from '../../../domain/value-objects/profession-skill-cost.vo';
+import { RealmType } from '../../../domain/value-objects/realm-type.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
+import { AccessType } from '../../../../shared/domain/entities/access-type';
 
 export class UpdateProfessionCommand extends AuthenticatedCommand {
   constructor(

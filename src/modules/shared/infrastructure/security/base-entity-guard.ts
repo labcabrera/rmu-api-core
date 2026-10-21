@@ -1,7 +1,7 @@
 import { ForbiddenError } from '../../domain/errors/errors';
 import { RMU_ADMIN, RMU_USER } from '../../domain/entities/user-roles';
 import { RbacEntity } from '../../domain/entities/rbac-entity';
-import { QueryCriteria } from 'src/modules/shared/application/criteria/query-criteria';
+import { QueryCriteria } from '../../application/criteria/query-criteria';
 
 export abstract class BaseEntityGuard<E extends RbacEntity> implements BaseEntityGuard<E> {
   checkRead(entity: E, userId: string, roles: string[]) {

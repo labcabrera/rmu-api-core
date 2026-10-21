@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import type { AbsoluteManeuverResult } from 'src/modules/maneuvers/domain/value-objects/absolute-maneuver-result.vo';
+import type { AbsoluteManeuverResult } from '../../../domain/value-objects/absolute-maneuver-result.vo';
 
 export type ManeuverTableDocument = ManeuverTableModel & Document;
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
-import { Trait } from 'src/modules/traits/domain/aggregates/trait';
-import { TraitProps } from 'src/modules/traits/domain/aggregates/trait-props';
-import { TraitCreatedEvent } from 'src/modules/traits/domain/events/trait-created.event';
-import { TraitUpdatedEvent } from 'src/modules/traits/domain/events/trait-updated.event';
+import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait';
+import { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props';
+import { TraitCreatedEvent } from '../../../../src/modules/traits/domain/events/trait-created.event';
+import { TraitUpdatedEvent } from '../../../../src/modules/traits/domain/events/trait-updated.event';
 
 const makeTraitProps = (overrides: Partial<TraitProps> = {}): TraitProps => ({
   id: 'trait-1',

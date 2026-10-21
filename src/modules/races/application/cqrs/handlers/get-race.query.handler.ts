@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { Race } from 'src/modules/races/domain/aggregates/race';
+import { Race } from '../../../domain/aggregates/race';
 import { GetRaceQuery } from '../queries/get-race.query';
 import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { RaceGuardPort } from '../../ports/race-guard.port';
 
 @QueryHandler(GetRaceQuery)

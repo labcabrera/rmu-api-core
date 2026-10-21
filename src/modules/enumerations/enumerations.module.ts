@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from 'src/modules/auth/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
 import { EnumerationController } from './interfaces/http/enumeration.controller';
 import { SharedModule } from '../shared/shared.module';
 import { MongoEnumerationRepository } from './infrastructure/db/mongo.enumeration.repository';

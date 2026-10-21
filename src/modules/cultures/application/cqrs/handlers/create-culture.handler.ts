@@ -1,13 +1,13 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateCultureCommand } from '../commands/create-culture.command';
-import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
+import { Culture } from '../../../domain/aggregates/culture';
 import type { CultureRepository } from '../../ports/culture-repository';
 import type { CultureGuardPort } from '../../ports/culture-guard.port';
 import type { CultureEventBusPort } from '../../ports/culture-event-bus.port';
-import { CultureCreatedEvent } from 'src/modules/cultures/domain/events/culture-created.event';
-import { CreateCultureProps } from 'src/modules/cultures/domain/aggregates/culture-props';
-import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { CultureCreatedEvent } from '../../../domain/events/culture-created.event';
+import { CreateCultureProps } from '../../../domain/aggregates/culture-props';
+import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank';
 import { CultureViewService } from '../../services/culture-view.service';
 import { CultureView } from '../../read-models/culture-view';
 

@@ -1,4 +1,4 @@
-import { NotFoundError, ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError, ValidationError } from '../../../shared/domain/errors/errors';
 import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
 import { ABSOLUTE_MANEUVER_TABLE } from '../value-objects/tables/generic-maneuver.table';
 import { Injectable } from '@nestjs/common';

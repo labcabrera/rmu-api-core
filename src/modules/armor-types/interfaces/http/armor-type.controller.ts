@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
 import { ArmorTypeDto } from './dto/armor-type.dto';
 import { NotFoundError } from '../../../shared/domain/errors/errors';
 import type { ArmorTypeRepository } from '../../application/ports/armor-type-repository';

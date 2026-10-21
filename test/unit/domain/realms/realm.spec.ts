@@ -1,9 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
-import { Realm } from 'src/modules/realms/domain/aggregates/realm';
-import { RealmCreatedEvent } from 'src/modules/realms/domain/events/realm-created.event';
-import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';
-import { RealmUpdatedEvent } from 'src/modules/realms/domain/events/realm-updated.event';
-import { RealmProps } from 'src/modules/realms/domain/aggregates/realm-props';
+import { Realm } from '../../../../src/modules/realms/domain/aggregates/realm';
+import { RealmCreatedEvent } from '../../../../src/modules/realms/domain/events/realm-created.event';
+import { RealmDeletedEvent } from '../../../../src/modules/realms/domain/events/realm-deleted.event';
+import { RealmUpdatedEvent } from '../../../../src/modules/realms/domain/events/realm-updated.event';
+import { RealmProps } from '../../../../src/modules/realms/domain/aggregates/realm-props';
 
 const baseProps = (): RealmProps => ({
   id: 'realm-1',

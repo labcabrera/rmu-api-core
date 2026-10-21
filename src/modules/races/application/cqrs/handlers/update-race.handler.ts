@@ -4,7 +4,7 @@ import { Race } from '../../../domain/aggregates/race';
 import { UpdateRaceCommand } from '../commands/update-race.command';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { RaceGuardPort } from '../../ports/race-guard.port';
 
 @CommandHandler(UpdateRaceCommand)

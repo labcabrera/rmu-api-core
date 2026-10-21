@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../../shared/domain/entities/page';
 import { GetSkillCategoriesQuery } from '../queries/get-skill-categories.query';
-import { SkillCategory } from 'src/modules/skill-categories/domain/entities/skill-category';
+import { SkillCategory } from '../../../domain/entities/skill-category';
 import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 
 @QueryHandler(GetSkillCategoriesQuery)

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from 'src/modules/auth/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-event-bus.adapter';
 import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository';

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from 'src/modules/auth/auth.module';
-import { ManeuverController } from './infrastructure/controllers/maneuver.controller';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
+import { ManeuverController } from './interfaces/http/maneuver.controller';
 import { PercentManeuverService } from './domain/services/percent-maneuver.service';
 import { AbsoluteManeuverService } from './domain/services/absolute-maneuver.service';
 import { PercentManeuverHandler } from './application/cqrs/handlers/percent-maneuver.handler';

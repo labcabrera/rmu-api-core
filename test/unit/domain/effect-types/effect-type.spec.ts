@@ -1,12 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { EffectType } from 'src/modules/effect-types/domain/aggregates/effect-type';
+import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors';
+import { EffectType } from '../../../../src/modules/effect-types/domain/aggregates/effect-type';
 
 describe('EffectType', () => {
   it('creates an effect type with caller-defined id', () => {
     const effectType = EffectType.create({
       id: 'bleeding',
       isPersistent: true,
+      isStackable: false,
       value: 'required',
       modifier: 'optional',
       rounds: 'required',
@@ -28,6 +29,7 @@ describe('EffectType', () => {
     const effectType = EffectType.create({
       id: 'stunned',
       isPersistent: true,
+      isStackable: false,
       value: 'forbidden',
       modifier: 'optional',
       rounds: 'required',
@@ -41,6 +43,7 @@ describe('EffectType', () => {
 
     effectType.update({
       isPersistent: false,
+      isStackable: false,
       value: 'optional',
       accessType: 'public',
     });
@@ -55,6 +58,7 @@ describe('EffectType', () => {
     const effectType = EffectType.create({
       id: 'prone',
       isPersistent: false,
+      isStackable: false,
       value: 'forbidden',
       modifier: 'forbidden',
       rounds: 'forbidden',

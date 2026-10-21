@@ -1,8 +1,8 @@
-import { RaceResistances } from 'src/modules/races/domain/value-objects/race-resistances.vo';
-import { RaceStats } from 'src/modules/races/domain/value-objects/race-stats.vo';
-import { SexBasedAttribute } from 'src/modules/races/domain/value-objects/sex-based-attribute.vo';
-import { RaceTrait } from 'src/modules/races/domain/value-objects/race-trait.vo';
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
+import { RaceResistances } from '../../../domain/value-objects/race-resistances.vo';
+import { RaceStats } from '../../../domain/value-objects/race-stats.vo';
+import { SexBasedAttribute } from '../../../domain/value-objects/sex-based-attribute.vo';
+import { RaceTrait } from '../../../domain/value-objects/race-trait.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
 
 export class CreateRaceCommand extends AuthenticatedCommand {
   constructor(

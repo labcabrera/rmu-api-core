@@ -3,8 +3,8 @@ import { RealmUpdatedEvent } from '../events/realm-updated.event';
 import { randomUUID } from 'crypto';
 import { RealmProps } from './realm-props';
 import { MagicPresence } from '../value-objects/realm-magic-type.vo';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import { AccessType } from '../../../shared/domain/entities/access-type';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
 
 export class Realm extends BaseAggregateRoot<RealmProps> {
   public name: string;

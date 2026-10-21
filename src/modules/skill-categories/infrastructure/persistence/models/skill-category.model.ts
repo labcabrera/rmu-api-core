@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import type { ManeuverProfile } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
+import type { ManeuverProfile } from '../../../domain/value-objects/maneuver-profile.vo';
 
 export type SkillCategoryDocument = SkillCategoryModel & Document;
 

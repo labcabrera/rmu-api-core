@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
 import { ProfessionRepository } from '../../application/ports/profession.repository';
 import { ProfessionDocument, ProfessionModel } from '../persistence/models/profession-model';
 import { Profession } from '../../domain/aggregates/profession';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
 
 @Injectable()
 export class MongoProfessionRepository extends MongoBaseRepository<Profession, ProfessionDocument> implements ProfessionRepository {

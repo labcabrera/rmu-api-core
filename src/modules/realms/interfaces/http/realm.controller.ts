@@ -3,19 +3,19 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
 import { GetRealmQuery } from '../../application/cqrs/queries/get-realm.query';
 import { GetRealmsQuery } from '../../application/cqrs/queries/get-realms.query';
-import { RealmDto, RealmPageDto } from './dtos/realm.dto';
+import { RealmDto, RealmPageDto } from './dto/realm.dto';
 import { Realm } from '../../domain/aggregates/realm';
-import { CreateRealmDto } from './dtos/create-realm.dto';
-import { UpdateRealmDto } from './dtos/update-realm.dto';
+import { CreateRealmDto } from './dto/create-realm.dto';
+import { UpdateRealmDto } from './dto/update-realm.dto';
 import { CreateRealmCommand } from '../../application/cqrs/commands/create-realm.command';
 import { DeleteRealmCommand } from '../../application/cqrs/commands/delete-realm.command';
 import { UpdateRealmCommand } from '../../application/cqrs/commands/update-realm.command';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
+import { Page } from '../../../shared/domain/entities/page';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')

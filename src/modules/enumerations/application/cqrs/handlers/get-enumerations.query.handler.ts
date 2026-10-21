@@ -2,9 +2,9 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { GetEnumerationsQuery } from '../queries/get-enumerations.query';
 import type { EnumerationRepository } from '../../ports/enumeration-repository';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../../shared/domain/entities/page';
 import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
+import { Enumeration } from '../../../domain/aggregates/enumeration';
 
 @QueryHandler(GetEnumerationsQuery)
 export class GetEnumerationsHandler implements IQueryHandler<GetEnumerationsQuery, Page<Enumeration>> {

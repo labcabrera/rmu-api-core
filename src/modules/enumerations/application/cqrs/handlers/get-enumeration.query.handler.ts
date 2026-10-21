@@ -3,8 +3,8 @@ import { Inject } from '@nestjs/common';
 import { GetEnumerationQuery } from '../queries/get-enumeration.query';
 import type { EnumerationRepository } from '../../ports/enumeration-repository';
 import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
+import { Enumeration } from '../../../domain/aggregates/enumeration';
 
 @QueryHandler(GetEnumerationQuery)
 export class GetEnumerationHandler implements IQueryHandler<GetEnumerationQuery, Enumeration> {

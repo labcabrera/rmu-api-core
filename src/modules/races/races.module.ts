@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
 import { RaceController } from './interfaces/http/race.controller';
 import { KafkaRaceEventBusAdapter } from './infrastructure/messaging/kafka.race-event-bus.adapter';
 import { MongoRaceRepository } from './infrastructure/db/mongo.race.repository';
@@ -14,7 +14,7 @@ import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handl
 import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler';
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler';
 import { SharedModule } from '../shared/shared.module';
-import { RaceGuardAdapter } from './infrastructure/security/RaceGuardAdapter';
+import { RaceGuardAdapter } from './infrastructure/security/race-guard.adapter';
 import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler';
 import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler';
 import { UpdateRaceRealmHandler } from './application/cqrs/handlers/update-race-realm.handler';
