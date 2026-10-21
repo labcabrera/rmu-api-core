@@ -1,15 +1,15 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateCultureCommand } from '../commands/create-culture.command';
-import { Culture } from '../../../domain/aggregates/culture';
-import type { CultureRepository } from '../../ports/culture-repository';
-import type { CultureGuardPort } from '../../ports/culture-guard.port';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port';
-import { CultureCreatedEvent } from '../../../domain/events/culture-created.event';
-import { CreateCultureProps } from '../../../domain/aggregates/culture-props';
-import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank';
-import { CultureViewService } from '../../services/culture-view.service';
-import { CultureView } from '../../read-models/culture-view';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CreateCultureCommand } from '../commands/create-culture.command.js';
+import { Culture } from '../../../domain/aggregates/culture.js';
+import type { CultureRepository } from '../../ports/culture-repository.js';
+import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
+import type { CultureEventBusPort } from '../../ports/culture-event-bus.port.js';
+import { CultureCreatedEvent } from '../../../domain/events/culture-created.event.js';
+import type { CreateCultureProps } from '../../../domain/aggregates/culture-props.js';
+import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
+import { CultureViewService } from '../../services/culture-view.service.js';
+import type { CultureView } from '../../read-models/culture-view.js';
 
 @CommandHandler(CreateCultureCommand)
 export class CreateCultureHandler implements ICommandHandler<CreateCultureCommand, CultureView> {

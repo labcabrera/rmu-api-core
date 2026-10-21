@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EnumerationRepository } from '../../application/ports/enumeration-repository';
-import { Enumeration } from '../../domain/aggregates/enumeration';
-import { EnumerationDocument, EnumerationModel } from '../persistence/models/enumeration.model';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
+import type { EnumerationRepository } from '../../application/ports/enumeration-repository.js';
+import { Enumeration } from '../../domain/aggregates/enumeration.js';
+import { type EnumerationDocument, EnumerationModel } from '../persistence/models/enumeration.model.js';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()
 export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration, EnumerationDocument> implements EnumerationRepository {

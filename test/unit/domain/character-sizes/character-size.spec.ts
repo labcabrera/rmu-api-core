@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHARACTER_SIZES } from '../../../../src/modules/shared/domain/entities/character-size';
+import { CHARACTER_SIZES } from '../../../../src/modules/shared/domain/entities/character-size.js';
 
 describe('CHARACTER_SIZES', () => {
   it('defines a complete ordered catalog with unique ids and names', () => {

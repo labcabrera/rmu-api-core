@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 import {
-  EffectiveManeuverProfile,
+  type EffectiveManeuverProfile,
   MANEUVER_LIGHT_USAGES,
   MANEUVER_TYPES,
-  ManeuverProfile,
+  type ManeuverProfile,
   ManeuverProfiles,
-} from '../../../domain/value-objects/maneuver-profile.vo';
-import type { ManeuverLightUsage, ManeuverType } from '../../../domain/value-objects/maneuver-profile.vo';
+} from '../../../domain/value-objects/maneuver-profile.vo.js';
+import type { ManeuverLightUsage, ManeuverType } from '../../../domain/value-objects/maneuver-profile.vo.js';
 
 export class ManeuverActionPointsDto {
   @ApiProperty({ description: 'Minimum action points', example: 1 })

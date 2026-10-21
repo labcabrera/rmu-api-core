@@ -1,14 +1,14 @@
 import { randomUUID } from 'crypto';
-import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { ValidationError } from '../../../shared/domain/errors/errors';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import { ValidationError } from '../../../shared/domain/errors/errors.js';
 import {
   MANEUVER_MODIFIER_TYPES,
-  ManeuverModifierOption,
-  ManeuverModifierScope,
-  ManeuverModifierType,
-} from '../value-objects/maneuver-modifier-type.vo';
-import { ManeuverModifierDefinition, ManeuverModifierProps } from './maneuver-modifier-props';
+  type ManeuverModifierOption,
+  type ManeuverModifierScope,
+  type ManeuverModifierType,
+} from '../value-objects/maneuver-modifier-type.vo.js';
+import type { ManeuverModifierDefinition, ManeuverModifierProps } from './maneuver-modifier-props.js';
 
 export type ManeuverModifierUpdate = Partial<ManeuverModifierDefinition> & { accessType?: AccessType };
 

@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { ENUMERATION_CATEGORIES } from '../../domain/value-objects/enumeration-category.vo';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { ENUMERATION_CATEGORIES } from '../../domain/value-objects/enumeration-category.vo.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/enumeration-categories')

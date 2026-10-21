@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EnduranceManeuverService } from '../../../../src/modules/maneuvers/domain/services/endurance-maneuver.service';
+import { EnduranceManeuverService } from '../../../../src/modules/maneuvers/domain/services/endurance-maneuver.service.js';
 
 describe('EnduranceManeuverService', () => {
   const service = new EnduranceManeuverService();

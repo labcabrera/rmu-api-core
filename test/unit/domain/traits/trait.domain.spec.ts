@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait';
-import { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props';
-import { TraitCreatedEvent } from '../../../../src/modules/traits/domain/events/trait-created.event';
-import { TraitUpdatedEvent } from '../../../../src/modules/traits/domain/events/trait-updated.event';
+import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait.js';
+import type { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props.js';
+import { TraitCreatedEvent } from '../../../../src/modules/traits/domain/events/trait-created.event.js';
+import { TraitUpdatedEvent } from '../../../../src/modules/traits/domain/events/trait-updated.event.js';
 
 const makeTraitProps = (overrides: Partial<TraitProps> = {}): TraitProps => ({
   id: 'trait-1',

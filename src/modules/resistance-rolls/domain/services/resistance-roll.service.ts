@@ -1,6 +1,6 @@
-import { KeyValue } from '../../../shared/domain/entities/key-value';
-import { ResistanceRollQuery } from '../../application/cqrs/queries/resistance-roll.query';
-import { ResistanceRollResult, ResistanceRollResultCode } from '../value-objects/resistance-roll-result';
+import { KeyValue } from '../../../shared/domain/entities/key-value.js';
+import { ResistanceRollQuery } from '../../application/cqrs/queries/resistance-roll.query.js';
+import { ResistanceRollResult, type ResistanceRollResultCode } from '../value-objects/resistance-roll-result.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

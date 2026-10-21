@@ -1,5 +1,5 @@
-import { QueryCriteria, SortCriteria } from '../criteria/query-criteria';
-import { Page } from '../../domain/entities/page';
+import { QueryCriteria, type SortCriteria } from '../criteria/query-criteria.js';
+import { Page } from '../../domain/entities/page.js';
 
 export interface BaseRepository<I> {
   findById(id: string): Promise<I | null>;

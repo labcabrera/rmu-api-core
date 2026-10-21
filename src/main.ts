@@ -1,11 +1,11 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
-import { configureLogger } from './bootstrap/logger';
-import { configureOpenApi } from './bootstrap/openapi';
-import { DomainExceptionFilter } from './modules/shared/interfaces/http/domain-exception.filter';
+import { type MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { AppModule } from './app.module.js';
+import { configureLogger } from './bootstrap/logger.js';
+import { configureOpenApi } from './bootstrap/openapi.js';
+import { DomainExceptionFilter } from './modules/shared/interfaces/http/domain-exception.filter.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: configureLogger(process.env.LOG_LEVEL) });

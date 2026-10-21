@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
-import { CultureDocument, CultureModel } from '../persistence/models/culture-model';
-import { CultureRepository } from '../../application/ports/culture-repository';
-import { Culture } from '../../domain/aggregates/culture';
-import { CultureSkillRank } from '../../domain/value-objects/culture-skill-rank';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { type CultureDocument, CultureModel } from '../persistence/models/culture-model.js';
+import type { CultureRepository } from '../../application/ports/culture-repository.js';
+import { Culture } from '../../domain/aggregates/culture.js';
+import { CultureSkillRank } from '../../domain/value-objects/culture-skill-rank.js';
 
 @Injectable()
 export class MongoCultureRepository extends MongoBaseRepository<Culture, CultureDocument> implements CultureRepository {

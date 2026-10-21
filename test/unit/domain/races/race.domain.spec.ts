@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { Race } from '../../../../src/modules/races/domain/aggregates/race';
-import { RaceProps } from '../../../../src/modules/races/domain/aggregates/race-props';
-import { RaceCreatedEvent } from '../../../../src/modules/races/domain/events/race-created.event';
-import { RaceUpdatedEvent } from '../../../../src/modules/races/domain/events/race-updated.event';
-import { RaceResistances } from '../../../../src/modules/races/domain/value-objects/race-resistances.vo';
-import { RaceSkillBonus } from '../../../../src/modules/races/domain/value-objects/race-skill-bonus.vo';
-import { RaceStats } from '../../../../src/modules/races/domain/value-objects/race-stats.vo';
-import { RaceTrait } from '../../../../src/modules/races/domain/value-objects/race-trait.vo';
+import { Race } from '../../../../src/modules/races/domain/aggregates/race.js';
+import type { RaceProps } from '../../../../src/modules/races/domain/aggregates/race-props.js';
+import { RaceCreatedEvent } from '../../../../src/modules/races/domain/events/race-created.event.js';
+import { RaceUpdatedEvent } from '../../../../src/modules/races/domain/events/race-updated.event.js';
+import { RaceResistances } from '../../../../src/modules/races/domain/value-objects/race-resistances.vo.js';
+import { RaceSkillBonus } from '../../../../src/modules/races/domain/value-objects/race-skill-bonus.vo.js';
+import { RaceStats } from '../../../../src/modules/races/domain/value-objects/race-stats.vo.js';
+import { RaceTrait } from '../../../../src/modules/races/domain/value-objects/race-trait.vo.js';
 
 const makeStats = (overrides: Partial<RaceStats> = {}): RaceStats => ({
   ag: 0,

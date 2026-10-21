@@ -6,7 +6,7 @@ import type {
   PermanentInjuryRow,
   RecoveryDaysRow,
   SeverityThreshold,
-} from '../../../domain/value-objects/healing-tables.vo';
+} from '../../../domain/value-objects/healing-tables.vo.js';
 
 export class HealingTablesDto {
   @ApiProperty({ description: 'Days for a light injury to fade by roll band and injury type', type: [Object] })

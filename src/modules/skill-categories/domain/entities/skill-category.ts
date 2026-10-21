@@ -1,4 +1,4 @@
-import { ManeuverProfile } from '../value-objects/maneuver-profile.vo';
+import type { ManeuverProfile } from '../value-objects/maneuver-profile.vo.js';
 
 export class SkillCategory {
   constructor(

@@ -1,12 +1,12 @@
 import { Inject, Logger } from '@nestjs/common';
-import { DeleteRaceCommand } from '../commands/delete-race.command';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { CreateRaceHandler } from './create-race.handler';
-import type { RaceGuardPort } from '../../ports/race-guard.port';
+import { DeleteRaceCommand } from '../commands/delete-race.command.js';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event.js';
+import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
+import type { RaceRepository } from '../../ports/race-repository.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { CreateRaceHandler } from './create-race.handler.js';
+import type { RaceGuardPort } from '../../ports/race-guard.port.js';
 
 @CommandHandler(DeleteRaceCommand)
 export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {

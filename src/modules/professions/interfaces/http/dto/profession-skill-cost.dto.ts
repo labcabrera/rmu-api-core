@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProfessionSkillCosts } from '../../../domain/value-objects/profession-skill-cost.vo';
+import type { ProfessionSkillCosts } from '../../../domain/value-objects/profession-skill-cost.vo.js';
 
 export class ProfessionSkillCostsDto {
   @ApiProperty({ description: 'Animal skill costs', example: [2, 4] })

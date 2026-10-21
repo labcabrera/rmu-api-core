@@ -1,5 +1,5 @@
-import { ForbiddenError } from '../../../shared/domain/errors/errors';
-import { RMU_ADMIN, RMU_CORE_LAW } from '../../../shared/domain/entities/user-roles';
+import { ForbiddenError } from '../../../shared/domain/errors/errors.js';
+import { RMU_ADMIN, RMU_CORE_LAW } from '../../../shared/domain/entities/user-roles.js';
 
 /** Rulebook content: only users with Core Law access (or administrators, like the service account) can read it. */
 export const checkCoreLawAccess = (roles: string[]): void => {

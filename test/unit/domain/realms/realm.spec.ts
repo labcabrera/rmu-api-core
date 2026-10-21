@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { Realm } from '../../../../src/modules/realms/domain/aggregates/realm';
-import { RealmCreatedEvent } from '../../../../src/modules/realms/domain/events/realm-created.event';
-import { RealmDeletedEvent } from '../../../../src/modules/realms/domain/events/realm-deleted.event';
-import { RealmUpdatedEvent } from '../../../../src/modules/realms/domain/events/realm-updated.event';
-import { RealmProps } from '../../../../src/modules/realms/domain/aggregates/realm-props';
+import { Realm } from '../../../../src/modules/realms/domain/aggregates/realm.js';
+import { RealmCreatedEvent } from '../../../../src/modules/realms/domain/events/realm-created.event.js';
+import { RealmDeletedEvent } from '../../../../src/modules/realms/domain/events/realm-deleted.event.js';
+import { RealmUpdatedEvent } from '../../../../src/modules/realms/domain/events/realm-updated.event.js';
+import type { RealmProps } from '../../../../src/modules/realms/domain/aggregates/realm-props.js';
 
 const baseProps = (): RealmProps => ({
   id: 'realm-1',

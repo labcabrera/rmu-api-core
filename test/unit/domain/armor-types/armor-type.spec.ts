@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ARMOR_TYPES } from '../../../../src/modules/armor-types/domain/entities/armor-type';
+import { ARMOR_TYPES } from '../../../../src/modules/armor-types/domain/entities/armor-type.js';
 
 describe('ARMOR_TYPES', () => {
   it('defines the armor catalog from none to plate in id order', () => {

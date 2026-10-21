@@ -3,19 +3,19 @@
 import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete, Patch } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { ProfessionDto, ProfessionPageDto } from './dto/profession.dto';
-import { GetProfessionQuery } from '../../application/cqrs/queries/get-profession.query';
-import { Profession } from '../../domain/aggregates/profession';
-import { GetProfessionsQuery } from '../../application/cqrs/queries/get-professions.query';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { Page } from '../../../shared/domain/entities/page';
-import { CreateProfessionDto } from './dto/create-profession.dto';
-import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-profession.command';
-import { UpdateProfessionDto } from './dto/update-profession.dto';
-import { CreateProfessionCommand } from '../../application/cqrs/commands/create-profession.command';
-import { UpdateProfessionCommand } from '../../application/cqrs/commands/update-profession.command';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { ProfessionDto, ProfessionPageDto } from './dto/profession.dto.js';
+import { GetProfessionQuery } from '../../application/cqrs/queries/get-profession.query.js';
+import { Profession } from '../../domain/aggregates/profession.js';
+import { GetProfessionsQuery } from '../../application/cqrs/queries/get-professions.query.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { CreateProfessionDto } from './dto/create-profession.dto.js';
+import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-profession.command.js';
+import { UpdateProfessionDto } from './dto/update-profession.dto.js';
+import { CreateProfessionCommand } from '../../application/cqrs/commands/create-profession.command.js';
+import { UpdateProfessionCommand } from '../../application/cqrs/commands/update-profession.command.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')

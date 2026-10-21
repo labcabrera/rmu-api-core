@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
-import { AbsoluteManeuverService, DEFAULT_ABSOLUTE_MANEUVER_TABLE } from '../../domain/services/absolute-maneuver.service';
-import { AbsoluteManeuverTable } from '../../domain/value-objects/absolute-maneuver-table.vo';
-import type { ManeuverTableRepository } from '../ports/maneuver-table-repository';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { AbsoluteManeuverService, DEFAULT_ABSOLUTE_MANEUVER_TABLE } from '../../domain/services/absolute-maneuver.service.js';
+import { AbsoluteManeuverTable } from '../../domain/value-objects/absolute-maneuver-table.vo.js';
+import type { ManeuverTableRepository } from '../ports/maneuver-table-repository.js';
 
 /** Looks absolute maneuver tables up in code first and then in the database. */
 @Injectable()

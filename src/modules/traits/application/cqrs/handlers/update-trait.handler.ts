@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UpdateTraitCommand } from '../commands/update-trait.command';
-import { Trait } from '../../../domain/aggregates/trait';
-import type { TraitRepository } from '../../ports/trait.repository';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { TraitGuardPort } from '../../ports/trait-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { UpdateTraitCommand } from '../commands/update-trait.command.js';
+import { Trait } from '../../../domain/aggregates/trait.js';
+import type { TraitRepository } from '../../ports/trait.repository.js';
+import type { TraitEventBusPort } from '../../ports/trait-event-bus.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
 
 @CommandHandler(UpdateTraitCommand)
 export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, Trait> {

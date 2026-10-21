@@ -2,12 +2,12 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { ResistanceRollQuery } from '../../application/cqrs/queries/resistance-roll.query';
-import { ResistanceRollQueryDto } from './dto/resistance-roll-query.dto';
-import { ResistanceRollResultDto } from './dto/resistance-roll-result.dto';
-import { ResistanceRollResult } from '../../domain/value-objects/resistance-roll-result';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { ResistanceRollQuery } from '../../application/cqrs/queries/resistance-roll.query.js';
+import { ResistanceRollQueryDto } from './dto/resistance-roll-query.dto.js';
+import { ResistanceRollResultDto } from './dto/resistance-roll-result.dto.js';
+import { ResistanceRollResult } from '../../domain/value-objects/resistance-roll-result.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/resistance-rolls')

@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Realm } from '../../../domain/aggregates/realm';
-import { CreateRealmCommand } from '../commands/create-realm.command';
-import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
-import type { RealmRepository } from '../../ports/realm-repository';
-import type { RealmGuardPort } from '../../ports/realm-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Realm } from '../../../domain/aggregates/realm.js';
+import { CreateRealmCommand } from '../commands/create-realm.command.js';
+import type { RealmEventBusPort } from '../../ports/realm-event-bus.port.js';
+import type { RealmRepository } from '../../ports/realm-repository.js';
+import type { RealmGuardPort } from '../../ports/realm-guard.port.js';
 
 @CommandHandler(CreateRealmCommand)
 export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, Realm> {

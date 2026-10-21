@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Race } from '../../../domain/aggregates/race';
-import { UpdateRaceCommand } from '../commands/update-race.command';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { RaceGuardPort } from '../../ports/race-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Race } from '../../../domain/aggregates/race.js';
+import { UpdateRaceCommand } from '../commands/update-race.command.js';
+import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
+import type { RaceRepository } from '../../ports/race-repository.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { RaceGuardPort } from '../../ports/race-guard.port.js';
 
 @CommandHandler(UpdateRaceCommand)
 export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Race> {

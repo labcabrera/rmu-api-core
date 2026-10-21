@@ -1,5 +1,5 @@
-import { ManeuverEffect } from './maneuver-effect.vo';
-import { ResultCode } from './maneuver-result.vo';
+import type { ManeuverEffect } from './maneuver-effect.vo.js';
+import type { ResultCode } from './maneuver-result.vo.js';
 
 export interface AbsoluteManeuverResult {
   result: ResultCode;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors';
-import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service.js';
 
 describe('AbsoluteManeuverService', () => {
   const service = new AbsoluteManeuverService();

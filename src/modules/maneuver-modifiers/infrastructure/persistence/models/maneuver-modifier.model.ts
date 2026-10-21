@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import type {
   ManeuverModifierOption,
   ManeuverModifierScope,
   ManeuverModifierType,
-} from '../../../domain/value-objects/maneuver-modifier-type.vo';
+} from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 
 export type ManeuverModifierDocument = ManeuverModifierModel & Document;
 

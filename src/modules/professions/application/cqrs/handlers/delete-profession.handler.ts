@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import type { ProfessionRepository } from '../../ports/profession.repository';
-import type { ProfessionGuardPort } from '../../ports/profession-guard.port';
-import { DeleteProfessionCommand } from '../commands/delete-profession.command';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import type { ProfessionRepository } from '../../ports/profession.repository.js';
+import type { ProfessionGuardPort } from '../../ports/profession-guard.port.js';
+import { DeleteProfessionCommand } from '../commands/delete-profession.command.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 
 @CommandHandler(DeleteProfessionCommand)
 export class DeleteProfessionHandler implements ICommandHandler<DeleteProfessionCommand, void> {

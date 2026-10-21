@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from '../shared/infrastructure/security/auth.module';
-import { CharacterSizeController } from './interfaces/http/character-size.controller';
-import { InMemoryCharacterSizeRepository } from './infrastructure/db/in-memory-character-size.repository';
-import { SharedModule } from '../shared/shared.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
+import { CharacterSizeController } from './interfaces/http/character-size.controller.js';
+import { InMemoryCharacterSizeRepository } from './infrastructure/db/in-memory-character-size.repository.js';
+import { SharedModule } from '../shared/shared.module.js';
 
 @Module({
   imports: [TerminusModule, CqrsModule, AuthModule, SharedModule],

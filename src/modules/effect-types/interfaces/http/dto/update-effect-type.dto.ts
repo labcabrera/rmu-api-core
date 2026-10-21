@@ -1,8 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsIn, IsOptional } from 'class-validator';
-import { UpdateEffectTypeCommand } from '../../../application/cqrs/commands/update-effect-type.command';
-import { EFFECT_PROPERTY_REQUIREMENTS, type EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { UpdateEffectTypeCommand } from '../../../application/cqrs/commands/update-effect-type.command.js';
+import {
+  EFFECT_PROPERTY_REQUIREMENTS,
+  type EffectPropertyRequirement,
+} from '../../../domain/value-objects/effect-property-requirement.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateEffectTypeDto {
   @ApiProperty({ description: 'Indicates if the effect persists over time', example: true, required: false })

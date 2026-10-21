@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray, IsOptional } from 'class-validator';
-import { RaceResistancesDto } from './race-resistances.dto';
-import { CreateRaceCommand } from '../../../application/cqrs/commands/create-race.command';
-import { RaceStatsDto } from './race-stats.dto';
-import { SexBasedAttributeDto } from './sex-based-attribute.dto';
-import { RaceTraitDto } from './race-trait.dto';
+import { RaceResistancesDto } from './race-resistances.dto.js';
+import { CreateRaceCommand } from '../../../application/cqrs/commands/create-race.command.js';
+import { RaceStatsDto } from './race-stats.dto.js';
+import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
+import { RaceTraitDto } from './race-trait.dto.js';
 // realmId is a string identifier
 
 export class CreateRaceDto {

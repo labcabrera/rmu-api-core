@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import type { EnumerationRepository } from '../../ports/enumeration-repository';
-import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { ConflictError, NotFoundError } from '../../../../shared/domain/errors/errors';
-import { Enumeration } from '../../../domain/aggregates/enumeration';
-import { UpdateEnumerationCommand } from '../commands/update-enumeration.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import type { EnumerationRepository } from '../../ports/enumeration-repository.js';
+import type { EnumerationGuardPort } from '../../ports/enumeration-guard.js';
+import { ConflictError, NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { Enumeration } from '../../../domain/aggregates/enumeration.js';
+import { UpdateEnumerationCommand } from '../commands/update-enumeration.command.js';
 
 @CommandHandler(UpdateEnumerationCommand)
 export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerationCommand, Enumeration> {

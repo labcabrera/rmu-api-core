@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { EffectType } from '../../../domain/aggregates/effect-type';
-import { DeleteEffectTypeCommand } from '../commands/delete-effect-type.command';
-import type { EffectTypeRepository } from '../../ports/effect-type-repository';
-import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { EffectType } from '../../../domain/aggregates/effect-type.js';
+import { DeleteEffectTypeCommand } from '../commands/delete-effect-type.command.js';
+import type { EffectTypeRepository } from '../../ports/effect-type-repository.js';
+import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port.js';
 
 @CommandHandler(DeleteEffectTypeCommand)
 export class DeleteEffectTypeHandler implements ICommandHandler<DeleteEffectTypeCommand, EffectType> {

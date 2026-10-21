@@ -1,4 +1,4 @@
-import { QueryCriteria } from '../criteria/query-criteria';
+import { QueryCriteria } from '../criteria/query-criteria.js';
 
 export interface EntityGuard<E> {
   checkCreate(roles: string[]): void;

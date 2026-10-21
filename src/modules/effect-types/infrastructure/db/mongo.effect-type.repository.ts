@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
-import { EffectTypeRepository } from '../../application/ports/effect-type-repository';
-import { EffectType } from '../../domain/aggregates/effect-type';
-import { EffectTypeDocument, EffectTypeModel } from '../persistence/models/effect-type.model';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import type { EffectTypeRepository } from '../../application/ports/effect-type-repository.js';
+import { EffectType } from '../../domain/aggregates/effect-type.js';
+import { type EffectTypeDocument, EffectTypeModel } from '../persistence/models/effect-type.model.js';
 
 @Injectable()
 export class MongoEffectTypeRepository extends MongoBaseRepository<EffectType, EffectTypeDocument> implements EffectTypeRepository {

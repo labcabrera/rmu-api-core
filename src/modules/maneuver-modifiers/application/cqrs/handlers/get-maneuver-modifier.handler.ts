@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier';
-import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
-import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';
-import { GetManeuverModifierQuery } from '../queries/get-maneuver-modifier.query';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
+import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.js';
+import { GetManeuverModifierQuery } from '../queries/get-maneuver-modifier.query.js';
 
 @QueryHandler(GetManeuverModifierQuery)
 export class GetManeuverModifierHandler implements IQueryHandler<GetManeuverModifierQuery, ManeuverModifier> {

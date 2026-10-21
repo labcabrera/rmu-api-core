@@ -1,4 +1,4 @@
-import { BaseRepository } from '../../../shared/application/ports/base-repository';
-import { Culture } from '../../domain/aggregates/culture';
+import type { BaseRepository } from '../../../shared/application/ports/base-repository.js';
+import { Culture } from '../../domain/aggregates/culture.js';
 
 export type CultureRepository = BaseRepository<Culture>;

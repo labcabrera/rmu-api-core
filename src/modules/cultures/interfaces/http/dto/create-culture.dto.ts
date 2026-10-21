@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { CreateCultureCommand } from '../../../application/cqrs/commands/create-culture.command';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { CultureSkillRankDto } from './culture-skill-rank.dto';
+import { CreateCultureCommand } from '../../../application/cqrs/commands/create-culture.command.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
 
 export class CreateCultureDto {
   @ApiProperty({ description: 'Name of the culture', example: 'Nomad' })

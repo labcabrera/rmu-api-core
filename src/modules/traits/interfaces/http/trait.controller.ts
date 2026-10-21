@@ -3,19 +3,19 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { CreateTraitCommand } from '../../application/cqrs/commands/create-trait.command';
-import { DeleteTraitCommand } from '../../application/cqrs/commands/delete-trait.command';
-import { UpdateTraitCommand } from '../../application/cqrs/commands/update-trait.command';
-import { Trait } from '../../domain/aggregates/trait';
-import { UpdateTraitDto } from './dto/update-trait.dto';
-import { TraitDto, TraitPageDto } from './dto/trait.dto';
-import { CreateTraitDto } from './dto/create-trait.dto';
-import { GetTraitsQuery } from '../../application/cqrs/queries/get-traits.query';
-import { GetTraitQuery } from '../../application/cqrs/queries/get-trait.query';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { Page } from '../../../shared/domain/entities/page';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { CreateTraitCommand } from '../../application/cqrs/commands/create-trait.command.js';
+import { DeleteTraitCommand } from '../../application/cqrs/commands/delete-trait.command.js';
+import { UpdateTraitCommand } from '../../application/cqrs/commands/update-trait.command.js';
+import { Trait } from '../../domain/aggregates/trait.js';
+import { UpdateTraitDto } from './dto/update-trait.dto.js';
+import { TraitDto, TraitPageDto } from './dto/trait.dto.js';
+import { CreateTraitDto } from './dto/create-trait.dto.js';
+import { GetTraitsQuery } from '../../application/cqrs/queries/get-traits.query.js';
+import { GetTraitQuery } from '../../application/cqrs/queries/get-trait.query.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/traits')

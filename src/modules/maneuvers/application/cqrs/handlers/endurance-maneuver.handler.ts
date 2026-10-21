@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { EnduranceManeuverQuery } from '../queries/endurance-maneuver.query';
-import { EnduranceManeuverService } from '../../../domain/services/endurance-maneuver.service';
-import { EnduranceManeuverResult } from '../../../domain/value-objects/endurance-maneuver-result.vo';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { EnduranceManeuverQuery } from '../queries/endurance-maneuver.query.js';
+import { EnduranceManeuverService } from '../../../domain/services/endurance-maneuver.service.js';
+import type { EnduranceManeuverResult } from '../../../domain/value-objects/endurance-maneuver-result.vo.js';
 
 @QueryHandler(EnduranceManeuverQuery)
 export class EnduranceManeuverHandler implements IQueryHandler<EnduranceManeuverQuery, EnduranceManeuverResult> {

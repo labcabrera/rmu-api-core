@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
-import { RaceTrait } from './race-trait.model';
+import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model.js';
+import { RaceTrait } from './race-trait.model.js';
 // realm is now stored as realmId string
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { RaceSkillBonus } from './race-skill-bonus.model';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { RaceSkillBonus } from './race-skill-bonus.model.js';
 
 export type RaceDocument = RaceModel & Document;
 

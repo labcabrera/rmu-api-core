@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CriticalSeverity } from '../../../domain/value-objects/percent-maneuver-result.vo';
+import type { CriticalSeverity } from '../../../domain/value-objects/percent-maneuver-result.vo.js';
 
 export class PercentManeuverResultDto {
   @ApiProperty({ description: 'The percent value', example: 80, required: true })

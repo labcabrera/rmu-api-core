@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
-import { Trait } from '../../../domain/aggregates/trait';
-import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import { Trait } from '../../../domain/aggregates/trait.js';
+import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })

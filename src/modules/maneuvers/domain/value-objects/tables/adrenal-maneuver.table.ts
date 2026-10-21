@@ -1,4 +1,4 @@
-import { AbsoluteManeuverTable } from '../absolute-maneuver-table.vo';
+import { AbsoluteManeuverTable } from '../absolute-maneuver-table.vo.js';
 
 export const ADRENAL_MANEUVER_TABLE = new AbsoluteManeuverTable(
   'adrenal',

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean } from 'class-validator';
-import { CreateTraitCommand } from '../../../application/cqrs/commands/create-trait.command';
-import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo';
-import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo';
+import { CreateTraitCommand } from '../../../application/cqrs/commands/create-trait.command.js';
+import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class CreateTraitDto {
   @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })

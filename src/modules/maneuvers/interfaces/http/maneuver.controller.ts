@@ -3,16 +3,16 @@
 import { Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { PercentManeuverResultDto } from './dto/percent-maneuver-result.dto';
-import { PercentManeuverQuery } from '../../application/cqrs/queries/percent-maneuver.query';
-import { AbsoluteManeuverQuery } from '../../application/cqrs/queries/absolute-maneuver.query';
-import { AbsoluteManeuverResultDto } from './dto/absolute-maneuver-result.dto';
-import { EnduranceManeuverResultDto } from './dto/endurance-maneuver-result.dto';
-import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { AbsoluteManeuverTableDto } from './dto/absolute-maneuver-table.dto';
-import { AbsoluteManeuverTableProvider } from '../../application/services/absolute-maneuver-table.provider';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { PercentManeuverResultDto } from './dto/percent-maneuver-result.dto.js';
+import { PercentManeuverQuery } from '../../application/cqrs/queries/percent-maneuver.query.js';
+import { AbsoluteManeuverQuery } from '../../application/cqrs/queries/absolute-maneuver.query.js';
+import { AbsoluteManeuverResultDto } from './dto/absolute-maneuver-result.dto.js';
+import { EnduranceManeuverResultDto } from './dto/endurance-maneuver-result.dto.js';
+import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { AbsoluteManeuverTableDto } from './dto/absolute-maneuver-table.dto.js';
+import { AbsoluteManeuverTableProvider } from '../../application/services/absolute-maneuver-table.provider.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')

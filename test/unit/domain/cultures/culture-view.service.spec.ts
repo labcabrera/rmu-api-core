@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { CultureViewService } from '../../../../src/modules/cultures/application/services/culture-view.service';
-import { Culture } from '../../../../src/modules/cultures/domain/aggregates/culture';
-import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank';
-import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill';
-import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository';
+import { CultureViewService } from '../../../../src/modules/cultures/application/services/culture-view.service.js';
+import { Culture } from '../../../../src/modules/cultures/domain/aggregates/culture.js';
+import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank.js';
+import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
+import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository.js';
 
 const makeSkill = (id: string, categoryId: string) =>
   Skill.fromProps({ id, categoryId, bonus: [], specialization: null, owner: 'owner', accessType: 'public', createdAt: new Date() });

@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ConflictError } from '../../../../shared/domain/errors/errors';
-import { CreateSkillCategoryCommand } from '../commands/create-skill-category.command';
-import { SkillCategory } from '../../../domain/entities/skill-category';
-import { ManeuverProfiles } from '../../../domain/value-objects/maneuver-profile.vo';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { CreateSkillCategoryCommand } from '../commands/create-skill-category.command.js';
+import { SkillCategory } from '../../../domain/entities/skill-category.js';
+import { ManeuverProfiles } from '../../../domain/value-objects/maneuver-profile.vo.js';
+import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository.js';
 
 @CommandHandler(CreateSkillCategoryCommand)
 export class CreateSkillCategoryHandler implements ICommandHandler<CreateSkillCategoryCommand, SkillCategory> {

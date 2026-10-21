@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
-import { RaceTrait } from '../../../domain/value-objects/race-trait.vo';
+import { RaceTrait } from '../../../domain/value-objects/race-trait.vo.js';
 
 export class RaceTraitDto {
   @ApiProperty({ description: 'Identifier of the race trait', example: 'race-trait-001' })

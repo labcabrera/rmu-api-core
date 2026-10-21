@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
-import { RaceResistances } from '../../../domain/value-objects/race-resistances.vo';
+import { RaceResistances } from '../../../domain/value-objects/race-resistances.vo.js';
 
 export class RaceResistancesDto {
   @ApiProperty({ description: 'Channeling resistance', example: 0 })

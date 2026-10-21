@@ -1,5 +1,5 @@
-import { AccessType } from '../../../shared/domain/entities/access-type';
-import { MagicPresence } from '../value-objects/realm-magic-type.vo';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import type { MagicPresence } from '../value-objects/realm-magic-type.vo.js';
 
 export interface RealmProps {
   id: string;

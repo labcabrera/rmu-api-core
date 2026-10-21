@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Delete, HttpCode, Patch } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateEnumerationDto } from './dto/create-enumeration.dto';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { GetEnumerationQuery } from '../../application/cqrs/queries/get-enumeration.query';
-import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumerations.query';
-import { Page } from '../../../shared/domain/entities/page';
-import { Enumeration } from '../../domain/aggregates/enumeration';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
-import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { UpdateEnumerationDto } from './dto/update-enumeration.dto';
+import { CreateEnumerationDto } from './dto/create-enumeration.dto.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { GetEnumerationQuery } from '../../application/cqrs/queries/get-enumeration.query.js';
+import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumerations.query.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import { Enumeration } from '../../domain/aggregates/enumeration.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { UpdateEnumerationDto } from './dto/update-enumeration.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/enumerations')

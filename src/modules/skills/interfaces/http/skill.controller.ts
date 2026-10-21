@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Patch, HttpCode, Delete } from '@nestjs/common';
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { SkillDto, SkillPageDto } from './dto/skill.dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { SkillDto, SkillPageDto } from './dto/skill.dto.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateSkillDto } from './dto/create-skill.dto';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
-import { GetSkillQuery } from '../../application/cqrs/queries/get-skill.query';
-import { GetSkillsQuery } from '../../application/cqrs/queries/get-skills.query';
-import { Page } from '../../../shared/domain/entities/page';
-import { SkillView } from '../../application/read-models/skill-view';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
-import { UpdateSkillDto } from './dto/update-skill.dto';
-import { DeleteSkillCommand } from '../../application/cqrs/commands/delete-skill.command';
-import { UpdateSkillCommand } from '../../application/cqrs/commands/update-skill.command';
-import { CreateSkillCommand } from '../../application/cqrs/commands/create-skill.command';
+import { CreateSkillDto } from './dto/create-skill.dto.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { GetSkillQuery } from '../../application/cqrs/queries/get-skill.query.js';
+import { GetSkillsQuery } from '../../application/cqrs/queries/get-skills.query.js';
+import { Page } from '../../../shared/domain/entities/page.js';
+import type { SkillView } from '../../application/read-models/skill-view.js';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { UpdateSkillDto } from './dto/update-skill.dto.js';
+import { DeleteSkillCommand } from '../../application/cqrs/commands/delete-skill.command.js';
+import { UpdateSkillCommand } from '../../application/cqrs/commands/update-skill.command.js';
+import { CreateSkillCommand } from '../../application/cqrs/commands/create-skill.command.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skills')

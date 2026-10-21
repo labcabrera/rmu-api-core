@@ -1,8 +1,8 @@
-import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
-import { RealmType } from '../value-objects/realm-type.vo';
-import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
-import { EntitySource } from '../../../shared/domain/entities/entity-source';
-import { AccessType } from '../../../shared/domain/entities/access-type';
+import type { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo.js';
+import type { RealmType } from '../value-objects/realm-type.vo.js';
+import type { ProfessionArchetype } from '../value-objects/profession-archetype.vo.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 
 export interface ProfessionProps {
   id: string;

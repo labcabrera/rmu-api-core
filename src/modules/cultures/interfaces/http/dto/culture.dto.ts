@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { CultureView } from '../../../application/read-models/culture-view';
-import { CultureSkillRankDto } from './culture-skill-rank.dto';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { CultureView } from '../../../application/read-models/culture-view.js';
+import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
 
 export class CultureDto {
   @ApiProperty({ description: 'Culture identifier', example: 'culture-001' })

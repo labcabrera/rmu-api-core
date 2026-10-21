@@ -1,4 +1,4 @@
-import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
 
 /** Modifiers that apply to a skill (its own and those of its category) or to a category. */
 export class FindApplicableManeuverModifiersQuery extends AuthenticatedCommand {

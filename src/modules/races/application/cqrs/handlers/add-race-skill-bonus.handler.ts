@@ -1,11 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Race } from '../../../domain/aggregates/race';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { RaceGuardPort } from '../../ports/race-guard.port';
-import { AddRaceSkillBonusCommand } from '../commands/add-race-skill-bonus.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Race } from '../../../domain/aggregates/race.js';
+import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
+import type { RaceRepository } from '../../ports/race-repository.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { RaceGuardPort } from '../../ports/race-guard.port.js';
+import { AddRaceSkillBonusCommand } from '../commands/add-race-skill-bonus.command.js';
 
 @CommandHandler(AddRaceSkillBonusCommand)
 export class AddRaceSkillBonusHandler implements ICommandHandler<AddRaceSkillBonusCommand, Race> {

@@ -1,11 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Race } from '../../../domain/aggregates/race';
-import { CreateRaceCommand } from '../commands/create-race.command';
-import type { RealmRepository } from '../../../../realms/application/ports/realm-repository';
-import type { RaceRepository } from '../../ports/race-repository';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import { ValidationError } from '../../../../shared/domain/errors/errors';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Race } from '../../../domain/aggregates/race.js';
+import { CreateRaceCommand } from '../commands/create-race.command.js';
+import type { RealmRepository } from '../../../../realms/application/ports/realm-repository.js';
+import type { RaceRepository } from '../../ports/race-repository.js';
+import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
+import { ValidationError } from '../../../../shared/domain/errors/errors.js';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {

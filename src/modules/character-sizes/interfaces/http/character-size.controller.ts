@@ -1,9 +1,9 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
-import { CharacterSizeDto } from './dto/character-size.dto';
-import { NotFoundError } from '../../../shared/domain/errors/errors';
-import type { CharacterSizeRepository } from '../../application/ports/character-size-repository';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { CharacterSizeDto } from './dto/character-size.dto.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import type { CharacterSizeRepository } from '../../application/ports/character-size-repository.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/character-sizes')

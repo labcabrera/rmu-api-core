@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import type { EnumerationRepository } from '../../ports/enumeration-repository';
-import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { Enumeration } from '../../../domain/aggregates/enumeration';
-import { DeleteEnumerationCommand } from '../commands/delete-enumeration.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import type { EnumerationRepository } from '../../ports/enumeration-repository.js';
+import type { EnumerationGuardPort } from '../../ports/enumeration-guard.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { Enumeration } from '../../../domain/aggregates/enumeration.js';
+import { DeleteEnumerationCommand } from '../commands/delete-enumeration.command.js';
 
 @CommandHandler(DeleteEnumerationCommand)
 export class DeleteEnumerationHandler implements ICommandHandler<DeleteEnumerationCommand, Enumeration> {

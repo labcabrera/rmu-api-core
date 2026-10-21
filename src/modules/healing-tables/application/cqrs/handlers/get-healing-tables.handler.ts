@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import { checkCoreLawAccess } from '../../../domain/services/healing-tables-access';
-import { HealingTables } from '../../../domain/value-objects/healing-tables.vo';
-import type { HealingTablesRepository } from '../../ports/healing-tables-repository';
-import { GetHealingTablesQuery } from '../queries/get-healing-tables.query';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { checkCoreLawAccess } from '../../../domain/services/healing-tables-access.js';
+import type { HealingTables } from '../../../domain/value-objects/healing-tables.vo.js';
+import type { HealingTablesRepository } from '../../ports/healing-tables-repository.js';
+import { GetHealingTablesQuery } from '../queries/get-healing-tables.query.js';
 
 @QueryHandler(GetHealingTablesQuery)
 export class GetHealingTablesHandler implements IQueryHandler<GetHealingTablesQuery, HealingTables> {

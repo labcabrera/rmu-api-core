@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { AddRaceSkillBonusCommand } from '../../../application/cqrs/commands/add-race-skill-bonus.command';
+import { AddRaceSkillBonusCommand } from '../../../application/cqrs/commands/add-race-skill-bonus.command.js';
 
 export class AddRaceSkillBonusDto {
   @ApiProperty({ description: 'Skill identifier', required: true, example: 'animal-handling' })

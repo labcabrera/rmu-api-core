@@ -1,6 +1,6 @@
-import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
-import { TraitCategory } from '../../../domain/value-objects/trait-category.vo';
-import { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class CreateTraitCommand extends AuthenticatedCommand {
   public constructor(

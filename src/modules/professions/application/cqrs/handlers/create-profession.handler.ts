@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ConflictError } from '../../../../shared/domain/errors/errors';
-import { CreateProfessionCommand } from '../commands/create-profession.command';
-import { Profession } from '../../../domain/aggregates/profession';
-import type { ProfessionRepository } from '../../ports/profession.repository';
-import type { ProfessionGuardPort } from '../../ports/profession-guard.port';
-import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { CreateProfessionCommand } from '../commands/create-profession.command.js';
+import { Profession } from '../../../domain/aggregates/profession.js';
+import type { ProfessionRepository } from '../../ports/profession.repository.js';
+import type { ProfessionGuardPort } from '../../ports/profession-guard.port.js';
+import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles.js';
 
 @CommandHandler(CreateProfessionCommand)
 export class CreateProfessionHandler implements ICommandHandler<CreateProfessionCommand, Profession> {

@@ -1,11 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { DeleteTraitCommand } from '../commands/delete-trait.command';
-import { TraitDeletedEvent } from '../../../domain/events/trait-deleted.event';
-import type { TraitRepository } from '../../ports/trait.repository';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { TraitGuardPort } from '../../ports/trait-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { DeleteTraitCommand } from '../commands/delete-trait.command.js';
+import { TraitDeletedEvent } from '../../../domain/events/trait-deleted.event.js';
+import type { TraitRepository } from '../../ports/trait.repository.js';
+import type { TraitEventBusPort } from '../../ports/trait-event-bus.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
 
 @CommandHandler(DeleteTraitCommand)
 export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {

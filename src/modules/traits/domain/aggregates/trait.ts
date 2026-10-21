@@ -1,9 +1,9 @@
-import { TraitCreatedEvent } from '../events/trait-created.event';
-import { TraitUpdatedEvent } from '../events/trait-updated.event';
-import { TraitCategory } from '../value-objects/trait-category.vo';
-import { TraitSpecialization } from '../value-objects/trait-specialization.vo';
-import { TraitProps } from './trait-props';
-import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
+import { TraitCreatedEvent } from '../events/trait-created.event.js';
+import { TraitUpdatedEvent } from '../events/trait-updated.event.js';
+import type { TraitCategory } from '../value-objects/trait-category.vo.js';
+import type { TraitSpecialization } from '../value-objects/trait-specialization.vo.js';
+import type { TraitProps } from './trait-props.js';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
 
 export class Trait extends BaseAggregateRoot<TraitProps> {
   private constructor(

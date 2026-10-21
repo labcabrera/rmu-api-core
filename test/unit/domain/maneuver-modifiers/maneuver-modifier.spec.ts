@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { ManeuverModifier } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier';
-import { ManeuverModifierDefinition } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier-props';
-import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';
+import { ManeuverModifier } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier.js';
+import type { ManeuverModifierDefinition } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier-props.js';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const create = (definition: Partial<ManeuverModifierDefinition>) =>
   ManeuverModifier.create({

@@ -1,10 +1,10 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { UpdateManeuverModifierCommand } from '../../../application/cqrs/commands/update-maneuver-modifier.command';
-import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo';
-import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo';
-import type { AccessType } from '../../../../shared/domain/entities/access-type';
-import { ManeuverModifierDefinitionFields } from './maneuver-modifier.dto';
+import { UpdateManeuverModifierCommand } from '../../../application/cqrs/commands/update-maneuver-modifier.command.js';
+import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
+import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ManeuverModifierDefinitionFields } from './maneuver-modifier.dto.js';
 
 export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefinitionFields) {
   @ApiProperty({ required: false })

@@ -4,8 +4,8 @@ import {
   DEFAULT_CULTURE_DEVELOPMENT_COST,
   cultureCategoryCost,
   cultureDevelopmentCost,
-} from '../../../../src/modules/cultures/domain/services/culture-development-cost';
-import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank';
+} from '../../../../src/modules/cultures/domain/services/culture-development-cost.js';
+import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank.js';
 
 // Invented skills, mapped to categories of the cost table.
 const skillCategories: Record<string, string> = {

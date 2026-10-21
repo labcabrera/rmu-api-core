@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { ResistanceRollResult, ResistanceRollResultCode } from '../../../domain/value-objects/resistance-roll-result';
-import { KeyValue } from '../../../../shared/domain/entities/key-value';
+import type { ResistanceRollResult, ResistanceRollResultCode } from '../../../domain/value-objects/resistance-roll-result.js';
+import { KeyValue } from '../../../../shared/domain/entities/key-value.js';
 
 export class ResistanceRollResultDto {
   @ApiProperty({ type: String, description: 'Result code', example: 'success', required: true })

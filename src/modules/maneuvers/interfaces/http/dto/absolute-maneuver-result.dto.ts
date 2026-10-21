@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AbsoluteManeuverResult } from '../../../domain/value-objects/absolute-maneuver-result.vo';
-import type { ManeuverEffect, ManeuverEffectStatus } from '../../../domain/value-objects/maneuver-effect.vo';
-import type { ResultCode } from '../../../domain/value-objects/maneuver-result.vo';
+import type { AbsoluteManeuverResult } from '../../../domain/value-objects/absolute-maneuver-result.vo.js';
+import type { ManeuverEffect, ManeuverEffectStatus } from '../../../domain/value-objects/maneuver-effect.vo.js';
+import type { ResultCode } from '../../../domain/value-objects/maneuver-result.vo.js';
 
 export class ManeuverEffectDto {
   @ApiProperty({ type: String, description: 'Effect status', example: 'retryBonus' })

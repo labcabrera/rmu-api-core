@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { GetHealingTablesHandler } from '../../../../src/modules/healing-tables/application/cqrs/handlers/get-healing-tables.handler';
-import { GetHealingTablesQuery } from '../../../../src/modules/healing-tables/application/cqrs/queries/get-healing-tables.query';
-import type { HealingTablesRepository } from '../../../../src/modules/healing-tables/application/ports/healing-tables-repository';
-import { HealingTables } from '../../../../src/modules/healing-tables/domain/value-objects/healing-tables.vo';
-import { MongoHealingTablesRepository } from '../../../../src/modules/healing-tables/infrastructure/db/mongo.healing-tables.repository';
-import { HealingTablesModel } from '../../../../src/modules/healing-tables/infrastructure/persistence/models/healing-tables.model';
-import { ForbiddenError, NotFoundError } from '../../../../src/modules/shared/domain/errors/errors';
+import { GetHealingTablesHandler } from '../../../../src/modules/healing-tables/application/cqrs/handlers/get-healing-tables.handler.js';
+import { GetHealingTablesQuery } from '../../../../src/modules/healing-tables/application/cqrs/queries/get-healing-tables.query.js';
+import type { HealingTablesRepository } from '../../../../src/modules/healing-tables/application/ports/healing-tables-repository.js';
+import type { HealingTables } from '../../../../src/modules/healing-tables/domain/value-objects/healing-tables.vo.js';
+import { MongoHealingTablesRepository } from '../../../../src/modules/healing-tables/infrastructure/db/mongo.healing-tables.repository.js';
+import { HealingTablesModel } from '../../../../src/modules/healing-tables/infrastructure/persistence/models/healing-tables.model.js';
+import { ForbiddenError, NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 // Fixture values, not the rulebook ones
 const days = { bone: 1, 'cut-burn': 2, 'muscle-tendon': 3, organ: 4, 'poison-disease': 5, 'skin-tissue': 6 };

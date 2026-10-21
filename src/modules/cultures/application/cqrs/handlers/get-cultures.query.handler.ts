@@ -1,11 +1,11 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { GetCulturesQuery } from '../queries/get-cultures.query';
-import { Page } from '../../../../shared/domain/entities/page';
-import type { CultureRepository } from '../../ports/culture-repository';
-import type { CultureGuardPort } from '../../ports/culture-guard.port';
-import { CultureViewService } from '../../services/culture-view.service';
-import { CultureView } from '../../read-models/culture-view';
+import { GetCulturesQuery } from '../queries/get-cultures.query.js';
+import { Page } from '../../../../shared/domain/entities/page.js';
+import type { CultureRepository } from '../../ports/culture-repository.js';
+import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
+import { CultureViewService } from '../../services/culture-view.service.js';
+import type { CultureView } from '../../read-models/culture-view.js';
 
 @QueryHandler(GetCulturesQuery)
 export class GetCulturesHandler implements IQueryHandler<GetCulturesQuery, Page<CultureView>> {

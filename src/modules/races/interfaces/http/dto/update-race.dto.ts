@@ -1,9 +1,9 @@
 import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { RaceResistancesDto } from './race-resistances.dto';
-import { RaceStatsDto } from './race-stats.dto';
-import { SexBasedAttributeDto } from './sex-based-attribute.dto';
-import { UpdateRaceCommand } from '../../../application/cqrs/commands/update-race.command';
-import { RaceTraitDto } from './race-trait.dto';
+import { RaceResistancesDto } from './race-resistances.dto.js';
+import { RaceStatsDto } from './race-stats.dto.js';
+import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
+import { UpdateRaceCommand } from '../../../application/cqrs/commands/update-race.command.js';
+import { RaceTraitDto } from './race-trait.dto.js';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 

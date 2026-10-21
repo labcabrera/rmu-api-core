@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProfessionSkillCostsDto } from './profession-skill-cost.dto';
+import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
-import { UpdateProfessionCommand } from '../../../application/cqrs/commands/update-profession.command';
-import { RealmType } from '../../../domain/value-objects/realm-type.vo';
-import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo';
-import { AccessType } from '../../../../shared/domain/entities/access-type';
+import { UpdateProfessionCommand } from '../../../application/cqrs/commands/update-profession.command.js';
+import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
+import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateProfessionDto {
   @ApiProperty({ description: 'Available realm types for the profession', required: false, example: ['channeling'] })

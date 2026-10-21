@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from '../../../../shared/domain/errors/errors';
-import type { SkillRepository } from '../../ports/skill-repository';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
-import type { SkillGuardPort } from '../../ports/skill-guard';
-import { DeleteSkillCommand } from '../commands/delete-skill.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import type { SkillRepository } from '../../ports/skill-repository.js';
+import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository.js';
+import type { SkillGuardPort } from '../../ports/skill-guard.js';
+import { DeleteSkillCommand } from '../commands/delete-skill.command.js';
 
 @CommandHandler(DeleteSkillCommand)
 export class DeleteSkillHandler implements ICommandHandler<DeleteSkillCommand, void> {
