@@ -21,7 +21,7 @@ export class CreateProfessionDto {
   @IsString({ each: true })
   fixedRealmTypes: RealmType[];
 
-  @ApiProperty({ description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
+  @ApiProperty({ type: String, description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
   @IsString()
   archetype: ProfessionArchetype;
 
@@ -44,7 +44,7 @@ export class CreateProfessionDto {
   @IsOptional()
   imageUrl?: string | undefined;
 
-  @ApiProperty({ description: 'Access type', required: true, example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type', required: true, example: 'public' })
   @IsString()
   accessType: AccessType;
 

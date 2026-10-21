@@ -75,7 +75,7 @@ export class RaceDto {
   @ApiProperty({ description: 'Owner identifier', example: 'user123' })
   owner: string;
 
-  @ApiProperty({ description: 'Access type', required: true })
+  @ApiProperty({ type: String, description: 'Access type', required: true })
   accessType: AccessType;
 
   static fromEntity(entity: Race): RaceDto {

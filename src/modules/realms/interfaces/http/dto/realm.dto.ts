@@ -25,7 +25,7 @@ export class RealmDto {
   @ApiProperty({ description: 'Owner of the realm', example: 'user123' })
   owner: string;
 
-  @ApiProperty({ description: 'Access type', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type', example: 'public' })
   accessType: AccessType;
 
   static fromEntity(entity: Realm): RealmDto {

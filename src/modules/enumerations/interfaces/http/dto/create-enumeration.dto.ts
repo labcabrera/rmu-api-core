@@ -36,7 +36,7 @@ export class CreateEnumerationDto {
   @IsOptional()
   imageUrl?: string | null;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   @IsString()
   accessType: AccessType;
 

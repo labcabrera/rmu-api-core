@@ -10,7 +10,7 @@ export class UpdateRealmDto {
   @IsOptional()
   name: string | undefined;
 
-  @ApiProperty({ description: 'Magic presence in the realm', example: 'limited', required: false })
+  @ApiProperty({ type: String, description: 'Magic presence in the realm', example: 'limited', required: false })
   @IsString()
   @IsIn(['unlimited', 'limited', 'none'])
   @IsOptional()
@@ -39,7 +39,7 @@ export class UpdateRealmDto {
   @IsOptional()
   imageUrl: string | undefined;
 
-  @ApiProperty({ description: 'Is the realm public', example: true, required: false })
+  @ApiProperty({ type: String, description: 'Access type', example: 'public', required: false })
   @IsString()
   @IsOptional()
   accessType: AccessType | undefined;

@@ -18,7 +18,7 @@ export class SkillDto {
   @ApiProperty({ description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
   specialization: EnumerationCategory | null;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   accessType: AccessType;
 
   @ApiProperty({

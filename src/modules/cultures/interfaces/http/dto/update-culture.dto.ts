@@ -21,7 +21,7 @@ export class UpdateCultureDto {
   @IsOptional()
   imageUrl?: string;
 
-  @ApiProperty({ description: 'Access type', required: false, example: 'private' })
+  @ApiProperty({ type: String, description: 'Access type', required: false, example: 'private' })
   @IsString()
   @IsOptional()
   accessType?: AccessType;

@@ -3,7 +3,7 @@ import { EnduranceManeuverResult } from '../../../domain/value-objects/endurance
 import type { ResultCode } from '../../../domain/value-objects/maneuver-result.vo';
 
 export class EnduranceManeuverResultDto {
-  @ApiProperty({ description: 'The result value', example: 'success', required: true })
+  @ApiProperty({ type: String, description: 'The result value', example: 'success', required: true })
   result: ResultCode;
 
   @ApiProperty({ description: 'The critical severity level', example: 'A', required: false })

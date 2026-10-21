@@ -42,7 +42,7 @@ export class CreateEffectTypeDto {
   @IsIn(EFFECT_PROPERTY_REQUIREMENTS)
   delay: EffectPropertyRequirement;
 
-  @ApiProperty({ description: 'Access type of the effect type', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public' })
   @IsIn(['public', 'private'])
   accessType: AccessType;
 

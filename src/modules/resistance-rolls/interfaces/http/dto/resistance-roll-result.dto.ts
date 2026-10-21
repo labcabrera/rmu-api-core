@@ -3,7 +3,7 @@ import type { ResistanceRollResult, ResistanceRollResultCode } from '../../../do
 import { KeyValue } from '../../../../shared/domain/entities/key-value';
 
 export class ResistanceRollResultDto {
-  @ApiProperty({ description: 'Result code', example: 'success', required: true })
+  @ApiProperty({ type: String, description: 'Result code', example: 'success', required: true })
   result: ResistanceRollResultCode;
 
   @ApiProperty({ description: 'Resistance roll modifiers', example: [{ key: 'bonus', value: 2 }], required: true })

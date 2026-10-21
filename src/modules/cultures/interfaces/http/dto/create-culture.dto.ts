@@ -21,7 +21,7 @@ export class CreateCultureDto {
   @IsOptional()
   imageUrl: string | null;
 
-  @ApiProperty({ description: 'Access type', required: true, example: 'private' })
+  @ApiProperty({ type: String, description: 'Access type', required: true, example: 'private' })
   @IsString()
   accessType: AccessType;
 

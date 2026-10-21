@@ -18,7 +18,7 @@ export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefin
   @IsOptional()
   type?: ManeuverModifierType;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ type: String, required: false })
   @IsIn(['public', 'private'])
   @IsOptional()
   accessType?: AccessType;
