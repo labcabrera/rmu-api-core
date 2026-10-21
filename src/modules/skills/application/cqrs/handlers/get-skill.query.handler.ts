@@ -5,7 +5,7 @@ import type { SkillRepository } from '../../ports/skill-repository';
 import { SkillView } from '../../read-models/skill-view';
 import { SkillViewService } from '../../services/skill-view.service';
 import type { SkillGuardPort } from '../../ports/skill-guard';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 
 @QueryHandler(GetSkillQuery)
 export class GetSkillHandler implements IQueryHandler<GetSkillQuery, SkillView> {

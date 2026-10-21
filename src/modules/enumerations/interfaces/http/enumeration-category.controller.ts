@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards, Body, Request } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
 import { ENUMERATION_CATEGORIES } from '../../domain/value-objects/enumeration-category.vo';
 
 @UseGuards(JwtAuthGuard)

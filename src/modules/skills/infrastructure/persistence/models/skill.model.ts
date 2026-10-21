@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { ManeuverProfile } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo';
+import type { ManeuverProfile } from '../../../../skill-categories/domain/value-objects/maneuver-profile.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
 
 export type SkillDocument = SkillModel & Document;
 

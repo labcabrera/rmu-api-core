@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier';
 import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port';
 import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository';

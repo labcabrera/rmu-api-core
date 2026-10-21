@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 import { ManeuverProfileDto } from './maneuver-profile.dto';
-import { CreateSkillCategoryCommand } from 'src/modules/skill-categories/application/cqrs/commands/create-skill-category.command';
+import { CreateSkillCategoryCommand } from '../../../application/cqrs/commands/create-skill-category.command';
 
 export class CreateSkillCategoryDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })

@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { GetCultureQuery } from '../queries/get-culture.query';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { CultureGuardPort } from '../../ports/culture-guard.port';
 import type { CultureRepository } from '../../ports/culture-repository';
 import { CultureViewService } from '../../services/culture-view.service';

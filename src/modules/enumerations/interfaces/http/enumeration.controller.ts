@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Delete, HttpCode, Patch } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
 import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateEnumerationDto } from './dto/create-enumeration.dto';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
 import { GetEnumerationQuery } from '../../application/cqrs/queries/get-enumeration.query';
 import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumerations.query';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../shared/domain/entities/page';
 import { Enumeration } from '../../domain/aggregates/enumeration';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../shared/domain/errors/errors';
 import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
 import { UpdateEnumerationDto } from './dto/update-enumeration.dto';
 
 @UseGuards(JwtAuthGuard)

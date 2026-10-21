@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import type { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import type { EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source';
 
 export type EnumerationDocument = EnumerationModel & Document;
 

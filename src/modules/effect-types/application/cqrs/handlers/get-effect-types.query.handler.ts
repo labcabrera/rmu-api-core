@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { EffectType } from 'src/modules/effect-types/domain/aggregates/effect-type';
+import { Page } from '../../../../shared/domain/entities/page';
+import { EffectType } from '../../../domain/aggregates/effect-type';
 import { GetEffectTypesQuery } from '../queries/get-effect-types.query';
 import type { EffectTypeRepository } from '../../ports/effect-type-repository';
 import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port';

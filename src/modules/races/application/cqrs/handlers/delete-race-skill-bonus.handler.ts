@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Race } from '../../../domain/aggregates/race';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
 import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { RaceGuardPort } from '../../ports/race-guard.port';
 import { DeleteRaceSkillBonusCommand } from '../commands/delete-race-skill-bonus.command';
 

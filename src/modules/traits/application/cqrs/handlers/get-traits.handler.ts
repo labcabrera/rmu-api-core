@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { GetTraitsQuery } from '../queries/get-traits.query';
-import { Trait } from 'src/modules/traits/domain/aggregates/trait';
+import { Trait } from '../../../domain/aggregates/trait';
 import type { TraitRepository } from '../../ports/trait.repository';
-import { Page } from 'src/modules/shared/domain/entities/page';
+import { Page } from '../../../../shared/domain/entities/page';
 import type { TraitGuardPort } from '../../ports/trait-guard.port';
 
 @QueryHandler(GetTraitsQuery)

@@ -4,8 +4,8 @@ import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 import { TraitDocument, TraitModel } from '../persistence/models/trait-model';
 import { TraitRepository } from '../../application/ports/trait.repository';
 import { Trait } from '../../domain/aggregates/trait';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
 
 @Injectable()
 export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocument> implements TraitRepository {

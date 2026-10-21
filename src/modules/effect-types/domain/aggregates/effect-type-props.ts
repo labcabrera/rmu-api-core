@@ -1,5 +1,5 @@
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import { AccessType } from '../../../shared/domain/entities/access-type';
+import { EntitySource } from '../../../shared/domain/entities/entity-source';
 import { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo';
 
 export interface EffectTypeProps {

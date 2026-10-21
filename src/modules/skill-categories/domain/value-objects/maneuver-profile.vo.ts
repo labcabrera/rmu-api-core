@@ -1,4 +1,4 @@
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { ValidationError } from '../../../shared/domain/errors/errors';
 
 export const MANEUVER_TYPES = ['absolute', 'percent'] as const;
 export type ManeuverType = (typeof MANEUVER_TYPES)[number];

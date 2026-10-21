@@ -1,10 +1,10 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTraitCommand } from '../commands/delete-trait.command';
-import { TraitDeletedEvent } from 'src/modules/traits/domain/events/trait-deleted.event';
+import { TraitDeletedEvent } from '../../../domain/events/trait-deleted.event';
 import type { TraitRepository } from '../../ports/trait.repository';
 import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { TraitGuardPort } from '../../ports/trait-guard.port';
 
 @CommandHandler(DeleteTraitCommand)

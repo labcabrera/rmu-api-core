@@ -1,4 +1,4 @@
-import { BaseEntityGuard } from 'src/modules/shared/infrastructure/security/base-entity-guard';
+import { BaseEntityGuard } from '../../../shared/infrastructure/security/base-entity-guard';
 import { EffectTypeGuardPort } from '../../application/ports/effect-type-guard.port';
 import { EffectType } from '../../domain/aggregates/effect-type';
 

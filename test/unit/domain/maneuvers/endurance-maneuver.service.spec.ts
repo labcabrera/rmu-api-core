@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { EnduranceManeuverService } from 'src/modules/maneuvers/domain/services/endurance-maneuver.service';
+import { EnduranceManeuverService } from '../../../../src/modules/maneuvers/domain/services/endurance-maneuver.service';
 
 describe('EnduranceManeuverService', () => {
   const service = new EnduranceManeuverService();

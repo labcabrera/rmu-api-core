@@ -2,8 +2,8 @@ import { Controller, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
 import { UpdateRaceRealmNameCommand } from '../../../races/application/cqrs/commands/update-race-realm.command';
-import { DomainEvent } from 'src/modules/shared/domain/events/domain-event';
-import { RealmProps } from 'src/modules/realms/domain/aggregates/realm-props';
+import { DomainEvent } from '../../../shared/domain/events/domain-event';
+import { RealmProps } from '../../domain/aggregates/realm-props';
 import { DeleteRacesByRealmCommand } from '../../../races/application/cqrs/commands/delete-races-by-realm.command';
 
 @Controller()

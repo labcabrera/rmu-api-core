@@ -1,9 +1,9 @@
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 import { SkillProps } from './skill-props';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { ManeuverProfile, ManeuverProfiles } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
+import { EnumerationCategory } from '../../../enumerations/domain/value-objects/enumeration-category.vo';
+import { NotModifiedError } from '../../../shared/domain/errors/errors';
+import { ManeuverProfile, ManeuverProfiles } from '../../../skill-categories/domain/value-objects/maneuver-profile.vo';
 
 export type SkillUpdateProps = Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt' | 'maneuver'>> & {
   /** undefined keeps the current profile, null removes it. */

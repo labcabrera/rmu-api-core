@@ -3,17 +3,17 @@
 import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete, Patch } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { ProfessionDto, ProfessionPageDto } from './dtos/profession.dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
+import { ProfessionDto, ProfessionPageDto } from './dto/profession.dto';
 import { GetProfessionQuery } from '../../application/cqrs/queries/get-profession.query';
 import { Profession } from '../../domain/aggregates/profession';
 import { GetProfessionsQuery } from '../../application/cqrs/queries/get-professions.query';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { CreateProfessionDto } from './dtos/create-profession.dto';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
+import { Page } from '../../../shared/domain/entities/page';
+import { CreateProfessionDto } from './dto/create-profession.dto';
 import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-profession.command';
-import { UpdateProfessionDto } from './dtos/update-profession.dto';
+import { UpdateProfessionDto } from './dto/update-profession.dto';
 import { CreateProfessionCommand } from '../../application/cqrs/commands/create-profession.command';
 import { UpdateProfessionCommand } from '../../application/cqrs/commands/update-profession.command';
 

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNotEmpty, IsString, IsOptional } from 'class-validator';
-import { CreateEnumerationCommand } from 'src/modules/enumerations/application/cqrs/commands/create-enumeration.command';
-import { ENUMERATION_CATEGORIES, type EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { CreateEnumerationCommand } from '../../../application/cqrs/commands/create-enumeration.command';
+import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
 
 export class CreateEnumerationDto {
   @ApiProperty({ description: 'Enumeration key', example: 'horse' })

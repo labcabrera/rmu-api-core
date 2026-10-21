@@ -1,11 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import { DeleteCultureCommand } from '../commands/delete-culture.command';
 import type { CultureRepository } from '../../ports/culture-repository';
 import type { CultureGuardPort } from '../../ports/culture-guard.port';
 import type { CultureEventBusPort } from '../../ports/culture-event-bus.port';
-import { CultureDeletedEvent } from 'src/modules/cultures/domain/events/culture-deleted.event';
+import { CultureDeletedEvent } from '../../../domain/events/culture-deleted.event';
 
 @CommandHandler(DeleteCultureCommand)
 export class DeleteCultureHandler implements ICommandHandler<DeleteCultureCommand> {

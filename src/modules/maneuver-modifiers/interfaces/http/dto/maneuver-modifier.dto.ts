@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
-import { ManeuverModifier } from 'src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier';
-import { MANEUVER_MODIFIER_TYPES } from 'src/modules/maneuver-modifiers/domain/value-objects/maneuver-modifier-type.vo';
-import type { ManeuverModifierType } from 'src/modules/maneuver-modifiers/domain/value-objects/maneuver-modifier-type.vo';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto';
+import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier';
+import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo';
+import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo';
 
 export class ManeuverModifierOptionDto {
   @ApiProperty({ description: 'Option key', example: 'option-a' })

@@ -1,11 +1,11 @@
 import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
 import { RealmType } from '../value-objects/realm-type.vo';
 import { ProfessionProps } from './profession-props';
-import { RbacEntity } from 'src/modules/shared/domain/entities/rbac-entity';
+import { RbacEntity } from '../../../shared/domain/entities/rbac-entity';
 import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import { EntitySource } from '../../../shared/domain/entities/entity-source';
+import { AccessType } from '../../../shared/domain/entities/access-type';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
 
 export class Profession extends BaseAggregateRoot<ProfessionProps> implements RbacEntity {
   constructor(

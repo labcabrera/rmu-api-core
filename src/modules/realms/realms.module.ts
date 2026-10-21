@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from 'src/modules/auth/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
 import { MongoRealmRepository } from './infrastructure/db/mongo.realm.repository';
 import { RealmController } from './interfaces/http/realm.controller';
 import { MongooseModule } from '@nestjs/mongoose';

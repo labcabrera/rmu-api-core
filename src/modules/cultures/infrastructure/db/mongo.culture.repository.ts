@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
+import { NotFoundError } from '../../../shared/domain/errors/errors';
 import { CultureDocument, CultureModel } from '../persistence/models/culture-model';
 import { CultureRepository } from '../../application/ports/culture-repository';
 import { Culture } from '../../domain/aggregates/culture';

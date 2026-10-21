@@ -1,6 +1,6 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { MagicPresence } from 'src/modules/realms/domain/value-objects/realm-magic-type.vo';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command';
+import { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo';
+import { AccessType } from '../../../../shared/domain/entities/access-type';
 
 export class UpdateRealmCommand extends AuthenticatedCommand {
   constructor(

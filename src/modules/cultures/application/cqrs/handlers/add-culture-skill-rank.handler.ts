@@ -4,9 +4,9 @@ import type { CultureRepository } from '../../ports/culture-repository';
 import type { CultureGuardPort } from '../../ports/culture-guard.port';
 import type { CultureEventBusPort } from '../../ports/culture-event-bus.port';
 import { AddCultureSkillRankCommand } from '../commands/add-culture-skill-rank.command';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { CultureUpdatedEvent } from 'src/modules/cultures/domain/events/culture-updated.event';
-import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
+import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event';
+import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank';
 import { CultureViewService } from '../../services/culture-view.service';
 import { CultureView } from '../../read-models/culture-view';
 

@@ -72,6 +72,9 @@ RMU_IAM_CLIENT_SECRET={our-clientId-secret}
 LOG_LEVEL=debug
 ----
 
+`RMU_IAM_URI` (default `http://localhost/sso`) and `RMU_IAM_REALM` (default `rmu`) are optional: they only build the
+browser-facing OAuth URLs of the Swagger UI (`/api-docs`). The schema of every variable is in `src/config/env.schema.ts`.
+
 === Running with Docker
 
 This project includes `docker-run.sh` which builds the image and runs the container on the `rmu-network` Docker network.
@@ -93,6 +96,39 @@ For production build:
 npm run build
 npm run start:prod
 ```
+
+== Project layout
+
+----
+src/
+  main.ts                  bootstrap only: pipes, filters, Kafka transport, shutdown hooks
+  bootstrap/               logger levels and OpenAPI (Swagger) setup
+  config/env.schema.ts     Joi schema of the environment
+  modules/<feature>/
+    <feature>.module.ts
+    domain/                aggregates, value objects, domain services, repository ports
+    application/cqrs/      commands, queries and their handlers
+    infrastructure/
+      db/                  repository adapters (Mongo)
+      persistence/models/  Mongoose schemas
+      security/            <entity>-guard.adapter.ts (read/write access checks)
+      messaging/           Kafka event publishers
+    interfaces/http/       controllers
+      dto/                 request and response DTOs
+  modules/shared/          base repository, RSQL parser, DomainError -> HTTP filter, Kafka producer, health
+    infrastructure/security/  JWT strategy and guard, TokenService (client credentials), AuthModule
+test/unit/domain/<feature>/  unit tests
+----
+
+Conventions:
+
+- Imports are relative; there is no `src/...` alias.
+- File names are kebab-case (`race-guard.adapter.ts`), with a dotted suffix for the role (`.module`, `.controller`,
+  `.dto`, `.handler`, `.repository`).
+- A read-only module may skip `domain/` (`character-sizes`).
+
+`scripts/smoke.sh [base-url]` calls one endpoint of every controller with a service-account token and fails on any
+non-2xx answer (default `http://localhost:3001`; through the gateway `http://localhost/api/core`).
 
 == Contributing
 

@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateTraitCommand } from '../commands/update-trait.command';
-import { Trait } from 'src/modules/traits/domain/aggregates/trait';
+import { Trait } from '../../../domain/aggregates/trait';
 import type { TraitRepository } from '../../ports/trait.repository';
 import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { TraitGuardPort } from '../../ports/trait-guard.port';
 
 @CommandHandler(UpdateTraitCommand)

@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import { checkCoreLawAccess } from '../../../domain/services/healing-tables-access';
 import { HealingTables } from '../../../domain/value-objects/healing-tables.vo';
 import type { HealingTablesRepository } from '../../ports/healing-tables-repository';

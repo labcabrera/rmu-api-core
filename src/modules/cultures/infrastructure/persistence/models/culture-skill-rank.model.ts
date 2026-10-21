@@ -1,5 +1,5 @@
 import { Prop, Schema } from '@nestjs/mongoose';
-import type { CultureRegion, CultureSkillRankType } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import type { CultureRegion, CultureSkillRankType } from '../../../domain/value-objects/culture-skill-rank';
 
 @Schema({ _id: false })
 export class CultureSkillRankModel {

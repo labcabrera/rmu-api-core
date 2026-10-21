@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model';
 import { RaceTrait } from './race-trait.model';
 // realm is now stored as realmId string
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
 import { RaceSkillBonus } from './race-skill-bonus.model';
 
 export type RaceDocument = RaceModel & Document;

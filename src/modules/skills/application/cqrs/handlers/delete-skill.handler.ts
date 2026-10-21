@@ -1,6 +1,6 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
 import type { SkillRepository } from '../../ports/skill-repository';
 import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 import type { SkillGuardPort } from '../../ports/skill-guard';

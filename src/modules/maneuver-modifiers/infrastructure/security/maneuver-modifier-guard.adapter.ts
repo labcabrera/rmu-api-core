@@ -1,4 +1,4 @@
-import { BaseEntityGuard } from 'src/modules/shared/infrastructure/security/base-entity-guard';
+import { BaseEntityGuard } from '../../../shared/infrastructure/security/base-entity-guard';
 import { ManeuverModifierGuardPort } from '../../application/ports/maneuver-modifier-guard.port';
 import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier';
 

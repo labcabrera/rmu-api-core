@@ -1,8 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
-import type { SkillCategoryRepository } from 'src/modules/realms/application/ports/skill-category-repository';
-import { SkillCategory } from 'src/modules/skill-categories/domain/entities/skill-category';
-import { SkillViewService } from 'src/modules/skills/application/services/skill-view.service';
-import { Skill } from 'src/modules/skills/domain/aggregates/skill';
+import type { SkillCategoryRepository } from '../../../../src/modules/realms/application/ports/skill-category-repository';
+import { SkillCategory } from '../../../../src/modules/skill-categories/domain/entities/skill-category';
+import { SkillViewService } from '../../../../src/modules/skills/application/services/skill-view.service';
+import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill';
 
 const categories = [
   new SkillCategory('category-a', [], null, { resultTable: 'table-a', movement: true }),

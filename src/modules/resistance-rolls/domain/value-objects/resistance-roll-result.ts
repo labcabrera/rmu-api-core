@@ -1,4 +1,4 @@
-import { KeyValue } from 'src/modules/shared/domain/entities/key-value';
+import { KeyValue } from '../../../shared/domain/entities/key-value';
 
 export type ResistanceRollResultCode = 'success' | 'mild-failure' | 'moderate-failure' | 'severe-failure' | 'extreme-failure';
 

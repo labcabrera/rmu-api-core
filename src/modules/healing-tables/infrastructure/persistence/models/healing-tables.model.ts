@@ -6,7 +6,7 @@ import type {
   PermanentInjuryRow,
   RecoveryDaysRow,
   SeverityThreshold,
-} from 'src/modules/healing-tables/domain/value-objects/healing-tables.vo';
+} from '../../../domain/value-objects/healing-tables.vo';
 
 export type HealingTablesDocument = HealingTablesModel & Document;
 

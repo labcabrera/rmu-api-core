@@ -2,10 +2,10 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Race } from '../../../domain/aggregates/race';
 import { CreateRaceCommand } from '../commands/create-race.command';
-import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
+import type { RealmRepository } from '../../../../realms/application/ports/realm-repository';
 import type { RaceRepository } from '../../ports/race-repository';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { ValidationError } from '../../../../shared/domain/errors/errors';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {

@@ -1,8 +1,8 @@
 import { TraitGuardPort } from '../../application/ports/trait-guard.port';
 import { Trait } from '../../domain/aggregates/trait';
-import { ForbiddenError } from 'src/modules/shared/domain/errors/errors';
-import { RMU_ADMIN, RMU_USER } from 'src/modules/shared/domain/entities/user-roles';
-import { QueryCriteria } from 'src/modules/shared/application/criteria/query-criteria';
+import { ForbiddenError } from '../../../shared/domain/errors/errors';
+import { RMU_ADMIN, RMU_USER } from '../../../shared/domain/entities/user-roles';
+import { QueryCriteria } from '../../../shared/application/criteria/query-criteria';
 
 export class TraitGuardAdapter implements TraitGuardPort {
   checkRead(entity: Trait, userId: string, roles: string[]): void {

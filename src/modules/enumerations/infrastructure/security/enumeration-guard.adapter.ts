@@ -1,4 +1,4 @@
-import { BaseEntityGuard } from 'src/modules/shared/infrastructure/security/base-entity-guard';
+import { BaseEntityGuard } from '../../../shared/infrastructure/security/base-entity-guard';
 import { EnumerationGuardPort } from '../../application/ports/enumeration-guard';
 import { Enumeration } from '../../domain/aggregates/enumeration';
 

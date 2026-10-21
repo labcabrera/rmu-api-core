@@ -2,7 +2,7 @@ import { RaceResistances } from '../value-objects/race-resistances.vo';
 import { RaceStats } from '../value-objects/race-stats.vo';
 import { RaceTrait } from '../value-objects/race-trait.vo';
 import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo';
 
 export interface RaceProps {

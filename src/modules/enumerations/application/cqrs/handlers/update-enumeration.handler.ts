@@ -2,8 +2,8 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import type { EnumerationRepository } from '../../ports/enumeration-repository';
 import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { ConflictError, NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
+import { ConflictError, NotFoundError } from '../../../../shared/domain/errors/errors';
+import { Enumeration } from '../../../domain/aggregates/enumeration';
 import { UpdateEnumerationCommand } from '../commands/update-enumeration.command';
 
 @CommandHandler(UpdateEnumerationCommand)

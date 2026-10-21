@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors';
+import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service';
 
 describe('AbsoluteManeuverService', () => {
   const service = new AbsoluteManeuverService();

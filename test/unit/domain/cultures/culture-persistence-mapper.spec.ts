@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { MongoCultureRepository } from 'src/modules/cultures/infrastructure/db/mongo.culture.repository';
-import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { MongoCultureRepository } from '../../../../src/modules/cultures/infrastructure/db/mongo.culture.repository';
+import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank';
 
 describe('MongoCultureRepository.mapSkillRanks', () => {
   it("maps the old fixedSkillRanks to 'skill' entries when skillRanks is absent", () => {

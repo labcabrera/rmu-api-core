@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { SkillCategoryRepository } from 'src/modules/realms/application/ports/skill-category-repository';
-import { ManeuverProfiles } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
+import type { SkillCategoryRepository } from '../../../realms/application/ports/skill-category-repository';
+import { ManeuverProfiles } from '../../../skill-categories/domain/value-objects/maneuver-profile.vo';
 import { Skill } from '../../domain/aggregates/skill';
 import { SkillView } from '../read-models/skill-view';
 

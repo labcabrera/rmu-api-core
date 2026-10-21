@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../shared/infrastructure/security/auth.module';
 import { KafkaCultureEventBusAdapter } from './infrastructure/messaging/kafka.culture-event-bus.adapter';
 import { RealmsModule } from '../realms/realms.module';
 import { SharedModule } from '../shared/shared.module';

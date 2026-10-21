@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Race } from 'src/modules/races/domain/aggregates/race';
+import { Race } from '../../domain/aggregates/race';
 import { RaceDocument, RaceModel } from '../persistence/models/race-model';
 import { RaceRepository } from '../../application/ports/race-repository';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 
 @Injectable()
 export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument> implements RaceRepository {

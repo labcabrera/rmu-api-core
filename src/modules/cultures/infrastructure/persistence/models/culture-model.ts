@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import type { AccessType } from '../../../../shared/domain/entities/access-type';
 import { CultureSkillRankModel, LegacyCultureFixedSkillRankModel } from './culture-skill-rank.model';
 
 export type CultureDocument = CultureModel & Document;

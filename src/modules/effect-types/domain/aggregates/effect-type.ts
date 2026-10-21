@@ -1,7 +1,7 @@
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
+import { NotModifiedError } from '../../../shared/domain/errors/errors';
+import { AccessType } from '../../../shared/domain/entities/access-type';
+import { EntitySource } from '../../../shared/domain/entities/entity-source';
 import { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo';
 import { EffectTypeProps } from './effect-type-props';
 

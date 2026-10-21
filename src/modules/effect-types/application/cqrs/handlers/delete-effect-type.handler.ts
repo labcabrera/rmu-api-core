@@ -1,7 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { EffectType } from 'src/modules/effect-types/domain/aggregates/effect-type';
+import { NotFoundError } from '../../../../shared/domain/errors/errors';
+import { EffectType } from '../../../domain/aggregates/effect-type';
 import { DeleteEffectTypeCommand } from '../commands/delete-effect-type.command';
 import type { EffectTypeRepository } from '../../ports/effect-type-repository';
 import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port';

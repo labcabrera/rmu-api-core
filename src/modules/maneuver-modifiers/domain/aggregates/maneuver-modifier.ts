@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate';
+import { AccessType } from '../../../shared/domain/entities/access-type';
+import { ValidationError } from '../../../shared/domain/errors/errors';
 import {
   MANEUVER_MODIFIER_TYPES,
   ManeuverModifierOption,

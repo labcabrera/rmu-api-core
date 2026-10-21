@@ -2,10 +2,10 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
+import { Page } from '../../../shared/domain/entities/page';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query';
 import { DeleteEffectTypeCommand } from '../../application/cqrs/commands/delete-effect-type.command';
 import { GetEffectTypeQuery } from '../../application/cqrs/queries/get-effect-type.query';
 import { GetEffectTypesQuery } from '../../application/cqrs/queries/get-effect-types.query';

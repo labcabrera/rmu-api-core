@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { SkillRepository } from 'src/modules/skills/application/ports/skill-repository';
-import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
-import { cultureDevelopmentCost } from 'src/modules/cultures/domain/services/culture-development-cost';
+import type { SkillRepository } from '../../../skills/application/ports/skill-repository';
+import { Culture } from '../../domain/aggregates/culture';
+import { cultureDevelopmentCost } from '../../domain/services/culture-development-cost';
 import { CultureView } from '../read-models/culture-view';
 
 /** Builds the culture read model, resolving skill categories from the skill catalog to cost the ranks. */

@@ -1,6 +1,6 @@
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { AccessType } from '../../../shared/domain/entities/access-type';
 import { EnumerationCategory } from '../value-objects/enumeration-category.vo';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import { EntitySource } from '../../../shared/domain/entities/entity-source';
 
 export interface EnumerationProps {
   id: string;

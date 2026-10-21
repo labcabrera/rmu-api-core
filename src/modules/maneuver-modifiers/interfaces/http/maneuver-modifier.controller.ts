@@ -12,9 +12,9 @@ import {
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard';
+import { Page } from '../../../shared/domain/entities/page';
+import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto';
 import { CreateManeuverModifierCommand } from '../../application/cqrs/commands/create-maneuver-modifier.command';
 import { DeleteManeuverModifierCommand } from '../../application/cqrs/commands/delete-maneuver-modifier.command';
 import { UpdateManeuverModifierCommand } from '../../application/cqrs/commands/update-maneuver-modifier.command';

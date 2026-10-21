@@ -4,9 +4,9 @@ import { Model } from 'mongoose';
 import { SkillRepository } from '../../application/ports/skill-repository';
 import { Skill } from '../../domain/aggregates/skill';
 import { SkillDocument, SkillModel } from '../persistence/models/skill.model';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser';
+import { NotFoundError } from '../../../shared/domain/errors/errors';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository';
 
 @Injectable()
 export class MongoSkillRepository extends MongoBaseRepository<Skill, SkillDocument> implements SkillRepository {
