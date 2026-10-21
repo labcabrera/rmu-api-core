@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { AbsoluteManeuverTableProvider } from '../../../../src/modules/maneuvers/application/services/absolute-maneuver-table.provider';
 import type { ManeuverTableRepository } from '../../../../src/modules/maneuvers/application/ports/maneuver-table-repository';
 import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service';

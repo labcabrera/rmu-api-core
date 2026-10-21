@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors';
 import { EffectType } from '../../../../src/modules/effect-types/domain/aggregates/effect-type';
 

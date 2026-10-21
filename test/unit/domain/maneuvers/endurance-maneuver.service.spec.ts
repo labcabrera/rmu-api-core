@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { EnduranceManeuverService } from '../../../../src/modules/maneuvers/domain/services/endurance-maneuver.service';
 
 describe('EnduranceManeuverService', () => {

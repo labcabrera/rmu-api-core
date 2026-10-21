@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { SkillCategory } from '../../../../src/modules/skill-categories/domain/entities/skill-category';
 
 describe('SkillCategory', () => {

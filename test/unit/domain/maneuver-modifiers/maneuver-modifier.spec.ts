@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { ManeuverModifier } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier';
 import { ManeuverModifierDefinition } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier-props';
 import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';

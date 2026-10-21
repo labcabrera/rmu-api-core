@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';
 import { ManeuverProfiles } from '../../../../src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
 

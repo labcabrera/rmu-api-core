@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { Culture } from '../../../../src/modules/cultures/domain/aggregates/culture';
 import { CultureProps } from '../../../../src/modules/cultures/domain/aggregates/culture-props';
 import { CultureCreatedEvent } from '../../../../src/modules/cultures/domain/events/culture-created.event';
