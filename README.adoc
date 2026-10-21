@@ -47,7 +47,7 @@ This section describes the most important steps and environment variables to run
 === Requirements
 
 - Docker (recommended 20.10+)
-- Node.js (for local development): recommended 18+
+- Node.js 24 (`.nvmrc`; `nvm use`) for local development
 - npm or pnpm
 
 === Local configuration
@@ -77,7 +77,12 @@ browser-facing OAuth URLs of the Swagger UI (`/api-docs`). The schema of every v
 
 === Running with Docker
 
-This project includes `docker-run.sh` which builds the image and runs the container on the `rmu-network` Docker network.
+`make docker-build` builds `labcabrera/rmu-api-core:latest` and `make docker-run` runs it on the `rmu-network` Docker
+network (needs `.env.docker`, copied from `.env.docker.example`). The image (`node:24-bookworm-slim`) only holds `dist/` and
+the production dependencies, runs as the `node` user with `NODE_ENV=production` and has its own `HEALTHCHECK` on
+`/v1/health`. Run it with `--init` (`init: true` in compose) so `SIGTERM` reaches Node and Nest closes Kafka and Mongo.
+`make docker-push` builds `linux/amd64` and `linux/arm64` without emulation: every `RUN` step happens on the builder's
+platform.
 
 In https://github.com/labcabrera/rmu-platform/docker-compose there are some `docker-compose` files that run multiple services together such as MongoDB, Keycloak and Kafka.
 

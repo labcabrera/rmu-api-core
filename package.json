@@ -14,7 +14,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node --enable-source-maps dist/main.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest --passWithNoTests",
@@ -114,5 +114,8 @@
     ],
     "testTimeout": 30000,
     "verbose": true
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
