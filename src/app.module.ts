@@ -18,6 +18,7 @@ import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rol
 import { CulturesModule } from './modules/cultures/cultures.module';
 import { EffectTypesModule } from './modules/effect-types/effect-types.module';
 import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-modifiers.module';
+import { HealingTablesModule } from './modules/healing-tables/healing-tables.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-m
     ResistanceRollsModule,
     CulturesModule,
     ManeuverModifiersModule,
+    HealingTablesModule,
   ],
 })
 export class AppModule {}

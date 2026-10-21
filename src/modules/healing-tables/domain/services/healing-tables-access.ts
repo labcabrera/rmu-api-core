@@ -1,0 +1,8 @@
+import { ForbiddenError } from 'src/modules/shared/domain/errors/errors';
+import { RMU_ADMIN, RMU_CORE_LAW } from 'src/modules/shared/domain/entities/user-roles';
+
+/** Rulebook content: only users with Core Law access (or administrators, like the service account) can read it. */
+export const checkCoreLawAccess = (roles: string[]): void => {
+  if (roles.includes(RMU_ADMIN) || roles.includes(RMU_CORE_LAW)) return;
+  throw new ForbiddenError('Core Law content requires the rmu-core-law group');
+};
