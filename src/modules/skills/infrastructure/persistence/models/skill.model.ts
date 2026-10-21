@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
+import type { ManeuverProfile } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export type SkillDocument = SkillModel & Document;
@@ -24,6 +25,9 @@ export class SkillModel {
 
   @Prop({ type: String, required: true })
   accessType: AccessType;
+
+  @Prop({ type: Object, required: false })
+  maneuver?: ManeuverProfile | null;
 
   @Prop({ required: true })
   createdAt: Date;

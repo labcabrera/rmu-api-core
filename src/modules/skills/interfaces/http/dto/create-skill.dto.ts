@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ManeuverProfileDto } from 'src/modules/skill-categories/interfaces/http/dto/maneuver-profile.dto';
 import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
 import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { CreateSkillCommand } from 'src/modules/skills/application/cqrs/commands/create-skill.command';
@@ -28,7 +30,22 @@ export class CreateSkillDto {
   @IsString()
   accessType: AccessType;
 
+  @ApiProperty({ description: 'Maneuver profile values that override the category profile', type: ManeuverProfileDto, required: false })
+  @ValidateNested()
+  @Type(() => ManeuverProfileDto)
+  @IsOptional()
+  maneuver?: ManeuverProfileDto;
+
   static toCommand(dto: CreateSkillDto, userId: string, roles: string[]): CreateSkillCommand {
-    return new CreateSkillCommand(dto.id, dto.categoryId, dto.bonus, dto.specialization, dto.accessType, userId, roles);
+    return new CreateSkillCommand(
+      dto.id,
+      dto.categoryId,
+      dto.bonus,
+      dto.specialization,
+      dto.accessType,
+      ManeuverProfileDto.toProfile(dto.maneuver),
+      userId,
+      roles,
+    );
   }
 }

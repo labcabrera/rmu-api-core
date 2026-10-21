@@ -5,6 +5,7 @@ import { SkillCategoryRepository } from '../../../realms/application/ports/skill
 import { Page } from 'src/modules/shared/domain/entities/page';
 import { SkillCategory } from '../../domain/entities/skill-category';
 import { SkillCategoryDocument, SkillCategoryModel } from '../persistence/models/skill-category.model';
+import { ManeuverProfiles } from '../../domain/value-objects/maneuver-profile.vo';
 import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
 
 @Injectable()
@@ -17,6 +18,12 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
   async findById(id: string): Promise<SkillCategory | null> {
     const doc = await this.skillCategoryModel.findById(id);
     return doc ? this.mapToEntity(doc) : null;
+  }
+
+  async findByIds(ids: string[]): Promise<SkillCategory[]> {
+    if (ids.length === 0) return [];
+    const docs = await this.skillCategoryModel.find({ _id: { $in: ids } });
+    return docs.map(doc => this.mapToEntity(doc));
   }
 
   async findByRsql(rsql: string | undefined, page: number, size: number): Promise<Page<SkillCategory>> {
@@ -37,10 +44,6 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
   }
 
   private mapToEntity(doc: SkillCategoryDocument): SkillCategory {
-    return {
-      id: doc.id as string,
-      bonus: doc.bonus,
-      realmBonus: doc.realmBonus,
-    };
+    return new SkillCategory(doc.id as string, doc.bonus, doc.realmBonus ?? null, ManeuverProfiles.normalize(doc.maneuver));
   }
 }

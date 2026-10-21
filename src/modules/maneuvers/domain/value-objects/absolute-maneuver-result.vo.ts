@@ -7,4 +7,6 @@ export interface AbsoluteManeuverResult {
   effects?: ManeuverEffect[];
   penaltyUntilAbsoluteSuccess?: number;
   bonusUntilAbsoluteFailure?: number;
+  /** Unusual event text of the table, only when the roll was an unusual event. */
+  unusualEvent?: string;
 }

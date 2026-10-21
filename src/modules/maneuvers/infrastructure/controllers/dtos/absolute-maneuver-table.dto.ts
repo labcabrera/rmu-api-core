@@ -21,7 +21,7 @@ export class AbsoluteManeuverTableDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ description: 'Table entries', type: [AbsoluteManeuverResultDto] })
+  @ApiProperty({ description: 'Table entries', type: [AbsoluteManeuverTableEntryDto] })
   table: AbsoluteManeuverTableEntryDto[];
 
   @ApiProperty({ description: 'Unusual event description', example: 'Some effect.', required: true })

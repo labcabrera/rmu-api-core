@@ -10,17 +10,32 @@ import { AbsoluteManeuverHandler } from './application/cqrs/handlers/absolute-ma
 import { EnduranceManeuverHandler } from './application/cqrs/handlers/endurance-maneuver.handler';
 import { SharedModule } from '../shared/shared.module';
 import { EnduranceManeuverService } from './domain/services/endurance-maneuver.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ManeuverTableModel, ManeuverTableSchema } from './infrastructure/persistence/models/maneuver-table.model';
+import { MongoManeuverTableRepository } from './infrastructure/db/mongo.maneuver-table.repository';
+import { AbsoluteManeuverTableProvider } from './application/services/absolute-maneuver-table.provider';
 
 @Module({
-  imports: [TerminusModule, CqrsModule, AuthModule, SharedModule],
+  imports: [
+    TerminusModule,
+    CqrsModule,
+    MongooseModule.forFeature([{ name: ManeuverTableModel.name, schema: ManeuverTableSchema }]),
+    AuthModule,
+    SharedModule,
+  ],
   controllers: [ManeuverController],
   providers: [
     AbsoluteManeuverService,
+    AbsoluteManeuverTableProvider,
     PercentManeuverService,
     EnduranceManeuverService,
     PercentManeuverHandler,
     AbsoluteManeuverHandler,
     EnduranceManeuverHandler,
+    {
+      provide: 'ManeuverTableRepository',
+      useClass: MongoManeuverTableRepository,
+    },
   ],
 })
 export class ManeuversModule {}

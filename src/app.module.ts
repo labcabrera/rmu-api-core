@@ -17,6 +17,7 @@ import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
 import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module';
 import { CulturesModule } from './modules/cultures/cultures.module';
 import { EffectTypesModule } from './modules/effect-types/effect-types.module';
+import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-modifiers.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { EffectTypesModule } from './modules/effect-types/effect-types.module';
     EffectTypesModule,
     ResistanceRollsModule,
     CulturesModule,
+    ManeuverModifiersModule,
   ],
 })
 export class AppModule {}

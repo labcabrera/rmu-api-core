@@ -1,4 +1,4 @@
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError, ValidationError } from 'src/modules/shared/domain/errors/errors';
 import { AbsoluteManeuverResult } from '../value-objects/absolute-maneuver-result.vo';
 import { ABSOLUTE_MANEUVER_TABLE } from '../value-objects/tables/generic-maneuver.table';
 import { Injectable } from '@nestjs/common';
@@ -11,6 +11,8 @@ import { CRAFTING_MANEUVER_TABLE } from '../value-objects/tables/crafting-maneuv
 import { GYMNASTIC_MANEUVER_TABLE } from '../value-objects/tables/gymnastic-maneuver.table';
 import { LORE_MANEUVER_TABLE } from '../value-objects/tables/lore-maneuver.table';
 import { MEDICAL_MANEUVER_TABLE } from '../value-objects/tables/medical-maneuver.table';
+
+export const DEFAULT_ABSOLUTE_MANEUVER_TABLE = 'generic';
 
 @Injectable()
 export class AbsoluteManeuverService {
@@ -26,21 +28,35 @@ export class AbsoluteManeuverService {
     MEDICAL_MANEUVER_TABLE,
   ];
 
+  /** Resolves a roll against a code table (generic when no name is given). */
   execute(roll: number, unusualEvent: boolean, tableName?: string): AbsoluteManeuverResult {
-    const table = this.getTable(tableName);
-    const entry = table.table.find(row => roll >= (row.min ?? -Infinity) && roll <= (row.max ?? Infinity));
-    if (!entry) throw new Error('Roll out of bounds');
-
-    return {
-      ...entry.result,
-      message: unusualEvent ? `${entry.result.message} ${table.unusualEvent}` : entry.result.message,
-    };
+    return this.resolve(this.getTable(tableName), roll, unusualEvent);
   }
 
-  getTable(tableName?: string) {
-    const table = this.tables.find(t => t.name == (tableName ? tableName : 'generic'));
-    if (!table) throw new ValidationError('Invalid absolute maneuver table');
+  /** Resolves a roll against any table, code or stored. */
+  resolve(table: AbsoluteManeuverTable, roll: number, unusualEvent: boolean): AbsoluteManeuverResult {
+    const entry = table.table.find(row => roll >= (row.min ?? -Infinity) && roll <= (row.max ?? Infinity));
+    if (!entry) throw new ValidationError(`Roll ${roll} out of bounds for absolute maneuver table ${table.name}`);
+
+    const result: AbsoluteManeuverResult = { ...entry.result };
+    if (entry.result.effects) result.effects = entry.result.effects.map(effect => ({ ...effect }));
+    if (unusualEvent && table.unusualEvent) {
+      result.message = `${entry.result.message} ${table.unusualEvent}`;
+      result.unusualEvent = table.unusualEvent;
+    }
+    return result;
+  }
+
+  /** Code table by name; throws NotFoundError when it is not a code table. */
+  getTable(tableName?: string): AbsoluteManeuverTable {
+    const name = tableName || DEFAULT_ABSOLUTE_MANEUVER_TABLE;
+    const table = this.findTable(name);
+    if (!table) throw new NotFoundError('Absolute maneuver table', name);
     return table;
+  }
+
+  findTable(tableName: string): AbsoluteManeuverTable | undefined {
+    return this.tables.find(t => t.name === tableName);
   }
 
   getTableNames(): string[] {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
 import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
 
 describe('AbsoluteManeuverService', () => {
@@ -48,7 +48,7 @@ describe('AbsoluteManeuverService', () => {
   });
 
   it('rejects unknown table names', () => {
-    expect(() => service.execute(100, false, 'unknown')).toThrow(ValidationError);
-    expect(() => service.execute(100, false, 'unknown')).toThrow('Invalid absolute maneuver table');
+    expect(() => service.execute(100, false, 'unknown')).toThrow(NotFoundError);
+    expect(() => service.execute(100, false, 'unknown')).toThrow('Absolute maneuver table unknown not found');
   });
 });

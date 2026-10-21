@@ -13,6 +13,7 @@ import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.h
 import { SkillGuardAdapter } from './infrastructure/security/skill-guard.adapter';
 import { SkillCategoriesModule } from '../skill-categories/skill-categories.module';
 import { UpdateSkillHandler } from './application/cqrs/handlers/update-skill.handler';
+import { SkillViewService } from './application/services/skill-view.service';
 import { DeleteSkillHandler } from './application/cqrs/handlers/delete-skill.handler';
 
 @Module({
@@ -31,6 +32,7 @@ import { DeleteSkillHandler } from './application/cqrs/handlers/delete-skill.han
     CreateSkillHandler,
     UpdateSkillHandler,
     DeleteSkillHandler,
+    SkillViewService,
     {
       provide: 'SkillRepository',
       useClass: MongoSkillRepository,

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+import { ManeuverProfileDto } from './maneuver-profile.dto';
 import { SkillCategory } from 'src/modules/skill-categories/domain/entities/skill-category';
 
 export class SkillCategoryDto {
@@ -12,11 +13,15 @@ export class SkillCategoryDto {
   @ApiProperty({ description: 'Realm bonus count', example: 2, nullable: true })
   realmBonus: number | null;
 
+  @ApiProperty({ description: 'Own maneuver profile of the category (no defaults applied)', type: ManeuverProfileDto, required: false })
+  maneuver?: ManeuverProfileDto;
+
   static fromEntity(entity: SkillCategory): SkillCategoryDto {
     const dto = new SkillCategoryDto();
     dto.id = entity.id;
     dto.bonus = entity.bonus || [];
     dto.realmBonus = entity.realmBonus;
+    dto.maneuver = ManeuverProfileDto.fromProfile(entity.maneuver);
     return dto;
   }
 }
