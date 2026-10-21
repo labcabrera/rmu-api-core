@@ -13,10 +13,14 @@ DEVELOP_BRANCH ?= develop
 RELEASE_BUMP   ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help docker-build docker-stop docker-run docker-logs docker-push create-release
+.PHONY: help check docker-build docker-stop docker-run docker-logs docker-push create-release
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
+
+check: ## Lint, type-check, unit and e2e tests (what CI runs before the build)
+	npm run check
+	npm run test:e2e
 
 docker-build: ## Build the local docker image
 	docker build -t "$(IMAGE_NAME)" .
