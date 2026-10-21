@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -16,6 +14,7 @@ import { UpdateRealmCommand } from '../../application/cqrs/commands/update-realm
 import { Page } from '../../../shared/domain/entities/page.js';
 import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
 import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import type { AuthenticatedRequest } from '../../../shared/interfaces/http/authenticated-request.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')
@@ -31,8 +30,8 @@ export class RealmController {
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
-  async findById(@Param('id') id: string, @Request() req) {
-    const query = new GetRealmQuery(id, req.user!.id as string);
+  async findById(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    const query = new GetRealmQuery(id, req.user.id);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
     return RealmDto.fromEntity(entity);
   }
@@ -42,9 +41,9 @@ export class RealmController {
   @ApiOkResponse({ type: RealmPageDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
-  async find(@Query() dto: PagedQueryDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async find(@Query() dto: PagedQueryDto, @Request() req: AuthenticatedRequest) {
+    const userId: string = req.user.id;
+    const roles: string[] = req.user.roles;
     const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
     const mapped = page.content.map(realm => RealmDto.fromEntity(realm));
@@ -58,9 +57,9 @@ export class RealmController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, realm already exists', type: ErrorDto })
-  async create(@Body() dto: CreateRealmDto, @Request() req) {
-    const user = req.user!;
-    const command = CreateRealmDto.toCommand(dto, user.id as string, user.roles as string[]);
+  async create(@Body() dto: CreateRealmDto, @Request() req: AuthenticatedRequest) {
+    const user = req.user;
+    const command = CreateRealmDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateRealmCommand, Realm>(command);
     return RealmDto.fromEntity(entity);
   }
@@ -71,9 +70,9 @@ export class RealmController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req) {
-    const user = req.user!;
-    const command = UpdateRealmDto.toCommand(id, dto, user.id as string, user.roles as string[]);
+  async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @Request() req: AuthenticatedRequest) {
+    const user = req.user;
+    const command = UpdateRealmDto.toCommand(id, dto, user.id, user.roles);
     const entity = await this.commandBus.execute<UpdateRealmCommand, Realm>(command);
     return RealmDto.fromEntity(entity);
   }
@@ -83,9 +82,9 @@ export class RealmController {
   @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete realm by id' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req) {
-    const user = req.user!;
-    const command = new DeleteRealmCommand(id, user.id as string, user.roles! as string[]);
+  async delete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    const user = req.user;
+    const command = new DeleteRealmCommand(id, user.id, user.roles);
     await this.commandBus.execute(command);
   }
 }

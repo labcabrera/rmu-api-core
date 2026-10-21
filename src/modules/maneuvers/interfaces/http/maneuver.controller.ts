@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
@@ -13,6 +11,7 @@ import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance
 import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
 import { AbsoluteManeuverTableDto } from './dto/absolute-maneuver-table.dto.js';
 import { AbsoluteManeuverTableProvider } from '../../application/services/absolute-maneuver-table.provider.js';
+import type { AuthenticatedRequest } from '../../../shared/interfaces/http/authenticated-request.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')
@@ -27,9 +26,9 @@ export class ManeuverController {
   @ApiOperation({ operationId: 'percentManeuver', summary: 'Get percent maneuver result' })
   @ApiOkResponse({ type: PercentManeuverResultDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async percentManeuver(@Query('roll') roll: number, @Request() req): Promise<PercentManeuverResultDto> {
-    const user = req.user!;
-    const query = new PercentManeuverQuery(roll, user.id as string, user.roles as string[]);
+  async percentManeuver(@Query('roll') roll: number, @Request() req: AuthenticatedRequest): Promise<PercentManeuverResultDto> {
+    const user = req.user;
+    const query = new PercentManeuverQuery(roll, user.id, user.roles);
     const entity = await this.queryBus.execute<PercentManeuverQuery, PercentManeuverResultDto>(query);
     return PercentManeuverResultDto.fromEntity(entity);
   }
@@ -50,10 +49,10 @@ export class ManeuverController {
     @Query('roll') roll: number,
     @Query('unusualEvent') unusualEvent: boolean = false,
     @Query('table') table: string | undefined,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<AbsoluteManeuverResultDto> {
-    const user = req.user!;
-    const query = new AbsoluteManeuverQuery(roll, table, unusualEvent, user.id as string, user.roles as string[]);
+    const user = req.user;
+    const query = new AbsoluteManeuverQuery(roll, table, unusualEvent, user.id, user.roles);
     const entity = await this.queryBus.execute<AbsoluteManeuverQuery, AbsoluteManeuverResultDto>(query);
     return AbsoluteManeuverResultDto.fromEntity(entity);
   }
@@ -83,10 +82,10 @@ export class ManeuverController {
   async enduranceManeuver(
     @Query('roll') roll: number,
     @Query('unusualEvent') unusualEvent: boolean = false,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<EnduranceManeuverResultDto> {
-    const user = req.user!;
-    const query = new EnduranceManeuverQuery(roll, unusualEvent, user.id as string, user.roles as string[]);
+    const user = req.user;
+    const query = new EnduranceManeuverQuery(roll, unusualEvent, user.id, user.roles);
     const entity = await this.queryBus.execute<EnduranceManeuverQuery, EnduranceManeuverResultDto>(query);
     return EnduranceManeuverResultDto.fromEntity(entity);
   }

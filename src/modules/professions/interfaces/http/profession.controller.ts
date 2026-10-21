@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { Controller, Get, Param, UseGuards, Request, Query, Post, Body, HttpCode, Delete, Patch } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -16,6 +14,7 @@ import { DeleteProfessionCommand } from '../../application/cqrs/commands/delete-
 import { UpdateProfessionDto } from './dto/update-profession.dto.js';
 import { CreateProfessionCommand } from '../../application/cqrs/commands/create-profession.command.js';
 import { UpdateProfessionCommand } from '../../application/cqrs/commands/update-profession.command.js';
+import type { AuthenticatedRequest } from '../../../shared/interfaces/http/authenticated-request.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')
@@ -31,9 +30,9 @@ export class ProfessionController {
   @ApiOperation({ operationId: 'findProfessionById', summary: 'Find profession by id' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Realm not found', type: ErrorDto })
-  async findById(@Param('id') id: string, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async findById(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    const userId: string = req.user.id;
+    const roles: string[] = req.user.roles;
     const query = new GetProfessionQuery(id, userId, roles);
     const profession = await this.queryBus.execute<GetProfessionQuery, Profession>(query);
     return ProfessionDto.fromEntity(profession);
@@ -43,9 +42,9 @@ export class ProfessionController {
   @ApiOkResponse({ type: ProfessionPageDto })
   @ApiOperation({ operationId: 'findProfessions', summary: 'Find all professions' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async find(@Query() dto: PagedQueryDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async find(@Query() dto: PagedQueryDto, @Request() req: AuthenticatedRequest) {
+    const userId: string = req.user.id;
+    const roles: string[] = req.user.roles;
     const query = new GetProfessionsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetProfessionsQuery, Page<Profession>>(query);
     const mapped = page.content.map(profession => ProfessionDto.fromEntity(profession));
@@ -58,9 +57,9 @@ export class ProfessionController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, profession already exists', type: ErrorDto })
-  async create(@Body() createProfessionDto: CreateProfessionDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async create(@Body() createProfessionDto: CreateProfessionDto, @Request() req: AuthenticatedRequest) {
+    const userId: string = req.user.id;
+    const roles: string[] = req.user.roles;
     const command = CreateProfessionDto.toCommand(createProfessionDto, userId, roles);
     const entity = await this.commandBus.execute<CreateProfessionCommand, Profession>(command);
     return ProfessionDto.fromEntity(entity);
@@ -72,9 +71,9 @@ export class ProfessionController {
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Profession not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async updateSettings(@Param('id') id: string, @Body() updateProfessionDto: UpdateProfessionDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async updateSettings(@Param('id') id: string, @Body() updateProfessionDto: UpdateProfessionDto, @Request() req: AuthenticatedRequest) {
+    const userId: string = req.user.id;
+    const roles: string[] = req.user.roles;
     const command = UpdateProfessionDto.toCommand(id, updateProfessionDto, userId, roles);
     const entity = await this.commandBus.execute<UpdateProfessionCommand, Profession>(command);
     return ProfessionDto.fromEntity(entity);
@@ -85,9 +84,9 @@ export class ProfessionController {
   @ApiOperation({ operationId: 'deleteProfession', summary: 'Delete profession by id' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiNotFoundResponse({ description: 'Profession not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async delete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    const userId: string = req.user.id;
+    const roles: string[] = req.user.roles;
     const command = new DeleteProfessionCommand(id, userId, roles);
     await this.commandBus.execute(command);
   }

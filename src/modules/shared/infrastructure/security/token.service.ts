@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
@@ -26,13 +24,13 @@ export class TokenService {
     params.append('client_id', clientId);
     params.append('client_secret', clientSecret);
 
-    const { data } = await axios.post(uri, params, {
+    const { data } = await axios.post<{ access_token: string; expires_in: number }>(uri, params, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
 
     this.token = data.access_token;
     this.expiresAt = now + data.expires_in * 1000 - 10_000; // 10s offset
 
-    return this.token!;
+    return this.token;
   }
 }

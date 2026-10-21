@@ -147,7 +147,7 @@ describe('Race domain aggregate', () => {
     expect(race.traits).toHaveLength(1);
     expect(race.traits[0]).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: expect.any(String) as unknown,
         traitId: 'trait-1',
         specialization: 'forest',
         isTalent: true,
