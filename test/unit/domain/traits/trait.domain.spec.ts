@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait';
 import { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props';
 import { TraitCreatedEvent } from '../../../../src/modules/traits/domain/events/trait-created.event';

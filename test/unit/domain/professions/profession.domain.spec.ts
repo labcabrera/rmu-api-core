@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { Profession } from '../../../../src/modules/professions/domain/aggregates/profession';
 import { ProfessionProps } from '../../../../src/modules/professions/domain/aggregates/profession-props';
 import { ProfessionSkillCosts } from '../../../../src/modules/professions/domain/value-objects/profession-skill-cost.vo';

@@ -18,10 +18,11 @@
     "start:prod": "node --enable-source-maps dist/main.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:cov": "vitest run --project unit --coverage",
+    "test:e2e": "vitest run --project e2e",
+    "check": "npm run lint && npm run typecheck && npm test",
     "prepare": "husky",
     "release": "semantic-release --no-ci"
   },
@@ -62,61 +63,24 @@
     "@swc/cli": "^0.8.1",
     "@swc/core": "^1.16.18",
     "@types/express": "^5.0.6",
-    "@types/jest": "^30.0.0",
     "@types/node": "^24.19.2",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
-    "jest": "^30.5.2",
+    "mongodb-memory-server": "^11.3.0",
     "prettier": "^3.9.10",
     "semantic-release": "^25.0.9",
     "semver": "^7.8.5",
     "supertest": "^7.3.1",
-    "ts-jest": "^29.4.15",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.72.0"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "rootDir": ".",
-    "testMatch": [
-      "<rootDir>/src/**/*.spec.ts",
-      "<rootDir>/test/**/*.spec.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/test/e2e/.*\\.e2e-spec\\.ts$"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.(t|j)s",
-      "!src/**/*.spec.ts",
-      "!src/**/*.e2e-spec.ts",
-      "!src/main.ts",
-      "!src/**/*.module.ts",
-      "!src/**/*.interface.ts"
-    ],
-    "coverageDirectory": "./coverage",
-    "coverageReporters": [
-      "text",
-      "lcov",
-      "html"
-    ],
-    "testTimeout": 30000,
-    "verbose": true
+    "typescript-eslint": "^8.72.0",
+    "unplugin-swc": "^2.0.0",
+    "vitest": "^5.0.5"
   },
   "engines": {
     "node": ">=24"

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { CultureSkillRank, CultureSkillRankProps } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank';
 import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors';
 

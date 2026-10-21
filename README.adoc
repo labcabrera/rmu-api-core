@@ -103,6 +103,19 @@ npm run typecheck
 npm run start:prod
 ```
 
+=== Tests
+
+Vitest with SWC (`vitest.config.ts`, projects `unit` and `e2e`):
+
+```bash
+npm test            # unit tests (test/unit)
+npm run test:cov    # unit tests with v8 coverage in coverage/
+npm run test:e2e    # boots AppModule against mongodb-memory-server; Kafka and the JWT guard are replaced
+npm run check       # lint + typecheck + unit tests
+```
+
+The first `test:e2e` run downloads a `mongod` binary to `~/.cache/mongodb-binaries`.
+
 == Project layout
 
 ----
@@ -124,6 +137,7 @@ src/
   modules/shared/          base repository, RSQL parser, DomainError -> HTTP filter, Kafka producer, health
     infrastructure/security/  JWT strategy and guard, TokenService (client credentials), AuthModule
 test/unit/domain/<feature>/  unit tests
+test/e2e/                    smoke test of the whole application
 ----
 
 Conventions:

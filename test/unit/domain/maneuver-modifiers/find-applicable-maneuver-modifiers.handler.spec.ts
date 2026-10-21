@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { FindApplicableManeuverModifiersHandler } from '../../../../src/modules/maneuver-modifiers/application/cqrs/handlers/find-applicable-maneuver-modifiers.handler';
 import { FindApplicableManeuverModifiersQuery } from '../../../../src/modules/maneuver-modifiers/application/cqrs/queries/find-applicable-maneuver-modifiers.query';
 import type { ManeuverModifierRepository } from '../../../../src/modules/maneuver-modifiers/application/ports/maneuver-modifier-repository';

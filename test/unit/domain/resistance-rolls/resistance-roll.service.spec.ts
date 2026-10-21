@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { ResistanceRollQuery } from '../../../../src/modules/resistance-rolls/application/cqrs/queries/resistance-roll.query';
 import { ResistanceRollService } from '../../../../src/modules/resistance-rolls/domain/services/resistance-roll.service';
 

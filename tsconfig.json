@@ -5,6 +5,7 @@
     "resolvePackageJsonExports": true,
     "target": "ES2024",
     "lib": ["ES2024"],
+    "types": ["node", "vitest/globals"],
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": false,

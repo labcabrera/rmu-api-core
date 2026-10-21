@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import {
   CULTURE_DEVELOPMENT_COST_BY_CATEGORY,
   DEFAULT_CULTURE_DEVELOPMENT_COST,

@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { Race } from '../../../../src/modules/races/domain/aggregates/race';
 import { RaceProps } from '../../../../src/modules/races/domain/aggregates/race-props';
 import { RaceCreatedEvent } from '../../../../src/modules/races/domain/events/race-created.event';

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { GetHealingTablesHandler } from '../../../../src/modules/healing-tables/application/cqrs/handlers/get-healing-tables.handler';
 import { GetHealingTablesQuery } from '../../../../src/modules/healing-tables/application/cqrs/queries/get-healing-tables.query';
 import type { HealingTablesRepository } from '../../../../src/modules/healing-tables/application/ports/healing-tables-repository';
