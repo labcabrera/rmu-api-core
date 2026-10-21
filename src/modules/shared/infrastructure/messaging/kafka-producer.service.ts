@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Kafka, type Producer } from 'kafkajs';
@@ -35,10 +31,10 @@ export class KafkaProducerService implements OnModuleInit {
     this.logger.debug('Kafka producer connected.');
   }
 
-  async emit(topic: string, message: any) {
+  async emit(topic: string, message: { data?: { id?: string } }) {
     this.logger.debug(`Emitting message to topic ${topic}:`);
 
-    const id = message.data.id ? message.data.id : '';
+    const id = message.data?.id ?? '';
     await this.producer.send({
       topic,
       messages: [

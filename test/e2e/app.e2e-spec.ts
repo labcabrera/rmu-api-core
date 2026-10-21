@@ -7,18 +7,22 @@ import { JwtAuthGuard } from '../../src/modules/shared/infrastructure/security/j
 import { DomainExceptionFilter } from '../../src/modules/shared/interfaces/http/domain-exception.filter.js';
 
 // Boots the whole AppModule against an in-memory Mongo. Kafka and Keycloak are replaced: the producer
-// records the events and the guard accepts a fixed token. AppModule is imported after setting the
+// records the events and the guard maps fixed tokens to users. AppModule is imported after setting the
 // environment, because ConfigModule.forRoot() reads it (and .env) when the module is evaluated.
 type App = Parameters<typeof request>[0];
 
 const TOKEN = 'e2e-token';
 const USER = { id: 'e2e-user', roles: ['rmu-admin'] };
+const PLAYER_TOKEN = 'e2e-player-token';
+const PLAYER = { id: 'e2e-player', roles: ['rmu-user'] };
+const USERS: Record<string, typeof USER> = { [`Bearer ${TOKEN}`]: USER, [`Bearer ${PLAYER_TOKEN}`]: PLAYER };
 
 const testGuard = {
   canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest<{ headers: Record<string, string>; user?: unknown }>();
-    if (req.headers.authorization !== `Bearer ${TOKEN}`) throw new UnauthorizedException();
-    req.user = USER;
+    const user = USERS[req.headers.authorization];
+    if (!user) throw new UnauthorizedException();
+    req.user = user;
     return true;
   },
 };
@@ -96,5 +100,42 @@ describe('AppModule (e2e)', () => {
     const found = await request(server).get(`/v1/realms/${realm.id}`).set('Authorization', auth).expect(200);
     expect(found.body).toMatchObject({ id: realm.id, magicPresence: 'limited' });
     expect(events.length).toBeGreaterThan(0);
+  });
+
+  it('a non-admin owner can delete their own race', async () => {
+    const auth = `Bearer ${PLAYER_TOKEN}`;
+    const realm = await request(server)
+      .post('/v1/realms')
+      .set('Authorization', auth)
+      .send({ name: 'Player realm', magicPresence: 'none', accessType: 'private' })
+      .expect(201);
+    const sex = { male: 1, female: 1 };
+    const race = await request(server)
+      .post('/v1/races')
+      .set('Authorization', auth)
+      .send({
+        name: 'Player race',
+        archetype: 'human',
+        realmId: (realm.body as { id: string }).id,
+        sizeId: 'medium',
+        stats: { ag: 0, co: 0, em: 0, in: 0, me: 0, pr: 0, qu: 0, re: 0, sd: 0, st: 0 },
+        resistances: { channeling: 0, disease: 0, essence: 0, fear: 0, mentalism: 0, physical: 0, poison: 0 },
+        averageHeight: sex,
+        averageWeight: sex,
+        strideBonus: 0,
+        enduranceBonus: 0,
+        recoveryMultiplier: 1,
+        baseHits: 10,
+        baseDevPoints: 60,
+        baseAt: 1,
+        talents: [],
+        traits: [],
+      })
+      .expect(201);
+
+    await request(server)
+      .delete(`/v1/races/${(race.body as { id: string }).id}`)
+      .set('Authorization', auth)
+      .expect(204);
   });
 });

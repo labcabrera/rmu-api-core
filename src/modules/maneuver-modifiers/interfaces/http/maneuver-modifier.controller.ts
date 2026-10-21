@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
@@ -26,6 +25,7 @@ import { CreateManeuverModifierDto } from './dto/create-maneuver-modifier.dto.js
 import { ManeuverModifierQueryDto } from './dto/maneuver-modifier-query.dto.js';
 import { ManeuverModifierDto, ManeuverModifierPageDto } from './dto/maneuver-modifier.dto.js';
 import { UpdateManeuverModifierDto } from './dto/update-maneuver-modifier.dto.js';
+import type { AuthenticatedRequest } from '../../../shared/interfaces/http/authenticated-request.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuver-modifiers')
@@ -42,8 +42,8 @@ export class ManeuverModifierController {
   @ApiOkResponse({ type: ManeuverModifierDto })
   @ApiNotFoundResponse({ description: 'Maneuver modifier not found', type: ErrorDto })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async findById(@Param('id') id: string, @Request() req): Promise<ManeuverModifierDto> {
-    const query = new GetManeuverModifierQuery(id, req.user!.id as string, req.user!.roles as string[]);
+  async findById(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<ManeuverModifierDto> {
+    const query = new GetManeuverModifierQuery(id, req.user.id, req.user.roles);
     const entity = await this.queryBus.execute<GetManeuverModifierQuery, ManeuverModifier>(query);
     return ManeuverModifierDto.fromEntity(entity);
   }
@@ -64,9 +64,12 @@ export class ManeuverModifierController {
   @ApiNotFoundResponse({ description: 'Skill not found (skillId filter)', type: ErrorDto })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
-  async find(@Query() dto: ManeuverModifierQueryDto, @Request() req): Promise<ManeuverModifierDto[] | Page<ManeuverModifierDto>> {
-    const userId = req.user!.id as string;
-    const roles = req.user!.roles as string[];
+  async find(
+    @Query() dto: ManeuverModifierQueryDto,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<ManeuverModifierDto[] | Page<ManeuverModifierDto>> {
+    const userId = req.user.id;
+    const roles = req.user.roles;
     if (dto.skillId || dto.categoryId) {
       const query = new FindApplicableManeuverModifiersQuery(dto.skillId, dto.categoryId, userId, roles);
       const list = await this.queryBus.execute<FindApplicableManeuverModifiersQuery, ManeuverModifier[]>(query);
@@ -85,8 +88,8 @@ export class ManeuverModifierController {
   @ApiOkResponse({ type: ManeuverModifierDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, key already exists', type: ErrorDto })
-  async create(@Body() dto: CreateManeuverModifierDto, @Request() req): Promise<ManeuverModifierDto> {
-    const command = CreateManeuverModifierDto.toCommand(dto, req.user!.id as string, req.user!.roles as string[]);
+  async create(@Body() dto: CreateManeuverModifierDto, @Request() req: AuthenticatedRequest): Promise<ManeuverModifierDto> {
+    const command = CreateManeuverModifierDto.toCommand(dto, req.user.id, req.user.roles);
     const entity = await this.commandBus.execute<CreateManeuverModifierCommand, ManeuverModifier>(command);
     return ManeuverModifierDto.fromEntity(entity);
   }
@@ -98,8 +101,12 @@ export class ManeuverModifierController {
   @ApiNotFoundResponse({ description: 'Maneuver modifier not found', type: ErrorDto })
   @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
   @ApiResponse({ status: 409, description: 'Conflict, key already exists', type: ErrorDto })
-  async update(@Param('id') id: string, @Body() dto: UpdateManeuverModifierDto, @Request() req): Promise<ManeuverModifierDto> {
-    const command = UpdateManeuverModifierDto.toCommand(id, dto, req.user!.id as string, req.user!.roles as string[]);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateManeuverModifierDto,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<ManeuverModifierDto> {
+    const command = UpdateManeuverModifierDto.toCommand(id, dto, req.user.id, req.user.roles);
     const entity = await this.commandBus.execute<UpdateManeuverModifierCommand, ManeuverModifier>(command);
     return ManeuverModifierDto.fromEntity(entity);
   }
@@ -108,8 +115,8 @@ export class ManeuverModifierController {
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteManeuverModifier', summary: 'Delete maneuver modifier' })
   @ApiNotFoundResponse({ description: 'Maneuver modifier not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req): Promise<void> {
-    const command = new DeleteManeuverModifierCommand(id, req.user!.id as string, req.user!.roles as string[]);
+  async delete(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<void> {
+    const command = new DeleteManeuverModifierCommand(id, req.user.id, req.user.roles);
     await this.commandBus.execute(command);
   }
 }
