@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import type { ManeuverProfile } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
 
 export type SkillCategoryDocument = SkillCategoryModel & Document;
 
@@ -13,6 +14,9 @@ export class SkillCategoryModel {
 
   @Prop({ type: Number, required: false })
   realmBonus: number | null;
+
+  @Prop({ type: Object, required: false })
+  maneuver?: ManeuverProfile | null;
 }
 
 export const SkillCategorySchema = SchemaFactory.createForClass(SkillCategoryModel);

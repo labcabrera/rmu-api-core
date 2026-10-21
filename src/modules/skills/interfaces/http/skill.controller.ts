@@ -9,7 +9,7 @@ import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql
 import { GetSkillQuery } from '../../application/cqrs/queries/get-skill.query';
 import { GetSkillsQuery } from '../../application/cqrs/queries/get-skills.query';
 import { Page } from 'src/modules/shared/domain/entities/page';
-import { Skill } from '../../domain/aggregates/skill';
+import { SkillView } from '../../application/read-models/skill-view';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { DeleteSkillCommand } from '../../application/cqrs/commands/delete-skill.command';
@@ -34,8 +34,8 @@ export class SkillController {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const query = new GetSkillQuery(id, userId, roles);
-    const entity = await this.queryBus.execute<GetSkillQuery, Skill>(query);
-    return SkillDto.fromEntity(entity);
+    const entity = await this.queryBus.execute<GetSkillQuery, SkillView>(query);
+    return SkillDto.fromView(entity);
   }
 
   @Get('')
@@ -47,8 +47,8 @@ export class SkillController {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const query = new GetSkillsQuery(dto.q, dto.page, dto.size, userId, roles);
-    const page = await this.queryBus.execute<GetSkillsQuery, Page<Skill>>(query);
-    const mapped = page.content.map(category => SkillDto.fromEntity(category));
+    const page = await this.queryBus.execute<GetSkillsQuery, Page<SkillView>>(query);
+    const mapped = page.content.map(view => SkillDto.fromView(view));
     return new Page<SkillDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
@@ -63,8 +63,8 @@ export class SkillController {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = CreateSkillDto.toCommand(createSkillDto, userId, roles);
-    const entity = await this.commandBus.execute<CreateSkillCommand, Skill>(command);
-    return SkillDto.fromEntity(entity);
+    const entity = await this.commandBus.execute<CreateSkillCommand, SkillView>(command);
+    return SkillDto.fromView(entity);
   }
 
   @Patch(':id')
@@ -77,8 +77,8 @@ export class SkillController {
     const userId: string = req.user!.id as string;
     const roles: string[] = req.user!.roles as string[];
     const command = UpdateSkillDto.toCommand(id, dto, userId, roles);
-    const entity = await this.commandBus.execute<UpdateSkillCommand, Skill>(command);
-    return SkillDto.fromEntity(entity);
+    const entity = await this.commandBus.execute<UpdateSkillCommand, SkillView>(command);
+    return SkillDto.fromView(entity);
   }
 
   @Delete(':id')

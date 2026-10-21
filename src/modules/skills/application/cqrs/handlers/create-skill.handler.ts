@@ -5,19 +5,22 @@ import { CreateSkillCommand } from '../commands/create-skill.command';
 import type { SkillRepository } from '../../ports/skill-repository';
 import { Skill } from 'src/modules/skills/domain/aggregates/skill';
 import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
+import { SkillView } from '../../read-models/skill-view';
+import { SkillViewService } from '../../services/skill-view.service';
 import type { SkillGuardPort } from '../../ports/skill-guard';
 
 @CommandHandler(CreateSkillCommand)
-export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, Skill> {
+export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, SkillView> {
   private readonly logger = new Logger(CreateSkillHandler.name);
 
   constructor(
     @Inject('SkillRepository') private readonly skillRepository: SkillRepository,
     @Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository,
     @Inject('SkillGuardPort') private readonly skillGuard: SkillGuardPort,
+    private readonly skillViewService: SkillViewService,
   ) {}
 
-  async execute(command: CreateSkillCommand): Promise<Skill> {
+  async execute(command: CreateSkillCommand): Promise<SkillView> {
     this.logger.log(`Creating skill ${command.id} for user ${command.userId}`);
     this.skillGuard.checkCreate(command.roles);
 
@@ -34,7 +37,9 @@ export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, S
       specialization: command.specialization,
       owner: command.userId,
       accessType: command.accessType,
+      maneuver: command.maneuver,
     });
-    return await this.skillRepository.save(skill);
+    const saved = await this.skillRepository.save(skill);
+    return await this.skillViewService.toView(saved);
   }
 }

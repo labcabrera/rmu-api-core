@@ -3,6 +3,12 @@ import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 import { SkillProps } from './skill-props';
 import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
 import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
+import { ManeuverProfile, ManeuverProfiles } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
+
+export type SkillUpdateProps = Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt' | 'maneuver'>> & {
+  /** undefined keeps the current profile, null removes it. */
+  maneuver?: ManeuverProfile | null;
+};
 
 export class Skill extends BaseAggregateRoot<SkillProps> {
   private constructor(
@@ -14,12 +20,24 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     public accessType: AccessType,
     public createdAt: Date,
     public updatedAt?: Date,
+    public maneuver?: ManeuverProfile,
   ) {
     super(id);
   }
 
   static create(props: Omit<SkillProps, 'createdAt' | 'updatedAt'>) {
-    return new Skill(props.id, props.categoryId, props.bonus, props.specialization, props.owner, props.accessType, new Date(), undefined);
+    ManeuverProfiles.validate(props.maneuver);
+    return new Skill(
+      props.id,
+      props.categoryId,
+      props.bonus,
+      props.specialization,
+      props.owner,
+      props.accessType,
+      new Date(),
+      undefined,
+      ManeuverProfiles.normalize(props.maneuver),
+    );
   }
 
   static fromProps(props: SkillProps) {
@@ -32,10 +50,11 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
       props.accessType,
       props.createdAt,
       props.updatedAt,
+      ManeuverProfiles.normalize(props.maneuver),
     );
   }
 
-  update(props: Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
+  update(props: SkillUpdateProps) {
     let modified = false;
     if (props.categoryId) {
       modified = props.categoryId !== this.categoryId;
@@ -53,6 +72,12 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
       modified = modified || props.accessType !== this.accessType;
       this.accessType = props.accessType;
     }
+    if (props.maneuver !== undefined) {
+      ManeuverProfiles.validate(props.maneuver);
+      const maneuver = ManeuverProfiles.normalize(props.maneuver);
+      modified = modified || JSON.stringify(maneuver) !== JSON.stringify(this.maneuver);
+      this.maneuver = maneuver;
+    }
     this.updatedAt = new Date();
     if (!modified) {
       throw new NotModifiedError('Skill not modified');
@@ -67,6 +92,7 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
       specialization: this.specialization,
       owner: this.owner,
       accessType: this.accessType,
+      maneuver: this.maneuver,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

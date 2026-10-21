@@ -1,4 +1,5 @@
 import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
+import { ManeuverProfile } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
 import { AccessType } from 'src/modules/shared/domain/entities/access-type';
 
 export interface SkillProps {
@@ -8,6 +9,8 @@ export interface SkillProps {
   specialization: EnumerationCategory | null;
   owner: string;
   accessType: AccessType;
+  /** Own maneuver profile: only the fields that override the category profile. */
+  maneuver?: ManeuverProfile | null;
   createdAt: Date;
   updatedAt?: Date;
 }

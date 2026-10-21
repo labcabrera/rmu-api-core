@@ -3,6 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ConflictError } from 'src/modules/shared/domain/errors/errors';
 import { CreateSkillCategoryCommand } from '../commands/create-skill-category.command';
 import { SkillCategory } from 'src/modules/skill-categories/domain/entities/skill-category';
+import { ManeuverProfiles } from 'src/modules/skill-categories/domain/value-objects/maneuver-profile.vo';
 import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
 
 @CommandHandler(CreateSkillCategoryCommand)
@@ -14,7 +15,13 @@ export class CreateSkillCategoryHandler implements ICommandHandler<CreateSkillCa
     if (current) {
       throw new ConflictError(`Skill Category with id ${command.id} already exists`);
     }
-    const skillCategory = new SkillCategory(command.id, command.bonus);
+    ManeuverProfiles.validate(command.maneuver);
+    const skillCategory = new SkillCategory(
+      command.id,
+      command.bonus,
+      command.realmBonus ?? null,
+      ManeuverProfiles.normalize(command.maneuver),
+    );
     return await this.skillCategoryRepository.save(skillCategory);
   }
 }

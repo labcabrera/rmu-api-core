@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Body, Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
 import { PercentManeuverResultDto } from './dtos/percent-maneuver-result.dto';
@@ -10,17 +10,16 @@ import { AbsoluteManeuverQuery } from '../../application/cqrs/queries/absolute-m
 import { AbsoluteManeuverResultDto } from './dtos/absolute-maneuver-result.dto';
 import { EnduranceManeuverResultDto } from './dtos/endurance-maneuver-result.dto';
 import { EnduranceManeuverQuery } from '../../application/cqrs/queries/endurance-maneuver.query';
-import { ManeuverTableType } from '../../domain/value-objects/maneuver-table-type.vo';
 import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
 import { AbsoluteManeuverTableDto } from './dtos/absolute-maneuver-table.dto';
-import { AbsoluteManeuverService } from '../../domain/services/absolute-maneuver.service';
+import { AbsoluteManeuverTableProvider } from '../../application/services/absolute-maneuver-table.provider';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')
 @ApiTags('Maneuvers')
 export class ManeuverController {
   constructor(
-    private absoluteManeuverService: AbsoluteManeuverService,
+    private tableProvider: AbsoluteManeuverTableProvider,
     private queryBus: QueryBus,
   ) {}
 
@@ -36,13 +35,21 @@ export class ManeuverController {
   }
 
   @Get('/absolute')
-  @ApiOperation({ operationId: 'absoluteManeuver', summary: 'Get absolute maneuver result' })
+  @ApiOperation({
+    operationId: 'absoluteManeuver',
+    summary: 'Get absolute maneuver result',
+    description: 'The table is looked up in code first and then in the maneuver-tables collection (default generic).',
+  })
+  @ApiQuery({ name: 'roll', type: Number, required: true })
+  @ApiQuery({ name: 'table', type: String, required: false, example: 'generic' })
+  @ApiQuery({ name: 'unusualEvent', type: Boolean, required: false })
   @ApiOkResponse({ type: AbsoluteManeuverResultDto, description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Unknown absolute maneuver table', type: ErrorDto })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
   async absoluteManeuver(
     @Query('roll') roll: number,
     @Query('unusualEvent') unusualEvent: boolean = false,
-    @Query('table') table: ManeuverTableType | undefined,
+    @Query('table') table: string | undefined,
     @Request() req,
   ): Promise<AbsoluteManeuverResultDto> {
     const user = req.user!;
@@ -55,8 +62,9 @@ export class ManeuverController {
   @ApiOperation({ operationId: 'absoluteManeuverTable', summary: 'Get absolute maneuver table' })
   @ApiOkResponse({ type: AbsoluteManeuverTableDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  absoluteManeuverTable(@Param('tableName') tableName: string): AbsoluteManeuverTableDto {
-    const table = this.absoluteManeuverService.getTable(tableName);
+  @ApiNotFoundResponse({ description: 'Unknown absolute maneuver table', type: ErrorDto })
+  async absoluteManeuverTable(@Param('tableName') tableName: string): Promise<AbsoluteManeuverTableDto> {
+    const table = await this.tableProvider.getTable(tableName);
     return AbsoluteManeuverTableDto.fromEntity(table);
   }
 
@@ -64,8 +72,8 @@ export class ManeuverController {
   @ApiOperation({ operationId: 'getAbsoluteManeuverTables', summary: 'Get absolute maneuver tables' })
   @ApiOkResponse({ type: [String], description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  getAbsoluteManeuverTables(): string[] {
-    return this.absoluteManeuverService.getTableNames();
+  async getAbsoluteManeuverTables(): Promise<string[]> {
+    return await this.tableProvider.getTableNames();
   }
 
   @Get('/endurance')

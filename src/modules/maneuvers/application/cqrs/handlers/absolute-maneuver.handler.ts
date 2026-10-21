@@ -1,18 +1,22 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { AbsoluteManeuverResult } from 'src/modules/maneuvers/domain/value-objects/absolute-maneuver-result.vo';
 import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
 import { AbsoluteManeuverQuery } from '../queries/absolute-maneuver.query';
+import { AbsoluteManeuverTableProvider } from '../../services/absolute-maneuver-table.provider';
 
 @QueryHandler(AbsoluteManeuverQuery)
 export class AbsoluteManeuverHandler implements IQueryHandler<AbsoluteManeuverQuery, AbsoluteManeuverResult> {
   private readonly logger = new Logger(AbsoluteManeuverHandler.name);
 
-  constructor(@Inject() private readonly absoluteManeuverService: AbsoluteManeuverService) {}
+  constructor(
+    private readonly absoluteManeuverService: AbsoluteManeuverService,
+    private readonly tableProvider: AbsoluteManeuverTableProvider,
+  ) {}
 
-  execute(query: AbsoluteManeuverQuery): Promise<AbsoluteManeuverResult> {
-    this.logger.log(`Executing absolute maneuver for roll ${query.roll}`);
-    const result = this.absoluteManeuverService.execute(query.roll, query.unusualEvent, query.table);
-    return Promise.resolve(result);
+  async execute(query: AbsoluteManeuverQuery): Promise<AbsoluteManeuverResult> {
+    this.logger.log(`Executing absolute maneuver for roll ${query.roll} (table ${query.table ?? 'generic'})`);
+    const table = await this.tableProvider.getTable(query.table);
+    return this.absoluteManeuverService.resolve(table, query.roll, query.unusualEvent);
   }
 }

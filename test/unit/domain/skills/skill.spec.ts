@@ -76,3 +76,25 @@ describe('Skill', () => {
     expect(() => skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus })).toThrow('Skill not modified');
   });
 });
+
+describe('Skill maneuver profile', () => {
+  it('stores only the defined maneuver fields', () => {
+    const skill = Skill.create({ ...baseProps(), maneuver: { light: 'required', movement: undefined } });
+
+    expect(skill.maneuver).toEqual({ light: 'required' });
+  });
+
+  it('rejects invalid maneuver profiles', () => {
+    expect(() => Skill.create({ ...baseProps(), maneuver: { actionPoints: { min: 4, max: 2 } } })).toThrow();
+  });
+
+  it('replaces and removes the maneuver profile on update', () => {
+    const skill = Skill.fromProps({ ...baseProps(), maneuver: { light: 'helpful' } });
+
+    skill.update({ maneuver: { movement: true } });
+    expect(skill.maneuver).toEqual({ movement: true });
+
+    skill.update({ maneuver: null });
+    expect(skill.maneuver).toBeUndefined();
+  });
+});
