@@ -13,7 +13,7 @@ import { SkillsModule } from './modules/skills/skills.module';
 import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
 import { EnumerationsModule } from './modules/enumerations/enumerations.module';
 import { CharacterSizesModule } from './modules/character-sizes/character-sizes.module';
-import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
+import { ArmorTypesModule } from './modules/armor-types/armor-types.module';
 import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module';
 import { CulturesModule } from './modules/cultures/cultures.module';
 import { EffectTypesModule } from './modules/effect-types/effect-types.module';
