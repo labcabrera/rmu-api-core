@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { RaceController } from './interfaces/http/race.controller.js';
-import { KafkaRaceEventBusAdapter } from './infrastructure/messaging/kafka.race-event-bus.adapter.js';
 import { MongoRaceRepository } from './infrastructure/db/mongo.race.repository.js';
 import { RealmsModule } from '../realms/realms.module.js';
 import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race-model.js';
@@ -17,7 +16,8 @@ import { SharedModule } from '../shared/shared.module.js';
 import { RaceGuardAdapter } from './infrastructure/security/race-guard.adapter.js';
 import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler.js';
 import { DeleteRaceTraitHandler } from './application/cqrs/handlers/delete-race-trait.handler.js';
-import { UpdateRaceRealmHandler } from './application/cqrs/handlers/update-race-realm.handler.js';
+import { SyncRaceRealmHandler } from './application/cqrs/handlers/sync-race-realm.handler.js';
+import { KafkaRealmEventConsumer } from './interfaces/messaging/kafka.realm-event-consumer.js';
 import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-races-by-realm.handler.js';
 import { AddRaceSkillBonusHandler } from './application/cqrs/handlers/add-race-skill-bonus.handler.js';
 import { DeleteRaceSkillBonusHandler } from './application/cqrs/handlers/delete-race-skill-bonus.handler.js';
@@ -31,7 +31,7 @@ import { DeleteRaceSkillBonusHandler } from './application/cqrs/handlers/delete-
     SharedModule,
     RealmsModule,
   ],
-  controllers: [RaceController],
+  controllers: [RaceController, KafkaRealmEventConsumer],
   providers: [
     GetRaceHandler,
     GetRacesHandler,
@@ -40,17 +40,13 @@ import { DeleteRaceSkillBonusHandler } from './application/cqrs/handlers/delete-
     DeleteRaceHandler,
     AddRaceTraitHandler,
     DeleteRaceTraitHandler,
-    UpdateRaceRealmHandler,
+    SyncRaceRealmHandler,
     DeleteRacesByRealmHandler,
     AddRaceSkillBonusHandler,
     DeleteRaceSkillBonusHandler,
     {
       provide: 'RaceRepository',
       useClass: MongoRaceRepository,
-    },
-    {
-      provide: 'RaceEventProducer',
-      useClass: KafkaRaceEventBusAdapter,
     },
     {
       provide: 'RaceGuardPort',

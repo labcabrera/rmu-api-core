@@ -3,7 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
-import { KafkaCultureEventBusAdapter } from './infrastructure/messaging/kafka.culture-event-bus.adapter.js';
 import { RealmsModule } from '../realms/realms.module.js';
 import { SharedModule } from '../shared/shared.module.js';
 import { CultureModel, CultureSchema } from './infrastructure/persistence/models/culture-model.js';
@@ -43,10 +42,6 @@ import { SkillsModule } from '../skills/skills.module.js';
     {
       provide: 'CultureRepository',
       useClass: MongoCultureRepository,
-    },
-    {
-      provide: 'CultureEventProducer',
-      useClass: KafkaCultureEventBusAdapter,
     },
     {
       provide: 'CultureGuard',

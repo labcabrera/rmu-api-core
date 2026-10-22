@@ -4,8 +4,8 @@ import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { DeleteCultureCommand } from '../commands/delete-culture.command.js';
 import type { CultureRepository } from '../../ports/culture-repository.js';
 import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port.js';
 import { CultureDeletedEvent } from '../../../domain/events/culture-deleted.event.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(DeleteCultureCommand)
 export class DeleteCultureHandler implements ICommandHandler<DeleteCultureCommand> {
@@ -14,7 +14,7 @@ export class DeleteCultureHandler implements ICommandHandler<DeleteCultureComman
   constructor(
     @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
     @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
-    @Inject('CultureEventProducer') private readonly raceEventBus: CultureEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: DeleteCultureCommand): Promise<void> {
@@ -26,6 +26,6 @@ export class DeleteCultureHandler implements ICommandHandler<DeleteCultureComman
     this.cultureGuard.checkDelete(culture, command.userId, command.roles);
 
     await this.cultureRepository.deleteById(command.id);
-    this.raceEventBus.publish(new CultureDeletedEvent(culture.getProps()));
+    await this.events.publish('culture', new CultureDeletedEvent(culture.getProps()));
   }
 }

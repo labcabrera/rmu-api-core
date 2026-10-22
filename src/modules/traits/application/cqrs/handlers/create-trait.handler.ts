@@ -3,8 +3,8 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { CreateTraitCommand } from '../commands/create-trait.command.js';
 import { Trait } from '../../../domain/aggregates/trait.js';
 import type { TraitRepository } from '../../ports/trait.repository.js';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port.js';
 import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(CreateTraitCommand)
 export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, Trait> {
@@ -12,7 +12,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
 
   constructor(
     @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
-    @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateTraitCommand): Promise<Trait> {
@@ -34,7 +34,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
       throw new ConflictError(`Trait with id ${trait.id} already exists`);
     }
     const savedTrait = await this.traitRepository.save(trait);
-    trait.getUncommittedEvents().forEach(event => this.traitEventBus.publish(event));
+    await this.events.publishChanges('trait', trait);
     return savedTrait;
   }
 }

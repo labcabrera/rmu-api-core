@@ -4,8 +4,8 @@ import { Race } from '../../../domain/aggregates/race.js';
 import { CreateRaceCommand } from '../commands/create-race.command.js';
 import type { RealmRepository } from '../../../../realms/application/ports/realm-repository.js';
 import type { RaceRepository } from '../../ports/race-repository.js';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
 import { ValidationError } from '../../../../shared/domain/errors/errors.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
@@ -14,7 +14,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
@@ -48,7 +48,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       accessType: realm.accessType,
     });
     const savedRace = await this.raceRepository.save(race);
-    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
+    await this.events.publishChanges('race', race);
     return savedRace;
   }
 }

@@ -19,6 +19,8 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: { clientId: config.get<string>('RMU_KAFKA_CLIENT_ID'), brokers: config.get<string>('RMU_KAFKA_BROKERS')!.split(',') },
+      // Without it Nest falls back to a group shared with every API that also leaves it unset.
+      consumer: { groupId: config.get<string>('RMU_KAFKA_CONSUMER_GROUP_ID')! },
     },
   });
   await app.listen(config.get<number>('PORT')!);

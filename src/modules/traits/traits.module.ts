@@ -3,7 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { MongooseModule } from '@nestjs/mongoose';
-import { KafkaTraitProducerService } from './infrastructure/messaging/kafka.trait-event-bus.adapter.js';
 import { MongoTraitRepository } from './infrastructure/db/mongo.trait.repository.js';
 import { TraitController } from './interfaces/http/trait.controller.js';
 import { CreateTraitHandler } from './application/cqrs/handlers/create-trait.handler.js';
@@ -33,10 +32,6 @@ import { TraitGuardAdapter } from './infrastructure/security/trait-guard.adapter
     {
       provide: 'TraitRepository',
       useClass: MongoTraitRepository,
-    },
-    {
-      provide: 'TraitEventProducer',
-      useClass: KafkaTraitProducerService,
     },
     {
       provide: 'TraitGuardPort',

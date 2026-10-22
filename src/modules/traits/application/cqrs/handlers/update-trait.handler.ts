@@ -3,16 +3,16 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { UpdateTraitCommand } from '../commands/update-trait.command.js';
 import { Trait } from '../../../domain/aggregates/trait.js';
 import type { TraitRepository } from '../../ports/trait.repository.js';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(UpdateTraitCommand)
 export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, Trait> {
   constructor(
     @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
     @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
-    @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: UpdateTraitCommand): Promise<Trait> {
@@ -33,7 +33,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       description: command.description,
     });
     const updated = await this.traitRepository.update(trait.id, trait);
-    trait.getUncommittedEvents().forEach(event => this.traitEventBus.publish(event));
+    await this.events.publishChanges('trait', trait);
     return updated;
   }
 }

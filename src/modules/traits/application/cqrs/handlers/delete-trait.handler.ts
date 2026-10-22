@@ -3,9 +3,9 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTraitCommand } from '../commands/delete-trait.command.js';
 import { TraitDeletedEvent } from '../../../domain/events/trait-deleted.event.js';
 import type { TraitRepository } from '../../ports/trait.repository.js';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(DeleteTraitCommand)
 export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
@@ -14,7 +14,7 @@ export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
   constructor(
     @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
     @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
-    @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: DeleteTraitCommand): Promise<void> {
@@ -28,6 +28,6 @@ export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
     if (!deleted) {
       throw new NotFoundError('Trait', command.id);
     }
-    this.traitEventBus.publish(new TraitDeletedEvent(deleted.getProps()));
+    await this.events.publish('trait', new TraitDeletedEvent(deleted.getProps()));
   }
 }

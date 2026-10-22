@@ -11,5 +11,6 @@ export const envSchema = Joi.object({
   RMU_IAM_AUDIENCE: Joi.string().required(),
   RMU_KAFKA_BROKERS: Joi.string().required(),
   RMU_KAFKA_CLIENT_ID: Joi.string().required(),
+  RMU_KAFKA_CONSUMER_GROUP_ID: Joi.string().default('rmu-api-core-consumer'),
   RMU_KAFKA_DEFAULT_PARTITIONS: Joi.number().integer().min(1).default(1),
 });

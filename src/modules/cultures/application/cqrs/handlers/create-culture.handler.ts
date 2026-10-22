@@ -4,12 +4,12 @@ import { CreateCultureCommand } from '../commands/create-culture.command.js';
 import { Culture } from '../../../domain/aggregates/culture.js';
 import type { CultureRepository } from '../../ports/culture-repository.js';
 import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port.js';
 import { CultureCreatedEvent } from '../../../domain/events/culture-created.event.js';
 import type { CreateCultureProps } from '../../../domain/aggregates/culture-props.js';
 import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
 import type { CultureView } from '../../read-models/culture-view.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(CreateCultureCommand)
 export class CreateCultureHandler implements ICommandHandler<CreateCultureCommand, CultureView> {
@@ -18,7 +18,7 @@ export class CreateCultureHandler implements ICommandHandler<CreateCultureComman
   constructor(
     @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
     @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
-    @Inject('CultureEventProducer') private readonly cultureEventBus: CultureEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
     private readonly cultureViewService: CultureViewService,
   ) {}
 
@@ -38,7 +38,7 @@ export class CreateCultureHandler implements ICommandHandler<CreateCultureComman
     };
     const culture = Culture.create(props);
     await this.cultureRepository.save(culture);
-    this.cultureEventBus.publish(new CultureCreatedEvent(culture.getProps()));
+    await this.events.publish('culture', new CultureCreatedEvent(culture.getProps()));
     return this.cultureViewService.toView(culture);
   }
 }

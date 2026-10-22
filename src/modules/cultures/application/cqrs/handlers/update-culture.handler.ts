@@ -4,11 +4,11 @@ import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { UpdateCultureCommand } from '../commands/update-culture.command.js';
 import type { CultureRepository } from '../../ports/culture-repository.js';
 import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port.js';
 import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event.js';
 import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
 import type { CultureView } from '../../read-models/culture-view.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(UpdateCultureCommand)
 export class UpdateCultureHandler implements ICommandHandler<UpdateCultureCommand, CultureView> {
@@ -17,7 +17,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
   constructor(
     @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
     @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
-    @Inject('CultureEventProducer') private readonly cultureEventBus: CultureEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
     private readonly cultureViewService: CultureViewService,
   ) {}
 
@@ -39,7 +39,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
       suggestedVocations: command.suggestedVocations,
     });
     const updated = await this.cultureRepository.update(command.id, culture);
-    this.cultureEventBus.publish(new CultureUpdatedEvent(updated.getProps()));
+    await this.events.publish('culture', new CultureUpdatedEvent(updated.getProps()));
     return this.cultureViewService.toView(updated);
   }
 }
