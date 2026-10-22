@@ -21,12 +21,16 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
 
     this.guard.checkUpdate(current, command.userId, command.roles);
 
-    const page = await this.enumerationRepository.findByRsql(`key=="${command.key}";category=="${command.category}"`, 0, 1);
-    if (page.pagination.totalElements > 0) {
-      throw new ConflictError(`Enumeration with key ${command.key} and category ${command.category} already exists`);
+    const key = command.key ?? current.key;
+    const category = command.category ?? current.category;
+    if (key !== current.key || category !== current.category) {
+      const page = await this.enumerationRepository.findByRsql(`key=="${key}";category=="${category}";id!="${current.id}"`, 0, 1);
+      if (page.pagination.totalElements > 0) {
+        throw new ConflictError(`Enumeration with key ${key} and category ${category} already exists`);
+      }
     }
 
-    current.update({
+    const modified = current.update({
       key: command.key,
       category: command.category,
       realmId: command.realmId,
@@ -34,6 +38,7 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
       imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
+    if (!modified) return current;
     return await this.enumerationRepository.update(command.id, current);
   }
 }

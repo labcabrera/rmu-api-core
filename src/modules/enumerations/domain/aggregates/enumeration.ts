@@ -3,7 +3,6 @@ import type { AccessType } from '../../../shared/domain/entities/access-type.js'
 import type { EnumerationProps } from './enumeration-props.js';
 import type { EnumerationCategory } from '../value-objects/enumeration-category.vo.js';
 import { randomUUID } from 'crypto';
-import { NotModifiedError } from '../../../shared/domain/errors/errors.js';
 import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 
 export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
@@ -55,7 +54,8 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
     );
   }
 
-  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>) {
+  /** Applies the given fields and returns whether any of them changed the state. */
+  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>): boolean {
     let modified = false;
     if (props.key) {
       modified = this.key !== props.key;
@@ -85,8 +85,9 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
       modified = modified || this.entitySource !== props.entitySource;
       this.entitySource = props.entitySource;
     }
-    if (!modified) throw new NotModifiedError('No changes detected');
+    if (!modified) return false;
     this.updatedAt = new Date();
+    return true;
   }
 
   public getProps(): EnumerationProps {

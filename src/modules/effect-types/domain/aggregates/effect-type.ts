@@ -1,5 +1,4 @@
 import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
-import { NotModifiedError } from '../../../shared/domain/errors/errors.js';
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 import type { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo.js';
@@ -63,7 +62,8 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     );
   }
 
-  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner' | 'entitySource'>) {
+  /** Applies the given fields and returns whether any of them changed the state. */
+  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner' | 'entitySource'>): boolean {
     let modified = false;
 
     if (props.isPersistent !== undefined) {
@@ -103,8 +103,9 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
       this.accessType = props.accessType;
     }
 
-    if (!modified) throw new NotModifiedError('No changes detected');
+    if (!modified) return false;
     this.updatedAt = new Date();
+    return true;
   }
 
   public getProps(): EffectTypeProps {

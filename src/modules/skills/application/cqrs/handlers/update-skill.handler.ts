@@ -32,7 +32,7 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
       if (!category) throw new ValidationError(`Skill category with id ${command.categoryId} does not exist`);
     }
 
-    current.update({
+    const modified = current.update({
       categoryId: command.categoryId,
       bonus: command.bonus,
       specialization: command.specialization,
@@ -40,6 +40,7 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
       maneuver: command.maneuver,
     });
 
+    if (!modified) return await this.skillViewService.toView(current);
     const updated = await this.skillRepository.update(current.id, current);
     return await this.skillViewService.toView(updated);
   }

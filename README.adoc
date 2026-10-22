@@ -45,7 +45,7 @@ https://github.com/labcabrera/rmu-platform[rmu-platform] with `make up-infra` (C
 === Configuration
 
 Configuration is read from `.env` at the repository root. Copy `.env.example`, which already points to the
-infrastructure ports seen from the host, and set `RMU_IAM_CLIENT_SECRET`:
+infrastructure ports seen from the host. Set `RMU_IAM_CLIENT_SECRET` there only to run `scripts/smoke.sh`:
 
 ```bash
 cp .env.example .env
@@ -61,7 +61,6 @@ The Joi schema in `src/config/env.schema.ts` fails startup on a missing required
 | `LOG_LEVEL` | no (`info`) | Nest logger level
 | `RMU_MONGO_CORE_URI` | yes | MongoDB connection string
 | `RMU_IAM_JWK_URI`, `RMU_IAM_ISSUER_URI`, `RMU_IAM_AUDIENCE` | yes | JWT validation
-| `RMU_IAM_TOKEN_URI`, `RMU_IAM_CLIENT_ID`, `RMU_IAM_CLIENT_SECRET` | yes | service-account token (client credentials, `TokenService`)
 | `RMU_IAM_URI`, `RMU_IAM_REALM` | no (`http://localhost/sso`, `rmu`) | browser-facing OAuth URLs of the Swagger UI (`/api-docs`)
 | `RMU_KAFKA_BROKERS`, `RMU_KAFKA_CLIENT_ID` | yes | Kafka connection
 | `RMU_KAFKA_DEFAULT_PARTITIONS` | no (`1`) | number of partitions the producer spreads messages over (by key hash)
@@ -129,7 +128,7 @@ src/
     interfaces/http/       controllers
       dto/                 request and response DTOs
   modules/shared/          base repository, RSQL parser, DomainError -> HTTP filter, Kafka producer, health
-    infrastructure/security/  JWT strategy and guard, TokenService (client credentials), AuthModule
+    infrastructure/security/  JWT strategy and guard, AuthModule
 test/unit/domain/<feature>/  unit tests
 test/e2e/                    smoke test of the whole application
 ----
@@ -184,7 +183,7 @@ files and adapt names, ports and the Mongo variable:
 | `commitlint.config.cjs`, `release.config.cjs` | CommonJS configs in an ESM package
 | `.github/workflows/ci.yml` | pnpm install, lint, typecheck, unit, e2e and build on Node 24, plus a `docker build` without push
 | `src/main.ts`, `src/bootstrap/`, `src/config/env.schema.ts` | short bootstrap with shutdown hooks, logger levels, OpenAPI and the Joi schema
-| `src/modules/shared/infrastructure/security/` | JWT strategy and guard, `TokenService`, `AuthModule`
+| `src/modules/shared/infrastructure/security/` | JWT strategy and guard, `AuthModule`
 | `test/e2e/app.e2e-spec.ts`, `scripts/smoke.sh` | smoke test with `mongodb-memory-server`, and the same calls against a running API with a real token
 |===
 

@@ -6,7 +6,6 @@ import {
   ForbiddenError,
   InvalidSearchExpression,
   NotFoundError,
-  NotModifiedError,
   UnauthorizedError,
   ValidationError,
 } from '../../../../src/modules/shared/domain/errors/errors.js';
@@ -29,7 +28,6 @@ describe('domain errors', () => {
       statusCode: 404,
     },
     { error: new ConflictError('Already exists'), name: 'ConflictError', message: 'Already exists', statusCode: 409 },
-    { error: new NotModifiedError('No changes'), name: 'NotModifiedError', message: 'No changes', statusCode: 304 },
     { error: new ValidationError('Invalid input'), name: 'ValidationError', message: 'Invalid input', statusCode: 400 },
     {
       error: new InvalidSearchExpression('Bad query'),

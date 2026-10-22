@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration.js';
 import type { EnumerationProps } from '../../../../src/modules/enumerations/domain/aggregates/enumeration-props.js';
 import { ENUMERATION_CATEGORIES } from '../../../../src/modules/enumerations/domain/value-objects/enumeration-category.vo.js';
-import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const baseProps = (): EnumerationProps => ({
   id: 'enum-1',
@@ -80,11 +79,12 @@ describe('Enumeration', () => {
     expect(enumeration.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('throws NotModifiedError when update has no effective changes', () => {
+  it('reports no change and keeps updatedAt when update has no effective changes', () => {
     const enumeration = Enumeration.fromProps(baseProps());
 
-    expect(() => enumeration.update({})).toThrow(NotModifiedError);
-    expect(() => enumeration.update({ key: 'westron' })).toThrow('No changes detected');
+    expect(enumeration.update({})).toBe(false);
+    expect(enumeration.update({ key: 'westron' })).toBe(false);
+    expect(enumeration.updatedAt).toEqual(baseProps().updatedAt);
   });
 
   it('exposes the expected enumeration category catalog without duplicates', () => {

@@ -41,9 +41,6 @@ describe('AppModule (e2e)', () => {
       RMU_IAM_JWK_URI: 'http://localhost/certs',
       RMU_IAM_ISSUER_URI: 'http://localhost/sso/realms/rmu',
       RMU_IAM_AUDIENCE: 'rmu-api',
-      RMU_IAM_TOKEN_URI: 'http://localhost/token',
-      RMU_IAM_CLIENT_ID: 'rmu-client',
-      RMU_IAM_CLIENT_SECRET: 'e2e',
       RMU_KAFKA_BROKERS: 'localhost:9092',
       RMU_KAFKA_CLIENT_ID: 'rmu-api-core-e2e',
     });

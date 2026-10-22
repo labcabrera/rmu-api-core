@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
 import type { SkillProps } from '../../../../src/modules/skills/domain/aggregates/skill-props.js';
-import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const baseProps = (): SkillProps => ({
   id: 'skill-1',
@@ -68,12 +67,13 @@ describe('Skill', () => {
     expect(skill.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('throws NotModifiedError when no provided field changes state', () => {
+  it('reports no change and keeps updatedAt when no provided field changes state', () => {
     const skill = Skill.fromProps(baseProps());
     const currentBonus = skill.bonus;
 
-    expect(() => skill.update({})).toThrow(NotModifiedError);
-    expect(() => skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus })).toThrow('Skill not modified');
+    expect(skill.update({})).toBe(false);
+    expect(skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus })).toBe(false);
+    expect(skill.updatedAt).toEqual(baseProps().updatedAt);
   });
 });
 
