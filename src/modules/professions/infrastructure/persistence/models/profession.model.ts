@@ -51,3 +51,6 @@ export class ProfessionModel {
 }
 
 export const ProfessionSchema = SchemaFactory.createForClass(ProfessionModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+ProfessionSchema.index({ owner: 1 });
+ProfessionSchema.index({ accessType: 1 });

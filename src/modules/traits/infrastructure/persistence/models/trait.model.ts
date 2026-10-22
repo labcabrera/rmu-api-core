@@ -48,3 +48,5 @@ export class TraitModel {
 }
 
 export const TraitSchema = SchemaFactory.createForClass(TraitModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+TraitSchema.index({ owner: 1 });

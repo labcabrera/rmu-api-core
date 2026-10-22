@@ -49,3 +49,7 @@ export class CultureModel {
 }
 
 export const CultureSchema = SchemaFactory.createForClass(CultureModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+CultureSchema.index({ owner: 1 });
+CultureSchema.index({ accessType: 1 });
+CultureSchema.index({ name: 1 });

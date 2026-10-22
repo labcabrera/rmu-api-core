@@ -43,3 +43,8 @@ export class EnumerationModel {
 }
 
 export const EnumerationSchema = SchemaFactory.createForClass(EnumerationModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+EnumerationSchema.index({ owner: 1 });
+EnumerationSchema.index({ accessType: 1 });
+EnumerationSchema.index({ key: 1, category: 1 });
+EnumerationSchema.index({ realmId: 1 });

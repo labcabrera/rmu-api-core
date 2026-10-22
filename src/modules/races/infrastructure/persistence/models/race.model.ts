@@ -87,3 +87,8 @@ export class RaceModel {
 }
 
 export const RaceSchema = SchemaFactory.createForClass(RaceModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+RaceSchema.index({ owner: 1 });
+RaceSchema.index({ accessType: 1 });
+RaceSchema.index({ realmId: 1 });
+RaceSchema.index({ name: 1 });

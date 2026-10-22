@@ -55,5 +55,8 @@ export class ManeuverModifierModel {
 }
 
 export const ManeuverModifierSchema = SchemaFactory.createForClass(ManeuverModifierModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+ManeuverModifierSchema.index({ owner: 1 });
+ManeuverModifierSchema.index({ accessType: 1 });
 ManeuverModifierSchema.index({ 'scope.skillIds': 1 });
 ManeuverModifierSchema.index({ 'scope.categoryIds': 1 });

@@ -5,7 +5,7 @@ import { type MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module.js';
 import { configureLogger } from './bootstrap/logger.js';
 import { configureOpenApi } from './bootstrap/openapi.js';
-import { DomainExceptionFilter } from './modules/shared/interfaces/http/domain-exception.filter.js';
+import { HttpExceptionFilter } from './modules/shared/interfaces/http/http-exception.filter.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: configureLogger(process.env.LOG_LEVEL) });
@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors();
   app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true }, whitelist: true }));
-  app.useGlobalFilters(new DomainExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   configureOpenApi(app);
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
