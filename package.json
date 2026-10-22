@@ -23,7 +23,7 @@
     "test:watch": "vitest --project unit",
     "test:cov": "vitest run --project unit --coverage",
     "test:e2e": "vitest run --project e2e",
-    "check": "npm run lint && npm run typecheck && npm test",
+    "check": "pnpm run lint && pnpm run typecheck && pnpm test",
     "prepare": "husky",
     "release": "semantic-release --no-ci"
   },
@@ -84,6 +84,15 @@
     "vitest": "^5.0.5"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=24",
+    "pnpm": ">=10"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@scarf/scarf",
+      "@swc/core",
+      "mongodb-memory-server"
+    ]
   }
 }
