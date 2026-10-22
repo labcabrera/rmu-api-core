@@ -2,8 +2,9 @@ import { ForbiddenError } from '../../domain/errors/errors.js';
 import { RMU_ADMIN, RMU_USER } from '../../domain/entities/user-roles.js';
 import type { RbacEntity } from '../../domain/entities/rbac-entity.js';
 import { QueryCriteria } from '../../application/criteria/query-criteria.js';
+import type { EntityGuard } from '../../application/ports/entity-guard.js';
 
-export abstract class BaseEntityGuard<E extends RbacEntity> implements BaseEntityGuard<E> {
+export abstract class BaseEntityGuard<E extends RbacEntity> implements EntityGuard<E> {
   checkRead(entity: E, userId: string, roles: string[]) {
     if (entity.accessType === 'public') return;
     if (roles.includes(RMU_ADMIN)) return;

@@ -9,6 +9,7 @@ import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggreg
 import type { RaceProps } from './race-props.js';
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 
 export class Race extends BaseAggregateRoot<RaceProps> {
   private constructor(
@@ -86,12 +87,11 @@ export class Race extends BaseAggregateRoot<RaceProps> {
 
   removeTrait(traitId: string) {
     const index = this.traits.findIndex(trait => trait.id === traitId);
-    if (index !== -1) {
-      this.traits.splice(index, 1);
-      this.apply(new RaceUpdatedEvent(this.getProps()));
-    }
+    if (index === -1) throw new NotFoundError('Race trait', traitId);
+    this.traits.splice(index, 1);
     this.apply(new RaceUpdatedEvent(this.getProps()));
   }
+
   addSkillBonus(skillId: string, specialization: string | null, bonus: number) {
     const current = this.skillBonuses.find(sb => sb.skillId === skillId && sb.specialization === specialization);
     if (current) {
@@ -106,10 +106,9 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     const index = this.skillBonuses.findIndex(
       sb => sb.skillId === skillId && (sb.specialization === specialization || (!sb.specialization && !specialization)),
     );
-    if (index !== -1) {
-      this.skillBonuses.splice(index, 1);
-      this.apply(new RaceUpdatedEvent(this.getProps()));
-    }
+    if (index === -1) throw new NotFoundError('Race skill bonus', skillId);
+    this.skillBonuses.splice(index, 1);
+    this.apply(new RaceUpdatedEvent(this.getProps()));
   }
 
   static fromProps(props: RaceProps) {

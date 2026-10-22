@@ -1,5 +1,6 @@
 import { type ExecutionContext, type INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { KafkaProducerService } from '../../src/modules/shared/infrastructure/messaging/kafka-producer.service.js';
@@ -74,6 +75,23 @@ describe('AppModule (e2e)', () => {
 
   it('GET /v1/races without a token is 401', async () => {
     await request(server).get('/v1/races').expect(401);
+  });
+
+  it('every OpenAPI operation has a unique operationId', () => {
+    const document = SwaggerModule.createDocument(app, new DocumentBuilder().build());
+    const ids = Object.values(document.paths).flatMap(methods =>
+      Object.values(methods as Record<string, { operationId?: string }>)
+        .map(operation => operation?.operationId)
+        .filter((id): id is string => typeof id === 'string'),
+    );
+    const duplicated = ids.filter((id, index) => ids.indexOf(id) !== index);
+    expect(duplicated).toEqual([]);
+  });
+
+  it('GET /v1/races rejects a page size above 1000', async () => {
+    const auth = `Bearer ${TOKEN}`;
+    await request(server).get('/v1/races?size=1000').set('Authorization', auth).expect(200);
+    await request(server).get('/v1/races?size=1001').set('Authorization', auth).expect(400);
   });
 
   it('GET /v1/races returns an empty page', async () => {

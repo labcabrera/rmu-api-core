@@ -4,6 +4,7 @@ import { CommandBus, CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
 import type { RaceRepository } from '../../ports/race-repository.js';
 import { DeleteRacesByRealmCommand } from '../commands/delete-races-by-realm.command.js';
+import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles.js';
 
 @CommandHandler(DeleteRacesByRealmCommand)
 export class DeleteRacesByRealmHandler implements ICommandHandler<DeleteRacesByRealmCommand> {
@@ -20,7 +21,7 @@ export class DeleteRacesByRealmHandler implements ICommandHandler<DeleteRacesByR
     const races = await this.raceRepository.findByRealmId(command.realmId);
     //TODO async delete
     for (const race of races) {
-      const deleteCmd = new DeleteRaceCommand(race.id, 'system', ['rmu-admin']);
+      const deleteCmd = new DeleteRaceCommand(race.id, 'system', [RMU_ADMIN]);
       await this.commandBus.execute(deleteCmd);
     }
   }

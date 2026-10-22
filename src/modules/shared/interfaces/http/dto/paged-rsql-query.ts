@@ -1,7 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsOptional, IsInt, Min, IsString } from 'class-validator';
+import { Transform, type TransformFnParams } from 'class-transformer';
+import { IsOptional, IsInt, Max, Min, IsString } from 'class-validator';
+
+export const MAX_PAGE_SIZE = 1000;
+
+// Empty query values fall back to the default; anything else is left for @IsInt to reject.
+const toInt =
+  (fallback: number) =>
+  ({ value }: TransformFnParams): unknown => {
+    if (value === undefined || value === null || value === '') return fallback;
+    return typeof value === 'string' ? Number(value) : (value as unknown);
+  };
 
 export class PagedQueryDto {
   @ApiPropertyOptional({ description: 'RSQL search expression', example: 'name=re=lord', type: String, required: false })
@@ -13,19 +22,14 @@ export class PagedQueryDto {
   @IsInt()
   @IsOptional()
   @Min(0)
-  @Transform(({ value }) => {
-    if (value === undefined || value === null || value === '') return 0;
-    return parseInt(value, 10);
-  })
+  @Transform(toInt(0))
   page: number = 0;
 
-  @ApiProperty({ description: 'Size', minimum: 1, example: 10, default: 10 })
+  @ApiProperty({ description: 'Size', minimum: 1, maximum: MAX_PAGE_SIZE, example: 10, default: 10 })
   @IsInt()
   @IsOptional()
   @Min(1)
-  @Transform(({ value }) => {
-    if (value === undefined || value === null || value === '') return 10;
-    return parseInt(value, 10);
-  })
+  @Max(MAX_PAGE_SIZE)
+  @Transform(toInt(10))
   size: number = 10;
 }

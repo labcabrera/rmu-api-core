@@ -5,12 +5,11 @@ import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event.js';
 import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
 import type { RaceRepository } from '../../ports/race-repository.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
-import { CreateRaceHandler } from './create-race.handler.js';
 import type { RaceGuardPort } from '../../ports/race-guard.port.js';
 
 @CommandHandler(DeleteRaceCommand)
 export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
-  private readonly logger = new Logger(CreateRaceHandler.name);
+  private readonly logger = new Logger(DeleteRaceHandler.name);
 
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
