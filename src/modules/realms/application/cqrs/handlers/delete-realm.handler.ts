@@ -1,11 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { DeleteRealmCommand } from '../commands/delete-realm.command.js';
-import type { RealmEventBusPort } from '../../ports/realm-event-bus.port.js';
 import type { RealmRepository } from '../../ports/realm-repository.js';
 import { RealmDeletedEvent } from '../../../domain/events/realm-deleted.event.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import type { RealmGuardPort } from '../../ports/realm-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(DeleteRealmCommand)
 export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
@@ -14,7 +14,7 @@ export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('RealmGuardPort') private readonly realmGuard: RealmGuardPort,
-    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: DeleteRealmCommand): Promise<void> {
@@ -28,6 +28,6 @@ export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
     const deleted = await this.realmRepository.deleteById(command.id);
     if (!deleted) throw new NotFoundError('Realm', command.id);
 
-    this.realmEventBus.publish(new RealmDeletedEvent(current.getProps()));
+    await this.events.publish('realm', new RealmDeletedEvent(current.getProps()));
   }
 }

@@ -63,6 +63,7 @@ The Joi schema in `src/config/env.schema.ts` fails startup on a missing required
 | `RMU_IAM_JWK_URI`, `RMU_IAM_ISSUER_URI`, `RMU_IAM_AUDIENCE` | yes | JWT validation
 | `RMU_IAM_URI`, `RMU_IAM_REALM` | no (`http://localhost/sso`, `rmu`) | browser-facing OAuth URLs of the Swagger UI (`/api-docs`)
 | `RMU_KAFKA_BROKERS`, `RMU_KAFKA_CLIENT_ID` | yes | Kafka connection
+| `RMU_KAFKA_CONSUMER_GROUP_ID` | no (`rmu-api-core-consumer`) | consumer group of the realm events that keep the races in step
 | `RMU_KAFKA_DEFAULT_PARTITIONS` | no (`1`) | number of partitions the producer spreads messages over (by key hash)
 |===
 
@@ -124,10 +125,11 @@ src/
       db/                  repository adapters (Mongo)
       persistence/models/  Mongoose schemas
       security/            <entity>-guard.adapter.ts (read/write access checks)
-      messaging/           Kafka event publishers
     interfaces/http/       controllers
       dto/                 request and response DTOs
-  modules/shared/          base repository, RSQL parser, DomainError -> HTTP filter, Kafka producer, health
+    interfaces/messaging/  Kafka consumers (races: realm events)
+  modules/shared/          base repository, RSQL parser, DomainError -> HTTP filter, Kafka producer, health,
+                           DomainEventPublisher (internal.rmu-core.<aggregate>.<event>.v1)
     infrastructure/security/  JWT strategy and guard, AuthModule
 test/unit/domain/<feature>/  unit tests
 test/e2e/                    smoke test of the whole application
@@ -141,6 +143,10 @@ Conventions:
 - File names are kebab-case (`race-guard.adapter.ts`), with a dotted suffix for the role (`.module`, `.controller`,
   `.dto`, `.handler`, `.repository`).
 - A read-only module may skip `domain/` (`character-sizes`).
+- Handlers publish domain events through `DomainEventPublisher` (`DOMAIN_EVENT_PUBLISHER`) after saving:
+  `publishChanges('race', race)` for the aggregate's uncommitted events, `publish('race', event)` for one built by
+  hand. Publishing awaits Kafka (with retries) and logs a failure instead of failing the request. Modules react to
+  each other's changes through these topics, like any other service, and never import each other's commands.
 - The build uses SWC (`nest build`), which compiles file by file and cannot resolve imported type aliases in decorator
   metadata. A property typed with a string union alias (`AccessType`) needs an explicit `type: String` in `@ApiProperty`
   and `@Prop`, and constructor injection must not use a bare `@Inject()` (Nest would read `Function` as the token).

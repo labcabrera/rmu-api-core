@@ -2,10 +2,10 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { Realm } from '../../../domain/aggregates/realm.js';
 import { UpdateRealmCommand } from '../commands/update-realm.command.js';
-import type { RealmEventBusPort } from '../../ports/realm-event-bus.port.js';
 import type { RealmRepository } from '../../ports/realm-repository.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import type { RealmGuardPort } from '../../ports/realm-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
@@ -14,7 +14,7 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('RealmGuardPort') private readonly realmGuard: RealmGuardPort,
-    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {
@@ -34,7 +34,7 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
       accessType: command.accessType,
     });
     const updated = await this.realmRepository.update(realm.id, realm);
-    realm.getUncommittedEvents().forEach(event => this.realmEventBus.publish(event));
+    await this.events.publishChanges('realm', realm);
     return updated;
   }
 }

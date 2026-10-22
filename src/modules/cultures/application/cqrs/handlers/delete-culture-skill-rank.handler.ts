@@ -2,12 +2,12 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import type { CultureRepository } from '../../ports/culture-repository.js';
 import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event.js';
 import { DeleteCultureSkillRankCommand } from '../commands/delete-culture-skill-rank.command.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
 import type { CultureView } from '../../read-models/culture-view.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(DeleteCultureSkillRankCommand)
 export class DeleteCultureSkillRankHandler implements ICommandHandler<DeleteCultureSkillRankCommand, CultureView> {
@@ -16,7 +16,7 @@ export class DeleteCultureSkillRankHandler implements ICommandHandler<DeleteCult
   constructor(
     @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
     @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
-    @Inject('CultureEventProducer') private readonly cultureEventBus: CultureEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
     private readonly cultureViewService: CultureViewService,
   ) {}
 
@@ -32,7 +32,7 @@ export class DeleteCultureSkillRankHandler implements ICommandHandler<DeleteCult
 
     const updated = await this.cultureRepository.update(command.cultureId, culture);
 
-    this.cultureEventBus.publish(new CultureUpdatedEvent(updated.getProps()));
+    await this.events.publish('culture', new CultureUpdatedEvent(updated.getProps()));
     return this.cultureViewService.toView(updated);
   }
 }

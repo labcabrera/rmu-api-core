@@ -2,9 +2,9 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { Realm } from '../../../domain/aggregates/realm.js';
 import { CreateRealmCommand } from '../commands/create-realm.command.js';
-import type { RealmEventBusPort } from '../../ports/realm-event-bus.port.js';
 import type { RealmRepository } from '../../ports/realm-repository.js';
 import type { RealmGuardPort } from '../../ports/realm-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(CreateRealmCommand)
 export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, Realm> {
@@ -13,7 +13,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
   constructor(
     @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
     @Inject('RealmGuardPort') private readonly realmGuard: RealmGuardPort,
-    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateRealmCommand): Promise<Realm> {
@@ -29,7 +29,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
       accessType: command.accessType,
     });
     const savedRealm = await this.realmRepository.save(realm);
-    realm.getUncommittedEvents().forEach(event => this.realmEventBus.publish(event));
+    await this.events.publishChanges('realm', realm);
     return savedRealm;
   }
 }

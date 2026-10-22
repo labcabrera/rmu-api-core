@@ -1,10 +1,9 @@
 import { Inject, Logger } from '@nestjs/common';
-import { DeleteRaceCommand } from '../commands/delete-race.command.js';
-import { CommandBus, CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port.js';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import type { RaceRepository } from '../../ports/race-repository.js';
 import { DeleteRacesByRealmCommand } from '../commands/delete-races-by-realm.command.js';
-import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles.js';
+import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
 
 @CommandHandler(DeleteRacesByRealmCommand)
 export class DeleteRacesByRealmHandler implements ICommandHandler<DeleteRacesByRealmCommand> {
@@ -12,17 +11,16 @@ export class DeleteRacesByRealmHandler implements ICommandHandler<DeleteRacesByR
 
   constructor(
     @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
-    private readonly commandBus: CommandBus,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
+  // Idempotent: a redelivered event finds no races left. No access check: the realm owner already deleted it.
   async execute(command: DeleteRacesByRealmCommand): Promise<void> {
-    this.logger.log(`Deleting races for realm ${command.realmId}`);
     const races = await this.raceRepository.findByRealmId(command.realmId);
-    //TODO async delete
+    this.logger.log(`Deleting ${races.length} races of realm ${command.realmId}`);
     for (const race of races) {
-      const deleteCmd = new DeleteRaceCommand(race.id, 'system', [RMU_ADMIN]);
-      await this.commandBus.execute(deleteCmd);
+      await this.raceRepository.deleteById(race.id);
+      await this.events.publish('race', new RaceDeletedEvent(race.getProps()));
     }
   }
 }
