@@ -142,10 +142,10 @@ export class RaceController {
 
   @Delete(':id/skill-bonuses/:skillId')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'removeTrait', summary: 'Remove a trait from a race' })
+  @ApiOperation({ operationId: 'removeSkillBonus', summary: 'Remove a skill bonus from a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Race or trait not found', type: ErrorDto })
+  @ApiNotFoundResponse({ description: 'Race or skill bonus not found', type: ErrorDto })
   async removeSkillBonus(
     @Param('id') id: string,
     @Param('skillId') skillId: string,

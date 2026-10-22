@@ -7,6 +7,7 @@ import { RaceResistances } from '../../../../src/modules/races/domain/value-obje
 import { RaceSkillBonus } from '../../../../src/modules/races/domain/value-objects/race-skill-bonus.vo.js';
 import { RaceStats } from '../../../../src/modules/races/domain/value-objects/race-stats.vo.js';
 import { RaceTrait } from '../../../../src/modules/races/domain/value-objects/race-trait.vo.js';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const makeStats = (overrides: Partial<RaceStats> = {}): RaceStats => ({
   ag: 0,
@@ -159,7 +160,17 @@ describe('Race domain aggregate', () => {
     race.removeTrait(race.traits[0].id);
 
     expect(race.traits).toEqual([]);
-    expect(race.getUncommittedEvents()).toEqual([expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent)]);
+    expect(race.getUncommittedEvents()).toEqual([expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent)]);
+  });
+
+  it('rejects removing a trait or skill bonus the race does not have, without emitting events', () => {
+    const race = Race.fromProps(makeRaceProps());
+
+    expect(() => race.removeTrait('missing')).toThrow(NotFoundError);
+    expect(() => race.removeSkillBonus('skill-1', 'missing')).toThrow(NotFoundError);
+    expect(race.traits).toHaveLength(1);
+    expect(race.skillBonuses).toHaveLength(1);
+    expect(race.getUncommittedEvents()).toEqual([]);
   });
 
   it('upserts and deletes skill bonuses by skill and nullable specialization', () => {
