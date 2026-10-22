@@ -73,6 +73,7 @@ describe('Skill', () => {
 
     expect(skill.update({})).toBe(false);
     expect(skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus })).toBe(false);
+    expect(skill.update({ bonus: [...currentBonus] })).toBe(false);
     expect(skill.updatedAt).toEqual(baseProps().updatedAt);
   });
 });

@@ -31,7 +31,7 @@ export class RealmController {
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
   @ApiErrors({ 404: 'Realm not found' })
   async findById(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    const query = new GetRealmQuery(id, user.id);
+    const query = new GetRealmQuery(id, user.id, user.roles);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
     return RealmDto.fromEntity(entity);
   }

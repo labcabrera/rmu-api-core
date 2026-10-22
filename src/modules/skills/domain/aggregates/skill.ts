@@ -61,7 +61,7 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
       this.props.categoryId = props.categoryId;
     }
     if (props.bonus) {
-      modified = modified || props.bonus !== this.props.bonus;
+      modified = modified || props.bonus.join() !== this.props.bonus.join();
       this.props.bonus = props.bonus;
     }
     if (props.specialization) {

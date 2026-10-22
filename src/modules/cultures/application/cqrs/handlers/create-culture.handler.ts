@@ -4,7 +4,6 @@ import { CreateCultureCommand } from '../commands/create-culture.command.js';
 import { Culture } from '../../../domain/aggregates/culture.js';
 import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-repository.port.js';
 import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
-import { CultureCreatedEvent } from '../../../domain/events/culture-created.event.js';
 import type { CreateCultureProps } from '../../../domain/aggregates/culture-props.js';
 import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
@@ -38,7 +37,7 @@ export class CreateCultureHandler implements ICommandHandler<CreateCultureComman
     };
     const culture = Culture.create(props);
     await this.cultureRepository.save(culture);
-    await this.events.publish('culture', new CultureCreatedEvent(culture.getProps()));
+    await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(culture);
   }
 }

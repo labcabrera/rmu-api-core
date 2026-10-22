@@ -4,7 +4,6 @@ import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-
 import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
 import { AddCultureSkillRankCommand } from '../commands/add-culture-skill-rank.command.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
-import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event.js';
 import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
 import type { CultureView } from '../../read-models/culture-view.js';
@@ -33,7 +32,7 @@ export class AddCultureSkillRankHandler implements ICommandHandler<AddCultureSki
 
     const updated = await this.cultureRepository.update(command.cultureId, culture);
 
-    await this.events.publish('culture', new CultureUpdatedEvent(updated.getProps()));
+    await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);
   }
 }

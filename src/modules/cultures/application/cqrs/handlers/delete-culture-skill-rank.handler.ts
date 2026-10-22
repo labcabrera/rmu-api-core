@@ -3,7 +3,6 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-repository.port.js';
 import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
-import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event.js';
 import { DeleteCultureSkillRankCommand } from '../commands/delete-culture-skill-rank.command.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
 import type { CultureView } from '../../read-models/culture-view.js';
@@ -32,7 +31,7 @@ export class DeleteCultureSkillRankHandler implements ICommandHandler<DeleteCult
 
     const updated = await this.cultureRepository.update(command.cultureId, culture);
 
-    await this.events.publish('culture', new CultureUpdatedEvent(updated.getProps()));
+    await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);
   }
 }
