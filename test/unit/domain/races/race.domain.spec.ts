@@ -163,6 +163,29 @@ describe('Race domain aggregate', () => {
     expect(race.getUncommittedEvents()).toEqual([expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent)]);
   });
 
+  it('keeps earlier event snapshots unchanged when the race changes again', () => {
+    const race = Race.fromProps(makeRaceProps({ traits: [] }));
+
+    race.addTrait('trait-1', undefined, false, undefined, undefined);
+    race.addSkillBonus('skill-1', null, 10);
+    race.removeTrait(race.traits[0].id);
+
+    const [afterAdd, afterBonus, afterRemove] = race.getUncommittedEvents().map(event => event.data);
+    expect(afterAdd.traits).toHaveLength(1);
+    expect(afterAdd.skillBonuses).toEqual([new RaceSkillBonus('skill-1', null, 5)]);
+    expect(afterBonus.skillBonuses).toEqual([new RaceSkillBonus('skill-1', null, 10)]);
+    expect(afterRemove.traits).toEqual([]);
+    expect(race.updatedAt).toBeInstanceOf(Date);
+  });
+
+  it('cannot be changed from outside through its props', () => {
+    const race = Race.fromProps(makeRaceProps());
+
+    race.getProps().name = 'Changed';
+
+    expect(race.name).toBe('Human');
+  });
+
   it('rejects removing a trait or skill bonus the race does not have, without emitting events', () => {
     const race = Race.fromProps(makeRaceProps());
 
