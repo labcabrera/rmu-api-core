@@ -2,35 +2,67 @@ import { randomUUID } from 'crypto';
 import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import { ValidationError } from '../../../shared/domain/errors/errors.js';
-import {
-  MANEUVER_MODIFIER_TYPES,
-  type ManeuverModifierOption,
-  type ManeuverModifierScope,
-  type ManeuverModifierType,
-} from '../value-objects/maneuver-modifier-type.vo.js';
+import { MANEUVER_MODIFIER_TYPES, type ManeuverModifierScope } from '../value-objects/maneuver-modifier-type.vo.js';
 import type { ManeuverModifierDefinition, ManeuverModifierProps } from './maneuver-modifier-props.js';
 
 export type ManeuverModifierUpdate = Partial<ManeuverModifierDefinition> & { accessType?: AccessType };
 
 /** Skill specific maneuver modifier of the catalog. */
 export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
-  private constructor(
-    id: string,
-    public key: string,
-    public scope: ManeuverModifierScope,
-    public type: ManeuverModifierType,
-    public value: number | undefined,
-    public options: ManeuverModifierOption[] | undefined,
-    public perUnit: number | undefined,
-    public min: number | undefined,
-    public max: number | undefined,
-    public description: string | undefined,
-    public owner: string,
-    public accessType: AccessType,
-    public createdAt: Date,
-    public updatedAt?: Date,
-  ) {
-    super(id);
+  private constructor(props: ManeuverModifierProps) {
+    super(props);
+  }
+
+  get key() {
+    return this.props.key;
+  }
+
+  get scope() {
+    return this.props.scope;
+  }
+
+  get type() {
+    return this.props.type;
+  }
+
+  get value() {
+    return this.props.value;
+  }
+
+  get options() {
+    return this.props.options;
+  }
+
+  get perUnit() {
+    return this.props.perUnit;
+  }
+
+  get min() {
+    return this.props.min;
+  }
+
+  get max() {
+    return this.props.max;
+  }
+
+  get description() {
+    return this.props.description;
+  }
+
+  get owner() {
+    return this.props.owner;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   static create(props: ManeuverModifierDefinition & { owner: string; accessType: AccessType }): ManeuverModifier {
@@ -51,22 +83,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
   }
 
   private static build(props: ManeuverModifierProps): ManeuverModifier {
-    return new ManeuverModifier(
-      props.id,
-      props.key,
-      props.scope,
-      props.type,
-      props.value,
-      props.options,
-      props.perUnit,
-      props.min,
-      props.max,
-      props.description,
-      props.owner,
-      props.accessType,
-      props.createdAt,
-      props.updatedAt,
-    );
+    return new ManeuverModifier({ ...props });
   }
 
   update(changes: ManeuverModifierUpdate): void {
@@ -78,48 +95,38 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     });
     const definition = ManeuverModifier.normalize(merged);
     ManeuverModifier.validate(definition);
-    this.key = definition.key;
-    this.scope = definition.scope;
-    this.type = definition.type;
-    this.value = definition.value;
-    this.options = definition.options;
-    this.perUnit = definition.perUnit;
-    this.min = definition.min;
-    this.max = definition.max;
-    this.description = definition.description;
-    if (changes.accessType) this.accessType = changes.accessType;
-    this.updatedAt = new Date();
+    this.props.key = definition.key;
+    this.props.scope = definition.scope;
+    this.props.type = definition.type;
+    this.props.value = definition.value;
+    this.props.options = definition.options;
+    this.props.perUnit = definition.perUnit;
+    this.props.min = definition.min;
+    this.props.max = definition.max;
+    this.props.description = definition.description;
+    if (changes.accessType) this.props.accessType = changes.accessType;
+    this.props.updatedAt = new Date();
   }
 
   /** True when the modifier applies to the skill or to its category. */
   appliesTo(skillId?: string, categoryId?: string): boolean {
     return (
-      (!!skillId && (this.scope.skillIds ?? []).includes(skillId)) || (!!categoryId && (this.scope.categoryIds ?? []).includes(categoryId))
+      (!!skillId && (this.props.scope.skillIds ?? []).includes(skillId)) ||
+      (!!categoryId && (this.props.scope.categoryIds ?? []).includes(categoryId))
     );
   }
 
   getDefinition(): ManeuverModifierDefinition {
     return {
-      key: this.key,
-      scope: this.scope,
-      type: this.type,
-      value: this.value,
-      options: this.options,
-      perUnit: this.perUnit,
-      min: this.min,
-      max: this.max,
-      description: this.description,
-    };
-  }
-
-  getProps(): ManeuverModifierProps {
-    return {
-      id: this.id,
-      ...this.getDefinition(),
-      owner: this.owner,
-      accessType: this.accessType,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      key: this.props.key,
+      scope: this.props.scope,
+      type: this.props.type,
+      value: this.props.value,
+      options: this.props.options,
+      perUnit: this.props.perUnit,
+      min: this.props.min,
+      max: this.props.max,
+      description: this.props.description,
     };
   }
 

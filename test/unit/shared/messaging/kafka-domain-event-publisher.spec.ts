@@ -6,6 +6,10 @@ import { BaseAggregateRoot } from '../../../../src/modules/shared/domain/aggrega
 import { DomainEvent } from '../../../../src/modules/shared/domain/events/domain-event.js';
 
 class Thing extends BaseAggregateRoot<{ id: string }> {
+  constructor(id: string) {
+    super({ id });
+  }
+
   touch(eventType: string) {
     this.apply(new DomainEvent(eventType, this.getProps()));
   }
