@@ -5,11 +5,11 @@ import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { RealmsModule } from '../realms/realms.module.js';
 import { SharedModule } from '../shared/shared.module.js';
-import { CultureModel, CultureSchema } from './infrastructure/persistence/models/culture-model.js';
+import { CultureModel, CultureSchema } from './infrastructure/persistence/models/culture.model.js';
 import { CultureController } from './interfaces/http/culture.controller.js';
 import { CultureGuardAdapter } from './infrastructure/security/culture-guard.adapter.js';
-import { GetCultureHandler } from './application/cqrs/handlers/get-culture.query.handler.js';
-import { GetCulturesHandler } from './application/cqrs/handlers/get-cultures.query.handler.js';
+import { GetCultureHandler } from './application/cqrs/handlers/get-culture.handler.js';
+import { GetCulturesHandler } from './application/cqrs/handlers/get-cultures.handler.js';
 import { CreateCultureHandler } from './application/cqrs/handlers/create-culture.handler.js';
 import { UpdateCultureHandler } from './application/cqrs/handlers/update-culture.handler.js';
 import { DeleteCultureHandler } from './application/cqrs/handlers/delete-culture.handler.js';
@@ -18,6 +18,8 @@ import { AddCultureSkillRankHandler } from './application/cqrs/handlers/add-cult
 import { DeleteCultureSkillRankHandler } from './application/cqrs/handlers/delete-culture-skill-rank.handler.js';
 import { CultureViewService } from './application/services/culture-view.service.js';
 import { SkillsModule } from '../skills/skills.module.js';
+import { CULTURE_GUARD } from './application/ports/culture-guard.port.js';
+import { CULTURE_REPOSITORY } from './application/ports/culture-repository.port.js';
 
 @Module({
   imports: [
@@ -40,14 +42,14 @@ import { SkillsModule } from '../skills/skills.module.js';
     DeleteCultureSkillRankHandler,
     CultureViewService,
     {
-      provide: 'CultureRepository',
+      provide: CULTURE_REPOSITORY,
       useClass: MongoCultureRepository,
     },
     {
-      provide: 'CultureGuard',
+      provide: CULTURE_GUARD,
       useClass: CultureGuardAdapter,
     },
   ],
-  exports: ['CultureRepository'],
+  exports: [CULTURE_REPOSITORY],
 })
 export class CulturesModule {}

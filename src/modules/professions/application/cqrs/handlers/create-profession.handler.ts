@@ -3,15 +3,15 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { ConflictError } from '../../../../shared/domain/errors/errors.js';
 import { CreateProfessionCommand } from '../commands/create-profession.command.js';
 import { Profession } from '../../../domain/aggregates/profession.js';
-import type { ProfessionRepository } from '../../ports/profession.repository.js';
-import type { ProfessionGuardPort } from '../../ports/profession-guard.port.js';
+import { PROFESSION_REPOSITORY, type ProfessionRepository } from '../../ports/profession-repository.port.js';
+import { PROFESSION_GUARD, type ProfessionGuardPort } from '../../ports/profession-guard.port.js';
 import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles.js';
 
 @CommandHandler(CreateProfessionCommand)
 export class CreateProfessionHandler implements ICommandHandler<CreateProfessionCommand, Profession> {
   constructor(
-    @Inject('ProfessionRepository') private readonly professionRepository: ProfessionRepository,
-    @Inject('ProfessionGuardPort') private readonly professionGuard: ProfessionGuardPort,
+    @Inject(PROFESSION_REPOSITORY) private readonly professionRepository: ProfessionRepository,
+    @Inject(PROFESSION_GUARD) private readonly professionGuard: ProfessionGuardPort,
   ) {}
 
   async execute(command: CreateProfessionCommand): Promise<Profession> {

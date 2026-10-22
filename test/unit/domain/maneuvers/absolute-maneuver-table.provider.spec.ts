@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AbsoluteManeuverTableProvider } from '../../../../src/modules/maneuvers/application/services/absolute-maneuver-table.provider.js';
-import type { ManeuverTableRepository } from '../../../../src/modules/maneuvers/application/ports/maneuver-table-repository.js';
+import type { ManeuverTableRepository } from '../../../../src/modules/maneuvers/application/ports/maneuver-table-repository.port.js';
 import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service.js';
 import { AbsoluteManeuverTable } from '../../../../src/modules/maneuvers/domain/value-objects/absolute-maneuver-table.vo.js';
 import { MongoManeuverTableRepository } from '../../../../src/modules/maneuvers/infrastructure/db/mongo.maneuver-table.repository.js';

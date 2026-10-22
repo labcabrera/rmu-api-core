@@ -1,8 +1,8 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { CreateEnumerationCommand } from '../commands/create-enumeration.command.js';
-import type { EnumerationRepository } from '../../ports/enumeration-repository.js';
-import type { EnumerationGuardPort } from '../../ports/enumeration-guard.js';
+import { ENUMERATION_REPOSITORY, type EnumerationRepository } from '../../ports/enumeration-repository.port.js';
+import { ENUMERATION_GUARD, type EnumerationGuardPort } from '../../ports/enumeration-guard.port.js';
 import { ConflictError } from '../../../../shared/domain/errors/errors.js';
 import { Enumeration } from '../../../domain/aggregates/enumeration.js';
 
@@ -11,8 +11,8 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
   private readonly logger = new Logger(CreateEnumerationHandler.name);
 
   constructor(
-    @Inject('EnumerationRepository') private readonly enumerationRepository: EnumerationRepository,
-    @Inject('EnumerationGuardPort') private readonly guard: EnumerationGuardPort,
+    @Inject(ENUMERATION_REPOSITORY) private readonly enumerationRepository: EnumerationRepository,
+    @Inject(ENUMERATION_GUARD) private readonly guard: EnumerationGuardPort,
   ) {}
 
   async execute(command: CreateEnumerationCommand): Promise<Enumeration> {

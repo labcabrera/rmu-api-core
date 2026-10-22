@@ -8,13 +8,15 @@ import { MongoSkillRepository } from './infrastructure/db/mongo.skill.repository
 import { MongooseModule } from '@nestjs/mongoose';
 import { SkillModel, SkillSchema } from './infrastructure/persistence/models/skill.model.js';
 import { CreateSkillHandler } from './application/cqrs/handlers/create-skill.handler.js';
-import { GetSkillHandler } from './application/cqrs/handlers/get-skill.query.handler.js';
-import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.query.handler.js';
+import { GetSkillHandler } from './application/cqrs/handlers/get-skill.handler.js';
+import { GetSkillsHandler } from './application/cqrs/handlers/get-skills.handler.js';
 import { SkillGuardAdapter } from './infrastructure/security/skill-guard.adapter.js';
 import { SkillCategoriesModule } from '../skill-categories/skill-categories.module.js';
 import { UpdateSkillHandler } from './application/cqrs/handlers/update-skill.handler.js';
 import { SkillViewService } from './application/services/skill-view.service.js';
 import { DeleteSkillHandler } from './application/cqrs/handlers/delete-skill.handler.js';
+import { SKILL_GUARD } from './application/ports/skill-guard.port.js';
+import { SKILL_REPOSITORY } from './application/ports/skill-repository.port.js';
 
 @Module({
   imports: [
@@ -34,14 +36,14 @@ import { DeleteSkillHandler } from './application/cqrs/handlers/delete-skill.han
     DeleteSkillHandler,
     SkillViewService,
     {
-      provide: 'SkillRepository',
+      provide: SKILL_REPOSITORY,
       useClass: MongoSkillRepository,
     },
     {
-      provide: 'SkillGuardPort',
+      provide: SKILL_GUARD,
       useClass: SkillGuardAdapter,
     },
   ],
-  exports: ['SkillRepository'],
+  exports: [SKILL_REPOSITORY],
 })
 export class SkillsModule {}

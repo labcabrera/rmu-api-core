@@ -14,6 +14,8 @@ import { MongoManeuverModifierRepository } from './infrastructure/db/mongo.maneu
 import { ManeuverModifierModel, ManeuverModifierSchema } from './infrastructure/persistence/models/maneuver-modifier.model.js';
 import { ManeuverModifierGuardAdapter } from './infrastructure/security/maneuver-modifier-guard.adapter.js';
 import { ManeuverModifierController } from './interfaces/http/maneuver-modifier.controller.js';
+import { MANEUVER_MODIFIER_GUARD } from './application/ports/maneuver-modifier-guard.port.js';
+import { MANEUVER_MODIFIER_REPOSITORY } from './application/ports/maneuver-modifier-repository.port.js';
 
 @Module({
   imports: [
@@ -31,8 +33,8 @@ import { ManeuverModifierController } from './interfaces/http/maneuver-modifier.
     CreateManeuverModifierHandler,
     UpdateManeuverModifierHandler,
     DeleteManeuverModifierHandler,
-    { provide: 'ManeuverModifierRepository', useClass: MongoManeuverModifierRepository },
-    { provide: 'ManeuverModifierGuardPort', useClass: ManeuverModifierGuardAdapter },
+    { provide: MANEUVER_MODIFIER_REPOSITORY, useClass: MongoManeuverModifierRepository },
+    { provide: MANEUVER_MODIFIER_GUARD, useClass: ManeuverModifierGuardAdapter },
   ],
 })
 export class ManeuverModifiersModule {}

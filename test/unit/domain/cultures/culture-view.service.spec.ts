@@ -3,7 +3,7 @@ import { CultureViewService } from '../../../../src/modules/cultures/application
 import { Culture } from '../../../../src/modules/cultures/domain/aggregates/culture.js';
 import { CultureSkillRank } from '../../../../src/modules/cultures/domain/value-objects/culture-skill-rank.js';
 import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
-import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository.js';
+import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository.port.js';
 
 const makeSkill = (id: string, categoryId: string) =>
   Skill.fromProps({ id, categoryId, bonus: [], specialization: null, owner: 'owner', accessType: 'public', createdAt: new Date() });

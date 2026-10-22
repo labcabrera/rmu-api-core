@@ -1,13 +1,13 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
-import type { RaceRepository } from '../../ports/race-repository.js';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
 import { SyncRaceRealmCommand } from '../commands/sync-race-realm.command.js';
 
 @CommandHandler(SyncRaceRealmCommand)
 export class SyncRaceRealmHandler implements ICommandHandler<SyncRaceRealmCommand, void> {
   private readonly logger = new Logger(SyncRaceRealmHandler.name);
 
-  constructor(@Inject('RaceRepository') private readonly raceRepository: RaceRepository) {}
+  constructor(@Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository) {}
 
   // Idempotent: it sets the realm's current values, so a redelivered event changes nothing.
   async execute(command: SyncRaceRealmCommand): Promise<void> {

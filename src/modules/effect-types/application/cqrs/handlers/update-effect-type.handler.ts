@@ -3,16 +3,16 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { EffectType } from '../../../domain/aggregates/effect-type.js';
 import { UpdateEffectTypeCommand } from '../commands/update-effect-type.command.js';
-import type { EffectTypeRepository } from '../../ports/effect-type-repository.js';
-import type { EffectTypeGuardPort } from '../../ports/effect-type-guard.port.js';
+import { EFFECT_TYPE_REPOSITORY, type EffectTypeRepository } from '../../ports/effect-type-repository.port.js';
+import { EFFECT_TYPE_GUARD, type EffectTypeGuardPort } from '../../ports/effect-type-guard.port.js';
 
 @CommandHandler(UpdateEffectTypeCommand)
 export class UpdateEffectTypeHandler implements ICommandHandler<UpdateEffectTypeCommand, EffectType> {
   private readonly logger = new Logger(UpdateEffectTypeHandler.name);
 
   constructor(
-    @Inject('EffectTypeRepository') private readonly effectTypeRepository: EffectTypeRepository,
-    @Inject('EffectTypeGuardPort') private readonly guard: EffectTypeGuardPort,
+    @Inject(EFFECT_TYPE_REPOSITORY) private readonly effectTypeRepository: EffectTypeRepository,
+    @Inject(EFFECT_TYPE_GUARD) private readonly guard: EffectTypeGuardPort,
   ) {}
 
   async execute(command: UpdateEffectTypeCommand): Promise<EffectType> {

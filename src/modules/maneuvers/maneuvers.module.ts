@@ -14,6 +14,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ManeuverTableModel, ManeuverTableSchema } from './infrastructure/persistence/models/maneuver-table.model.js';
 import { MongoManeuverTableRepository } from './infrastructure/db/mongo.maneuver-table.repository.js';
 import { AbsoluteManeuverTableProvider } from './application/services/absolute-maneuver-table.provider.js';
+import { MANEUVER_TABLE_REPOSITORY } from './application/ports/maneuver-table-repository.port.js';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { AbsoluteManeuverTableProvider } from './application/services/absolute-m
     AbsoluteManeuverHandler,
     EnduranceManeuverHandler,
     {
-      provide: 'ManeuverTableRepository',
+      provide: MANEUVER_TABLE_REPOSITORY,
       useClass: MongoManeuverTableRepository,
     },
   ],

@@ -2,15 +2,15 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { Profession } from '../../../domain/aggregates/profession.js';
-import type { ProfessionRepository } from '../../ports/profession.repository.js';
-import type { ProfessionGuardPort } from '../../ports/profession-guard.port.js';
+import { PROFESSION_REPOSITORY, type ProfessionRepository } from '../../ports/profession-repository.port.js';
+import { PROFESSION_GUARD, type ProfessionGuardPort } from '../../ports/profession-guard.port.js';
 import { UpdateProfessionCommand } from '../commands/update-profession.command.js';
 
 @CommandHandler(UpdateProfessionCommand)
 export class UpdateProfessionHandler implements ICommandHandler<UpdateProfessionCommand, Profession> {
   constructor(
-    @Inject('ProfessionRepository') private readonly professionRepository: ProfessionRepository,
-    @Inject('ProfessionGuardPort') private readonly professionGuard: ProfessionGuardPort,
+    @Inject(PROFESSION_REPOSITORY) private readonly professionRepository: ProfessionRepository,
+    @Inject(PROFESSION_GUARD) private readonly professionGuard: ProfessionGuardPort,
   ) {}
 
   async execute(command: UpdateProfessionCommand): Promise<Profession> {

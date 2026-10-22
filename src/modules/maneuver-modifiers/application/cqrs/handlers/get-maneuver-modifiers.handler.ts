@@ -1,16 +1,16 @@
 import { Inject } from '@nestjs/common';
 import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Page } from '../../../../shared/domain/entities/page.js';
+import { Page } from '../../../../shared/application/pagination/page.js';
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
-import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
-import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.js';
+import { MANEUVER_MODIFIER_GUARD, type ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import { MANEUVER_MODIFIER_REPOSITORY, type ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.port.js';
 import { GetManeuverModifiersQuery } from '../queries/get-maneuver-modifiers.query.js';
 
 @QueryHandler(GetManeuverModifiersQuery)
 export class GetManeuverModifiersHandler implements IQueryHandler<GetManeuverModifiersQuery, Page<ManeuverModifier>> {
   constructor(
-    @Inject('ManeuverModifierRepository') private readonly repository: ManeuverModifierRepository,
-    @Inject('ManeuverModifierGuardPort') private readonly guard: ManeuverModifierGuardPort,
+    @Inject(MANEUVER_MODIFIER_REPOSITORY) private readonly repository: ManeuverModifierRepository,
+    @Inject(MANEUVER_MODIFIER_GUARD) private readonly guard: ManeuverModifierGuardPort,
   ) {}
 
   async execute(query: GetManeuverModifiersQuery): Promise<Page<ManeuverModifier>> {

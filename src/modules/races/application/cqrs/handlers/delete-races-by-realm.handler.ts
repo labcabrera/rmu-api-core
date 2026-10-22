@@ -1,16 +1,16 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
-import type { RaceRepository } from '../../ports/race-repository.js';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
 import { DeleteRacesByRealmCommand } from '../commands/delete-races-by-realm.command.js';
 import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event.js';
-import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteRacesByRealmCommand)
 export class DeleteRacesByRealmHandler implements ICommandHandler<DeleteRacesByRealmCommand> {
   private readonly logger = new Logger(DeleteRacesByRealmHandler.name);
 
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
+    @Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 

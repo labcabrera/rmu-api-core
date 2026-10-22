@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { FindApplicableManeuverModifiersHandler } from '../../../../src/modules/maneuver-modifiers/application/cqrs/handlers/find-applicable-maneuver-modifiers.handler.js';
 import { FindApplicableManeuverModifiersQuery } from '../../../../src/modules/maneuver-modifiers/application/cqrs/queries/find-applicable-maneuver-modifiers.query.js';
-import type { ManeuverModifierRepository } from '../../../../src/modules/maneuver-modifiers/application/ports/maneuver-modifier-repository.js';
+import type { ManeuverModifierRepository } from '../../../../src/modules/maneuver-modifiers/application/ports/maneuver-modifier-repository.port.js';
 import { ManeuverModifier } from '../../../../src/modules/maneuver-modifiers/domain/aggregates/maneuver-modifier.js';
 import { ManeuverModifierGuardAdapter } from '../../../../src/modules/maneuver-modifiers/infrastructure/security/maneuver-modifier-guard.adapter.js';
 import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
-import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository.js';
+import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository.port.js';
 import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
 
 const modifier = (key: string, scope: { skillIds?: string[]; categoryIds?: string[] }, accessType: 'public' | 'private' = 'public') =>

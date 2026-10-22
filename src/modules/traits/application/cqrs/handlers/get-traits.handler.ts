@@ -2,15 +2,15 @@ import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { GetTraitsQuery } from '../queries/get-traits.query.js';
 import { Trait } from '../../../domain/aggregates/trait.js';
-import type { TraitRepository } from '../../ports/trait.repository.js';
-import { Page } from '../../../../shared/domain/entities/page.js';
-import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
+import { TRAIT_REPOSITORY, type TraitRepository } from '../../ports/trait-repository.port.js';
+import { Page } from '../../../../shared/application/pagination/page.js';
+import { TRAIT_GUARD, type TraitGuardPort } from '../../ports/trait-guard.port.js';
 
 @QueryHandler(GetTraitsQuery)
 export class GetTraitsHandler implements IQueryHandler<GetTraitsQuery, Page<Trait>> {
   constructor(
-    @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
-    @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
+    @Inject(TRAIT_REPOSITORY) private readonly traitRepository: TraitRepository,
+    @Inject(TRAIT_GUARD) private readonly traitGuard: TraitGuardPort,
   ) {}
 
   async execute(query: GetTraitsQuery): Promise<Page<Trait>> {

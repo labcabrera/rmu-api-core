@@ -6,10 +6,11 @@ import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { SharedModule } from '../shared/shared.module.js';
 import { CreateSkillCategoryHandler } from './application/cqrs/handlers/create-skill-category.handler.js';
 import { GetSkillCategoriesHandler } from './application/cqrs/handlers/get-skill-categories.handler.js';
-import { GetSkillCategoryHandler } from './application/cqrs/handlers/get-skill-category.query.handler.js';
+import { GetSkillCategoryHandler } from './application/cqrs/handlers/get-skill-category.handler.js';
 import { MongoSkillCategoryRepository } from './infrastructure/db/mongo.skill-category.repository.js';
 import { SkillCategoryModel, SkillCategorySchema } from './infrastructure/persistence/models/skill-category.model.js';
 import { SkillCategoryController } from './interfaces/http/skill-categories.controller.js';
+import { SKILL_CATEGORY_REPOSITORY } from './application/ports/skill-category-repository.port.js';
 
 @Module({
   imports: [
@@ -25,10 +26,10 @@ import { SkillCategoryController } from './interfaces/http/skill-categories.cont
     GetSkillCategoryHandler,
     GetSkillCategoriesHandler,
     {
-      provide: 'SkillCategoryRepository',
+      provide: SKILL_CATEGORY_REPOSITORY,
       useClass: MongoSkillCategoryRepository,
     },
   ],
-  exports: ['SkillCategoryRepository'],
+  exports: [SKILL_CATEGORY_REPOSITORY],
 })
 export class SkillCategoriesModule {}

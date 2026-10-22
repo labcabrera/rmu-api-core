@@ -7,6 +7,7 @@ import { GetHealingTablesHandler } from './application/cqrs/handlers/get-healing
 import { MongoHealingTablesRepository } from './infrastructure/db/mongo.healing-tables.repository.js';
 import { HealingTablesModel, HealingTablesSchema } from './infrastructure/persistence/models/healing-tables.model.js';
 import { HealingTablesController } from './interfaces/http/healing-tables.controller.js';
+import { HEALING_TABLES_REPOSITORY } from './application/ports/healing-tables-repository.port.js';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { HealingTablesController } from './interfaces/http/healing-tables.contro
   providers: [
     GetHealingTablesHandler,
     {
-      provide: 'HealingTablesRepository',
+      provide: HEALING_TABLES_REPOSITORY,
       useClass: MongoHealingTablesRepository,
     },
   ],

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { EnumerationRepository } from '../../application/ports/enumeration-repository.js';
+import type { EnumerationRepository } from '../../application/ports/enumeration-repository.port.js';
 import { Enumeration } from '../../domain/aggregates/enumeration.js';
 import { type EnumerationDocument, EnumerationModel } from '../persistence/models/enumeration.model.js';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()

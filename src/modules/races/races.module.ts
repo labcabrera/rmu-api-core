@@ -6,12 +6,12 @@ import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { RaceController } from './interfaces/http/race.controller.js';
 import { MongoRaceRepository } from './infrastructure/db/mongo.race.repository.js';
 import { RealmsModule } from '../realms/realms.module.js';
-import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race-model.js';
+import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race.model.js';
 import { DeleteRaceHandler } from './application/cqrs/handlers/delete-race.handler.js';
 import { UpdateRaceHandler } from './application/cqrs/handlers/update-race.handler.js';
 import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handler.js';
-import { GetRaceHandler } from './application/cqrs/handlers/get-race.query.handler.js';
-import { GetRacesHandler } from './application/cqrs/handlers/get-races.query.handler.js';
+import { GetRaceHandler } from './application/cqrs/handlers/get-race.handler.js';
+import { GetRacesHandler } from './application/cqrs/handlers/get-races.handler.js';
 import { SharedModule } from '../shared/shared.module.js';
 import { RaceGuardAdapter } from './infrastructure/security/race-guard.adapter.js';
 import { AddRaceTraitHandler } from './application/cqrs/handlers/add-race-trait.handler.js';
@@ -21,6 +21,8 @@ import { KafkaRealmEventConsumer } from './interfaces/messaging/kafka.realm-even
 import { DeleteRacesByRealmHandler } from './application/cqrs/handlers/delete-races-by-realm.handler.js';
 import { AddRaceSkillBonusHandler } from './application/cqrs/handlers/add-race-skill-bonus.handler.js';
 import { DeleteRaceSkillBonusHandler } from './application/cqrs/handlers/delete-race-skill-bonus.handler.js';
+import { RACE_GUARD } from './application/ports/race-guard.port.js';
+import { RACE_REPOSITORY } from './application/ports/race-repository.port.js';
 
 @Module({
   imports: [
@@ -45,14 +47,14 @@ import { DeleteRaceSkillBonusHandler } from './application/cqrs/handlers/delete-
     AddRaceSkillBonusHandler,
     DeleteRaceSkillBonusHandler,
     {
-      provide: 'RaceRepository',
+      provide: RACE_REPOSITORY,
       useClass: MongoRaceRepository,
     },
     {
-      provide: 'RaceGuardPort',
+      provide: RACE_GUARD,
       useClass: RaceGuardAdapter,
     },
   ],
-  exports: ['RaceRepository'],
+  exports: [RACE_REPOSITORY],
 })
 export class RacesModule {}

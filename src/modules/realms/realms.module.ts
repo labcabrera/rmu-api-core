@@ -5,7 +5,7 @@ import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { MongoRealmRepository } from './infrastructure/db/mongo.realm.repository.js';
 import { RealmController } from './interfaces/http/realm.controller.js';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RealmModel, RealmSchema } from './infrastructure/persistence/models/realm-model.js';
+import { RealmModel, RealmSchema } from './infrastructure/persistence/models/realm.model.js';
 import { CreateRealmHandler } from './application/cqrs/handlers/create-realm.handler.js';
 import { DeleteRealmHandler } from './application/cqrs/handlers/delete-realm.handler.js';
 import { GetRealmHandler } from './application/cqrs/handlers/get-realm.handler.js';
@@ -13,6 +13,8 @@ import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler
 import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler.js';
 import { SharedModule } from '../shared/shared.module.js';
 import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter.js';
+import { REALM_GUARD } from './application/ports/realm-guard.port.js';
+import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
 
 @Module({
   imports: [
@@ -30,14 +32,14 @@ import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter
     UpdateRealmHandler,
     DeleteRealmHandler,
     {
-      provide: 'RealmRepository',
+      provide: REALM_REPOSITORY,
       useClass: MongoRealmRepository,
     },
     {
-      provide: 'RealmGuardPort',
+      provide: REALM_GUARD,
       useClass: RealmGuardAdapter,
     },
   ],
-  exports: ['RealmRepository'],
+  exports: [REALM_REPOSITORY],
 })
 export class RealmsModule {}

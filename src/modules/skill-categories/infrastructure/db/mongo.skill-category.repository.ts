@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { SkillCategoryRepository } from '../../../realms/application/ports/skill-category-repository.js';
-import { Page } from '../../../shared/domain/entities/page.js';
+import type { SkillCategoryRepository } from '../../application/ports/skill-category-repository.port.js';
+import { Page } from '../../../shared/application/pagination/page.js';
 import { SkillCategory } from '../../domain/entities/skill-category.js';
 import { type SkillCategoryDocument, SkillCategoryModel } from '../persistence/models/skill-category.model.js';
 import { ManeuverProfiles } from '../../domain/value-objects/maneuver-profile.vo.js';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 
 @Injectable()
 export class MongoSkillCategoryRepository implements SkillCategoryRepository {

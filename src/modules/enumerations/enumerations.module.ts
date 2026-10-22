@@ -6,14 +6,16 @@ import { EnumerationController } from './interfaces/http/enumeration.controller.
 import { SharedModule } from '../shared/shared.module.js';
 import { MongoEnumerationRepository } from './infrastructure/db/mongo.enumeration.repository.js';
 import { MongooseModule } from '@nestjs/mongoose';
-import { GetEnumerationHandler } from './application/cqrs/handlers/get-enumeration.query.handler.js';
+import { GetEnumerationHandler } from './application/cqrs/handlers/get-enumeration.handler.js';
 import { EnumerationGuardAdapter } from './infrastructure/security/enumeration-guard.adapter.js';
 import { EnumerationModel, EnumerationSchema } from './infrastructure/persistence/models/enumeration.model.js';
 import { CreateEnumerationHandler } from './application/cqrs/handlers/create-enumeration.handler.js';
 import { UpdateEnumerationHandler } from './application/cqrs/handlers/update-enumeration.handler.js';
-import { GetEnumerationsHandler } from './application/cqrs/handlers/get-enumerations.query.handler.js';
+import { GetEnumerationsHandler } from './application/cqrs/handlers/get-enumerations.handler.js';
 import { DeleteEnumerationHandler } from './application/cqrs/handlers/delete-enumeration.handler.js';
 import { EnumerationCategoryController } from './interfaces/http/enumeration-category.controller.js';
+import { ENUMERATION_GUARD } from './application/ports/enumeration-guard.port.js';
+import { ENUMERATION_REPOSITORY } from './application/ports/enumeration-repository.port.js';
 
 @Module({
   imports: [
@@ -31,14 +33,14 @@ import { EnumerationCategoryController } from './interfaces/http/enumeration-cat
     UpdateEnumerationHandler,
     DeleteEnumerationHandler,
     {
-      provide: 'EnumerationRepository',
+      provide: ENUMERATION_REPOSITORY,
       useClass: MongoEnumerationRepository,
     },
     {
-      provide: 'EnumerationGuardPort',
+      provide: ENUMERATION_GUARD,
       useClass: EnumerationGuardAdapter,
     },
   ],
-  exports: ['EnumerationRepository'],
+  exports: [ENUMERATION_REPOSITORY],
 })
 export class EnumerationsModule {}

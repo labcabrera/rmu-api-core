@@ -2,16 +2,16 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { CreateTraitCommand } from '../commands/create-trait.command.js';
 import { Trait } from '../../../domain/aggregates/trait.js';
-import type { TraitRepository } from '../../ports/trait.repository.js';
+import { TRAIT_REPOSITORY, type TraitRepository } from '../../ports/trait-repository.port.js';
 import { ConflictError } from '../../../../shared/domain/errors/errors.js';
-import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(CreateTraitCommand)
 export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, Trait> {
   private readonly logger = new Logger(CreateTraitHandler.name);
 
   constructor(
-    @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
+    @Inject(TRAIT_REPOSITORY) private readonly traitRepository: TraitRepository,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 

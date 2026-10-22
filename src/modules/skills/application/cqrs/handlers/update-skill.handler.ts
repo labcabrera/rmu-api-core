@@ -1,11 +1,14 @@
 import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors.js';
-import type { SkillRepository } from '../../ports/skill-repository.js';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository.js';
+import { SKILL_REPOSITORY, type SkillRepository } from '../../ports/skill-repository.port.js';
+import {
+  SKILL_CATEGORY_REPOSITORY,
+  type SkillCategoryRepository,
+} from '../../../../skill-categories/application/ports/skill-category-repository.port.js';
 import type { SkillView } from '../../read-models/skill-view.js';
 import { SkillViewService } from '../../services/skill-view.service.js';
-import type { SkillGuardPort } from '../../ports/skill-guard.js';
+import { SKILL_GUARD, type SkillGuardPort } from '../../ports/skill-guard.port.js';
 import { UpdateSkillCommand } from '../commands/update-skill.command.js';
 
 @CommandHandler(UpdateSkillCommand)
@@ -13,9 +16,9 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
   private readonly logger = new Logger(UpdateSkillHandler.name);
 
   constructor(
-    @Inject('SkillRepository') private readonly skillRepository: SkillRepository,
-    @Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository,
-    @Inject('SkillGuardPort') private readonly skillGuard: SkillGuardPort,
+    @Inject(SKILL_REPOSITORY) private readonly skillRepository: SkillRepository,
+    @Inject(SKILL_CATEGORY_REPOSITORY) private readonly skillCategoryRepository: SkillCategoryRepository,
+    @Inject(SKILL_GUARD) private readonly skillGuard: SkillGuardPort,
     private readonly skillViewService: SkillViewService,
   ) {}
 

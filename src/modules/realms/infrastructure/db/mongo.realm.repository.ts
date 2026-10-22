@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import type { RealmRepository } from '../../application/ports/realm-repository.js';
+import type { RealmRepository } from '../../application/ports/realm-repository.port.js';
 import { Realm } from '../../domain/aggregates/realm.js';
-import { RealmModel, type RealmDocument } from '../persistence/models/realm-model.js';
+import { RealmModel, type RealmDocument } from '../persistence/models/realm.model.js';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()

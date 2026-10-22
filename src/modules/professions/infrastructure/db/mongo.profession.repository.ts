@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
-import type { ProfessionRepository } from '../../application/ports/profession.repository.js';
-import { type ProfessionDocument, ProfessionModel } from '../persistence/models/profession-model.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
+import type { ProfessionRepository } from '../../application/ports/profession-repository.port.js';
+import { type ProfessionDocument, ProfessionModel } from '../persistence/models/profession.model.js';
 import { Profession } from '../../domain/aggregates/profession.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 

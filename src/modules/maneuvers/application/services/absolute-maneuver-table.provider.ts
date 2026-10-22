@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 import { AbsoluteManeuverService, DEFAULT_ABSOLUTE_MANEUVER_TABLE } from '../../domain/services/absolute-maneuver.service.js';
 import { AbsoluteManeuverTable } from '../../domain/value-objects/absolute-maneuver-table.vo.js';
-import type { ManeuverTableRepository } from '../ports/maneuver-table-repository.js';
+import { MANEUVER_TABLE_REPOSITORY, type ManeuverTableRepository } from '../ports/maneuver-table-repository.port.js';
 
 /** Looks absolute maneuver tables up in code first and then in the database. */
 @Injectable()
 export class AbsoluteManeuverTableProvider {
   constructor(
     private readonly absoluteManeuverService: AbsoluteManeuverService,
-    @Inject('ManeuverTableRepository') private readonly maneuverTableRepository: ManeuverTableRepository,
+    @Inject(MANEUVER_TABLE_REPOSITORY) private readonly maneuverTableRepository: ManeuverTableRepository,
   ) {}
 
   async getTable(tableName?: string): Promise<AbsoluteManeuverTable> {
