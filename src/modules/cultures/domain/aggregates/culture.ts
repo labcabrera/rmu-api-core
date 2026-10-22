@@ -75,6 +75,7 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     if (props.name) this.props.name = props.name;
     if (props.description !== undefined) this.props.description = props.description;
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
+    if (props.accessType !== undefined) this.props.accessType = props.accessType;
     if (props.skillRanks !== undefined) this.props.skillRanks = props.skillRanks;
     if (props.languages !== undefined) this.props.languages = props.languages;
     if (props.suggestedCrafts !== undefined) this.props.suggestedCrafts = props.suggestedCrafts;

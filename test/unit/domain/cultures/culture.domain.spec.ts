@@ -61,7 +61,7 @@ describe('Culture domain aggregate', () => {
     expect(culture.getUncommittedEvents()).toEqual([]);
   });
 
-  it('updates text, nullable media, skill ranks and the new fields while preserving owner', () => {
+  it('updates text, nullable media, skill ranks, access type and the new fields while preserving owner', () => {
     const createdAt = new Date('2025-01-01T00:00:00.000Z');
     const culture = Culture.fromProps(makeCultureProps({ createdAt, owner: 'owner-1' }));
     const skillRanks = [skill('skill-2', 1, 'desert')];
@@ -86,7 +86,7 @@ describe('Culture domain aggregate', () => {
       suggestedCrafts: 'crafts',
       suggestedVocations: 'vocations',
       owner: 'owner-1',
-      accessType: 'private',
+      accessType: 'public',
       createdAt,
     });
     expect(culture.updatedAt).toBeInstanceOf(Date);

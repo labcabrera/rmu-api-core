@@ -4,7 +4,6 @@ import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { UpdateCultureCommand } from '../commands/update-culture.command.js';
 import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-repository.port.js';
 import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
-import { CultureUpdatedEvent } from '../../../domain/events/culture-updated.event.js';
 import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
 import { CultureViewService } from '../../services/culture-view.service.js';
 import type { CultureView } from '../../read-models/culture-view.js';
@@ -39,7 +38,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
       suggestedVocations: command.suggestedVocations,
     });
     const updated = await this.cultureRepository.update(command.id, culture);
-    await this.events.publish('culture', new CultureUpdatedEvent(updated.getProps()));
+    await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);
   }
 }

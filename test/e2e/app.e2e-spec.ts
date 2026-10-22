@@ -20,7 +20,13 @@ const TOKEN = 'e2e-token';
 const USER = { id: 'e2e-user', roles: ['rmu-admin'] };
 const PLAYER_TOKEN = 'e2e-player-token';
 const PLAYER = { id: 'e2e-player', roles: ['rmu-user'] };
-const USERS: Record<string, typeof USER> = { [`Bearer ${TOKEN}`]: USER, [`Bearer ${PLAYER_TOKEN}`]: PLAYER };
+const OTHER_TOKEN = 'e2e-other-token';
+const OTHER = { id: 'e2e-other', roles: ['rmu-user'] };
+const USERS: Record<string, typeof USER> = {
+  [`Bearer ${TOKEN}`]: USER,
+  [`Bearer ${PLAYER_TOKEN}`]: PLAYER,
+  [`Bearer ${OTHER_TOKEN}`]: OTHER,
+};
 
 const testGuard = {
   canActivate(context: ExecutionContext) {
@@ -166,6 +172,53 @@ describe('AppModule (e2e)', () => {
     const race = await createRace(auth, realm.id);
 
     await request(server).delete(`/v1/races/${race.id}`).set('Authorization', auth).expect(204);
+  });
+
+  describe('permissions', () => {
+    const admin = `Bearer ${TOKEN}`;
+    const owner = `Bearer ${PLAYER_TOKEN}`;
+    const other = `Bearer ${OTHER_TOKEN}`;
+    const ids = (body: unknown) => (body as { content: { id: string }[] }).content.map(item => item.id);
+
+    it('a private realm and its races are visible and editable only by their owner and admins', async () => {
+      const realm = await createRealm(owner, 'Private realm');
+      const race = await createRace(owner, realm.id);
+
+      for (const [path, patch] of [
+        [`/v1/realms/${realm.id}`, { name: 'Renamed realm' }],
+        [`/v1/races/${race.id}`, { name: 'Renamed race' }],
+      ] as const) {
+        await request(server).get(path).set('Authorization', owner).expect(200);
+        await request(server).get(path).set('Authorization', admin).expect(200);
+        await request(server).get(path).set('Authorization', other).expect(403);
+        await request(server).patch(path).set('Authorization', other).send(patch).expect(403);
+        await request(server).delete(path).set('Authorization', other).expect(403);
+        await request(server).patch(path).set('Authorization', owner).send(patch).expect(200);
+        await request(server).patch(path).set('Authorization', admin).send(patch).expect(200);
+      }
+
+      const realmsOfOther = await request(server).get('/v1/realms?size=1000').set('Authorization', other).expect(200);
+      const racesOfOther = await request(server).get('/v1/races?size=1000').set('Authorization', other).expect(200);
+      expect(ids(realmsOfOther.body)).not.toContain(realm.id);
+      expect(ids(racesOfOther.body)).not.toContain(race.id);
+      const racesOfAdmin = await request(server).get('/v1/races?size=1000').set('Authorization', admin).expect(200);
+      expect(ids(racesOfAdmin.body)).toContain(race.id);
+
+      await request(server).delete(`/v1/races/${race.id}`).set('Authorization', admin).expect(204);
+      await request(server).delete(`/v1/realms/${realm.id}`).set('Authorization', owner).expect(204);
+    });
+
+    it('a public realm is visible to everyone but editable only by its owner and admins', async () => {
+      const realm = await createRealm(owner, 'Public realm');
+      await request(server).patch(`/v1/realms/${realm.id}`).set('Authorization', owner).send({ accessType: 'public' }).expect(200);
+
+      await request(server).get(`/v1/realms/${realm.id}`).set('Authorization', other).expect(200);
+      const listed = await request(server).get('/v1/realms?size=1000').set('Authorization', other).expect(200);
+      expect(ids(listed.body)).toContain(realm.id);
+      await request(server).patch(`/v1/realms/${realm.id}`).set('Authorization', other).send({ name: 'Taken' }).expect(403);
+      await request(server).delete(`/v1/realms/${realm.id}`).set('Authorization', other).expect(403);
+      await request(server).delete(`/v1/realms/${realm.id}`).set('Authorization', admin).expect(204);
+    });
   });
 
   it('the realm event consumer keeps the races of a realm in step', async () => {

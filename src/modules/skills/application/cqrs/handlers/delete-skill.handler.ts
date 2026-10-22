@@ -2,10 +2,6 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { SKILL_REPOSITORY, type SkillRepository } from '../../ports/skill-repository.port.js';
-import {
-  SKILL_CATEGORY_REPOSITORY,
-  type SkillCategoryRepository,
-} from '../../../../skill-categories/application/ports/skill-category-repository.port.js';
 import { SKILL_GUARD, type SkillGuardPort } from '../../ports/skill-guard.port.js';
 import { DeleteSkillCommand } from '../commands/delete-skill.command.js';
 
@@ -15,7 +11,6 @@ export class DeleteSkillHandler implements ICommandHandler<DeleteSkillCommand, v
 
   constructor(
     @Inject(SKILL_REPOSITORY) private readonly skillRepository: SkillRepository,
-    @Inject(SKILL_CATEGORY_REPOSITORY) private readonly skillCategoryRepository: SkillCategoryRepository,
     @Inject(SKILL_GUARD) private readonly skillGuard: SkillGuardPort,
   ) {}
 

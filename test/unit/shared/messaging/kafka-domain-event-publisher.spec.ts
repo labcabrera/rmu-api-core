@@ -19,7 +19,7 @@ class Thing extends BaseAggregateRoot<{ id: string }> {
   }
 }
 
-const setup = (emit = vi.fn(() => Promise.resolve())) => {
+const setup = (emit = vi.fn<(topic: string, message: unknown) => Promise<void>>(() => Promise.resolve())) => {
   const publisher = new KafkaDomainEventPublisher({ emit } as unknown as KafkaProducerService);
   return { publisher, emit };
 };
