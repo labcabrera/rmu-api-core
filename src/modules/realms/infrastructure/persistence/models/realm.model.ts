@@ -39,3 +39,6 @@ export class RealmModel {
 }
 
 export const RealmSchema = SchemaFactory.createForClass(RealmModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+RealmSchema.index({ owner: 1 });
+RealmSchema.index({ accessType: 1 });

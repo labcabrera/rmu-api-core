@@ -5,7 +5,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { KafkaProducerService } from '../../src/modules/shared/infrastructure/messaging/kafka-producer.service.js';
 import { JwtAuthGuard } from '../../src/modules/shared/infrastructure/security/jwt-auth.guard.js';
-import { DomainExceptionFilter } from '../../src/modules/shared/interfaces/http/domain-exception.filter.js';
+import { HttpExceptionFilter } from '../../src/modules/shared/interfaces/http/http-exception.filter.js';
 import type { KafkaContext } from '@nestjs/microservices';
 import { KafkaRealmEventConsumer } from '../../src/modules/races/interfaces/messaging/kafka.realm-event-consumer.js';
 import { DomainEvent } from '../../src/modules/shared/domain/events/domain-event.js';
@@ -59,7 +59,7 @@ describe('AppModule (e2e)', () => {
 
     app = moduleRef.createNestApplication({ logger: ['error', 'warn'] });
     app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true }, whitelist: true }));
-    app.useGlobalFilters(new DomainExceptionFilter());
+    app.useGlobalFilters(new HttpExceptionFilter());
     await app.init();
     server = app.getHttpServer() as App;
   });
@@ -75,7 +75,8 @@ describe('AppModule (e2e)', () => {
   });
 
   it('GET /v1/races without a token is 401', async () => {
-    await request(server).get('/v1/races').expect(401);
+    const res = await request(server).get('/v1/races').expect(401);
+    expect(res.body).toMatchObject({ statusCode: 401, error: 'UnauthorizedException', path: '/v1/races' });
   });
 
   it('every OpenAPI operation has a unique operationId', () => {
@@ -103,7 +104,9 @@ describe('AppModule (e2e)', () => {
   });
 
   it('POST /v1/realms validates the body', async () => {
-    await request(server).post('/v1/realms').set('Authorization', `Bearer ${TOKEN}`).send({}).expect(400);
+    const res = await request(server).post('/v1/realms').set('Authorization', `Bearer ${TOKEN}`).send({}).expect(400);
+    expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/realms' });
+    expect((res.body as { message: unknown }).message).toEqual(expect.arrayContaining([expect.any(String)]));
   });
 
   it('POST /v1/realms persists the realm and emits an event', async () => {

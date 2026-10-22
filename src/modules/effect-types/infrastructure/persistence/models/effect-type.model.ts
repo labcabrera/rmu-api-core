@@ -52,3 +52,6 @@ export class EffectTypeModel {
 }
 
 export const EffectTypeSchema = SchemaFactory.createForClass(EffectTypeModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+EffectTypeSchema.index({ owner: 1 });
+EffectTypeSchema.index({ accessType: 1 });

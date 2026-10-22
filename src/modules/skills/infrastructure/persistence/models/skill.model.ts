@@ -37,3 +37,7 @@ export class SkillModel {
 }
 
 export const SkillSchema = SchemaFactory.createForClass(SkillModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+SkillSchema.index({ owner: 1 });
+SkillSchema.index({ accessType: 1 });
+SkillSchema.index({ categoryId: 1 });
