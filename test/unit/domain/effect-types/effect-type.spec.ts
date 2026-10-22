@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { NotModifiedError } from '../../../../src/modules/shared/domain/errors/errors.js';
 import { EffectType } from '../../../../src/modules/effect-types/domain/aggregates/effect-type.js';
 
 describe('EffectType', () => {
@@ -70,6 +69,6 @@ describe('EffectType', () => {
       entitySource: 'user',
     });
 
-    expect(() => effectType.update({ isPersistent: false })).toThrow(NotModifiedError);
+    expect(effectType.update({ isPersistent: false })).toBe(false);
   });
 });

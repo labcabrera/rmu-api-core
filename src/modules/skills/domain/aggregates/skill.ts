@@ -2,7 +2,6 @@ import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggreg
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import type { SkillProps } from './skill-props.js';
 import type { EnumerationCategory } from '../../../enumerations/domain/value-objects/enumeration-category.vo.js';
-import { NotModifiedError } from '../../../shared/domain/errors/errors.js';
 import { type ManeuverProfile, ManeuverProfiles } from '../../../skill-categories/domain/value-objects/maneuver-profile.vo.js';
 
 export type SkillUpdateProps = Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt' | 'maneuver'>> & {
@@ -54,7 +53,8 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     );
   }
 
-  update(props: SkillUpdateProps) {
+  /** Applies the given fields and returns whether any of them changed the state. */
+  update(props: SkillUpdateProps): boolean {
     let modified = false;
     if (props.categoryId) {
       modified = props.categoryId !== this.categoryId;
@@ -78,10 +78,9 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
       modified = modified || JSON.stringify(maneuver) !== JSON.stringify(this.maneuver);
       this.maneuver = maneuver;
     }
+    if (!modified) return false;
     this.updatedAt = new Date();
-    if (!modified) {
-      throw new NotModifiedError('Skill not modified');
-    }
+    return true;
   }
 
   public getProps(): SkillProps {

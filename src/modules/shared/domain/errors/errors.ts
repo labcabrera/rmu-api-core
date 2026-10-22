@@ -16,8 +16,6 @@ export class NotFoundError extends DomainError {
 }
 
 export class ConflictError extends DomainError {
-  public readonly status: number = 409;
-
   constructor(message: string) {
     super(message, 409);
     this.name = 'ConflictError';
@@ -25,19 +23,7 @@ export class ConflictError extends DomainError {
   }
 }
 
-export class NotModifiedError extends DomainError {
-  public readonly status: number = 304;
-
-  constructor(message: string) {
-    super(message, 304);
-    this.name = 'NotModifiedError';
-    Object.setPrototypeOf(this, NotModifiedError.prototype);
-  }
-}
-
 export class ValidationError extends DomainError {
-  public readonly status: number = 400;
-
   constructor(message: string) {
     super(message, 400);
     this.name = 'ValidationError';
@@ -46,8 +32,6 @@ export class ValidationError extends DomainError {
 }
 
 export class InvalidSearchExpression extends DomainError {
-  public readonly status: number = 400;
-
   constructor(message: string) {
     super(message, 400);
     this.name = 'InvalidSearchExpression';
@@ -56,7 +40,6 @@ export class InvalidSearchExpression extends DomainError {
 }
 
 export class UnauthorizedError extends DomainError {
-  public readonly status: number = 401;
   constructor(message: string) {
     super(message, 401);
     this.name = 'UnauthorizedError';
@@ -65,7 +48,6 @@ export class UnauthorizedError extends DomainError {
 }
 
 export class ForbiddenError extends DomainError {
-  public readonly status: number = 403;
   constructor(message: string) {
     super(message, 403);
     this.name = 'ForbiddenError';
