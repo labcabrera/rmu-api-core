@@ -2,15 +2,15 @@ import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Realm } from '../../../domain/aggregates/realm.js';
 import { GetRealmsQuery } from '../queries/get-realms.query.js';
-import type { RealmRepository } from '../../ports/realm-repository.js';
-import { Page } from '../../../../shared/domain/entities/page.js';
-import type { RealmGuardPort } from '../../ports/realm-guard.port.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../ports/realm-repository.port.js';
+import { Page } from '../../../../shared/application/pagination/page.js';
+import { REALM_GUARD, type RealmGuardPort } from '../../ports/realm-guard.port.js';
 
 @QueryHandler(GetRealmsQuery)
 export class GetRealmsHandler implements IQueryHandler<GetRealmsQuery, Page<Realm>> {
   constructor(
-    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RealmGuardPort') private readonly realmGuard: RealmGuardPort,
+    @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
+    @Inject(REALM_GUARD) private readonly realmGuard: RealmGuardPort,
   ) {}
 
   async execute(query: GetRealmsQuery): Promise<Page<Realm>> {

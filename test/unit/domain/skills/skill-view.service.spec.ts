@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { SkillCategoryRepository } from '../../../../src/modules/realms/application/ports/skill-category-repository.js';
+import type { SkillCategoryRepository } from '../../../../src/modules/skill-categories/application/ports/skill-category-repository.port.js';
 import { SkillCategory } from '../../../../src/modules/skill-categories/domain/entities/skill-category.js';
 import { SkillViewService } from '../../../../src/modules/skills/application/services/skill-view.service.js';
 import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { GetHealingTablesHandler } from '../../../../src/modules/healing-tables/application/cqrs/handlers/get-healing-tables.handler.js';
 import { GetHealingTablesQuery } from '../../../../src/modules/healing-tables/application/cqrs/queries/get-healing-tables.query.js';
-import type { HealingTablesRepository } from '../../../../src/modules/healing-tables/application/ports/healing-tables-repository.js';
+import type { HealingTablesRepository } from '../../../../src/modules/healing-tables/application/ports/healing-tables-repository.port.js';
 import type { HealingTables } from '../../../../src/modules/healing-tables/domain/value-objects/healing-tables.vo.js';
 import { MongoHealingTablesRepository } from '../../../../src/modules/healing-tables/infrastructure/db/mongo.healing-tables.repository.js';
 import { HealingTablesModel } from '../../../../src/modules/healing-tables/infrastructure/persistence/models/healing-tables.model.js';

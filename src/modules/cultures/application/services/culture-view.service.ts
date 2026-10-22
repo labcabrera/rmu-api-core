@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { SkillRepository } from '../../../skills/application/ports/skill-repository.js';
+import { SKILL_REPOSITORY, type SkillRepository } from '../../../skills/application/ports/skill-repository.port.js';
 import { Culture } from '../../domain/aggregates/culture.js';
 import { cultureDevelopmentCost } from '../../domain/services/culture-development-cost.js';
 import type { CultureView } from '../read-models/culture-view.js';
@@ -7,7 +7,7 @@ import type { CultureView } from '../read-models/culture-view.js';
 /** Builds the culture read model, resolving skill categories from the skill catalog to cost the ranks. */
 @Injectable()
 export class CultureViewService {
-  constructor(@Inject('SkillRepository') private readonly skillRepository: SkillRepository) {}
+  constructor(@Inject(SKILL_REPOSITORY) private readonly skillRepository: SkillRepository) {}
 
   async toView(culture: Culture): Promise<CultureView> {
     const [view] = await this.toViews([culture]);

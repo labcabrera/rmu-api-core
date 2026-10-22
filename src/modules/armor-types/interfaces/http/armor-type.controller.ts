@@ -3,13 +3,13 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
 import { ArmorTypeDto } from './dto/armor-type.dto.js';
 import { NotFoundError } from '../../../shared/domain/errors/errors.js';
-import type { ArmorTypeRepository } from '../../application/ports/armor-type-repository.js';
+import { ARMOR_TYPE_REPOSITORY, type ArmorTypeRepository } from '../../application/ports/armor-type-repository.port.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/armor-types')
 @ApiTags('Armor Types')
 export class ArmorTypeController {
-  constructor(@Inject('ArmorTypeRepository') private readonly armorTypeRepository: ArmorTypeRepository) {}
+  constructor(@Inject(ARMOR_TYPE_REPOSITORY) private readonly armorTypeRepository: ArmorTypeRepository) {}
 
   @Get(':id')
   @ApiOkResponse({ type: ArmorTypeDto })

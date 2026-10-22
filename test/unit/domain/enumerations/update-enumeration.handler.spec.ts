@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { UpdateEnumerationHandler } from '../../../../src/modules/enumerations/application/cqrs/handlers/update-enumeration.handler.js';
 import { UpdateEnumerationCommand } from '../../../../src/modules/enumerations/application/cqrs/commands/update-enumeration.command.js';
-import type { EnumerationRepository } from '../../../../src/modules/enumerations/application/ports/enumeration-repository.js';
-import type { EnumerationGuardPort } from '../../../../src/modules/enumerations/application/ports/enumeration-guard.js';
+import type { EnumerationRepository } from '../../../../src/modules/enumerations/application/ports/enumeration-repository.port.js';
+import type { EnumerationGuardPort } from '../../../../src/modules/enumerations/application/ports/enumeration-guard.port.js';
 import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration.js';
 import { ConflictError } from '../../../../src/modules/shared/domain/errors/errors.js';
-import { Page } from '../../../../src/modules/shared/domain/entities/page.js';
+import { Page } from '../../../../src/modules/shared/application/pagination/page.js';
 
 const westron = () =>
   Enumeration.fromProps({

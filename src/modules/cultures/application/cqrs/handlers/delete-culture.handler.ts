@@ -2,18 +2,18 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { DeleteCultureCommand } from '../commands/delete-culture.command.js';
-import type { CultureRepository } from '../../ports/culture-repository.js';
-import type { CultureGuardPort } from '../../ports/culture-guard.port.js';
+import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-repository.port.js';
+import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
 import { CultureDeletedEvent } from '../../../domain/events/culture-deleted.event.js';
-import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteCultureCommand)
 export class DeleteCultureHandler implements ICommandHandler<DeleteCultureCommand> {
   private readonly logger = new Logger(DeleteCultureHandler.name);
 
   constructor(
-    @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
-    @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
+    @Inject(CULTURE_REPOSITORY) private readonly cultureRepository: CultureRepository,
+    @Inject(CULTURE_GUARD) private readonly cultureGuard: CultureGuardPort,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { HealingTablesRepository } from '../../application/ports/healing-tables-repository.js';
+import type { HealingTablesRepository } from '../../application/ports/healing-tables-repository.port.js';
 import type { HealingTables } from '../../domain/value-objects/healing-tables.vo.js';
 import { type HealingTablesDocument, HealingTablesModel } from '../persistence/models/healing-tables.model.js';
 

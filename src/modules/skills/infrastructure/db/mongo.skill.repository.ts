@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { SkillRepository } from '../../application/ports/skill-repository.js';
+import type { SkillRepository } from '../../application/ports/skill-repository.port.js';
 import { Skill } from '../../domain/aggregates/skill.js';
 import { type SkillDocument, SkillModel } from '../persistence/models/skill.model.js';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 

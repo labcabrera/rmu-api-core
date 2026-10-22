@@ -1,9 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
-import { Page } from '../../../shared/domain/entities/page.js';
-import { ErrorDto } from '../../../shared/interfaces/http/dto/error-dto.js';
+import { Page } from '../../../shared/application/pagination/page.js';
 import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import { DeleteEffectTypeCommand } from '../../application/cqrs/commands/delete-effect-type.command.js';
 import { GetEffectTypeQuery } from '../../application/cqrs/queries/get-effect-type.query.js';
@@ -12,7 +11,9 @@ import { EffectType } from '../../domain/aggregates/effect-type.js';
 import { CreateEffectTypeDto } from './dto/create-effect-type.dto.js';
 import { EffectTypeDto, EffectTypePageDto } from './dto/effect-type.dto.js';
 import { UpdateEffectTypeDto } from './dto/update-effect-type.dto.js';
-import type { AuthenticatedRequest } from '../../../shared/interfaces/http/authenticated-request.js';
+import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
+import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
+import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/effect-types')
@@ -26,10 +27,10 @@ export class EffectTypeController {
   @Get(':id')
   @ApiOperation({ operationId: 'findEffectTypeById', summary: 'Find effect type by id' })
   @ApiOkResponse({ type: EffectTypeDto })
-  @ApiNotFoundResponse({ description: 'Effect type not found', type: ErrorDto })
-  async findById(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
-    const userId: string = req.user.id;
-    const roles: string[] = req.user.roles;
+  @ApiErrors({ 404: 'Effect type not found' })
+  async findById(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const query = new GetEffectTypeQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetEffectTypeQuery, EffectType>(query);
     return EffectTypeDto.fromEntity(entity);
@@ -38,9 +39,9 @@ export class EffectTypeController {
   @Get('')
   @ApiOperation({ operationId: 'findEffectTypes', summary: 'Find effect types by RSQL' })
   @ApiOkResponse({ type: EffectTypePageDto })
-  async find(@Query() dto: PagedQueryDto, @Request() req: AuthenticatedRequest): Promise<EffectTypePageDto> {
-    const userId: string = req.user.id;
-    const roles: string[] = req.user.roles;
+  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<EffectTypePageDto> {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const query = new GetEffectTypesQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetEffectTypesQuery, Page<EffectType>>(query);
     const mapped = page.content.map(effectType => EffectTypeDto.fromEntity(effectType));
@@ -50,10 +51,10 @@ export class EffectTypeController {
   @Post('')
   @HttpCode(201)
   @ApiOperation({ operationId: 'createEffectType', summary: 'Create effect type' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async create(@Body() dto: CreateEffectTypeDto, @Request() req: AuthenticatedRequest) {
-    const userId: string = req.user.id;
-    const roles: string[] = req.user.roles;
+  @ApiErrors()
+  async create(@Body() dto: CreateEffectTypeDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = CreateEffectTypeDto.toCommand(dto, userId, roles);
     const result = await this.commandBus.execute<CreateEffectTypeDto, EffectType>(command);
     return EffectTypeDto.fromEntity(result);
@@ -61,11 +62,10 @@ export class EffectTypeController {
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateEffectType', summary: 'Update effect type' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Effect type not found', type: ErrorDto })
-  async update(@Param('id') id: string, @Body() dto: UpdateEffectTypeDto, @Request() req: AuthenticatedRequest) {
-    const userId: string = req.user.id;
-    const roles: string[] = req.user.roles;
+  @ApiErrors({ 404: 'Effect type not found' })
+  async update(@Param('id') id: string, @Body() dto: UpdateEffectTypeDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = UpdateEffectTypeDto.toCommand(id, dto, userId, roles);
     const result = await this.commandBus.execute<UpdateEffectTypeDto, EffectType>(command);
     return EffectTypeDto.fromEntity(result);
@@ -74,11 +74,10 @@ export class EffectTypeController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteEffectType', summary: 'Delete effect type' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Effect type not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
-    const userId: string = req.user.id;
-    const roles: string[] = req.user.roles;
+  @ApiErrors({ 404: 'Effect type not found' })
+  async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = new DeleteEffectTypeCommand(id, userId, roles);
     await this.commandBus.execute(command);
   }

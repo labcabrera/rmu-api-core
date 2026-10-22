@@ -2,18 +2,18 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTraitCommand } from '../commands/delete-trait.command.js';
 import { TraitDeletedEvent } from '../../../domain/events/trait-deleted.event.js';
-import type { TraitRepository } from '../../ports/trait.repository.js';
+import { TRAIT_REPOSITORY, type TraitRepository } from '../../ports/trait-repository.port.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
-import type { TraitGuardPort } from '../../ports/trait-guard.port.js';
-import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
+import { TRAIT_GUARD, type TraitGuardPort } from '../../ports/trait-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteTraitCommand)
 export class DeleteTraitHandler implements ICommandHandler<DeleteTraitCommand> {
   private readonly logger = new Logger(DeleteTraitHandler.name);
 
   constructor(
-    @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
-    @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
+    @Inject(TRAIT_REPOSITORY) private readonly traitRepository: TraitRepository,
+    @Inject(TRAIT_GUARD) private readonly traitGuard: TraitGuardPort,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 

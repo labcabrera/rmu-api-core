@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { SkillCategoryRepository } from '../../../realms/application/ports/skill-category-repository.js';
+import {
+  SKILL_CATEGORY_REPOSITORY,
+  type SkillCategoryRepository,
+} from '../../../skill-categories/application/ports/skill-category-repository.port.js';
 import { ManeuverProfiles } from '../../../skill-categories/domain/value-objects/maneuver-profile.vo.js';
 import { Skill } from '../../domain/aggregates/skill.js';
 import type { SkillView } from '../read-models/skill-view.js';
 
 @Injectable()
 export class SkillViewService {
-  constructor(@Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository) {}
+  constructor(@Inject(SKILL_CATEGORY_REPOSITORY) private readonly skillCategoryRepository: SkillCategoryRepository) {}
 
   async toView(skill: Skill): Promise<SkillView> {
     const [view] = await this.toViews([skill]);

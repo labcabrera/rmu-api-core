@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Logger } from '@nestjs/common';
-import { KafkaDomainEventPublisher } from '../../../../src/modules/shared/infrastructure/messaging/kafka-domain-event-publisher.js';
+import { KafkaDomainEventPublisher } from '../../../../src/modules/shared/infrastructure/messaging/kafka.domain-event.publisher.js';
 import type { KafkaProducerService } from '../../../../src/modules/shared/infrastructure/messaging/kafka-producer.service.js';
 import { BaseAggregateRoot } from '../../../../src/modules/shared/domain/aggregates/base-aggregate.js';
 import { DomainEvent } from '../../../../src/modules/shared/domain/events/domain-event.js';

@@ -2,18 +2,18 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { Race } from '../../../domain/aggregates/race.js';
 import { CreateRaceCommand } from '../commands/create-race.command.js';
-import type { RealmRepository } from '../../../../realms/application/ports/realm-repository.js';
-import type { RaceRepository } from '../../ports/race-repository.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../../../realms/application/ports/realm-repository.port.js';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
 import { ValidationError } from '../../../../shared/domain/errors/errors.js';
-import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
   private readonly logger = new Logger(CreateRaceHandler.name);
 
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
+    @Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository,
+    @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 

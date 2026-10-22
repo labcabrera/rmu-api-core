@@ -1,18 +1,18 @@
 import { Inject } from '@nestjs/common';
 import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
-import type { SkillRepository } from '../../../../skills/application/ports/skill-repository.js';
+import { SKILL_REPOSITORY, type SkillRepository } from '../../../../skills/application/ports/skill-repository.port.js';
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
-import type { ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
-import type { ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.js';
+import { MANEUVER_MODIFIER_GUARD, type ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import { MANEUVER_MODIFIER_REPOSITORY, type ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.port.js';
 import { FindApplicableManeuverModifiersQuery } from '../queries/find-applicable-maneuver-modifiers.query.js';
 
 @QueryHandler(FindApplicableManeuverModifiersQuery)
 export class FindApplicableManeuverModifiersHandler implements IQueryHandler<FindApplicableManeuverModifiersQuery, ManeuverModifier[]> {
   constructor(
-    @Inject('ManeuverModifierRepository') private readonly repository: ManeuverModifierRepository,
-    @Inject('ManeuverModifierGuardPort') private readonly guard: ManeuverModifierGuardPort,
-    @Inject('SkillRepository') private readonly skillRepository: SkillRepository,
+    @Inject(MANEUVER_MODIFIER_REPOSITORY) private readonly repository: ManeuverModifierRepository,
+    @Inject(MANEUVER_MODIFIER_GUARD) private readonly guard: ManeuverModifierGuardPort,
+    @Inject(SKILL_REPOSITORY) private readonly skillRepository: SkillRepository,
   ) {}
 
   async execute(query: FindApplicableManeuverModifiersQuery): Promise<ManeuverModifier[]> {

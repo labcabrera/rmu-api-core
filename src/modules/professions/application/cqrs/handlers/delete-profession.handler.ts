@@ -1,17 +1,17 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
-import type { ProfessionRepository } from '../../ports/profession.repository.js';
-import type { ProfessionGuardPort } from '../../ports/profession-guard.port.js';
+import { PROFESSION_REPOSITORY, type ProfessionRepository } from '../../ports/profession-repository.port.js';
+import { PROFESSION_GUARD, type ProfessionGuardPort } from '../../ports/profession-guard.port.js';
 import { DeleteProfessionCommand } from '../commands/delete-profession.command.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { ProfessionDeletedEvent } from '../../../domain/events/profession-deleted.event.js';
-import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteProfessionCommand)
 export class DeleteProfessionHandler implements ICommandHandler<DeleteProfessionCommand, void> {
   constructor(
-    @Inject('ProfessionRepository') private readonly professionRepository: ProfessionRepository,
-    @Inject('ProfessionGuardPort') private readonly professionGuard: ProfessionGuardPort,
+    @Inject(PROFESSION_REPOSITORY) private readonly professionRepository: ProfessionRepository,
+    @Inject(PROFESSION_GUARD) private readonly professionGuard: ProfessionGuardPort,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 

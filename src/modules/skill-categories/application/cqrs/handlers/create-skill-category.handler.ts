@@ -4,11 +4,11 @@ import { ConflictError } from '../../../../shared/domain/errors/errors.js';
 import { CreateSkillCategoryCommand } from '../commands/create-skill-category.command.js';
 import { SkillCategory } from '../../../domain/entities/skill-category.js';
 import { ManeuverProfiles } from '../../../domain/value-objects/maneuver-profile.vo.js';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository.js';
+import { SKILL_CATEGORY_REPOSITORY, type SkillCategoryRepository } from '../../ports/skill-category-repository.port.js';
 
 @CommandHandler(CreateSkillCategoryCommand)
 export class CreateSkillCategoryHandler implements ICommandHandler<CreateSkillCategoryCommand, SkillCategory> {
-  constructor(@Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository) {}
+  constructor(@Inject(SKILL_CATEGORY_REPOSITORY) private readonly skillCategoryRepository: SkillCategoryRepository) {}
 
   async execute(command: CreateSkillCategoryCommand): Promise<SkillCategory> {
     const current = await this.skillCategoryRepository.findById(command.id);

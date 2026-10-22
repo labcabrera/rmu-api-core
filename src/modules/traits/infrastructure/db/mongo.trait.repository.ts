@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { type TraitDocument, TraitModel } from '../persistence/models/trait-model.js';
-import type { TraitRepository } from '../../application/ports/trait.repository.js';
+import { type TraitDocument, TraitModel } from '../persistence/models/trait.model.js';
+import type { TraitRepository } from '../../application/ports/trait-repository.port.js';
 import { Trait } from '../../domain/aggregates/trait.js';
-import { RsqlParser } from '../../../shared/infrastructure/persistence/repositories/rsql-parser.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()

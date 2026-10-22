@@ -1,11 +1,17 @@
 import { KeyValue } from '../../../shared/domain/entities/key-value.js';
-import { ResistanceRollQuery } from '../../application/cqrs/queries/resistance-roll.query.js';
 import { ResistanceRollResult, type ResistanceRollResultCode } from '../value-objects/resistance-roll-result.js';
 import { Injectable } from '@nestjs/common';
 
+export interface ResistanceRollInput {
+  readonly attackLevel: number;
+  readonly targetLevel: number;
+  readonly modifiers: KeyValue[] | null;
+  readonly roll: number;
+}
+
 @Injectable()
 export class ResistanceRollService {
-  execute(query: ResistanceRollQuery): ResistanceRollResult {
+  execute(query: ResistanceRollInput): ResistanceRollResult {
     const modifiers = [] as KeyValue[];
     if (query.modifiers) {
       query.modifiers.forEach(mod => modifiers.push({ key: mod.key, value: mod.value }));
