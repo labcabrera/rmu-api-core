@@ -19,8 +19,8 @@ help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
 check: ## Lint, type-check, unit and e2e tests (what CI runs before the build)
-	npm run check
-	npm run test:e2e
+	pnpm run check
+	pnpm run test:e2e
 
 docker-build: ## Build the local docker image
 	docker build -t "$(IMAGE_NAME)" .
@@ -63,15 +63,15 @@ create-release: ## Release develop to master with semantic-release (tag + CHANGE
 	git checkout $(MASTER_BRANCH) 2>/dev/null || git checkout -b $(MASTER_BRANCH) --track $(REMOTE)/$(MASTER_BRANCH)
 	git pull --ff-only $(REMOTE) $(MASTER_BRANCH)
 	git merge --no-ff --no-edit -m "Merge branch '$(DEVELOP_BRANCH)' into $(MASTER_BRANCH)" $(DEVELOP_BRANCH)
-	@RELEASE_BUMP="$(RELEASE_BUMP)" npx --no -- semantic-release --no-ci \
+	@RELEASE_BUMP="$(RELEASE_BUMP)" pnpm exec semantic-release --no-ci \
 		&& git describe --exact-match --tags HEAD >/dev/null 2>&1 \
 		|| { echo "No release was created, restoring $(MASTER_BRANCH) and returning to $(DEVELOP_BRANCH)" >&2; \
 			git reset -q --hard $(REMOTE)/$(MASTER_BRANCH); git checkout -q $(DEVELOP_BRANCH); exit 1; }
 	git checkout $(DEVELOP_BRANCH)
 	git merge --no-edit $(MASTER_BRANCH)
 	@version=$$(node -p "require('./package.json').version"); \
-		next=$$(npx --no -- semver -i patch "$$version")-SNAPSHOT; \
-		npm version --no-git-tag-version "$$next" >/dev/null \
-		&& git commit -q -m "chore: prepare next development version $$next" package.json package-lock.json \
+		next=$$(pnpm exec semver -i patch "$$version")-SNAPSHOT; \
+		pnpm pkg set version="$$next" \
+		&& git commit -q -m "chore: prepare next development version $$next" package.json \
 		&& echo "Released $$version, $(DEVELOP_BRANCH) is now at $$next"
 	git push $(REMOTE) $(DEVELOP_BRANCH)
