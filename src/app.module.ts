@@ -19,6 +19,7 @@ import { CulturesModule } from './modules/cultures/cultures.module.js';
 import { EffectTypesModule } from './modules/effect-types/effect-types.module.js';
 import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-modifiers.module.js';
 import { HealingTablesModule } from './modules/healing-tables/healing-tables.module.js';
+import { PsychologyTablesModule } from './modules/psychology-tables/psychology-tables.module.js';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { HealingTablesModule } from './modules/healing-tables/healing-tables.mod
     CulturesModule,
     ManeuverModifiersModule,
     HealingTablesModule,
+    PsychologyTablesModule,
   ],
 })
 export class AppModule {}

@@ -75,6 +75,13 @@ describe('Catalogs and calculations (e2e)', () => {
         restPeriodHours: 8,
         fullRestDayMultiplier: 2,
         talentMultipliers: { 'e2e-talent': 0.5 },
+        treatmentDifficulties: [{ procedure: 'dress', injuryType: 'skin-tissue', severity: 'medium', difficulty: 'h' }],
+        treatmentRules: {
+          headDifficultySteps: 3,
+          cauterizePenaltyPerBleeding: -2,
+          bleedingProcedures: ['pressure'],
+          tourniquetLocations: ['arm'],
+        },
       };
       await e2e.connection.collection('healing-tables').insertOne({ _id: 'core-law', ...tables } as never);
 
@@ -82,6 +89,52 @@ describe('Catalogs and calculations (e2e)', () => {
       expect(res.body).toEqual(tables);
       await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('admin')).expect(200);
       await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('owner')).expect(403);
+    });
+  });
+
+  describe('psychology tables', () => {
+    it('requires Core Law access', async () => {
+      await request(e2e.server).get('/v1/psychology-tables').expect(401);
+      const res = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      expect(res.body).toMatchObject({ statusCode: 403, error: 'ForbiddenError', path: '/v1/psychology-tables' });
+      await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('noRole')).expect(403);
+    });
+
+    it('answers 404 while the tables have not been imported, and returns them once they are', async () => {
+      const missing = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      expect(missing.body).toMatchObject({ code: 'not-found' });
+
+      // Made-up values with the shape of the import, not the rulebook tables.
+      const tables = {
+        frightLevels: [{ key: 'e2e-danger', level: 4 }],
+        frightLevelModifiers: [{ key: 'e2e-magic', level: 2 }],
+        fearResults: [
+          { min: 1, max: 9, severity: 'mild', result: 'balk', rallyModifier: 0 },
+          { min: 10, max: null, severity: 'extreme', result: 'broken', rallyModifier: -9 },
+        ],
+        morale: [
+          { min: null, max: 0, result: 'absolute-failure', outcome: 'refuses-hostile', moraleModifier: -1, moraleModifierDays: null },
+        ],
+        moraleUnusualEvent: { roll: 22, outcome: 'e2e' },
+        rally: [{ min: 1, max: null, result: 'success', fearSeverityChange: -1 }],
+        rallyUnusualEvent: { roll: 22, outcome: 'e2e', leaderFearRrBonus: 2, leaderHits: 3, durationDays: 4 },
+        rallyGroupModifier: { followersPerStep: 5, modifier: -5 },
+        resistance: [{ min: 1, max: null, result: 'mild-failure', severity: 'mild' }],
+        resistanceRoll: {
+          requiredTotal: 40,
+          attackLevelMultiplier: -3,
+          targetLevelMultiplier: 3,
+          ownRealmBonus: 5,
+          stats: { physical: 'co', fear: 'sd', channeling: 'in', essence: 'em', mentalism: 'pr' },
+          fearIgnoresInjuryPenalties: true,
+        },
+      };
+      await e2e.connection.collection('psychology-tables').insertOne({ _id: 'core-law', ...tables } as never);
+
+      const res = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual(tables);
+      await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('admin')).expect(200);
+      await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('owner')).expect(403);
     });
   });
 
