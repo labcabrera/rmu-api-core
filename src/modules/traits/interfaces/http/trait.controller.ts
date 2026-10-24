@@ -12,7 +12,7 @@ import { CreateTraitDto } from './dto/create-trait.dto.js';
 import { GetTraitsQuery } from '../../application/cqrs/queries/get-traits.query.js';
 import { GetTraitQuery } from '../../application/cqrs/queries/get-trait.query.js';
 import { Page } from '../../../shared/application/pagination/page.js';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
 import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
@@ -40,7 +40,7 @@ export class TraitController {
   @ApiOperation({ operationId: 'findTraits', summary: 'Find Traits by RSQL' })
   @ApiOkResponse({ type: TraitPageDto, description: 'Success' })
   @ApiErrors({ 400: 'Invalid RSQL query' })
-  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
+  async find(@Query() dto: CatalogPagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
     const query = new GetTraitsQuery(dto.q, dto.page, dto.size, user.id, user.roles);
     const page = await this.queryBus.execute<GetTraitsQuery, Page<Trait>>(query);
     const mapped = page.content.map(Trait => TraitDto.fromEntity(Trait));

@@ -1,11 +1,12 @@
-import { type ExecutionContext, type INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import { type ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { KafkaProducerService } from '../../src/modules/shared/infrastructure/messaging/kafka-producer.service.js';
 import { JwtAuthGuard } from '../../src/modules/shared/infrastructure/security/jwt-auth.guard.js';
-import { HttpExceptionFilter } from '../../src/modules/shared/interfaces/http/http-exception.filter.js';
+import { configureHttp } from '../../src/bootstrap/http.js';
 import type { KafkaContext } from '@nestjs/microservices';
 import { KafkaRealmEventConsumer } from '../../src/modules/races/interfaces/messaging/kafka.realm-event-consumer.js';
 import { DomainEvent } from '../../src/modules/shared/domain/events/domain-event.js';
@@ -40,7 +41,7 @@ const testGuard = {
 
 describe('AppModule (e2e)', () => {
   let mongo: MongoMemoryServer;
-  let app: INestApplication;
+  let app: NestExpressApplication;
   let server: App;
   const events: { topic: string; message: unknown }[] = [];
 
@@ -53,6 +54,7 @@ describe('AppModule (e2e)', () => {
       RMU_IAM_AUDIENCE: 'rmu-api',
       RMU_KAFKA_BROKERS: 'localhost:9092',
       RMU_KAFKA_CLIENT_ID: 'rmu-api-core-e2e',
+      RMU_THROTTLE_LIMIT: '0',
     });
 
     const { AppModule } = await import('../../src/app.module.js');
@@ -63,11 +65,10 @@ describe('AppModule (e2e)', () => {
       .useValue(testGuard)
       .compile();
 
-    app = moduleRef.createNestApplication({ logger: ['error', 'warn'] });
-    app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true }, whitelist: true }));
-    app.useGlobalFilters(new HttpExceptionFilter());
+    app = moduleRef.createNestApplication<NestExpressApplication>({ logger: ['error', 'warn'] });
+    configureHttp(app);
     await app.init();
-    server = app.getHttpServer() as App;
+    server = app.getHttpServer();
   });
 
   afterAll(async () => {
@@ -96,10 +97,21 @@ describe('AppModule (e2e)', () => {
     expect(duplicated).toEqual([]);
   });
 
-  it('GET /v1/races rejects a page size above 1000', async () => {
+  it('GET /v1/races rejects a page size above 100, and the catalogs one above 1000', async () => {
     const auth = `Bearer ${TOKEN}`;
-    await request(server).get('/v1/races?size=1000').set('Authorization', auth).expect(200);
-    await request(server).get('/v1/races?size=1001').set('Authorization', auth).expect(400);
+    await request(server).get('/v1/races?size=100').set('Authorization', auth).expect(200);
+    await request(server).get('/v1/races?size=101').set('Authorization', auth).expect(400);
+    for (const catalog of ['skills', 'skill-categories', 'enumerations', 'traits']) {
+      await request(server).get(`/v1/${catalog}?size=1000`).set('Authorization', auth).expect(200);
+      await request(server).get(`/v1/${catalog}?size=1001`).set('Authorization', auth).expect(400);
+    }
+  });
+
+  it('answers with the helmet security headers and no CORS headers', async () => {
+    const res = await request(server).get('/v1/health').set('Origin', 'http://evil.test').expect(200);
+    expect(res.headers).toMatchObject({ 'x-content-type-options': 'nosniff', 'x-frame-options': 'SAMEORIGIN' });
+    expect(res.headers['content-security-policy']).toBeDefined();
+    expect(res.headers['access-control-allow-origin']).toBeUndefined();
   });
 
   it('GET /v1/races returns an empty page', async () => {
@@ -219,11 +231,11 @@ describe('AppModule (e2e)', () => {
         await request(server).patch(path).set('Authorization', admin).send(patch).expect(200);
       }
 
-      const realmsOfOther = await request(server).get('/v1/realms?size=1000').set('Authorization', other).expect(200);
-      const racesOfOther = await request(server).get('/v1/races?size=1000').set('Authorization', other).expect(200);
+      const realmsOfOther = await request(server).get('/v1/realms?size=100').set('Authorization', other).expect(200);
+      const racesOfOther = await request(server).get('/v1/races?size=100').set('Authorization', other).expect(200);
       expect(ids(realmsOfOther.body)).not.toContain(realm.id);
       expect(ids(racesOfOther.body)).not.toContain(race.id);
-      const racesOfAdmin = await request(server).get('/v1/races?size=1000').set('Authorization', admin).expect(200);
+      const racesOfAdmin = await request(server).get('/v1/races?size=100').set('Authorization', admin).expect(200);
       expect(ids(racesOfAdmin.body)).toContain(race.id);
 
       await request(server).delete(`/v1/races/${race.id}`).set('Authorization', admin).expect(204);
@@ -235,7 +247,7 @@ describe('AppModule (e2e)', () => {
       await request(server).patch(`/v1/realms/${realm.id}`).set('Authorization', owner).send({ accessType: 'public' }).expect(200);
 
       await request(server).get(`/v1/realms/${realm.id}`).set('Authorization', other).expect(200);
-      const listed = await request(server).get('/v1/realms?size=1000').set('Authorization', other).expect(200);
+      const listed = await request(server).get('/v1/realms?size=100').set('Authorization', other).expect(200);
       expect(ids(listed.body)).toContain(realm.id);
       await request(server).patch(`/v1/realms/${realm.id}`).set('Authorization', other).send({ name: 'Taken' }).expect(403);
       await request(server).delete(`/v1/realms/${realm.id}`).set('Authorization', other).expect(403);

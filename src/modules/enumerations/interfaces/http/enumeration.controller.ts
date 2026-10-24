@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.g
 import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateEnumerationDto } from './dto/create-enumeration.dto.js';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import { GetEnumerationQuery } from '../../application/cqrs/queries/get-enumeration.query.js';
 import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumerations.query.js';
 import { Page } from '../../../shared/application/pagination/page.js';
@@ -40,7 +40,7 @@ export class EnumerationController {
   @Get('')
   @ApiOperation({ operationId: 'findEnumerations', summary: 'Find enumerations by RSQL' })
   @ApiOkResponse({ type: EnumerationPageDto })
-  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<EnumerationPageDto> {
+  async find(@Query() dto: CatalogPagedQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<EnumerationPageDto> {
     const userId: string = user.id;
     const roles: string[] = user.roles;
     const query = new GetEnumerationsQuery(dto.q, dto.page, dto.size, userId, roles);
