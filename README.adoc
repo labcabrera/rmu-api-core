@@ -65,6 +65,9 @@ The Joi schema in `src/config/env.schema.ts` fails startup on a missing required
 | `RMU_KAFKA_BROKERS`, `RMU_KAFKA_CLIENT_ID` | yes | Kafka connection
 | `RMU_KAFKA_CONSUMER_GROUP_ID` | no (`rmu-api-core-consumer`) | consumer group of the realm events that keep the races in step
 | `RMU_KAFKA_DEFAULT_PARTITIONS` | no (`1`) | number of partitions the producer spreads messages over (by key hash)
+| `RMU_CORS_ORIGINS` | no (empty) | comma-separated origins allowed by CORS; empty turns CORS off, as browsers come through the gateway on the same origin
+| `RMU_THROTTLE_LIMIT`, `RMU_THROTTLE_TTL_MS` | no (`300`, `60000`) | requests per client IP and window; `0` turns the limit off. `/v1/health` is never limited
+| `RMU_TRUST_PROXY` | no (`loopback, linklocal, uniquelocal`) | Express `trust proxy`: the client IP comes from `X-Forwarded-For` when the request arrives from these addresses (Caddy)
 |===
 
 === Running locally

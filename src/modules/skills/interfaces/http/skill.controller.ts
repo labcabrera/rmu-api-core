@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.g
 import { SkillDto, SkillPageDto } from './dto/skill.dto.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateSkillDto } from './dto/create-skill.dto.js';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import { GetSkillQuery } from '../../application/cqrs/queries/get-skill.query.js';
 import { GetSkillsQuery } from '../../application/cqrs/queries/get-skills.query.js';
 import { Page } from '../../../shared/application/pagination/page.js';
@@ -42,7 +42,7 @@ export class SkillController {
   @ApiOperation({ operationId: 'findSkills', summary: 'Find skills by RSQL' })
   @ApiOkResponse({ type: SkillPageDto, description: 'Success' })
   @ApiErrors({ 400: 'Invalid RSQL query' })
-  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<SkillPageDto> {
+  async find(@Query() dto: CatalogPagedQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<SkillPageDto> {
     const userId: string = user.id;
     const roles: string[] = user.roles;
     const query = new GetSkillsQuery(dto.q, dto.page, dto.size, userId, roles);

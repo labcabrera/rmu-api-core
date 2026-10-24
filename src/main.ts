@@ -1,19 +1,17 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { type MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module.js';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { configureHttp } from './bootstrap/http.js';
 import { configureLogger } from './bootstrap/logger.js';
 import { configureOpenApi } from './bootstrap/openapi.js';
-import { HttpExceptionFilter } from './modules/shared/interfaces/http/http-exception.filter.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: configureLogger(process.env.LOG_LEVEL) });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { logger: configureLogger(process.env.LOG_LEVEL) });
   const config = app.get(ConfigService);
-  app.enableCors();
-  app.enableShutdownHooks();
-  app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true }, whitelist: true }));
-  app.useGlobalFilters(new HttpExceptionFilter());
+  configureHttp(app);
   configureOpenApi(app);
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,

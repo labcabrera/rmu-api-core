@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.g
 import { Page } from '../../../shared/application/pagination/page.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetSkillCategoryQuery } from '../../application/cqrs/queries/get-skill-category.query.js';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import { GetSkillCategoriesQuery } from '../../application/cqrs/queries/get-skill-categories.query.js';
 import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 import { SkillCategoryDto, SkillCategoryPageDto } from './dto/skill-category.dto.js';
@@ -39,7 +39,7 @@ export class SkillCategoryController {
   @ApiOperation({ operationId: 'findSkillCategories', summary: 'Find skill categories by RSQL' })
   @ApiOkResponse({ type: SkillCategoryPageDto })
   @ApiErrors({ 400: 'Invalid RSQL query' })
-  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
+  async find(@Query() dto: CatalogPagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const query = new GetSkillCategoriesQuery(dto.q, dto.page, dto.size, userId);
     const page = await this.queryBus.execute<GetSkillCategoriesQuery, Page<SkillCategory>>(query);
