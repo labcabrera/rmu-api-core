@@ -100,12 +100,14 @@ pnpm start:prod
 | `pnpm test` / `pnpm test:watch` | unit tests (`test/unit`)
 | `pnpm test:cov` | unit and e2e tests with v8 coverage in `coverage/`; the thresholds of `vitest.config.ts` count both (what CI runs)
 | `pnpm test:e2e` | one file per resource booting `AppModule` against mongodb-memory-server, with RS256 tokens checked against a local JWKS (`test/e2e/support`); only the Kafka producer is replaced
-| `pnpm check` | lint + typecheck + unit tests
+| `pnpm check:swc` | `scripts/check-swc-metadata.cjs`: fails on the decorators SWC cannot compile like tsc (see the SWC convention under <<Project layout>>); `--fix` adds the missing `type`
+| `pnpm check` | lint + typecheck + `check:swc` + unit tests
 | `make check` | `pnpm check` plus the e2e tests
 |===
 
 Tests run on Vitest with SWC (`vitest.config.ts`, projects `unit` and `e2e`). The first `test:e2e` run downloads a
-`mongod` binary to `~/.cache/mongodb-binaries`.
+`mongod` binary to `~/.cache/mongodb-binaries`, once, in the `globalSetup` of the e2e project
+(`test/e2e/support/mongod-binary.ts`): without it, the files would download it in parallel and fail on the lock file.
 
 `scripts/smoke.sh [base-url]` calls one endpoint of every controller of a running API with a service-account token and
 fails on any non-2xx answer (default `http://localhost:3001`; through the gateway `http://localhost/api/core`).
@@ -160,18 +162,29 @@ Conventions:
   Adapters tied to a technology start with it: `mongo.race.repository.ts`.
 - Each port exports its DI token next to the interface (`export const RACE_REPOSITORY = Symbol('RaceRepository')`).
   Modules bind it (`{ provide: RACE_REPOSITORY, useClass: MongoRaceRepository }`) and handlers inject it with
-  `@Inject(RACE_REPOSITORY)`. There are no string tokens.
+  `@Inject(RACE_REPOSITORY)`. There are no string tokens, and no abstract classes as tokens either: an API that still
+  uses them (users) converts them to a `Symbol` next to the interface when it touches the port (spec 021).
 - Controllers take the user with `@CurrentUser() user: AuthenticatedUser` and document their errors with
   `@ApiErrors({ 404: 'Race not found' })`, which always adds the 401.
 - `domain/` never imports from `application/`. A read-only module may skip `domain/` (`character-sizes`).
 - Handlers publish domain events through `DomainEventPublisher` (`DOMAIN_EVENT_PUBLISHER`) after saving:
   `publishChanges('race', race)` for the aggregate's uncommitted events, `publish('race', event)` for one built by
   hand. Publishing awaits Kafka (with retries) and logs a failure instead of failing the request. Modules react to
-  each other's changes through these topics, like any other service, and never import each other's commands.
+  each other's changes through these topics, like any other service, and never import each other's commands. The
+  event `producer` is `RMU_KAFKA_CLIENT_ID` (`rmu-api-core` when unset).
+- **Writes without changes.** `BaseAggregateRoot` keeps the stored version in an ECMAScript private field
+  (`#storedVersion`, never serialized) and, in `restoreVersion()`, a snapshot of `getProps()`. The repository calls it
+  when it loads the aggregate (`toEntity`, also from custom finders) and after each write, including on the aggregate
+  passed to `update()`, which can then be written again. `hasChanges()` compares the props without `updatedAt` with
+  that snapshot; an aggregate made with `create()` always has changes. Every update handler applies the changes and
+  returns the aggregate unchanged when `!aggregate.hasChanges()`: no write, no new version, no event. Aggregates set
+  `updatedAt` only when `hasChanges()` is true.
 - The build uses SWC (`nest build`), which compiles file by file and cannot resolve imported type aliases in decorator
   metadata. A property typed with a string union alias (`AccessType`) needs an explicit `type: String` in `@ApiProperty`
-  and `@Prop`, and constructor injection must not use a bare `@Inject()` (Nest would read `Function` as the token).
-  `pnpm typecheck` runs `tsc --noEmit` separately.
+  and `@Prop` (also `string | null` or `number | undefined`, which SWC documents as `object`), and constructor
+  injection must not use a bare `@Inject()` (Nest would read `Function` as the token). Neither lint nor typecheck sees
+  them, only booting the app does: `pnpm check:swc` (in `make check` and the CI) finds both. `pnpm typecheck` runs
+  `tsc --noEmit` separately.
 - `armor-types` and `character-sizes` are fixed catalogs served from memory, and `resistance-rolls` and `maneuvers` are
   calculations: they have no aggregates, persistence or events, and that is on purpose. A module only gets the full
   CQRS and Mongo layout when its data can change.
@@ -181,17 +194,24 @@ Conventions:
 - **Validation:** the global `ValidationPipe` uses `whitelist`, so unknown body fields are dropped without an error
   (no `forbidNonWhitelisted`). A client sending extra fields, like the `owner` of an entity, is not rejected; the field
   is ignored.
+- **Search:** `q` is RSQL (`==`, `!=`, `<`, `<=`, `>`, `>=`, `=in=`, `=out=`, `=re=`, `;` for and, `,` for or). `=re=` is a case-insensitive
+  *contains* over the literal text, not a regular expression: the value is escaped, so `name=re=fire` finds
+  `Fireball` but `name=re=^Fire` looks for the characters `^Fire` and finds nothing.
 - **Paging:** `size` goes up to 100 (`PagedQueryDto`). Skills, skill categories, enumerations and traits, which the
   clients load whole, accept up to 1000 (`CatalogPagedQueryDto`).
 - **Errors:** every failure answers `{ statusCode, error, code, message, timestamp, path }`. `code` is stable and meant
   for clients: `not-found`, `forbidden`, `unauthorized`, `validation`, `bad-request`, `invalid-search`, `conflict`,
   `duplicate-key`, `version-conflict`, `too-many-requests`, `internal-error`... Domain errors take a default code from
-  their class and can pass a more specific one (`new ConflictError(message, 'duplicate-key')`).
+  their class and can pass a more specific one (`new ConflictError(message, 'duplicate-key')`). `path` is the route
+  without the query string (`/v1/realms`, not `/v1/realms?size=101`).
+- **OpenAPI:** every operation is documented with the `oauth2` and `access-token` security, except the public
+  `/v1/health`.
 - **Optimistic concurrency:** every stored aggregate has a `version` (0 when created, +1 on each write), returned in
   the responses. `MongoBaseRepository.update` only writes when the stored version is still the one that was loaded, so
   two concurrent handlers cannot overwrite each other. A `PATCH` may send the `version` its client read: if the entity
   moved on, the answer is 409 `version-conflict` and nothing changes. Without it, the update is applied to the current
-  version (image changes do that). Documents stored before versions existed count as version 0.
+  version (image changes do that). Documents stored before versions existed count as version 0. A `PATCH` that leaves
+  the entity as it was answers 200 with the stored entity, the same `version` and no event.
 - **Request limit:** `RMU_THROTTLE_LIMIT` requests per client IP and `RMU_THROTTLE_TTL_MS` window (429 with
   `Retry-After`); `/v1/health` and the Kafka handlers are never limited.
 
@@ -230,14 +250,28 @@ files and adapt names, ports and the Mongo variable:
 | `eslint.config.mjs` | typed `typescript-eslint`, Prettier, ESM, Vitest globals, `no-unsafe-*` as errors
 | `package.json`, `pnpm-lock.yaml` | `"type": "module"`, `engines.node >=24`, `packageManager` (pnpm), `pnpm.ignoredBuiltDependencies`, scripts `build`, `typecheck`, `lint`, `lint:fix`, `test`, `test:cov`, `test:e2e`, `check`, `start:prod`
 | `commitlint.config.cjs`, `release.config.cjs` | CommonJS configs in an ESM package
-| `.github/workflows/ci.yml` | pnpm install, lint, typecheck, unit, e2e and build on Node 24, plus a `docker build` without push
+| `.github/workflows/ci.yml` | pnpm install, lint, typecheck, `check:swc`, unit, e2e and build on Node 24, plus a `docker build` without push
+| `scripts/check-swc-metadata.cjs` | the SWC decorator check (`pnpm check:swc`)
+| `test/e2e/support/mongod-binary.ts` | `globalSetup` of the e2e project: downloads `mongod` once before the files
 | `src/main.ts`, `src/bootstrap/`, `src/config/env.schema.ts` | short bootstrap with shutdown hooks, logger levels, OpenAPI and the Joi schema
-| `src/modules/shared/` | JWT strategy and guard, `AuthModule`, `DomainEventPublisher`, `RsqlParser`, `@CurrentUser()`, `@ApiErrors()` and the conventions under <<Project layout>> (Symbol DI tokens, file names)
+| `src/modules/shared/` | JWT strategy and guard, `AuthModule`, `DomainEventPublisher`, `RsqlParser`, `@CurrentUser()`, `@ApiErrors()`, `BaseAggregateRoot` (`#storedVersion`, `hasChanges()`), `MongoBaseRepository` and the conventions under <<Project layout>> (Symbol DI tokens, file names)
 | `test/e2e/app.e2e-spec.ts`, `scripts/smoke.sh` | smoke test with `mongodb-memory-server`, and the same calls against a running API with a real token
 |===
 
 Run the API with `init: true` in compose. The SWC caveats under <<Project layout>> apply to every API: an explicit
-`type: String` for string union aliases in `@ApiProperty`/`@Prop`, and no bare `@Inject()`.
+`type: String` for string union aliases in `@ApiProperty`/`@Prop`, and no bare `@Inject()`; `pnpm check:swc` finds
+both.
+
+Core calls no other API, so it has no HTTP client. The APIs that do (items, strategic, tactical, users) share two files
+that are not in core:
+
+- `shared/infrastructure/http/http-client.ts`: `fetch` with a timeout (`RMU_HTTP_TIMEOUT_MS`, 10000 by default). A
+  timeout is a 504 `upstream-timeout`, a network failure a 502, an upstream 400/422 a 400 and an upstream 404/5xx a 502,
+  the last three with the upstream `status` (`isUpstreamHttpError(err) && err.status === 404` to tell a missing
+  entity). No axios.
+- `shared/infrastructure/security/token.service.ts`: the token of the call. It is the service account token (client
+  credentials, cached until it expires, with `rmu-admin`); tactical forwards the caller's own token instead while it
+  handles an HTTP request, so the other API checks that user's permissions.
 
 == Contributing
 
