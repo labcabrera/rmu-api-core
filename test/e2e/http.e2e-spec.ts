@@ -38,6 +38,15 @@ describe('HTTP hardening (e2e)', () => {
     expect(paths['/v1/realms'].get.security).toEqual([{ oauth2: [], 'access-token': [] }]);
   });
 
+  it('documents the optional and nullable fields with their type, not as objects (F-receta-02)', async () => {
+    const spec = await request(e2e.server).get('/api-spec').expect(200);
+    const schemas = (spec.body as { components: { schemas: Record<string, { properties: Record<string, { type?: string }> }> } }).components
+      .schemas;
+    expect(schemas.UpdateRealmDto.properties.name.type).toBe('string');
+    expect(schemas.SkillCategoryDto.properties.realmBonus.type).toBe('number');
+    expect(schemas.UpdateEffectTypeDto.properties.isStackable.type).toBe('boolean');
+  });
+
   it('names the route without the query string in the error body', async () => {
     // Another client address, so the request limit of the next tests is untouched.
     const res = await request(e2e.server)

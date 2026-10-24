@@ -11,12 +11,12 @@ export class CreateCultureDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Description of the culture', required: false })
+  @ApiProperty({ type: String, description: 'Description of the culture', required: false })
   @IsString()
   @IsOptional()
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL of the culture', required: false, example: 'images/cultures/nomad.png' })
+  @ApiProperty({ type: String, description: 'Image URL of the culture', required: false, example: 'images/cultures/nomad.png' })
   @IsString()
   @IsOptional()
   imageUrl: string | null;

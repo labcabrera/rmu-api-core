@@ -19,19 +19,19 @@ export class TraitDto {
   @ApiProperty({ description: 'Indicates if the trait is a talent', example: true })
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Indicates the specialization of the trait', example: 'combat-skill' })
+  @ApiProperty({ type: String, description: 'Indicates the specialization of the trait', example: 'combat-skill' })
   specialization: TraitSpecialization | null;
 
   @ApiProperty({ description: 'Indicates if the trait is tier based', example: false })
   isTierBased: boolean;
 
-  @ApiProperty({ description: 'Maximum tier of the trait', example: 5, required: false })
+  @ApiProperty({ type: Number, description: 'Maximum tier of the trait', example: 5, required: false })
   maxTier: number | undefined;
 
   @ApiProperty({ description: 'Cost of the trait', example: 7, required: false })
   adquisitionCost: number;
 
-  @ApiProperty({ description: 'Cost per tier of the trait', example: 3, required: false })
+  @ApiProperty({ type: Number, description: 'Cost per tier of the trait', example: 3, required: false })
   tierCost: number | undefined;
 
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })

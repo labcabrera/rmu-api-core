@@ -10,7 +10,12 @@ export class CreateRealmDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Short description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
+  @ApiProperty({
+    type: String,
+    description: 'Short description of the realm',
+    required: false,
+    example: 'A fantasy world created by J.R.R. Tolkien',
+  })
   @IsString()
   @IsOptional()
   shortDescription: string | undefined;
@@ -21,6 +26,7 @@ export class CreateRealmDto {
   magicPresence: MagicPresence;
 
   @ApiProperty({
+    type: String,
     description: 'Description of the realm',
     required: false,
     example: 'A fantasy world created by J.R.R. Tolkien with to much text later',
@@ -30,6 +36,7 @@ export class CreateRealmDto {
   description: string | undefined;
 
   @ApiProperty({
+    type: String,
     description: 'Image URL of the realm',
     required: false,
     example: 'https://example.com/images/realms/lotr.jpg',

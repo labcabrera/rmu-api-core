@@ -11,7 +11,7 @@ export class RaceTraitDto {
   @IsString()
   traitId: string;
 
-  @ApiProperty({ description: 'Specialization of the race trait', required: false, example: 'longbows' })
+  @ApiProperty({ type: String, description: 'Specialization of the race trait', required: false, example: 'longbows' })
   @IsString()
   @IsOptional()
   specialization: string | undefined;
@@ -20,7 +20,7 @@ export class RaceTraitDto {
   @IsBoolean()
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Tier level when applicable', required: false, example: 2 })
+  @ApiProperty({ type: Number, description: 'Tier level when applicable', required: false, example: 2 })
   @IsNumber()
   @IsOptional()
   tier: number | undefined;

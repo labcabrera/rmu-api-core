@@ -23,7 +23,7 @@ export class CreateTraitDto {
   @IsBoolean()
   isTalent: boolean;
 
-  @ApiProperty({ description: 'Trait specialization', required: false, example: 'none' })
+  @ApiProperty({ type: String, description: 'Trait specialization', required: false, example: 'none' })
   @IsString()
   @IsOptional()
   specialization: TraitSpecialization | null;
@@ -32,7 +32,7 @@ export class CreateTraitDto {
   @IsBoolean()
   isTierBased: boolean;
 
-  @ApiProperty({ description: 'Maximum tier of the trait', required: false, example: 5 })
+  @ApiProperty({ type: Number, description: 'Maximum tier of the trait', required: false, example: 5 })
   @IsNumber()
   @IsOptional()
   maxTier: number | undefined;
@@ -41,12 +41,17 @@ export class CreateTraitDto {
   @IsNumber()
   adquisitionCost: number;
 
-  @ApiProperty({ description: 'Cost per tier of the trait in development points', required: false, example: 3 })
+  @ApiProperty({ type: Number, description: 'Cost per tier of the trait in development points', required: false, example: 3 })
   @IsNumber()
   @IsOptional()
   tierCost: number | undefined;
 
-  @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
+  @ApiProperty({
+    type: String,
+    description: 'Description of the trait',
+    required: false,
+    example: 'A trait representing courage and bravery',
+  })
   @IsString()
   @IsOptional()
   description: string | undefined;

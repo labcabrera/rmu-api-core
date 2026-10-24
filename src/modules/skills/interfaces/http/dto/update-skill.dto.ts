@@ -7,7 +7,7 @@ import type { AccessType } from '../../../../shared/domain/entities/access-type.
 import { UpdateSkillCommand } from '../../../application/cqrs/commands/update-skill.command.js';
 
 export class UpdateSkillDto {
-  @ApiProperty({ description: 'Category identifier of the skill', example: 'animal', required: false })
+  @ApiProperty({ type: String, description: 'Category identifier of the skill', example: 'animal', required: false })
   @IsString()
   @IsOptional()
   categoryId: string | undefined;
@@ -17,7 +17,7 @@ export class UpdateSkillDto {
   @IsOptional()
   bonus: string[] | undefined;
 
-  @ApiProperty({ description: 'Specialization of the skill', example: 'tracking', required: false })
+  @ApiProperty({ type: String, description: 'Specialization of the skill', example: 'tracking', required: false })
   @IsString()
   @IsOptional()
   specialization: EnumerationCategory | undefined;

@@ -18,7 +18,7 @@ RELEASE_BUMP   ?=
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
-check: ## Lint, type-check, unit and e2e tests (what CI runs before the build)
+check: ## Lint, type-check, SWC metadata check, unit and e2e tests (what CI runs before the build)
 	pnpm run check
 	pnpm run test:e2e
 

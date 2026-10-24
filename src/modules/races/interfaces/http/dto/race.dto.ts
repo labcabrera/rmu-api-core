@@ -69,10 +69,10 @@ export class RaceDto {
   @ApiProperty({ description: 'Default language identifier', type: String, required: false })
   defaultLanguage: string | null;
 
-  @ApiProperty({ description: 'Description of the race' })
+  @ApiProperty({ type: String, description: 'Description of the race' })
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  @ApiProperty({ type: String, description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
   imageUrl: string | null;
 
   @ApiProperty({ description: 'Owner identifier', example: 'user123' })

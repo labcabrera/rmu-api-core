@@ -18,7 +18,7 @@ export class SkillDto {
   @ApiProperty({ description: 'List of stats that apply a benefit to the skill', example: ['em', 'co'] })
   bonus: string[];
 
-  @ApiProperty({ description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
+  @ApiProperty({ type: String, description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
   specialization: EnumerationCategory | null;
 
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })

@@ -5,7 +5,7 @@ import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domai
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateEnumerationDto {
-  @ApiProperty({ description: 'Enumeration key', example: 'horse' })
+  @ApiProperty({ type: String, description: 'Enumeration key', example: 'horse' })
   @IsString()
   @IsOptional()
   key: string | undefined;
@@ -21,7 +21,7 @@ export class UpdateEnumerationDto {
   @IsOptional()
   category: EnumerationCategory | undefined;
 
-  @ApiProperty({ description: 'Optional realm id for the enumeration', example: 'realm-123', required: false })
+  @ApiProperty({ type: String, description: 'Optional realm id for the enumeration', example: 'realm-123', required: false })
   @IsString()
   @IsOptional()
   realmId?: string | null | undefined;
@@ -30,12 +30,12 @@ export class UpdateEnumerationDto {
   @IsOptional()
   accessType: AccessType | undefined;
 
-  @ApiProperty({ description: 'Description', example: 'A large hoofed mammal', required: false })
+  @ApiProperty({ type: String, description: 'Description', example: 'A large hoofed mammal', required: false })
   @IsString()
   @IsOptional()
   description?: string | null | undefined;
 
-  @ApiProperty({ description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @ApiProperty({ type: String, description: 'Image URL', example: 'https://example.com/horse.png', required: false })
   @IsString()
   @IsOptional()
   imageUrl?: string | null | undefined;

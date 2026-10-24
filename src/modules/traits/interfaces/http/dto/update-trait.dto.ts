@@ -5,11 +5,7 @@ import type { TraitCategory } from '../../../domain/value-objects/trait-category
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class UpdateTraitDto {
-  @ApiProperty({
-    description: 'Name of the trait',
-    required: false,
-    example: 'Courage',
-  })
+  @ApiProperty({ type: String, description: 'Name of the trait', required: false, example: 'Courage' })
   @IsString()
   @IsOptional()
   name: string | undefined;
@@ -24,37 +20,42 @@ export class UpdateTraitDto {
   @IsOptional()
   category: TraitCategory | undefined;
 
-  @ApiProperty({ description: 'Indicates if the trait is a talent', required: false, example: true })
+  @ApiProperty({ type: Boolean, description: 'Indicates if the trait is a talent', required: false, example: true })
   @IsOptional()
   @IsBoolean()
   isTalent: boolean | undefined;
 
-  @ApiProperty({ description: 'Trait specialization', required: false, example: 'none' })
+  @ApiProperty({ type: String, description: 'Trait specialization', required: false, example: 'none' })
   @IsOptional()
   @IsString()
   specialization: TraitSpecialization | undefined;
 
-  @ApiProperty({ description: 'Indicates if the trait is tier based', required: false, example: true })
+  @ApiProperty({ type: Boolean, description: 'Indicates if the trait is tier based', required: false, example: true })
   @IsOptional()
   @IsBoolean()
   isTierBased: boolean | undefined;
 
-  @ApiProperty({ description: 'Maximum tier for the trait if it is tier based', required: false, example: 5 })
+  @ApiProperty({ type: Number, description: 'Maximum tier for the trait if it is tier based', required: false, example: 5 })
   @IsNumber()
   @IsOptional()
   maxTier: number | undefined;
 
-  @ApiProperty({ description: 'Cost of the trait', required: false, example: 7 })
+  @ApiProperty({ type: Number, description: 'Cost of the trait', required: false, example: 7 })
   @IsNumber()
   @IsOptional()
   adquisitionCost: number | undefined;
 
-  @ApiProperty({ description: 'Cost per tier of the trait', required: false, example: 3 })
+  @ApiProperty({ type: Number, description: 'Cost per tier of the trait', required: false, example: 3 })
   @IsNumber()
   @IsOptional()
   tierCost: number | undefined;
 
-  @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
+  @ApiProperty({
+    type: String,
+    description: 'Description of the trait',
+    required: false,
+    example: 'A trait representing courage and bravery',
+  })
   @IsString()
   @IsOptional()
   description: string | undefined;

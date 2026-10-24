@@ -34,12 +34,12 @@ export class CreateProfessionDto {
   @IsString({ each: true })
   professionalSkills: string[];
 
-  @ApiProperty({ description: 'Description of the profession', example: 'A brave warrior skilled in combat.' })
+  @ApiProperty({ type: String, description: 'Description of the profession', example: 'A brave warrior skilled in combat.' })
   @IsString()
   @IsOptional()
   description: string | undefined;
 
-  @ApiProperty({ description: 'Image URL for the profession', example: 'https://example.com/warrior.png' })
+  @ApiProperty({ type: String, description: 'Image URL for the profession', example: 'https://example.com/warrior.png' })
   @IsString()
   @IsOptional()
   imageUrl?: string | undefined;

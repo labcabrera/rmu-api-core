@@ -14,7 +14,7 @@ export class CreateSkillCategoryDto {
   @IsArray()
   bonus: string[];
 
-  @ApiProperty({ description: 'Realm base bonus count' })
+  @ApiProperty({ type: Number, description: 'Realm base bonus count' })
   @IsNumber()
   @IsOptional()
   realmBonus: number | null;

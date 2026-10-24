@@ -21,7 +21,7 @@ export class CreateSkillDto {
   @IsArray()
   bonus!: string[];
 
-  @ApiProperty({ description: 'Specialization of the skill', example: 'tracking' })
+  @ApiProperty({ type: String, description: 'Specialization of the skill', example: 'tracking' })
   @IsString()
   @IsOptional()
   specialization: EnumerationCategory | null;
