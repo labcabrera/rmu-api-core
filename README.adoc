@@ -98,10 +98,10 @@ pnpm start:prod
 | `pnpm lint` / `pnpm lint:fix` | ESLint (typed `typescript-eslint` + Prettier) over `src` and `test`
 | `pnpm format` | Prettier over `src` and `test`
 | `pnpm test` / `pnpm test:watch` | unit tests (`test/unit`)
-| `pnpm test:cov` | unit tests with v8 coverage in `coverage/`
-| `pnpm test:e2e` | boots `AppModule` against mongodb-memory-server; Kafka and the JWT guard are replaced
+| `pnpm test:cov` | unit and e2e tests with v8 coverage in `coverage/`; the thresholds of `vitest.config.ts` count both (what CI runs)
+| `pnpm test:e2e` | one file per resource booting `AppModule` against mongodb-memory-server, with RS256 tokens checked against a local JWKS (`test/e2e/support`); only the Kafka producer is replaced
 | `pnpm check` | lint + typecheck + unit tests
-| `make check` | `pnpm check` plus the e2e tests (what CI runs before the build)
+| `make check` | `pnpm check` plus the e2e tests
 |===
 
 Tests run on Vitest with SWC (`vitest.config.ts`, projects `unit` and `e2e`). The first `test:e2e` run downloads a
@@ -117,8 +117,8 @@ none of them is needed, and mongodb-memory-server downloads `mongod` on first us
 
 ----
 src/
-  main.ts                  bootstrap only: pipes, filters, Kafka transport, shutdown hooks
-  bootstrap/               logger levels and OpenAPI (Swagger) setup
+  main.ts                  bootstrap only: HTTP setup, OpenAPI, Kafka transport; a failed start exits with code 1
+  bootstrap/               HTTP setup (trust proxy, helmet, CORS, validation, error filter), logger levels, OpenAPI
   config/env.schema.ts     Joi schema of the environment
   modules/<feature>/
     <feature>.module.ts
@@ -145,7 +145,8 @@ src/
     interfaces/http/       DomainError -> HTTP filter, @CurrentUser(), @ApiErrors(), health, shared DTOs
 test/unit/domain/<feature>/  unit tests of each feature
 test/unit/shared/            unit tests of the shared module
-test/e2e/                    the whole application against mongodb-memory-server
+test/e2e/<resource>.e2e-spec.ts  the whole application against mongodb-memory-server, one file per resource
+test/e2e/support/            local JWKS and tokens, startApp(), request body fixtures
 ----
 
 Conventions:
@@ -171,6 +172,28 @@ Conventions:
   metadata. A property typed with a string union alias (`AccessType`) needs an explicit `type: String` in `@ApiProperty`
   and `@Prop`, and constructor injection must not use a bare `@Inject()` (Nest would read `Function` as the token).
   `pnpm typecheck` runs `tsc --noEmit` separately.
+- `armor-types` and `character-sizes` are fixed catalogs served from memory, and `resistance-rolls` and `maneuvers` are
+  calculations: they have no aggregates, persistence or events, and that is on purpose. A module only gets the full
+  CQRS and Mongo layout when its data can change.
+
+=== HTTP contract
+
+- **Validation:** the global `ValidationPipe` uses `whitelist`, so unknown body fields are dropped without an error
+  (no `forbidNonWhitelisted`). A client sending extra fields, like the `owner` of an entity, is not rejected; the field
+  is ignored.
+- **Paging:** `size` goes up to 100 (`PagedQueryDto`). Skills, skill categories, enumerations and traits, which the
+  clients load whole, accept up to 1000 (`CatalogPagedQueryDto`).
+- **Errors:** every failure answers `{ statusCode, error, code, message, timestamp, path }`. `code` is stable and meant
+  for clients: `not-found`, `forbidden`, `unauthorized`, `validation`, `bad-request`, `invalid-search`, `conflict`,
+  `duplicate-key`, `version-conflict`, `too-many-requests`, `internal-error`... Domain errors take a default code from
+  their class and can pass a more specific one (`new ConflictError(message, 'duplicate-key')`).
+- **Optimistic concurrency:** every stored aggregate has a `version` (0 when created, +1 on each write), returned in
+  the responses. `MongoBaseRepository.update` only writes when the stored version is still the one that was loaded, so
+  two concurrent handlers cannot overwrite each other. A `PATCH` may send the `version` its client read: if the entity
+  moved on, the answer is 409 `version-conflict` and nothing changes. Without it, the update is applied to the current
+  version (image changes do that). Documents stored before versions existed count as version 0.
+- **Request limit:** `RMU_THROTTLE_LIMIT` requests per client IP and `RMU_THROTTLE_TTL_MS` window (429 with
+  `Retry-After`); `/v1/health` and the Kafka handlers are never limited.
 
 == Docker
 
