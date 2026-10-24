@@ -3,6 +3,7 @@ import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait.js
 import type { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props.js';
 import { TraitCreatedEvent } from '../../../../src/modules/traits/domain/events/trait-created.event.js';
 import { TraitUpdatedEvent } from '../../../../src/modules/traits/domain/events/trait-updated.event.js';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const makeTraitProps = (overrides: Partial<TraitProps> = {}): TraitProps => ({
   id: 'trait-1',
@@ -48,6 +49,18 @@ describe('Trait domain aggregate', () => {
       eventType: 'created',
       data: trait.getProps(),
     });
+  });
+
+  it.each([
+    ['Ágil y rápido', 'agil-y-rapido'],
+    ['Visión nocturna', 'vision-nocturna'],
+    [' Blind Fighting! ', 'blind-fighting'],
+  ])('builds the id of %s without accents', (name, id) => {
+    expect(Trait.idFromName(name)).toBe(id);
+  });
+
+  it.each(['!!!', '   ', '¿?'])('rejects the name %j, which leaves an empty id', name => {
+    expect(() => Trait.idFromName(name)).toThrow(ValidationError);
   });
 
   it('hydrates from props without domain events', () => {

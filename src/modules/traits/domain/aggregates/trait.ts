@@ -2,6 +2,7 @@ import { TraitCreatedEvent } from '../events/trait-created.event.js';
 import { TraitUpdatedEvent } from '../events/trait-updated.event.js';
 import type { TraitProps } from './trait-props.js';
 import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import { ValidationError } from '../../../shared/domain/errors/errors.js';
 
 export class Trait extends BaseAggregateRoot<TraitProps> {
   private constructor(props: TraitProps) {
@@ -58,16 +59,25 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
   static create(props: Omit<TraitProps, 'id' | 'createdAt' | 'updatedAt'>): Trait {
     const trait = new Trait({
       ...props,
-      id: props.name
-        .trim()
-        .replaceAll(' ', '-')
-        .replace(/[^a-zA-Z0-9-]/g, '')
-        .toLowerCase(),
+      id: Trait.idFromName(props.name),
       createdAt: new Date(),
       updatedAt: undefined,
     });
     trait.apply(new TraitCreatedEvent(trait.getProps()));
     return trait;
+  }
+
+  /** Lowercase letters, digits and dashes, with the accents dropped (`Ágil` → `agil`). */
+  static idFromName(name: string): string {
+    const id = name
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .trim()
+      .replaceAll(' ', '-')
+      .replace(/[^a-zA-Z0-9-]/g, '')
+      .toLowerCase();
+    if (!id) throw new ValidationError(`Trait name ${name} has no letters or digits to build its id`);
+    return id;
   }
 
   static fromProps(props: TraitProps): Trait {

@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { type MicroserviceOptions, Transport } from '@nestjs/microservices';
@@ -27,4 +27,8 @@ async function bootstrap() {
   await app.startAllMicroservices();
 }
 
-void bootstrap();
+// A failed start (Mongo, Kafka, a port in use) ends the process, so the container restarts instead of hanging.
+bootstrap().catch((error: unknown) => {
+  new Logger('Bootstrap').fatal(error instanceof Error ? (error.stack ?? error.message) : String(error));
+  process.exit(1);
+});

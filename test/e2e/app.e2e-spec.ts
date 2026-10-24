@@ -139,6 +139,28 @@ describe('AppModule (e2e)', () => {
     return res.body as RealmProps;
   };
 
+  it('PATCH /v1/realms clears the optional texts with an empty string or null', async () => {
+    const auth = `Bearer ${TOKEN}`;
+    const realm = await createRealm(auth, 'Described realm');
+    await request(server)
+      .patch(`/v1/realms/${realm.id}`)
+      .set('Authorization', auth)
+      .send({ shortDescription: 'Short', description: 'Long' })
+      .expect(200);
+
+    await request(server)
+      .patch(`/v1/realms/${realm.id}`)
+      .set('Authorization', auth)
+      .send({ shortDescription: '', description: null })
+      .expect(200);
+    const found = await request(server).get(`/v1/realms/${realm.id}`).set('Authorization', auth).expect(200);
+    expect(found.body).not.toHaveProperty('shortDescription');
+    expect(found.body).not.toHaveProperty('description');
+
+    await request(server).patch(`/v1/realms/${realm.id}`).set('Authorization', auth).send({ name: '' }).expect(400);
+    await request(server).patch(`/v1/realms/${realm.id}`).set('Authorization', auth).send({ name: null }).expect(400);
+  });
+
   const createRace = async (auth: string, realmId: string) => {
     const sex = { male: 1, female: 1 };
     const res = await request(server)

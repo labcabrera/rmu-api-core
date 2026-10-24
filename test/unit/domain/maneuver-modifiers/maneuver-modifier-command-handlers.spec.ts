@@ -135,6 +135,16 @@ describe('maneuver modifier command handlers', () => {
       expect(update).not.toHaveBeenCalled();
     });
 
+    it('leaves the loaded modifier unchanged on a key conflict', async () => {
+      const loaded = modifier();
+      vi.spyOn(modifiers, 'findById').mockResolvedValue(loaded);
+
+      await expect(
+        handler().execute(new UpdateManeuverModifierCommand('mod-1', { key: 'slope', value: 15 }, OWNER.id, [...OWNER.roles])),
+      ).rejects.toThrow(ConflictError);
+      expect(loaded).toMatchObject({ key: 'rope', value: 10, updatedAt: undefined });
+    });
+
     it('rejects changes that leave an invalid definition without saving', async () => {
       const update = vi.spyOn(modifiers, 'update');
 
