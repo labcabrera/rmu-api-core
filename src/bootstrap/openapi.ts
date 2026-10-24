@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 
+const PUBLIC_PATH = '/v1/health';
+
 export function configureOpenApi(app: INestApplication) {
   const config = app.get(ConfigService);
   const oidcUri = `${config.get<string>('RMU_IAM_URI')}/realms/${config.get<string>('RMU_IAM_REALM')}/protocol/openid-connect`;
@@ -36,8 +38,9 @@ export function configureOpenApi(app: INestApplication) {
     )
     .build();
   const document = SwaggerModule.createDocument(app, openApiConfig);
-  // Apply security schema to all paths
-  for (const methods of Object.values(document.paths)) {
+  // Every operation needs a token but the health check, which is public (F-items-02).
+  for (const [path, methods] of Object.entries(document.paths)) {
+    if (path === PUBLIC_PATH) continue;
     for (const operation of Object.values(methods as Record<string, unknown>)) {
       if (operation && typeof operation === 'object' && 'responses' in operation) {
         (operation as { security?: Record<string, string[]>[] }).security = [{ oauth2: [], 'access-token': [] }];
