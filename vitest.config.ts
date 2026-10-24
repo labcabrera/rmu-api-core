@@ -22,7 +22,14 @@ export default defineConfig({
       },
       {
         extends: true,
-        test: { name: 'e2e', include: ['test/e2e/**/*.e2e-spec.ts'], testTimeout: 60_000, hookTimeout: 120_000 },
+        test: {
+          name: 'e2e',
+          include: ['test/e2e/**/*.e2e-spec.ts'],
+          // Downloads mongod once before the files run in parallel (F-receta-34).
+          globalSetup: ['test/e2e/support/mongod-binary.ts'],
+          testTimeout: 60_000,
+          hookTimeout: 120_000,
+        },
       },
     ],
   },
