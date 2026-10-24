@@ -21,7 +21,7 @@
     "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
-    "test:cov": "vitest run --project unit --coverage",
+    "test:cov": "vitest run --coverage",
     "test:e2e": "vitest run --project e2e",
     "check": "pnpm run lint && pnpm run typecheck && pnpm test",
     "prepare": "husky",
