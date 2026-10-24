@@ -2,15 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { type FilterQuery, Model } from 'mongoose';
 import { QueryCriteria } from '../../../shared/application/criteria/query-criteria.js';
-import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 import { MongoQueryCriteriaMapper } from '../../../shared/infrastructure/db/mongo-query-criteria.mapper.js';
 import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 import type { ManeuverModifierRepository } from '../../application/ports/maneuver-modifier-repository.port.js';
 import { ManeuverModifier } from '../../domain/aggregates/maneuver-modifier.js';
 import { type ManeuverModifierDocument, ManeuverModifierModel } from '../persistence/models/maneuver-modifier.model.js';
-
-const OPTIONAL_FIELDS = ['value', 'options', 'perUnit', 'min', 'max', 'description', 'updatedAt'] as const;
 
 @Injectable()
 export class MongoManeuverModifierRepository
@@ -26,7 +23,7 @@ export class MongoManeuverModifierRepository
 
   async findByKey(key: string): Promise<ManeuverModifier | null> {
     const doc = await this.modifierModel.findOne({ key });
-    return doc ? this.mapToEntity(doc) : null;
+    return doc ? this.toEntity(doc) : null;
   }
 
   async findApplicable(skillId: string | undefined, categoryId: string | undefined, filter?: QueryCriteria): Promise<ManeuverModifier[]> {
@@ -38,26 +35,7 @@ export class MongoManeuverModifierRepository
     const query: FilterQuery<ManeuverModifierDocument> =
       Object.keys(accessFilter).length === 0 ? { $or: scope } : { $and: [{ $or: scope }, accessFilter] };
     const docs = await this.modifierModel.find(query).sort({ key: 1 });
-    return docs.map(doc => this.mapToEntity(doc));
-  }
-
-  /** Full update: optional fields that are no longer set (e.g. after a type change) are removed. */
-  async update(entityId: string, entity: ManeuverModifier): Promise<ManeuverModifier> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, ...props } = entity.getProps();
-    const $set: Record<string, unknown> = {};
-    const $unset: Record<string, ''> = {};
-    Object.entries(props).forEach(([field, value]) => {
-      if (value === undefined) {
-        if ((OPTIONAL_FIELDS as readonly string[]).includes(field)) $unset[field] = '';
-      } else {
-        $set[field] = value;
-      }
-    });
-    const update = Object.keys($unset).length > 0 ? { $set, $unset } : { $set };
-    const updated = await this.modifierModel.findByIdAndUpdate(entityId, update, { new: true });
-    if (!updated) throw new NotFoundError('ManeuverModifier', entityId);
-    return this.mapToEntity(updated);
+    return docs.map(doc => this.toEntity(doc));
   }
 
   protected mapToEntity(doc: ManeuverModifierDocument): ManeuverModifier {

@@ -10,6 +10,9 @@ export class ProfessionDto {
   @ApiProperty({ description: 'Profession identifier', example: 'rogue', required: true })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ type: String, description: 'Archetype for the profession', required: true, example: 'non-spellcaster' })
   archetype: ProfessionArchetype;
 
@@ -43,6 +46,7 @@ export class ProfessionDto {
   static fromEntity(entity: Profession): ProfessionDto {
     return {
       id: entity.id,
+      version: entity.version,
       archetype: entity.archetype,
       availableRealmTypes: entity.availableRealmTypes,
       fixedRealmTypes: entity.fixedRealmTypes,

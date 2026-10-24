@@ -27,7 +27,7 @@ export class DeleteRaceSkillBonusHandler implements ICommandHandler<DeleteRaceSk
 
     race.removeSkillBonus(command.skillId, command.specialization);
 
-    const updated = await this.raceRepository.update(command.raceId, race);
+    const updated = await this.raceRepository.update(race);
     await this.events.publishChanges('race', race);
     return updated;
   }

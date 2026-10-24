@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean, IsInt, Min } from 'class-validator';
 import { UpdateTraitCommand } from '../../../application/cqrs/commands/update-trait.command.js';
 import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
@@ -59,6 +59,12 @@ export class UpdateTraitDto {
   @IsOptional()
   description: string | undefined;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateTraitDto, userId: string, roles: string[]) {
     return new UpdateTraitCommand(
       id,
@@ -73,6 +79,7 @@ export class UpdateTraitDto {
       dto.description,
       userId,
       roles,
+      dto.version,
     );
   }
 }

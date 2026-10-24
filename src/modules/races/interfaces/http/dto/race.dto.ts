@@ -12,6 +12,9 @@ export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Name of the race', example: 'Elf' })
   name: string;
 
@@ -81,6 +84,7 @@ export class RaceDto {
   static fromEntity(entity: Race): RaceDto {
     const dto = new RaceDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.name = entity.name;
     dto.archetype = entity.archetype;
     dto.realmId = entity.realmId;

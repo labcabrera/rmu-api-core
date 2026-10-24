@@ -8,6 +8,9 @@ export class CultureDto {
   @ApiProperty({ description: 'Culture identifier', example: 'culture-001' })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Name of the culture', example: 'Nomad' })
   name: string;
 
@@ -46,6 +49,7 @@ export class CultureDto {
     const entity = view.culture;
     const dto = new CultureDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.name = entity.name;
     dto.skillRanks = entity.skillRanks?.map(f => CultureSkillRankDto.fromEntity(f)) ?? [];
     if (entity.languages !== undefined) dto.languages = entity.languages;

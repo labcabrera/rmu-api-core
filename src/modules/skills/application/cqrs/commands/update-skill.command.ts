@@ -14,6 +14,8 @@ export class UpdateSkillCommand extends AuthenticatedCommand {
     public readonly maneuver: ManeuverProfile | null | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
   ) {
     super(userId, roles);
   }

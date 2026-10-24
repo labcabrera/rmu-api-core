@@ -30,9 +30,9 @@ export class InMemoryRepository<E extends Entity> implements BaseRepository<E> {
     return Promise.resolve(entity);
   }
 
-  update(id: string, entity: E): Promise<E> {
-    if (!this.items.has(id)) throw new NotFoundError('Entity', id);
-    this.items.set(id, entity);
+  update(entity: E): Promise<E> {
+    if (!this.items.has(entity.id)) throw new NotFoundError('Entity', entity.id);
+    this.items.set(entity.id, entity);
     return Promise.resolve(entity);
   }
 

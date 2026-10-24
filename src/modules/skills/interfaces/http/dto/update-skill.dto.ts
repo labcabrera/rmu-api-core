@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested, IsInt, Min } from 'class-validator';
 import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
@@ -37,6 +37,12 @@ export class UpdateSkillDto {
   @IsOptional()
   maneuver?: ManeuverProfileDto | null;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateSkillDto, userId: string, roles: string[]): UpdateSkillCommand {
     return new UpdateSkillCommand(
       id,
@@ -47,6 +53,7 @@ export class UpdateSkillDto {
       dto.maneuver === null ? null : ManeuverProfileDto.toProfile(dto.maneuver),
       userId,
       roles,
+      dto.version,
     );
   }
 }

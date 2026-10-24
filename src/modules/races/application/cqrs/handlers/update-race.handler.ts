@@ -21,6 +21,8 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
 
     this.raceGuard.checkUpdate(race, command.userId, command.roles);
 
+    race.checkVersion(command.expectedVersion);
+
     race.update({
       name: command.name,
       archetype: command.archetype,
@@ -41,7 +43,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       description: command.description,
       imageUrl: command.imageUrl,
     });
-    const updated = await this.raceRepository.update(command.id, race);
+    const updated = await this.raceRepository.update(race);
     await this.events.publishChanges('race', race);
     return updated;
   }

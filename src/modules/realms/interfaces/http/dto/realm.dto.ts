@@ -7,6 +7,9 @@ export class RealmDto {
   @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
   name: string;
 
@@ -31,6 +34,7 @@ export class RealmDto {
   static fromEntity(entity: Realm): RealmDto {
     const dto = new RealmDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.name = entity.name;
     dto.magicPresence = entity.magicPresence;
     dto.shortDescription = entity.shortDescription;

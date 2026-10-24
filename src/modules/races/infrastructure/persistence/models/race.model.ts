@@ -10,6 +10,10 @@ export type RaceDocument = RaceModel & Document;
 
 @Schema({ collection: 'races', _id: false, versionKey: false })
 export class RaceModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ required: true })
   _id: string;
 

@@ -26,7 +26,7 @@ export class AddRaceSkillBonusHandler implements ICommandHandler<AddRaceSkillBon
     this.raceGuard.checkUpdate(race, command.userId, command.roles);
     race.addSkillBonus(command.skillId, command.specialization, command.bonus);
 
-    const updated = await this.raceRepository.update(command.raceId, race);
+    const updated = await this.raceRepository.update(race);
     await this.events.publishChanges('race', race);
     return updated;
   }

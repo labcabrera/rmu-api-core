@@ -76,7 +76,7 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
       .replaceAll(' ', '-')
       .replace(/[^a-zA-Z0-9-]/g, '')
       .toLowerCase();
-    if (!id) throw new ValidationError(`Trait name ${name} has no letters or digits to build its id`);
+    if (!id) throw new ValidationError(`Trait name ${name} has no letters or digits to build its id`, 'invalid-trait-name');
     return id;
   }
 

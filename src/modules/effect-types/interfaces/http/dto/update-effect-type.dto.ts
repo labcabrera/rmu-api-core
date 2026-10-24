@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsIn, IsOptional } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsInt, Min } from 'class-validator';
 import { UpdateEffectTypeCommand } from '../../../application/cqrs/commands/update-effect-type.command.js';
 import {
   EFFECT_PROPERTY_REQUIREMENTS,
@@ -53,6 +53,12 @@ export class UpdateEffectTypeDto {
   @IsOptional()
   accessType: AccessType | undefined;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateEffectTypeDto, userId: string, roles: string[]): UpdateEffectTypeCommand {
     return new UpdateEffectTypeCommand(
       id,
@@ -67,6 +73,7 @@ export class UpdateEffectTypeDto {
       dto.accessType,
       userId,
       roles,
+      dto.version,
     );
   }
 }

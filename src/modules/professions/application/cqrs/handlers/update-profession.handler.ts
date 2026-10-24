@@ -19,6 +19,8 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
 
     this.professionGuard.checkUpdate(current, command.userId, command.roles);
 
+    current.checkVersion(command.expectedVersion);
+
     current.update({
       archetype: command.archetype,
       skillCosts: command.skillCosts,
@@ -29,6 +31,6 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
       imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
-    return await this.professionRepository.update(current.id, current);
+    return await this.professionRepository.update(current);
   }
 }

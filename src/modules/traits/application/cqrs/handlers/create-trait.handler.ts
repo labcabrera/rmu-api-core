@@ -31,7 +31,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
     });
     const existing = await this.traitRepository.findById(trait.id);
     if (existing) {
-      throw new ConflictError(`Trait with id ${trait.id} already exists`);
+      throw new ConflictError(`Trait with id ${trait.id} already exists`, 'duplicate-key');
     }
     const savedTrait = await this.traitRepository.save(trait);
     await this.events.publishChanges('trait', trait);

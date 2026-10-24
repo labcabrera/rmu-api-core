@@ -8,6 +8,10 @@ export type SkillDocument = SkillModel & Document;
 
 @Schema({ collection: 'skills', id: true, versionKey: false })
 export class SkillModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ type: String, required: true })
   _id: string;
 

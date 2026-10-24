@@ -22,6 +22,7 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
     if (current) {
       throw new ConflictError(
         `Enumeration with key ${command.key} and category ${command.category} already exists${command.realmId ? ` for realm ${command.realmId}` : ''}.`,
+        'duplicate-key',
       );
     }
 

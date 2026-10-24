@@ -20,7 +20,7 @@ export class CreateEffectTypeHandler implements ICommandHandler<CreateEffectType
 
     const current = await this.effectTypeRepository.findById(command.id);
     if (current) {
-      throw new ConflictError(`Effect type with id ${command.id} already exists`);
+      throw new ConflictError(`Effect type with id ${command.id} already exists`, 'duplicate-key');
     }
 
     const effectType = EffectType.create({

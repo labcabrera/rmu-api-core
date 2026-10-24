@@ -36,6 +36,9 @@ export class ManeuverModifierDto {
   @ApiProperty({ description: 'Identifier', example: '0f0e3c1a-2b7c-4c1e-9f62-3f1d2c3b4a5d' })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Unique key, also used as translation key', example: 'some-modifier' })
   key: string;
 
@@ -72,6 +75,7 @@ export class ManeuverModifierDto {
   static fromEntity(entity: ManeuverModifier): ManeuverModifierDto {
     const dto = new ManeuverModifierDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.key = entity.key;
     dto.scope = { ...entity.scope };
     dto.type = entity.type;

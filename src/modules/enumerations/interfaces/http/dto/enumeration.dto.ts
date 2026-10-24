@@ -9,6 +9,9 @@ export class EnumerationDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'enumeration-001', required: true })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Category ID of the skill', example: 'animal', required: true })
   key: string;
 
@@ -45,6 +48,7 @@ export class EnumerationDto {
   static fromEntity(entity: Enumeration): EnumerationDto {
     const dto = new EnumerationDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.key = entity.key;
     dto.category = entity.category;
     dto.realmId = entity.realmId;

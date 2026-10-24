@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsString, IsOptional } from 'class-validator';
+import { IsIn, IsString, IsOptional, IsInt, Min } from 'class-validator';
 import { UpdateEnumerationCommand } from '../../../application/cqrs/commands/update-enumeration.command.js';
 import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
@@ -40,6 +40,12 @@ export class UpdateEnumerationDto {
   @IsOptional()
   imageUrl?: string | null | undefined;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateEnumerationDto, userId: string, roles: string[]): UpdateEnumerationCommand {
     return new UpdateEnumerationCommand(
       id,
@@ -51,6 +57,7 @@ export class UpdateEnumerationDto {
       dto.accessType,
       userId,
       roles,
+      dto.version,
     );
   }
 }

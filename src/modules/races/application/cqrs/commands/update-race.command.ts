@@ -27,6 +27,8 @@ export class UpdateRaceCommand extends AuthenticatedCommand {
     public readonly imageUrl: string | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
   ) {
     super(userId, roles);
   }

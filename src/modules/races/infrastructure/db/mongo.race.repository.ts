@@ -17,12 +17,12 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
   async updateRealmInfo(realmId: string, realmName: string, realmOwner: string, accessType: AccessType): Promise<void> {
     const now = new Date();
     const update = { owner: realmOwner, accessType: accessType, updatedAt: now };
-    await this.model.updateMany({ realmId: realmId }, { $set: update }).exec();
+    await this.model.updateMany({ realmId: realmId }, { $set: update, $inc: { version: 1 } }).exec();
   }
 
   async findByRealmId(realmId: string): Promise<Race[]> {
     const values = await this.model.find({ realmId: realmId }).exec();
-    return values.map(doc => this.mapToEntity(doc));
+    return values.map(doc => this.toEntity(doc));
   }
 
   protected mapToEntity(doc: RaceDocument): Race {

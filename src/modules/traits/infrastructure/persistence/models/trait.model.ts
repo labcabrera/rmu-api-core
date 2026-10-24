@@ -1,20 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Trait } from '../../../domain/aggregates/trait.js';
+import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
-export type TraitDocument = Trait & Document;
+export type TraitDocument = TraitModel & Document;
 
 @Schema({ collection: 'traits', _id: false, versionKey: false })
 export class TraitModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ required: true })
   _id: string;
 
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  category: string;
+  @Prop({ type: String, required: true })
+  category: TraitCategory;
 
   @Prop({ required: true })
   isTalent: boolean;

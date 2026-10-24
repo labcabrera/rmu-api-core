@@ -20,7 +20,7 @@ export class CreateManeuverModifierHandler implements ICommandHandler<CreateMane
     this.guard.checkCreate(command.roles);
     const modifier = ManeuverModifier.create({ ...command.definition, owner: command.userId, accessType: command.accessType });
     if (await this.repository.findByKey(modifier.key)) {
-      throw new ConflictError(`Maneuver modifier with key ${modifier.key} already exists`);
+      throw new ConflictError(`Maneuver modifier with key ${modifier.key} already exists`, 'duplicate-key');
     }
     return await this.repository.save(modifier);
   }
