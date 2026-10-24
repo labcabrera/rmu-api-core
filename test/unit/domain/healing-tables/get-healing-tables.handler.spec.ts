@@ -21,6 +21,13 @@ const TABLES: HealingTables = {
   restPeriodHours: 2,
   fullRestDayMultiplier: 2,
   talentMultipliers: { 'fast-healer': 0.5 },
+  treatmentDifficulties: [{ procedure: 'stitches', injuryType: 'unknown', severity: 'light', difficulty: 'l' }],
+  treatmentRules: {
+    headDifficultySteps: 2,
+    cauterizePenaltyPerBleeding: -1,
+    bleedingProcedures: ['stitches'],
+    tourniquetLocations: ['leg'],
+  },
 };
 
 const repository = (tables: HealingTables | null): HealingTablesRepository => ({ findById: () => Promise.resolve(tables) });
@@ -47,5 +54,21 @@ describe('GetHealingTablesHandler', () => {
     const mapped = MongoHealingTablesRepository.mapToTables(doc);
     expect(mapped).not.toHaveProperty('_id');
     expect(mapped.recoveryDays).toEqual([{ min: null, max: null, days }]);
+    expect(mapped.treatmentDifficulties).toEqual(TABLES.treatmentDifficulties);
+    expect(mapped.treatmentRules).toEqual(TABLES.treatmentRules);
+  });
+
+  it('maps a document imported before the treatment difficulties with no rows and neutral rules', () => {
+    const older: HealingTablesModel = { ...TABLES, _id: 'core-law' };
+    delete older.treatmentDifficulties;
+    delete older.treatmentRules;
+    const mapped = MongoHealingTablesRepository.mapToTables(older);
+    expect(mapped.treatmentDifficulties).toEqual([]);
+    expect(mapped.treatmentRules).toEqual({
+      headDifficultySteps: 0,
+      cauterizePenaltyPerBleeding: 0,
+      bleedingProcedures: [],
+      tourniquetLocations: [],
+    });
   });
 });

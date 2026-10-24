@@ -6,6 +6,8 @@ import type {
   PermanentInjuryRow,
   RecoveryDaysRow,
   SeverityThreshold,
+  TreatmentDifficulty,
+  TreatmentRules,
 } from '../../../domain/value-objects/healing-tables.vo.js';
 
 export type HealingTablesDocument = HydratedDocument<HealingTablesModel>;
@@ -48,6 +50,12 @@ export class HealingTablesModel {
 
   @Prop({ type: Object, required: true })
   talentMultipliers: Record<string, number>;
+
+  @Prop({ type: [Object], required: false })
+  treatmentDifficulties?: TreatmentDifficulty[];
+
+  @Prop({ type: Object, required: false })
+  treatmentRules?: TreatmentRules;
 }
 
 export const HealingTablesSchema = SchemaFactory.createForClass(HealingTablesModel);
