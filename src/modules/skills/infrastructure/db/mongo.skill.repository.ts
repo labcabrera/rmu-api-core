@@ -15,7 +15,7 @@ export class MongoSkillRepository extends MongoBaseRepository<Skill, SkillDocume
 
   protected mapToEntity(doc: SkillDocument): Skill {
     return Skill.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       categoryId: doc.categoryId,
       bonus: doc.bonus,
       specialization: doc.specialization,

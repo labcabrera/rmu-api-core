@@ -15,7 +15,7 @@ export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocume
 
   protected mapToEntity(doc: TraitDocument): Trait {
     return Trait.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       name: doc.name,
       category: doc.category,
       isTalent: doc.isTalent,

@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
-export type EnumerationDocument = EnumerationModel & Document;
+export type EnumerationDocument = HydratedDocument<EnumerationModel>;
 
 @Schema({ collection: 'enumerations', id: true, versionKey: false })
 export class EnumerationModel {

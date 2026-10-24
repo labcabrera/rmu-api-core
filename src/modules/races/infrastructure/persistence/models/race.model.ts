@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import { RaceResistances, RaceStats, SexBasedAttribute } from './race-childs.model.js';
 import { RaceTrait } from './race-trait.model.js';
 // realm is now stored as realmId string
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { RaceSkillBonus } from './race-skill-bonus.model.js';
 
-export type RaceDocument = RaceModel & Document;
+export type RaceDocument = HydratedDocument<RaceModel>;
 
 @Schema({ collection: 'races', _id: false, versionKey: false })
 export class RaceModel {

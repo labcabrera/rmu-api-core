@@ -13,13 +13,13 @@ export class KafkaRealmEventConsumer {
 
   constructor(private readonly commandBus: CommandBus) {}
 
-  @EventPattern('internal.rmu-core.realm.updated.v1')
+  @EventPattern<string>('internal.rmu-core.realm.updated.v1')
   async handleRealmUpdated(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
     const realm = event.data;
     await this.run(context, realm.id, new SyncRaceRealmCommand(realm.id, realm.name, realm.owner, realm.accessType));
   }
 
-  @EventPattern('internal.rmu-core.realm.deleted.v1')
+  @EventPattern<string>('internal.rmu-core.realm.deleted.v1')
   async handleRealmDeleted(@Payload() event: DomainEvent<RealmProps>, @Ctx() context: KafkaContext) {
     await this.run(context, event.data.id, new DeleteRacesByRealmCommand(event.data.id));
   }

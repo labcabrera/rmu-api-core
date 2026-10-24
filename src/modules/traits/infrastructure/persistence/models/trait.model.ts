@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
-export type TraitDocument = TraitModel & Document;
+export type TraitDocument = HydratedDocument<TraitModel>;
 
 @Schema({ collection: 'traits', _id: false, versionKey: false })
 export class TraitModel {

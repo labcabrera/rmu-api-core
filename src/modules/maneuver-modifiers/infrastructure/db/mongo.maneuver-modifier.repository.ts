@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { type FilterQuery, Model } from 'mongoose';
+import { type QueryFilter, Model } from 'mongoose';
 import { QueryCriteria } from '../../../shared/application/criteria/query-criteria.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 import { MongoQueryCriteriaMapper } from '../../../shared/infrastructure/db/mongo-query-criteria.mapper.js';
@@ -27,12 +27,12 @@ export class MongoManeuverModifierRepository
   }
 
   async findApplicable(skillId: string | undefined, categoryId: string | undefined, filter?: QueryCriteria): Promise<ManeuverModifier[]> {
-    const scope: FilterQuery<ManeuverModifierDocument>[] = [];
+    const scope: QueryFilter<ManeuverModifierDocument>[] = [];
     if (skillId) scope.push({ 'scope.skillIds': skillId });
     if (categoryId) scope.push({ 'scope.categoryIds': categoryId });
     if (scope.length === 0) return [];
     const accessFilter = MongoQueryCriteriaMapper.toFilterQuery(filter);
-    const query: FilterQuery<ManeuverModifierDocument> =
+    const query: QueryFilter<ManeuverModifierDocument> =
       Object.keys(accessFilter).length === 0 ? { $or: scope } : { $and: [{ $or: scope }, accessFilter] };
     const docs = await this.modifierModel.find(query).sort({ key: 1 });
     return docs.map(doc => this.toEntity(doc));
@@ -40,7 +40,7 @@ export class MongoManeuverModifierRepository
 
   protected mapToEntity(doc: ManeuverModifierDocument): ManeuverModifier {
     return ManeuverModifier.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       key: doc.key,
       scope: {
         ...(doc.scope?.skillIds?.length ? { skillIds: doc.scope.skillIds } : {}),

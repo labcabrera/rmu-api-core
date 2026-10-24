@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CultureSkillRankModel, LegacyCultureFixedSkillRankModel } from './culture-skill-rank.model.js';
 
-export type CultureDocument = CultureModel & Document;
+export type CultureDocument = HydratedDocument<CultureModel>;
 
 @Schema({ collection: 'cultures', _id: false, versionKey: false })
 export class CultureModel {

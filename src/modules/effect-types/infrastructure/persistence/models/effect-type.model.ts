@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
-export type EffectTypeDocument = EffectTypeModel & Document;
+export type EffectTypeDocument = HydratedDocument<EffectTypeModel>;
 
 @Schema({ collection: 'effect-types', id: true, versionKey: false })
 export class EffectTypeModel {

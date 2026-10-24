@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
-export type RealmDocument = RealmModel & Document;
+export type RealmDocument = HydratedDocument<RealmModel>;
 
 @Schema({ collection: 'realms', versionKey: false })
 export class RealmModel {

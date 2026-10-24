@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import type { FilterQuery, HydratedDocument, Model, UpdateQuery } from 'mongoose';
+import type { QueryFilter, HydratedDocument, Model, UpdateQuery } from 'mongoose';
 import { RsqlParser } from './rsql-parser.js';
 import { Page } from '../../application/pagination/page.js';
 import { ConflictError, NotFoundError } from '../../domain/errors/errors.js';
@@ -35,7 +35,7 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<{ id: stri
     const rsqlParsed = this.rsqlParser.parse(rsql);
     const accessFilter = MongoQueryCriteriaMapper.toFilterQuery(filter);
 
-    let mongoQuery: FilterQuery<D>;
+    let mongoQuery: QueryFilter<D>;
     if (Object.keys(rsqlParsed).length === 0) {
       mongoQuery = accessFilter;
     } else if (Object.keys(accessFilter).length === 0) {
@@ -81,8 +81,8 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<{ id: stri
 
     // Version 0 also matches the documents stored before versions existed.
     const version = entity.version === 0 ? { $in: [0, null] } : entity.version;
-    const filter = { _id: id, version } as FilterQuery<D>;
-    const updated = await this.model.findOneAndUpdate(filter, update, { new: true });
+    const filter = { _id: id, version } as QueryFilter<D>;
+    const updated = await this.model.findOneAndUpdate(filter, update, { returnDocument: 'after' });
     if (updated) return this.toEntity(updated);
     if (await this.existsById(id)) {
       throw new ConflictError(`${id} was changed by someone else since version ${entity.version}`, 'version-conflict');
