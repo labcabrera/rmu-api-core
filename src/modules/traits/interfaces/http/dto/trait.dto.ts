@@ -7,6 +7,9 @@ export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
   name: string;
 
@@ -37,6 +40,7 @@ export class TraitDto {
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.name = entity.name;
     dto.category = entity.category;
     dto.isTalent = entity.isTalent;

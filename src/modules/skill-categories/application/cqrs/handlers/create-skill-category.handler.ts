@@ -13,7 +13,7 @@ export class CreateSkillCategoryHandler implements ICommandHandler<CreateSkillCa
   async execute(command: CreateSkillCategoryCommand): Promise<SkillCategory> {
     const current = await this.skillCategoryRepository.findById(command.id);
     if (current) {
-      throw new ConflictError(`Skill Category with id ${command.id} already exists`);
+      throw new ConflictError(`Skill Category with id ${command.id} already exists`, 'duplicate-key');
     }
     ManeuverProfiles.validate(command.maneuver);
     const skillCategory = new SkillCategory(

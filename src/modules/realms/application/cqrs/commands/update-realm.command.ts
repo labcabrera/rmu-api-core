@@ -13,6 +13,8 @@ export class UpdateRealmCommand extends AuthenticatedCommand {
     public readonly accessType: AccessType | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
   ) {
     super(userId, roles);
   }

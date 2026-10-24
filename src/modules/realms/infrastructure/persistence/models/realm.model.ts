@@ -1,20 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Realm } from '../../../domain/aggregates/realm.js';
+import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
-export type RealmDocument = Realm & Document;
+export type RealmDocument = RealmModel & Document;
 
 @Schema({ collection: 'realms', versionKey: false })
 export class RealmModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ required: true })
   _id: string;
 
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  magicPresence: string;
+  @Prop({ type: String, required: true })
+  magicPresence: MagicPresence;
 
   @Prop({ required: false })
   shortDescription?: string;

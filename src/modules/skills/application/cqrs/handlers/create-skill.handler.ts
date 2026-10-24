@@ -28,7 +28,7 @@ export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, S
     this.skillGuard.checkCreate(command.roles);
 
     const current = await this.skillRepository.findById(command.id);
-    if (current) throw new ConflictError(`Skill with id ${command.id} already exists`);
+    if (current) throw new ConflictError(`Skill with id ${command.id} already exists`, 'duplicate-key');
 
     const category = await this.skillCategoryRepository.findById(command.categoryId);
     if (!category) throw new ValidationError(`Skill category with id ${command.categoryId} does not exist`);

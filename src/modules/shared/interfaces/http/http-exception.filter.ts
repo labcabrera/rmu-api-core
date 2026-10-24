@@ -3,7 +3,18 @@ import type { Request, Response } from 'express';
 import { DomainError } from '../../domain/errors/errors.js';
 import type { ErrorDto } from './dto/error-dto.js';
 
-type ErrorBody = Pick<ErrorDto, 'statusCode' | 'error' | 'message'>;
+type ErrorBody = Pick<ErrorDto, 'statusCode' | 'error' | 'code' | 'message'>;
+
+/** The code of a Nest HTTP exception, from its status. */
+const HTTP_CODES: Record<number, string> = {
+  400: 'bad-request',
+  401: 'unauthorized',
+  403: 'forbidden',
+  404: 'not-found',
+  409: 'conflict',
+  413: 'payload-too-large',
+  429: 'too-many-requests',
+};
 
 /**
  * One error format for every HTTP failure: domain errors, Nest exceptions (validation, 401 from the guard...),
@@ -42,19 +53,30 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
 function toErrorBody(exception: unknown): ErrorBody {
   if (exception instanceof DomainError) {
-    return { statusCode: exception.statusCode, error: exception.name, message: exception.message };
+    return { statusCode: exception.statusCode, error: exception.name, code: exception.code, message: exception.message };
   }
   if (exception instanceof HttpException) {
     const response = exception.getResponse();
     const fields = typeof response === 'object' ? (response as { message?: unknown }) : {};
     const message = Array.isArray(fields.message) || typeof fields.message === 'string' ? fields.message : exception.message;
     // The class name, like domain errors: BadRequestException, UnauthorizedException...
-    return { statusCode: exception.getStatus(), error: exception.name, message: message as string | string[] };
+    const statusCode = exception.getStatus();
+    return { statusCode, error: exception.name, code: HTTP_CODES[statusCode] ?? 'http-error', message: message as string | string[] };
   }
   if (isDuplicateKey(exception)) {
-    return { statusCode: HttpStatus.CONFLICT, error: 'ConflictError', message: `Duplicate key ${JSON.stringify(exception.keyValue)}` };
+    return {
+      statusCode: HttpStatus.CONFLICT,
+      error: 'ConflictError',
+      code: 'duplicate-key',
+      message: `Duplicate key ${JSON.stringify(exception.keyValue)}`,
+    };
   }
-  return { statusCode: HttpStatus.INTERNAL_SERVER_ERROR, error: 'InternalServerError', message: 'Internal server error' };
+  return {
+    statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    error: 'InternalServerError',
+    code: 'internal-error',
+    message: 'Internal server error',
+  };
 }
 
 function isDuplicateKey(exception: unknown): exception is { keyValue?: unknown } {

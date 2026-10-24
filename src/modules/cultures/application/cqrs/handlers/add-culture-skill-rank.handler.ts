@@ -30,7 +30,7 @@ export class AddCultureSkillRankHandler implements ICommandHandler<AddCultureSki
 
     culture.addSkillRank(CultureSkillRank.create(command.skillRank));
 
-    const updated = await this.cultureRepository.update(command.cultureId, culture);
+    const updated = await this.cultureRepository.update(culture);
 
     await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);

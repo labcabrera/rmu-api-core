@@ -20,14 +20,15 @@ export class UpdateManeuverModifierHandler implements ICommandHandler<UpdateMane
     const current = await this.repository.findById(command.id);
     if (!current) throw new NotFoundError('ManeuverModifier', command.id);
     this.guard.checkUpdate(current, command.userId, command.roles);
+    current.checkVersion(command.expectedVersion);
 
     // The key is checked before changing the modifier, so a conflict leaves it as it was.
     const { key } = current.resolve(command.changes);
     const sameKey = await this.repository.findByKey(key);
     if (sameKey && sameKey.id !== current.id) {
-      throw new ConflictError(`Maneuver modifier with key ${key} already exists`);
+      throw new ConflictError(`Maneuver modifier with key ${key} already exists`, 'duplicate-key');
     }
     current.update(command.changes);
-    return await this.repository.update(current.id, current);
+    return await this.repository.update(current);
   }
 }

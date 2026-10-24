@@ -27,7 +27,7 @@ export class DeleteRaceTraitHandler implements ICommandHandler<DeleteRaceTraitCo
 
     race.removeTrait(command.traitId);
 
-    const updated = await this.raceRepository.update(command.raceId, race);
+    const updated = await this.raceRepository.update(race);
     await this.events.publishChanges('race', race);
     return updated;
   }

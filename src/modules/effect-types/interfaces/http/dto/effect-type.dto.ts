@@ -12,6 +12,9 @@ export class EffectTypeDto {
   @ApiProperty({ description: 'Effect type identifier', example: 'bleeding', required: true })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Indicates if the effect persists over time', example: true, required: true })
   isPersistent: boolean;
 
@@ -48,6 +51,7 @@ export class EffectTypeDto {
   static fromEntity(entity: EffectType): EffectTypeDto {
     const dto = new EffectTypeDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.isPersistent = entity.isPersistent;
     dto.isStackable = entity.isStackable;
     dto.value = entity.value;

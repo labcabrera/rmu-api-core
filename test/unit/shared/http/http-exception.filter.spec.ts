@@ -1,7 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
-import { type ArgumentsHost, BadRequestException, Logger, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  BadRequestException,
+  HttpException,
+  Logger,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { HttpExceptionFilter } from '../../../../src/modules/shared/interfaces/http/http-exception.filter.js';
-import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { ConflictError, NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const run = (exception: unknown) => {
   const json = vi.fn();
@@ -28,16 +35,25 @@ class MongoServerError extends Error {
 
 describe('HttpExceptionFilter', () => {
   it.each([
-    ['a domain error', new NotFoundError('Race', '1'), 404, 'NotFoundError', 'Race 1 not found'],
-    ['a validation error', new BadRequestException(['name should not be empty']), 400, 'BadRequestException', ['name should not be empty']],
-    ['a guard rejection', new UnauthorizedException(), 401, 'UnauthorizedException', 'Unauthorized'],
-    ['a duplicate key', new MongoServerError('E11000'), 409, 'ConflictError', 'Duplicate key {"key":"westron"}'],
-    ['an unexpected error', new TypeError('x is undefined'), 500, 'InternalServerError', 'Internal server error'],
-  ])('maps %s to one error format', (_, exception, statusCode, error, message) => {
+    ['a domain error', new NotFoundError('Race', '1'), 404, 'NotFoundError', 'not-found', 'Race 1 not found'],
+    ['a specific code', new ConflictError('Stale', 'version-conflict'), 409, 'ConflictError', 'version-conflict', 'Stale'],
+    [
+      'a validation error',
+      new BadRequestException(['name should not be empty']),
+      400,
+      'BadRequestException',
+      'bad-request',
+      ['name should not be empty'],
+    ],
+    ['a guard rejection', new UnauthorizedException(), 401, 'UnauthorizedException', 'unauthorized', 'Unauthorized'],
+    ['an unusual status', new HttpException('Teapot', 418), 418, 'HttpException', 'http-error', 'Teapot'],
+    ['a duplicate key', new MongoServerError('E11000'), 409, 'ConflictError', 'duplicate-key', 'Duplicate key {"key":"westron"}'],
+    ['an unexpected error', new TypeError('x is undefined'), 500, 'InternalServerError', 'internal-error', 'Internal server error'],
+  ])('maps %s to one error format', (_, exception, statusCode, error, errorCode, message) => {
     const { code, body } = run(exception);
 
     expect(code).toBe(statusCode);
-    expect(body).toEqual({ statusCode, error, message, timestamp: expect.any(String) as unknown, path: '/v1/races/1' });
+    expect(body).toEqual({ statusCode, error, code: errorCode, message, timestamp: expect.any(String) as unknown, path: '/v1/races/1' });
   });
 
   it('logs unexpected errors with their stack, without exposing them', () => {

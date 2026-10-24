@@ -27,6 +27,8 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
 
     this.cultureGuard.checkUpdate(culture, command.userId, command.roles);
 
+    culture.checkVersion(command.expectedVersion);
+
     culture.update({
       name: command.name,
       description: command.description,
@@ -37,7 +39,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
       suggestedCrafts: command.suggestedCrafts,
       suggestedVocations: command.suggestedVocations,
     });
-    const updated = await this.cultureRepository.update(command.id, culture);
+    const updated = await this.cultureRepository.update(culture);
     await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);
   }

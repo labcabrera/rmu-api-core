@@ -7,6 +7,10 @@ export type CultureDocument = CultureModel & Document;
 
 @Schema({ collection: 'cultures', _id: false, versionKey: false })
 export class CultureModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ required: true })
   _id: string;
 

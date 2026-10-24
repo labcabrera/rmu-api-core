@@ -9,6 +9,9 @@ export class SkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
   id: string;
 
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
   @ApiProperty({ description: 'Category of the skill', example: 'animal' })
   categoryId: string;
 
@@ -38,6 +41,7 @@ export class SkillDto {
     const entity = view.skill;
     const dto = new SkillDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.categoryId = entity.categoryId;
     dto.bonus = entity.bonus || [];
     dto.specialization = entity.specialization;

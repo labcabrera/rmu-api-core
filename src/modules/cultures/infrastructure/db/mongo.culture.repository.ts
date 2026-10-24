@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
-import { NotFoundError } from '../../../shared/domain/errors/errors.js';
 import { type CultureDocument, CultureModel } from '../persistence/models/culture.model.js';
 import type { CultureRepository } from '../../application/ports/culture-repository.port.js';
 import { Culture } from '../../domain/aggregates/culture.js';
@@ -15,15 +14,8 @@ export class MongoCultureRepository extends MongoBaseRepository<Culture, Culture
     super(cultureModel, rsqlParser);
   }
 
-  /** Writes only `skillRanks` and drops the old `fixedSkillRanks` field. */
-  async update(entityId: string, entity: Partial<Culture>): Promise<Culture> {
-    const props = entity.getProps ? entity.getProps() : entity;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, ...rest } = props;
-    const updated = await this.model.findByIdAndUpdate(entityId, { $set: rest, $unset: { fixedSkillRanks: 1 } }, { new: true });
-    if (!updated) throw new NotFoundError('Culture', entityId);
-    return this.mapToEntity(updated);
-  }
+  /** Cultures stored before the skill ranks were unified still have `fixedSkillRanks`. */
+  protected override readonly removedFields = ['fixedSkillRanks'];
 
   protected mapToEntity(doc: CultureDocument): Culture {
     return Culture.fromProps({

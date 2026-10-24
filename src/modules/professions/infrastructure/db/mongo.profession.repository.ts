@@ -15,7 +15,7 @@ export class MongoProfessionRepository extends MongoBaseRepository<Profession, P
 
   // async findById(id: string): Promise<Profession | null> {
   //   const readed = await this.professionModel.findById(id);
-  //   return readed ? this.mapToEntity(readed) : null;
+  //   return readed ? this.toEntity(readed) : null;
   // }
 
   // async findByRsql(rsql: string, page: number, size: number): Promise<Page<Profession>> {
@@ -25,7 +25,7 @@ export class MongoProfessionRepository extends MongoBaseRepository<Profession, P
   //     this.professionModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
   //     this.professionModel.countDocuments(mongoQuery),
   //   ]);
-  //   const content = professionsDocs.map((doc) => this.mapToEntity(doc));
+  //   const content = professionsDocs.map((doc) => this.toEntity(doc));
   //   return new Page<Profession>(content, page, size, totalElements);
   // }
 
@@ -33,7 +33,7 @@ export class MongoProfessionRepository extends MongoBaseRepository<Profession, P
   //   const props = profession.toProps();
   //   const model = new this.professionModel({ ...props, _id: profession.id });
   //   await model.save();
-  //   return this.mapToEntity(model);
+  //   return this.toEntity(model);
   // }
 
   // async update(id: string, request: Partial<Profession>): Promise<Profession> {
@@ -41,12 +41,12 @@ export class MongoProfessionRepository extends MongoBaseRepository<Profession, P
   //   if (!updatedProfession) {
   //     throw new NotFoundError('Profession', id);
   //   }
-  //   return this.mapToEntity(updatedProfession);
+  //   return this.toEntity(updatedProfession);
   // }
 
   // async deleteById(id: string): Promise<Profession | null> {
   //   const result = await this.professionModel.findByIdAndDelete(id);
-  //   return result ? this.mapToEntity(result) : null;
+  //   return result ? this.toEntity(result) : null;
   // }
 
   // async existsById(id: string): Promise<boolean> {

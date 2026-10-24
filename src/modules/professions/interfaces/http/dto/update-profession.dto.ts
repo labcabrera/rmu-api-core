@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
-import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString, IsInt, Min } from 'class-validator';
 import { UpdateProfessionCommand } from '../../../application/cqrs/commands/update-profession.command.js';
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
@@ -50,6 +50,12 @@ export class UpdateProfessionDto {
   @IsOptional()
   accessType: AccessType | undefined;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(professionId: string, dto: UpdateProfessionDto, userId: string, roles: string[]): UpdateProfessionCommand {
     return new UpdateProfessionCommand(
       professionId,
@@ -63,6 +69,7 @@ export class UpdateProfessionDto {
       dto.accessType,
       userId,
       roles,
+      dto.version,
     );
   }
 }

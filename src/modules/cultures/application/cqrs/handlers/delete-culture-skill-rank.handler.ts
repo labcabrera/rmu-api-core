@@ -29,7 +29,7 @@ export class DeleteCultureSkillRankHandler implements ICommandHandler<DeleteCult
 
     culture.deleteSkillRank(command.index);
 
-    const updated = await this.cultureRepository.update(command.cultureId, culture);
+    const updated = await this.cultureRepository.update(culture);
 
     await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);

@@ -11,6 +11,10 @@ export type ManeuverModifierDocument = ManeuverModifierModel & Document;
 
 @Schema({ collection: 'maneuver-modifiers', id: true, versionKey: false })
 export class ManeuverModifierModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ type: String, required: true })
   _id: string;
 

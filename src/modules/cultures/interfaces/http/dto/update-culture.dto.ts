@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested, IsInt, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UpdateCultureCommand } from '../../../application/cqrs/commands/update-culture.command.js';
@@ -53,6 +53,12 @@ export class UpdateCultureDto {
   @IsOptional()
   suggestedVocations?: string;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateCultureDto, userId: string, roles: string[]): UpdateCultureCommand {
     return new UpdateCultureCommand(
       id,
@@ -66,6 +72,7 @@ export class UpdateCultureDto {
       dto.suggestedVocations,
       userId,
       roles,
+      dto.version,
     );
   }
 }

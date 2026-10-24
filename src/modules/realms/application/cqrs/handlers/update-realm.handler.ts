@@ -25,6 +25,8 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
 
     this.realmGuard.checkUpdate(realm, command.userId, command.roles);
 
+    realm.checkVersion(command.expectedVersion);
+
     realm.update({
       name: command.name,
       magicPresence: command.magicPresence,
@@ -33,7 +35,7 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
       imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
-    const updated = await this.realmRepository.update(realm.id, realm);
+    const updated = await this.realmRepository.update(realm);
     await this.events.publishChanges('realm', realm);
     return updated;
   }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf, IsInt, Min } from 'class-validator';
 import { UpdateRealmCommand } from '../../../application/cqrs/commands/update-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
@@ -52,6 +52,12 @@ export class UpdateRealmDto {
   @IsOptional()
   accessType: AccessType | undefined;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateRealmDto, userId: string, roles: string[]) {
     return new UpdateRealmCommand(
       id,
@@ -63,6 +69,7 @@ export class UpdateRealmDto {
       dto.accessType,
       userId,
       roles,
+      dto.version,
     );
   }
 }

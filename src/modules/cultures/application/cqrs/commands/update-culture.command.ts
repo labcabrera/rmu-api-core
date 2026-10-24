@@ -15,6 +15,8 @@ export class UpdateCultureCommand extends AuthenticatedCommand {
     public readonly suggestedVocations: string | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
   ) {
     super(userId, roles);
   }

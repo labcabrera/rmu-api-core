@@ -18,7 +18,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
     this.professionGuard.checkCreate(command.roles);
 
     const current = await this.professionRepository.findById(command.id);
-    if (current) throw new ConflictError(`Profession with id ${command.id} already exists`);
+    if (current) throw new ConflictError(`Profession with id ${command.id} already exists`, 'duplicate-key');
 
     const entitySource = command.roles.includes(RMU_ADMIN) ? 'system' : 'user';
 

@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested, IsInt, Min } from 'class-validator';
 import { RaceResistancesDto } from './race-resistances.dto.js';
 import { RaceStatsDto } from './race-stats.dto.js';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
@@ -97,6 +97,12 @@ export class UpdateRaceDto {
   @IsOptional()
   imageUrl?: string;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateRaceDto, userId: string, roles: string[]): UpdateRaceCommand {
     return new UpdateRaceCommand(
       id,
@@ -120,6 +126,7 @@ export class UpdateRaceDto {
       dto.imageUrl,
       userId,
       roles,
+      dto.version,
     );
   }
 }

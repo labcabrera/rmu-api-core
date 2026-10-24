@@ -30,6 +30,8 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
 
     this.skillGuard.checkUpdate(current, command.userId, command.roles);
 
+    current.checkVersion(command.expectedVersion);
+
     if (command.categoryId) {
       const category = await this.skillCategoryRepository.findById(command.categoryId);
       if (!category) throw new ValidationError(`Skill category with id ${command.categoryId} does not exist`);
@@ -44,7 +46,7 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
     });
 
     if (!modified) return await this.skillViewService.toView(current);
-    const updated = await this.skillRepository.update(current.id, current);
+    const updated = await this.skillRepository.update(current);
     return await this.skillViewService.toView(updated);
   }
 }

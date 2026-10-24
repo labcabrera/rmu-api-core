@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
 import { UpdateManeuverModifierCommand } from '../../../application/cqrs/commands/update-maneuver-modifier.command.js';
 import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
@@ -23,6 +23,12 @@ export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefin
   @IsOptional()
   accessType?: AccessType;
 
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
   static toCommand(id: string, dto: UpdateManeuverModifierDto, userId: string, roles: string[]): UpdateManeuverModifierCommand {
     return new UpdateManeuverModifierCommand(
       id,
@@ -40,6 +46,7 @@ export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefin
       },
       userId,
       roles,
+      dto.version,
     );
   }
 }

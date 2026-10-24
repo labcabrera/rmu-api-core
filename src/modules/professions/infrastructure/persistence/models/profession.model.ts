@@ -10,6 +10,10 @@ export type ProfessionDocument = ProfessionModel & Document;
 
 @Schema({ collection: 'professions', id: true, versionKey: false })
 export class ProfessionModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ required: true })
   _id: string;
 

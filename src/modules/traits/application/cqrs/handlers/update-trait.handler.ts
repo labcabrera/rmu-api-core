@@ -21,6 +21,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       throw new NotFoundError('Trait', command.id);
     }
     this.traitGuard.checkUpdate(trait, command.userId, command.roles);
+    trait.checkVersion(command.expectedVersion);
     trait.update({
       name: command.name,
       category: command.category,
@@ -32,7 +33,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       tierCost: command.tierCost,
       description: command.description,
     });
-    const updated = await this.traitRepository.update(trait.id, trait);
+    const updated = await this.traitRepository.update(trait);
     await this.events.publishChanges('trait', trait);
     return updated;
   }

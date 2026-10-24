@@ -16,6 +16,8 @@ export class UpdateTraitCommand extends AuthenticatedCommand {
     public readonly description: string | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
   ) {
     super(userId, roles);
   }

@@ -21,6 +21,8 @@ export class UpdateEffectTypeHandler implements ICommandHandler<UpdateEffectType
 
     this.guard.checkUpdate(current, command.userId, command.roles);
 
+    current.checkVersion(command.expectedVersion);
+
     const modified = current.update({
       isPersistent: command.isPersistent,
       isStackable: command.isStackable,
@@ -34,6 +36,6 @@ export class UpdateEffectTypeHandler implements ICommandHandler<UpdateEffectType
     });
     if (!modified) return current;
 
-    return await this.effectTypeRepository.update(command.id, current);
+    return await this.effectTypeRepository.update(current);
   }
 }
