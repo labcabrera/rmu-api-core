@@ -1,43 +1,51 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsIn } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 import { UpdateRealmCommand } from '../../../application/cqrs/commands/update-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateRealmDto {
-  @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
+  @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings', required: false })
+  @ValidateIf((_, value) => value !== undefined)
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   name: string | undefined;
 
   @ApiProperty({ type: String, description: 'Magic presence in the realm', example: 'limited', required: false })
   @IsString()
   @IsIn(['unlimited', 'limited', 'none'])
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   magicPresence: MagicPresence | undefined;
 
-  @ApiProperty({ description: 'Short description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
+  @ApiProperty({
+    description: 'Short description of the realm; empty or null clears it',
+    required: false,
+    nullable: true,
+    example: 'A fantasy world created by J.R.R. Tolkien',
+  })
   @IsString()
   @IsOptional()
-  shortDescription: string | undefined;
+  shortDescription: string | null | undefined;
 
   @ApiProperty({
-    description: 'Description of the realm',
+    description: 'Description of the realm; empty or null clears it',
     required: false,
+    nullable: true,
     example: 'A fantasy world created by J.R.R. Tolkien with too much text later',
   })
   @IsString()
   @IsOptional()
-  description: string | undefined;
+  description: string | null | undefined;
 
   @ApiProperty({
-    description: 'Image URL of the realm',
+    description: 'Image URL of the realm; empty or null clears it',
     required: false,
+    nullable: true,
     example: 'https://example.com/images/realms/lotr.jpg',
   })
   @IsString()
   @IsOptional()
-  imageUrl: string | undefined;
+  imageUrl: string | null | undefined;
 
   @ApiProperty({ type: String, description: 'Access type', example: 'public', required: false })
   @IsString()

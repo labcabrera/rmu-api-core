@@ -86,15 +86,20 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     return new ManeuverModifier({ ...props });
   }
 
-  update(changes: ManeuverModifierUpdate): void {
-    const current = this.getDefinition();
-    const merged: ManeuverModifierDefinition = { ...current };
+  /** The definition the changes would leave, normalized and validated, without changing the modifier. */
+  resolve(changes: ManeuverModifierUpdate): ManeuverModifierDefinition {
+    const merged: ManeuverModifierDefinition = { ...this.getDefinition() };
     (Object.keys(changes) as (keyof ManeuverModifierUpdate)[]).forEach(field => {
       if (field === 'accessType' || changes[field] === undefined) return;
       (merged as unknown as Record<string, unknown>)[field] = changes[field];
     });
     const definition = ManeuverModifier.normalize(merged);
     ManeuverModifier.validate(definition);
+    return definition;
+  }
+
+  update(changes: ManeuverModifierUpdate): void {
+    const definition = this.resolve(changes);
     this.props.key = definition.key;
     this.props.scope = definition.scope;
     this.props.type = definition.type;

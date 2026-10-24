@@ -57,7 +57,11 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<any>, D> {
     const props = partialEntity.getProps ? partialEntity.getProps() : partialEntity;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = props;
-    const update = { $set: rest } as any;
+    // An undefined field was cleared: $unset removes it instead of leaving the old value.
+    const entries = Object.entries(rest as Record<string, unknown>);
+    const set = Object.fromEntries(entries.filter(([, value]) => value !== undefined));
+    const unset = Object.fromEntries(entries.filter(([, value]) => value === undefined).map(([key]) => [key, 1]));
+    const update = { $set: set, ...(Object.keys(unset).length > 0 && { $unset: unset }) } as any;
     const updatedEntity = await this.model.findByIdAndUpdate(entityId, update, { new: true });
     if (!updatedEntity) throw new NotFoundError('Entity', entityId);
     return this.mapToEntity(updatedEntity);

@@ -4,6 +4,11 @@ import { randomUUID } from 'crypto';
 import type { RealmProps } from './realm-props.js';
 import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
 
+type Clearable<T> = { [K in keyof T]?: T[K] | null };
+
+export type RealmUpdate = Partial<Pick<RealmProps, 'name' | 'magicPresence' | 'accessType'>> &
+  Clearable<Pick<RealmProps, 'shortDescription' | 'description' | 'imageUrl'>>;
+
 export class Realm extends BaseAggregateRoot<RealmProps> {
   private constructor(props: RealmProps) {
     super(props);
@@ -54,13 +59,17 @@ export class Realm extends BaseAggregateRoot<RealmProps> {
     return new Realm({ ...props });
   }
 
-  update(props: Partial<Omit<RealmProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
-    if (props.name) this.props.name = props.name;
-    if (props.magicPresence) this.props.magicPresence = props.magicPresence;
-    if (props.shortDescription) this.props.shortDescription = props.shortDescription;
-    if (props.description) this.props.description = props.description;
-    if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
-    if (props.accessType !== undefined) this.props.accessType = props.accessType;
+  /**
+   * Fields left undefined stay as they are. The optional texts are cleared with '' or null; name and magic presence
+   * cannot be cleared.
+   */
+  update(changes: RealmUpdate) {
+    if (changes.name) this.props.name = changes.name;
+    if (changes.magicPresence) this.props.magicPresence = changes.magicPresence;
+    if (changes.shortDescription !== undefined) this.props.shortDescription = changes.shortDescription || undefined;
+    if (changes.description !== undefined) this.props.description = changes.description || undefined;
+    if (changes.imageUrl !== undefined) this.props.imageUrl = changes.imageUrl || undefined;
+    if (changes.accessType) this.props.accessType = changes.accessType;
     this.props.updatedAt = new Date();
     this.apply(new RealmUpdatedEvent(this.getProps()));
   }

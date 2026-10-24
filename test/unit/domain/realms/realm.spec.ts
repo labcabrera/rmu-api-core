@@ -74,6 +74,26 @@ describe('Realm', () => {
     expect(realm.getUncommittedEvents()[0]).toBeInstanceOf(RealmUpdatedEvent);
   });
 
+  it('clears the optional texts with an empty string or null and leaves undefined fields alone', () => {
+    const realm = Realm.fromProps({ ...baseProps(), description: 'Long text', imageUrl: 'https://example.test/a.png' });
+
+    realm.update({ shortDescription: '', description: null, name: undefined });
+
+    expect(realm.shortDescription).toBeUndefined();
+    expect(realm.description).toBeUndefined();
+    expect(realm.imageUrl).toBe('https://example.test/a.png');
+    expect(realm.name).toBe('Shadow World');
+  });
+
+  it('keeps the name and magic presence when they come empty', () => {
+    const realm = Realm.fromProps(baseProps());
+
+    realm.update({ name: '', magicPresence: undefined });
+
+    expect(realm.name).toBe('Shadow World');
+    expect(realm.magicPresence).toBe('limited');
+  });
+
   it('builds realm lifecycle events with the expected event types', () => {
     const props = baseProps();
 
