@@ -29,6 +29,8 @@ export class UpdateManeuverModifierHandler implements ICommandHandler<UpdateMane
       throw new ConflictError(`Maneuver modifier with key ${key} already exists`, 'duplicate-key');
     }
     current.update(command.changes);
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!current.hasChanges()) return current;
     return await this.repository.update(current);
   }
 }

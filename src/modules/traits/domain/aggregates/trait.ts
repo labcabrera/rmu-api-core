@@ -96,7 +96,8 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
     if (adquisitionCost !== undefined) this.props.adquisitionCost = adquisitionCost;
     if (tierCost !== undefined) this.props.tierCost = tierCost;
     if (description !== undefined) this.props.description = description;
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new TraitUpdatedEvent(this.getProps()));
   }
 }

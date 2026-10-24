@@ -53,33 +53,26 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     return new Skill({ ...props, maneuver: ManeuverProfiles.normalize(props.maneuver) });
   }
 
-  /** Applies the given fields and returns whether any of them changed the state. */
-  update(props: SkillUpdateProps): boolean {
-    let modified = false;
+  /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
+  update(props: SkillUpdateProps): void {
     if (props.categoryId) {
-      modified = props.categoryId !== this.props.categoryId;
       this.props.categoryId = props.categoryId;
     }
     if (props.bonus) {
-      modified = modified || props.bonus.join() !== this.props.bonus.join();
       this.props.bonus = props.bonus;
     }
     if (props.specialization) {
-      modified = modified || props.specialization !== this.props.specialization;
       this.props.specialization = props.specialization;
     }
     if (props.accessType) {
-      modified = modified || props.accessType !== this.props.accessType;
       this.props.accessType = props.accessType;
     }
     if (props.maneuver !== undefined) {
       ManeuverProfiles.validate(props.maneuver);
       const maneuver = ManeuverProfiles.normalize(props.maneuver);
-      modified = modified || JSON.stringify(maneuver) !== JSON.stringify(this.props.maneuver);
       this.props.maneuver = maneuver;
     }
-    if (!modified) return false;
-    this.props.updatedAt = new Date();
-    return true;
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 }

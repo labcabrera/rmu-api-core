@@ -83,7 +83,11 @@ export abstract class MongoBaseRepository<E extends BaseAggregateRoot<{ id: stri
     const version = entity.version === 0 ? { $in: [0, null] } : entity.version;
     const filter = { _id: id, version } as QueryFilter<D>;
     const updated = await this.model.findOneAndUpdate(filter, update, { returnDocument: 'after' });
-    if (updated) return this.toEntity(updated);
+    if (updated) {
+      // The received aggregate moves to the new version too, so a handler can write it again (F-receta-05).
+      entity.restoreVersion(updated.version ?? 0);
+      return this.toEntity(updated);
+    }
     if (await this.existsById(id)) {
       throw new ConflictError(`${id} was changed by someone else since version ${entity.version}`, 'version-conflict');
     }

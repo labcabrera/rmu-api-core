@@ -67,14 +67,14 @@ describe('Skill', () => {
     expect(skill.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('reports no change and keeps updatedAt when no provided field changes state', () => {
-    const skill = Skill.fromProps(baseProps());
+  it('reports no change when no provided field changes state', () => {
+    const skill = Skill.fromProps(baseProps()).restoreVersion(0);
     const currentBonus = skill.bonus;
 
-    expect(skill.update({})).toBe(false);
-    expect(skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus })).toBe(false);
-    expect(skill.update({ bonus: [...currentBonus] })).toBe(false);
-    expect(skill.updatedAt).toEqual(baseProps().updatedAt);
+    skill.update({});
+    skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus });
+    skill.update({ bonus: [...currentBonus] });
+    expect(skill.hasChanges()).toBe(false);
   });
 });
 

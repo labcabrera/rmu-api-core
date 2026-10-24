@@ -39,6 +39,8 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
       suggestedCrafts: command.suggestedCrafts,
       suggestedVocations: command.suggestedVocations,
     });
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!culture.hasChanges()) return this.cultureViewService.toView(culture);
     const updated = await this.cultureRepository.update(culture);
     await this.events.publishChanges('culture', culture);
     return this.cultureViewService.toView(updated);

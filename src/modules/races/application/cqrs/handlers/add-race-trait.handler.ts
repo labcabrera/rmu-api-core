@@ -27,6 +27,8 @@ export class AddRaceTraitHandler implements ICommandHandler<AddRaceTraitCommand,
 
     race.addTrait(command.traitId, command.specialization, command.isTalent, command.tier, command.description);
 
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!race.hasChanges()) return race;
     const updated = await this.raceRepository.update(race);
     await this.events.publishChanges('race', race);
     return updated;

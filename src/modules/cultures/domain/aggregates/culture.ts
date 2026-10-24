@@ -80,14 +80,16 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     if (props.languages !== undefined) this.props.languages = props.languages;
     if (props.suggestedCrafts !== undefined) this.props.suggestedCrafts = props.suggestedCrafts;
     if (props.suggestedVocations !== undefined) this.props.suggestedVocations = props.suggestedVocations;
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new CultureUpdatedEvent(this.getProps()));
   }
 
   /** Appends an entry at the end of `skillRanks`. */
   addSkillRank(skillRank: CultureSkillRank) {
     this.props.skillRanks = [...this.props.skillRanks, skillRank];
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new CultureUpdatedEvent(this.getProps()));
   }
 
@@ -97,7 +99,8 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
       throw new NotFoundError('Culture skill rank', index);
     }
     this.props.skillRanks = this.props.skillRanks.filter((_, i) => i !== index);
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new CultureUpdatedEvent(this.getProps()));
   }
 }

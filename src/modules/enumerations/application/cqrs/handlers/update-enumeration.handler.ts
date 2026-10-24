@@ -32,7 +32,7 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
       }
     }
 
-    const modified = current.update({
+    current.update({
       key: command.key,
       category: command.category,
       realmId: command.realmId,
@@ -40,7 +40,8 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
       imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
-    if (!modified) return current;
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!current.hasChanges()) return current;
     return await this.enumerationRepository.update(current);
   }
 }

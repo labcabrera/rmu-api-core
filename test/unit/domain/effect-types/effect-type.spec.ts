@@ -53,7 +53,7 @@ describe('EffectType', () => {
     expect(effectType.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('throws when update has no effective changes', () => {
+  it('reports no change when update has no effective changes, once stored', () => {
     const effectType = EffectType.create({
       id: 'prone',
       isPersistent: false,
@@ -68,7 +68,11 @@ describe('EffectType', () => {
       accessType: 'public',
       entitySource: 'user',
     });
+    // Never stored: always has changes.
+    expect(effectType.hasChanges()).toBe(true);
+    effectType.restoreVersion(0);
 
-    expect(effectType.update({ isPersistent: false })).toBe(false);
+    effectType.update({ isPersistent: false });
+    expect(effectType.hasChanges()).toBe(false);
   });
 });

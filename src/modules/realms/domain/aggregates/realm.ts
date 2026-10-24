@@ -70,7 +70,8 @@ export class Realm extends BaseAggregateRoot<RealmProps> {
     if (changes.description !== undefined) this.props.description = changes.description || undefined;
     if (changes.imageUrl !== undefined) this.props.imageUrl = changes.imageUrl || undefined;
     if (changes.accessType) this.props.accessType = changes.accessType;
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new RealmUpdatedEvent(this.getProps()));
   }
 }

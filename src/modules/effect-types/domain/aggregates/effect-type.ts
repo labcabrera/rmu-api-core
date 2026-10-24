@@ -66,49 +66,36 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     return new EffectType({ ...props });
   }
 
-  /** Applies the given fields and returns whether any of them changed the state. */
-  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner' | 'entitySource'>): boolean {
-    let modified = false;
-
+  /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
+  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner' | 'entitySource'>): void {
     if (props.isPersistent !== undefined) {
-      modified = this.props.isPersistent !== props.isPersistent;
       this.props.isPersistent = props.isPersistent;
     }
     if (props.isStackable !== undefined) {
-      modified = modified || this.props.isStackable !== props.isStackable;
       this.props.isStackable = props.isStackable;
     }
     if (props.value !== undefined) {
-      modified = modified || this.props.value !== props.value;
       this.props.value = props.value;
     }
     if (props.modifier !== undefined) {
-      modified = modified || this.props.modifier !== props.modifier;
       this.props.modifier = props.modifier;
     }
     if (props.rounds !== undefined) {
-      modified = modified || this.props.rounds !== props.rounds;
       this.props.rounds = props.rounds;
     }
     if (props.text !== undefined) {
-      modified = modified || this.props.text !== props.text;
       this.props.text = props.text;
     }
     if (props.location !== undefined) {
-      modified = modified || this.props.location !== props.location;
       this.props.location = props.location;
     }
     if (props.delay !== undefined) {
-      modified = modified || this.props.delay !== props.delay;
       this.props.delay = props.delay;
     }
     if (props.accessType !== undefined) {
-      modified = modified || this.props.accessType !== props.accessType;
       this.props.accessType = props.accessType;
     }
-
-    if (!modified) return false;
-    this.props.updatedAt = new Date();
-    return true;
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 }

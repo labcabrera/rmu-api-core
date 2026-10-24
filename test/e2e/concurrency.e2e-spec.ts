@@ -1,5 +1,6 @@
 import request from 'supertest';
-import { type E2eApp, startApp } from './support/app.js';
+import { type E2eApp, startApp, takeTopics } from './support/app.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../src/modules/realms/application/ports/realm-repository.port.js';
 import { realmBody, traitBody } from './support/fixtures.js';
 
 // Optimistic concurrency and error codes (spec 018): every stored entity has a version, a PATCH that sends a stale
@@ -55,6 +56,39 @@ describe('Concurrency and error codes (e2e)', () => {
       .send({ imageUrl: 'https://example.test/realm.png' })
       .expect(200);
     expect(res.body).toMatchObject({ imageUrl: 'https://example.test/realm.png', version: 2 });
+  });
+
+  it('neither writes nor publishes a PATCH that changes nothing', async () => {
+    const auth = e2e.auth('owner');
+    const realm = await createRealm();
+    takeTopics(e2e.events);
+
+    const same = await request(e2e.server)
+      .patch(`/v1/realms/${realm.id}`)
+      .set('Authorization', auth)
+      .send({ name: realmBody().name })
+      .expect(200);
+    expect(same.body).toMatchObject({ version: 0 });
+    expect((same.body as { updatedAt?: string }).updatedAt).toBeUndefined();
+    expect(takeTopics(e2e.events)).toEqual([]);
+
+    const stored = await request(e2e.server).get(`/v1/realms/${realm.id}`).set('Authorization', auth).expect(200);
+    expect(stored.body).toMatchObject({ version: 0 });
+  });
+
+  it('moves the aggregate it writes to the new version, so it can be written again (F-receta-05)', async () => {
+    const realm = await createRealm();
+    const repository = e2e.app.get<RealmRepository>(REALM_REPOSITORY);
+    const loaded = (await repository.findById(realm.id))!;
+
+    loaded.update({ name: 'First write' });
+    await repository.update(loaded);
+    expect(loaded.version).toBe(1);
+    expect(loaded.hasChanges()).toBe(false);
+
+    loaded.update({ name: 'Second write' });
+    const second = await repository.update(loaded);
+    expect(second).toMatchObject({ name: 'Second write', version: 2 });
   });
 
   it('rejects an invalid version', async () => {

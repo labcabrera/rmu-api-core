@@ -23,7 +23,7 @@ export class UpdateEffectTypeHandler implements ICommandHandler<UpdateEffectType
 
     current.checkVersion(command.expectedVersion);
 
-    const modified = current.update({
+    current.update({
       isPersistent: command.isPersistent,
       isStackable: command.isStackable,
       value: command.value,
@@ -34,7 +34,8 @@ export class UpdateEffectTypeHandler implements ICommandHandler<UpdateEffectType
       delay: command.delay,
       accessType: command.accessType,
     });
-    if (!modified) return current;
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!current.hasChanges()) return current;
 
     return await this.effectTypeRepository.update(current);
   }
