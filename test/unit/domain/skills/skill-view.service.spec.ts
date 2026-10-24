@@ -28,10 +28,10 @@ describe('SkillViewService', () => {
     ]);
 
     expect(views.map(view => view.maneuver)).toEqual([
-      { defaultType: 'absolute', resultTable: 'table-a', movement: true, light: 'none' },
-      { defaultType: 'absolute', resultTable: 'table-a', movement: false, light: 'required' },
-      { defaultType: 'absolute', resultTable: 'generic', movement: false, light: 'none' },
-      { defaultType: 'percent', resultTable: 'generic', movement: false, light: 'none' },
+      { defaultType: 'absolute', resultTable: 'table-a', resultKind: 'standard', movement: true, light: 'none' },
+      { defaultType: 'absolute', resultTable: 'table-a', resultKind: 'standard', movement: false, light: 'required' },
+      { defaultType: 'absolute', resultTable: 'generic', resultKind: 'standard', movement: false, light: 'none' },
+      { defaultType: 'percent', resultTable: 'generic', resultKind: 'standard', movement: false, light: 'none' },
     ]);
   });
 

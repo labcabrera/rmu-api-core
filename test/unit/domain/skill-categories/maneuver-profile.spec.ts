@@ -7,6 +7,7 @@ describe('ManeuverProfiles', () => {
     expect(ManeuverProfiles.resolve(undefined, undefined)).toEqual({
       defaultType: 'absolute',
       resultTable: 'generic',
+      resultKind: 'standard',
       movement: false,
       light: 'none',
     });
@@ -18,6 +19,7 @@ describe('ManeuverProfiles', () => {
     expect(effective).toEqual({
       defaultType: 'absolute',
       resultTable: 'table-a',
+      resultKind: 'standard',
       movement: true,
       light: 'none',
       actionPoints: { min: 1, max: 3 },
@@ -33,9 +35,22 @@ describe('ManeuverProfiles', () => {
     expect(effective).toEqual({
       defaultType: 'percent',
       resultTable: 'table-a',
+      resultKind: 'standard',
       movement: false,
       light: 'required',
       actionPoints: { min: 0, max: 2 },
+    });
+  });
+
+  it('takes the result kind of the skill over the category one', () => {
+    expect(ManeuverProfiles.resolve({ resultKind: 'morale' }, undefined).resultKind).toBe('morale');
+    expect(ManeuverProfiles.resolve({ resultKind: 'morale' }, { defaultType: 'percent', resultKind: 'price' })).toMatchObject({
+      defaultType: 'percent',
+      resultKind: 'price',
+    });
+    expect(ManeuverProfiles.normalize({ resultKind: 'standard', resultTable: 'awareness' })).toEqual({
+      resultKind: 'standard',
+      resultTable: 'awareness',
     });
   });
 
@@ -55,6 +70,8 @@ describe('ManeuverProfiles', () => {
   it('validates enums and action point ranges', () => {
     expect(() => ManeuverProfiles.validate({ defaultType: 'other' as never })).toThrow(ValidationError);
     expect(() => ManeuverProfiles.validate({ light: 'dark' as never })).toThrow(ValidationError);
+    expect(() => ManeuverProfiles.validate({ resultKind: 'haggle' as never })).toThrow(ValidationError);
+    expect(() => ManeuverProfiles.validate({ resultKind: 'price', defaultType: 'percent' })).not.toThrow();
     expect(() => ManeuverProfiles.validate({ actionPoints: { min: 3, max: 1 } })).toThrow(ValidationError);
     expect(() => ManeuverProfiles.validate({ actionPoints: { min: -1, max: 1 } })).toThrow(ValidationError);
     expect(() => ManeuverProfiles.validate({ actionPoints: { min: 1, max: 1 }, light: 'helpful' })).not.toThrow();
