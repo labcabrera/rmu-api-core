@@ -50,6 +50,16 @@ describe('AppModule (e2e)', () => {
     expect(duplicated).toEqual([]);
   });
 
+  it('documents the psychology tables and the treatment difficulties in OpenAPI', () => {
+    const document = SwaggerModule.createDocument(e2e.app, new DocumentBuilder().build());
+    expect(document.paths['/v1/psychology-tables']?.get?.operationId).toBe('getPsychologyTables');
+    const schemas = document.components?.schemas as Record<string, { properties: Record<string, { enum?: string[] }> }>;
+    expect(schemas.FearResultRowDto.properties.result.enum).toEqual(['balk', 'retreat', 'routed', 'broken']);
+    expect(schemas.ResistanceRowDto.properties.severity.enum).toEqual(['mild', 'moderate', 'severe', 'extreme']);
+    expect(schemas.TreatmentDifficultyDto.properties.procedure.enum).toContain('stitches');
+    expect(schemas.EffectiveManeuverProfileDto.properties.resultKind.enum).toEqual(['standard', 'morale', 'price']);
+  });
+
   it('rejects a page size above 100, and above 1000 in the catalogs', async () => {
     const auth = e2e.auth('admin');
     await request(e2e.server).get('/v1/races?size=100').set('Authorization', auth).expect(200);

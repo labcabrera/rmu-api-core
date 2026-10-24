@@ -68,7 +68,13 @@ describe('skill command handlers', () => {
         owner: OWNER.id,
         accessType: 'public',
       });
-      expect(view.maneuver).toEqual({ defaultType: 'absolute', resultTable: 'generic', movement: true, light: 'helpful' });
+      expect(view.maneuver).toEqual({
+        defaultType: 'absolute',
+        resultTable: 'generic',
+        resultKind: 'standard',
+        movement: true,
+        light: 'helpful',
+      });
       expect(skills.items.get('swimming')).toBe(view.skill);
     });
 

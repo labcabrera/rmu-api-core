@@ -88,7 +88,13 @@ describe('Skills (e2e)', () => {
     it('resolves the maneuver profile from its category and its own overrides', async () => {
       const auth = e2e.auth('owner');
       const plain = await create('owner');
-      expect(plain.maneuver).toEqual({ defaultType: 'percent', resultTable: 'perception', movement: true, light: 'none' });
+      expect(plain.maneuver).toEqual({
+        defaultType: 'percent',
+        resultTable: 'perception',
+        resultKind: 'standard',
+        movement: true,
+        light: 'none',
+      });
       expect(plain).not.toHaveProperty('maneuverOverrides');
 
       const skill = await create('owner', { maneuver: { movement: false, light: 'required' } });
@@ -104,6 +110,12 @@ describe('Skills (e2e)', () => {
         .expect(200);
       expect((cleared.body as Skill).maneuver).toEqual(plain.maneuver);
       expect(cleared.body).not.toHaveProperty('maneuverOverrides');
+
+      const priced = await create('owner', { maneuver: { resultKind: 'price' } });
+      expect(priced).toMatchObject({
+        maneuver: { defaultType: 'percent', resultKind: 'price' },
+        maneuverOverrides: { resultKind: 'price' },
+      });
     });
   });
 
@@ -121,6 +133,7 @@ describe('Skills (e2e)', () => {
       const missing = await post(skillBody('invalid', 'missing')).expect(400);
       expect(missing.body).toMatchObject({ error: 'ValidationError' });
       await post(skillBody('invalid', CATEGORY, { maneuver: { light: 'bright' } })).expect(400);
+      await post(skillBody('invalid', CATEGORY, { maneuver: { resultKind: 'haggle' } })).expect(400);
       await post(skillBody('invalid', CATEGORY, { maneuver: { actionPoints: { min: 3, max: 1 } } })).expect(400);
 
       const skill = await create('owner');

@@ -36,6 +36,18 @@ export class MongoHealingTablesRepository implements HealingTablesRepository {
       restPeriodHours: doc.restPeriodHours,
       fullRestDayMultiplier: doc.fullRestDayMultiplier,
       talentMultipliers: { ...(doc.talentMultipliers || {}) },
+      treatmentDifficulties: (doc.treatmentDifficulties || []).map(row => ({
+        procedure: row.procedure,
+        injuryType: row.injuryType,
+        severity: row.severity,
+        difficulty: row.difficulty,
+      })),
+      treatmentRules: {
+        headDifficultySteps: doc.treatmentRules?.headDifficultySteps ?? 0,
+        cauterizePenaltyPerBleeding: doc.treatmentRules?.cauterizePenaltyPerBleeding ?? 0,
+        bleedingProcedures: [...(doc.treatmentRules?.bleedingProcedures || [])],
+        tourniquetLocations: [...(doc.treatmentRules?.tourniquetLocations || [])],
+      },
     };
   }
 }

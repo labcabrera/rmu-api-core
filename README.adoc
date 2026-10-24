@@ -189,6 +189,31 @@ Conventions:
   calculations: they have no aggregates, persistence or events, and that is on purpose. A module only gets the full
   CQRS and Mongo layout when its data can change.
 
+=== Rulebook data
+
+The numbers of the rulebook tables are not in this repository (it is public). `healing-tables` and
+`psychology-tables` read one document (`_id: core-law`) from the collections of the same name, and they answer 404
+until it has been imported; both need the `rmu-core-law` group (or `rmu-admin`). The maneuver profiles of skills and
+categories, the maneuver modifiers and the stored absolute maneuver tables come from the same place. The JSON files
+and the import scripts live in the workspace `data/` directory, outside every git repository, and are loaded by hand
+into the local `rmu-mongo` container from the workspace root (`DRY_RUN=1` only prints what would change):
+
+```bash
+data/scripts/run.sh data/scripts/import-healing-tables.js data/core-law/healing-tables.json
+data/scripts/run.sh data/scripts/import-psychology-tables.js data/core-law/psychology-tables.json
+data/scripts/run.sh data/scripts/import-maneuver-profiles.js data/core-law/maneuver-profiles.json
+OWNER=<keycloak-user-id> data/scripts/run.sh data/scripts/import-maneuver-modifiers.js data/core-law/maneuver-modifiers.json
+```
+
+- `GET /v1/healing-tables` also returns `treatmentDifficulties` (`procedure`, `injuryType`, `severity` and the
+  difficulty key of a Medicine procedure; no row means the procedure does not apply) and `treatmentRules` (head
+  injuries one step harder, cauterize penalty per point of bleeding, procedures that need bleeding, tourniquet
+  locations). A document imported before them returns no rows and neutral rules: import it again.
+- `GET /v1/psychology-tables` returns the fright levels, the fear states by failure margin, the morale and rally
+  tables and the resistance roll table, all as numbers and result keys.
+- The maneuver profile has a `resultKind`: `standard` (the `resultTable` or the percent table), `morale` (the morale
+  and rally tables, Leadership) or `price` (an opposed percent maneuver whose result is a price, Trading).
+
 === HTTP contract
 
 - **Validation:** the global `ValidationPipe` uses `whitelist`, so unknown body fields are dropped without an error

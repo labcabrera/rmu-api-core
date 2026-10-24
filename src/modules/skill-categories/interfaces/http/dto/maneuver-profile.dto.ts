@@ -4,11 +4,12 @@ import { IsBoolean, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Min, Validate
 import {
   type EffectiveManeuverProfile,
   MANEUVER_LIGHT_USAGES,
+  MANEUVER_RESULT_KINDS,
   MANEUVER_TYPES,
   type ManeuverProfile,
   ManeuverProfiles,
 } from '../../../domain/value-objects/maneuver-profile.vo.js';
-import type { ManeuverLightUsage, ManeuverType } from '../../../domain/value-objects/maneuver-profile.vo.js';
+import type { ManeuverLightUsage, ManeuverResultKind, ManeuverType } from '../../../domain/value-objects/maneuver-profile.vo.js';
 
 export class ManeuverActionPointsDto {
   @ApiProperty({ description: 'Minimum action points', example: 1 })
@@ -34,6 +35,16 @@ export class ManeuverProfileDto {
   @IsNotEmpty()
   @IsOptional()
   resultTable?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'How the result is read: standard tables, morale and rally tables, or a price',
+    enum: MANEUVER_RESULT_KINDS,
+    required: false,
+  })
+  @IsIn(MANEUVER_RESULT_KINDS)
+  @IsOptional()
+  resultKind?: ManeuverResultKind;
 
   @ApiProperty({ description: 'Requires freedom of movement (armor and encumbrance apply)', required: false })
   @IsBoolean()
@@ -69,6 +80,9 @@ export class EffectiveManeuverProfileDto {
 
   @ApiProperty({ example: 'generic' })
   resultTable: string;
+
+  @ApiProperty({ type: String, enum: MANEUVER_RESULT_KINDS, example: 'standard' })
+  resultKind: ManeuverResultKind;
 
   @ApiProperty({ example: false })
   movement: boolean;
