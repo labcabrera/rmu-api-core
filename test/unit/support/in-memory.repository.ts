@@ -2,7 +2,13 @@ import type { BaseRepository } from '../../../src/modules/shared/application/por
 import { Page } from '../../../src/modules/shared/application/pagination/page.js';
 import { NotFoundError } from '../../../src/modules/shared/domain/errors/errors.js';
 
-type Entity = { id: string };
+type Entity = { id: string; version?: number; restoreVersion?: (version: number) => unknown };
+
+/** As the Mongo repository, a loaded or stored aggregate gets its version back and a fresh change snapshot. */
+const stored = <E extends Entity>(entity: E): E => {
+  entity.restoreVersion?.(entity.version ?? 0);
+  return entity;
+};
 
 /**
  * BaseRepository double backed by a Map. findByRsql ignores the RSQL (handlers are tested, not the parser) and
@@ -13,7 +19,7 @@ export class InMemoryRepository<E extends Entity> implements BaseRepository<E> {
   match: (entity: E, rsql: string | undefined) => boolean = () => true;
 
   constructor(...entities: E[]) {
-    entities.forEach(entity => this.items.set(entity.id, entity));
+    entities.forEach(entity => this.items.set(entity.id, stored(entity)));
   }
 
   findById(id: string): Promise<E | null> {
@@ -26,13 +32,13 @@ export class InMemoryRepository<E extends Entity> implements BaseRepository<E> {
   }
 
   save(entity: E): Promise<E> {
-    this.items.set(entity.id, entity);
+    this.items.set(entity.id, stored(entity));
     return Promise.resolve(entity);
   }
 
   update(entity: E): Promise<E> {
     if (!this.items.has(entity.id)) throw new NotFoundError('Entity', entity.id);
-    this.items.set(entity.id, entity);
+    this.items.set(entity.id, stored(entity));
     return Promise.resolve(entity);
   }
 

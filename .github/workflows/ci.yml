@@ -33,6 +33,8 @@ jobs:
       - run: pnpm audit --prod --audit-level high
       - run: pnpm run lint
       - run: pnpm run typecheck
+      # Decorators that compile with tsc but break the app built with SWC (spec 021).
+      - run: pnpm run check:swc
       # Unit and e2e suites together: the coverage thresholds count both (spec 018).
       - run: pnpm test:cov
       - run: pnpm run build

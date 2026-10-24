@@ -110,7 +110,8 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     this.props.max = definition.max;
     this.props.description = definition.description;
     if (changes.accessType) this.props.accessType = changes.accessType;
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 
   /** True when the modifier applies to the skill or to its category. */

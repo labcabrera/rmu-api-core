@@ -70,7 +70,8 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
     if (props.description !== undefined) this.props.description = props.description;
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
     if (props.accessType) this.props.accessType = props.accessType;
-    this.props.updatedAt = new Date();
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 
   static fromProps(props: ProfessionProps): Profession {

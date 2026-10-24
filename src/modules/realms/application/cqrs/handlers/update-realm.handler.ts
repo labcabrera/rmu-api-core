@@ -35,6 +35,8 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
       imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!realm.hasChanges()) return realm;
     const updated = await this.realmRepository.update(realm);
     await this.events.publishChanges('realm', realm);
     return updated;

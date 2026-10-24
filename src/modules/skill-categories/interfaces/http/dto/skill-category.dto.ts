@@ -10,7 +10,7 @@ export class SkillCategoryDto {
   @ApiProperty({ description: 'List of stats that apply a benefit to the skill', example: ['em', 'co'] })
   bonus: string[];
 
-  @ApiProperty({ description: 'Realm bonus count', example: 2, nullable: true })
+  @ApiProperty({ type: Number, description: 'Realm bonus count', example: 2, nullable: true })
   realmBonus: number | null;
 
   @ApiProperty({ description: 'Own maneuver profile of the category (no defaults applied)', type: ManeuverProfileDto, required: false })

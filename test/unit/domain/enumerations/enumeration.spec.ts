@@ -79,12 +79,15 @@ describe('Enumeration', () => {
     expect(enumeration.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('reports no change and keeps updatedAt when update has no effective changes', () => {
-    const enumeration = Enumeration.fromProps(baseProps());
+  it('reports no change when update has no effective changes', () => {
+    const enumeration = Enumeration.fromProps(baseProps()).restoreVersion(0);
 
-    expect(enumeration.update({})).toBe(false);
-    expect(enumeration.update({ key: 'westron' })).toBe(false);
-    expect(enumeration.updatedAt).toEqual(baseProps().updatedAt);
+    enumeration.update({});
+    enumeration.update({ key: 'westron' });
+    expect(enumeration.hasChanges()).toBe(false);
+
+    enumeration.update({ key: 'adunaic' });
+    expect(enumeration.hasChanges()).toBe(true);
   });
 
   it('exposes the expected enumeration category catalog without duplicates', () => {

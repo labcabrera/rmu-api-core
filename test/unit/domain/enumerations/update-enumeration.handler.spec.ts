@@ -29,7 +29,8 @@ const command = (changes: { key?: string; description?: string | null }) =>
 
 const setup = (existing: Enumeration[] = []) => {
   const repository = {
-    findById: vi.fn(() => Promise.resolve(westron())),
+    // Loaded as the repository does: with its version, so hasChanges() compares with it.
+    findById: vi.fn(() => Promise.resolve(westron().restoreVersion(0))),
     findByRsql: vi.fn(() => Promise.resolve(new Page(existing, 0, 1, existing.length))),
     update: vi.fn((_id: string, entity: Enumeration) => Promise.resolve(entity)),
   };

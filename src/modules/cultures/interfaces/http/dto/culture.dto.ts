@@ -33,10 +33,10 @@ export class CultureDto {
   })
   developmentCost: number;
 
-  @ApiProperty({ description: 'Description of the culture' })
+  @ApiProperty({ type: String, description: 'Description of the culture' })
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL of the culture', required: false, example: 'images/cultures/nomad.png' })
+  @ApiProperty({ type: String, description: 'Image URL of the culture', required: false, example: 'images/cultures/nomad.png' })
   imageUrl: string | null;
 
   @ApiProperty({ description: 'Owner identifier', example: 'user-123' })

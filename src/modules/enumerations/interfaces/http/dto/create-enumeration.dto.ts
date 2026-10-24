@@ -21,17 +21,17 @@ export class CreateEnumerationDto {
   @IsNotEmpty()
   category: EnumerationCategory;
 
-  @ApiProperty({ description: 'Optional realm id for the enumeration', example: 'realm-123', required: false })
+  @ApiProperty({ type: String, description: 'Optional realm id for the enumeration', example: 'realm-123', required: false })
   @IsString()
   @IsOptional()
   realmId?: string | null;
 
-  @ApiProperty({ description: 'Description', example: 'A large hoofed mammal', required: false })
+  @ApiProperty({ type: String, description: 'Description', example: 'A large hoofed mammal', required: false })
   @IsString()
   @IsOptional()
   description?: string | null;
 
-  @ApiProperty({ description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @ApiProperty({ type: String, description: 'Image URL', example: 'https://example.com/horse.png', required: false })
   @IsString()
   @IsOptional()
   imageUrl?: string | null;

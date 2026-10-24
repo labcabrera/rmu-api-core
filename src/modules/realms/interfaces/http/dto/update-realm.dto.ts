@@ -5,7 +5,7 @@ import type { MagicPresence } from '../../../domain/value-objects/realm-magic-ty
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateRealmDto {
-  @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings', required: false })
+  @ApiProperty({ type: String, description: 'Name of the realm', example: 'Lord of the Rings', required: false })
   @ValidateIf((_, value) => value !== undefined)
   @IsString()
   @IsNotEmpty()
@@ -18,6 +18,7 @@ export class UpdateRealmDto {
   magicPresence: MagicPresence | undefined;
 
   @ApiProperty({
+    type: String,
     description: 'Short description of the realm; empty or null clears it',
     required: false,
     nullable: true,
@@ -28,6 +29,7 @@ export class UpdateRealmDto {
   shortDescription: string | null | undefined;
 
   @ApiProperty({
+    type: String,
     description: 'Description of the realm; empty or null clears it',
     required: false,
     nullable: true,
@@ -38,6 +40,7 @@ export class UpdateRealmDto {
   description: string | null | undefined;
 
   @ApiProperty({
+    type: String,
     description: 'Image URL of the realm; empty or null clears it',
     required: false,
     nullable: true,

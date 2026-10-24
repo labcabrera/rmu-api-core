@@ -31,10 +31,15 @@ export class ProfessionDto {
   @ApiProperty({ type: String, description: 'Entity source of the profession', required: true })
   entitySource: EntitySource;
 
-  @ApiProperty({ description: 'Description of the profession', required: false, example: 'A brave warrior skilled in combat.' })
+  @ApiProperty({
+    type: String,
+    description: 'Description of the profession',
+    required: false,
+    example: 'A brave warrior skilled in combat.',
+  })
   description?: string | undefined;
 
-  @ApiProperty({ description: 'Image URL for the profession', required: false, example: 'https://example.com/warrior.png' })
+  @ApiProperty({ type: String, description: 'Image URL for the profession', required: false, example: 'https://example.com/warrior.png' })
   imageUrl?: string | undefined;
 
   @ApiProperty({ description: 'Owner of the profession', example: 'user123', required: true })

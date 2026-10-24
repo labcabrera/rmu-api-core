@@ -55,39 +55,30 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
     return new Enumeration({ ...props });
   }
 
-  /** Applies the given fields and returns whether any of them changed the state. */
-  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>): boolean {
-    let modified = false;
+  /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
+  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>): void {
     if (props.key) {
-      modified = this.props.key !== props.key;
       this.props.key = props.key;
     }
     if (props.category) {
-      modified = modified || this.props.category !== props.category;
       this.props.category = props.category;
     }
     if (props.realmId) {
-      modified = modified || this.props.realmId !== props.realmId;
       this.props.realmId = props.realmId;
     }
     if (props.description) {
-      modified = modified || this.props.description !== props.description;
       this.props.description = props.description;
     }
     if (props.imageUrl) {
-      modified = modified || this.props.imageUrl !== props.imageUrl;
       this.props.imageUrl = props.imageUrl;
     }
     if (props.accessType) {
-      modified = modified || this.props.accessType !== props.accessType;
       this.props.accessType = props.accessType;
     }
     if (props.entitySource) {
-      modified = modified || this.props.entitySource !== props.entitySource;
       this.props.entitySource = props.entitySource;
     }
-    if (!modified) return false;
-    this.props.updatedAt = new Date();
-    return true;
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 }

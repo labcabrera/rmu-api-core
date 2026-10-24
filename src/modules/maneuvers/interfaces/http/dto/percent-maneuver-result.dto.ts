@@ -5,7 +5,7 @@ export class PercentManeuverResultDto {
   @ApiProperty({ description: 'The percent value', example: 80, required: true })
   percent: number;
 
-  @ApiProperty({ description: 'The critical severity level', example: 'A', required: false })
+  @ApiProperty({ type: String, description: 'The critical severity level', example: 'A', required: false })
   critical: CriticalSeverity | undefined;
 
   @ApiProperty({ description: 'A message describing the result', example: 'Completed at 50%', required: false })

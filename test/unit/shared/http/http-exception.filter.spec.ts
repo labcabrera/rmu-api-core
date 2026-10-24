@@ -15,7 +15,8 @@ const run = (exception: unknown) => {
   const status = vi.fn(() => ({ json }));
   const host = {
     switchToHttp: () => ({
-      getRequest: () => ({ method: 'GET', originalUrl: '/v1/races/1' }),
+      // The body names the route without the query string (F-receta-22); the log keeps the whole URL.
+      getRequest: () => ({ method: 'GET', originalUrl: '/v1/races/1?expand=traits', path: '/v1/races/1' }),
       getResponse: () => ({ status }),
     }),
   } as unknown as ArgumentsHost;
@@ -59,7 +60,7 @@ describe('HttpExceptionFilter', () => {
   it('logs unexpected errors with their stack, without exposing them', () => {
     const { error, body } = run(new TypeError('x is undefined'));
 
-    expect(error).toHaveBeenCalledWith('GET /v1/races/1: 500', expect.stringContaining('TypeError: x is undefined'));
+    expect(error).toHaveBeenCalledWith('GET /v1/races/1?expand=traits: 500', expect.stringContaining('TypeError: x is undefined'));
     expect(JSON.stringify(body)).not.toContain('x is undefined');
   });
 

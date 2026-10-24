@@ -33,6 +33,8 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       tierCost: command.tierCost,
       description: command.description,
     });
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!trait.hasChanges()) return trait;
     const updated = await this.traitRepository.update(trait);
     await this.events.publishChanges('trait', trait);
     return updated;

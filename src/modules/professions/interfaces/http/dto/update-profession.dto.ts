@@ -35,12 +35,17 @@ export class UpdateProfessionDto {
   @IsOptional()
   professionalSkills: string[] | undefined;
 
-  @ApiProperty({ description: 'Description of the profession', example: 'A brave warrior skilled in combat.', required: false })
+  @ApiProperty({
+    type: String,
+    description: 'Description of the profession',
+    example: 'A brave warrior skilled in combat.',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   description: string | undefined;
 
-  @ApiProperty({ description: 'Image URL for the profession', example: 'https://example.com/warrior.png', required: false })
+  @ApiProperty({ type: String, description: 'Image URL for the profession', example: 'https://example.com/warrior.png', required: false })
   @IsString()
   @IsOptional()
   imageUrl: string | undefined;

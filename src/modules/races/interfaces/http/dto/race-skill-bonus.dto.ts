@@ -7,7 +7,7 @@ export class RaceSkillBonusDto {
   @IsString()
   skillId: string;
 
-  @ApiProperty({ description: 'Skill specialziation', required: false, example: 'cat' })
+  @ApiProperty({ type: String, description: 'Skill specialziation', required: false, example: 'cat' })
   @IsString()
   @IsOptional()
   specialization: string | null;

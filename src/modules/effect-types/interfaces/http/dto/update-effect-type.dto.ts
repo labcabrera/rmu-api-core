@@ -8,12 +8,12 @@ import {
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateEffectTypeDto {
-  @ApiProperty({ description: 'Indicates if the effect persists over time', example: true, required: false })
+  @ApiProperty({ type: Boolean, description: 'Indicates if the effect persists over time', example: true, required: false })
   @IsBoolean()
   @IsOptional()
   isPersistent: boolean | undefined;
 
-  @ApiProperty({ description: 'Indicates if the effect can be stacked', example: false, required: false })
+  @ApiProperty({ type: Boolean, description: 'Indicates if the effect can be stacked', example: false, required: false })
   @IsBoolean()
   @IsOptional()
   isStackable: boolean | undefined;

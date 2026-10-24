@@ -27,13 +27,13 @@ export class EnumerationDto {
   })
   category: EnumerationCategory;
 
-  @ApiProperty({ description: 'Realm id this enumeration belongs to', example: 'realm-123', required: false })
+  @ApiProperty({ type: String, description: 'Realm id this enumeration belongs to', example: 'realm-123', required: false })
   realmId: string | null;
 
-  @ApiProperty({ description: 'Description', example: 'A large hoofed mammal', required: false })
+  @ApiProperty({ type: String, description: 'Description', example: 'A large hoofed mammal', required: false })
   description: string | null;
 
-  @ApiProperty({ description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @ApiProperty({ type: String, description: 'Image URL', example: 'https://example.com/horse.png', required: false })
   imageUrl: string | null;
 
   @ApiProperty({ description: 'Owner of the skill', example: 'user123', required: true })

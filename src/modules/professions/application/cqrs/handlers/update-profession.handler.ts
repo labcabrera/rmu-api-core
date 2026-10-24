@@ -31,6 +31,8 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
       imageUrl: command.imageUrl,
       accessType: command.accessType,
     });
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!current.hasChanges()) return current;
     return await this.professionRepository.update(current);
   }
 }

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Realm } from '../../../../src/modules/realms/domain/aggregates/realm.js';
 import type { RealmProps } from '../../../../src/modules/realms/domain/aggregates/realm-props.js';
 import { RealmGuardAdapter } from '../../../../src/modules/realms/infrastructure/security/realm-guard.adapter.js';
@@ -98,14 +98,17 @@ describe('realm command handlers', () => {
       expect(events.topics).toEqual(['realm.updated']);
     });
 
-    it('keeps the fields the command leaves undefined', async () => {
+    it('keeps the fields the command leaves undefined, without writing or publishing', async () => {
       const handler = new UpdateRealmHandler(realms, guard, events);
+      const update = vi.spyOn(realms, 'update');
       const updated = await handler.execute(
         new UpdateRealmCommand('realm-1', undefined, undefined, undefined, undefined, undefined, undefined, OWNER.id, [...OWNER.roles]),
       );
 
       expect(updated).toMatchObject({ name: 'Middle-earth', magicPresence: 'limited', accessType: 'private', imageUrl: undefined });
-      expect(events.topics).toEqual(['realm.updated']);
+      expect(updated.updatedAt).toBeUndefined();
+      expect(update).not.toHaveBeenCalled();
+      expect(events.topics).toEqual([]);
     });
 
     it('forbids another user', async () => {
