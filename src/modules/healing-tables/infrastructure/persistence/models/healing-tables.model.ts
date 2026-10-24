@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type {
   HealingType,
   InjurySeverity,
@@ -8,7 +8,7 @@ import type {
   SeverityThreshold,
 } from '../../../domain/value-objects/healing-tables.vo.js';
 
-export type HealingTablesDocument = HealingTablesModel & Document;
+export type HealingTablesDocument = HydratedDocument<HealingTablesModel>;
 
 /** Same shape as HealingTables, with the rulebook as _id. Imported with data/scripts/import-healing-tables.js. */
 @Schema({ collection: 'healing-tables', id: true, versionKey: false })

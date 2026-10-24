@@ -44,6 +44,6 @@ export class MongoSkillCategoryRepository implements SkillCategoryRepository {
   }
 
   private mapToEntity(doc: SkillCategoryDocument): SkillCategory {
-    return new SkillCategory(doc.id as string, doc.bonus, doc.realmBonus ?? null, ManeuverProfiles.normalize(doc.maneuver));
+    return new SkillCategory(doc._id, doc.bonus, doc.realmBonus ?? null, ManeuverProfiles.normalize(doc.maneuver));
   }
 }

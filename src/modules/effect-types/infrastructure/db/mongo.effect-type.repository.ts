@@ -15,7 +15,7 @@ export class MongoEffectTypeRepository extends MongoBaseRepository<EffectType, E
 
   protected mapToEntity(doc: EffectTypeDocument): EffectType {
     return EffectType.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       isPersistent: doc.isPersistent,
       isStackable: doc.isStackable,
       value: doc.value,

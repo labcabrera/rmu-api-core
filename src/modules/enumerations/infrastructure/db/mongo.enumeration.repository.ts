@@ -5,6 +5,7 @@ import type { EnumerationRepository } from '../../application/ports/enumeration-
 import { Enumeration } from '../../domain/aggregates/enumeration.js';
 import { type EnumerationDocument, EnumerationModel } from '../persistence/models/enumeration.model.js';
 import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
+import type { EnumerationCategory } from '../../domain/value-objects/enumeration-category.vo.js';
 import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
   }
 
   findByKeyCategoryAndRealm(key: string, category: string, realmId: string | null): Promise<Enumeration | null> {
-    const query = { key: key, category: category, realmId: realmId };
+    const query = { key: key, category: category as EnumerationCategory, realmId: realmId };
     return this.model
       .findOne(query)
       .exec()
@@ -23,7 +24,7 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
 
   protected mapToEntity(doc: EnumerationDocument): Enumeration {
     return Enumeration.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       key: doc.key,
       category: doc.category,
       realmId: doc.realmId ?? null,

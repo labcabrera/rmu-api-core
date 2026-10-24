@@ -1,10 +1,10 @@
-import type { FilterQuery } from 'mongoose';
+import type { QueryFilter } from 'mongoose';
 import { QueryCriteria, type SortCriteria } from '../../application/criteria/query-criteria.js';
 
 type MongoSort = Record<string, 1 | -1>;
 
 export class MongoQueryCriteriaMapper {
-  static toFilterQuery(criteria?: QueryCriteria): FilterQuery<any> {
+  static toFilterQuery(criteria?: QueryCriteria): QueryFilter<any> {
     if (!criteria || criteria.type === 'empty') return {};
 
     switch (criteria.type) {

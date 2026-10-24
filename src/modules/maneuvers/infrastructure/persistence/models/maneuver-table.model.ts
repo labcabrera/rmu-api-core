@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { AbsoluteManeuverResult } from '../../../domain/value-objects/absolute-maneuver-result.vo.js';
 
-export type ManeuverTableDocument = ManeuverTableModel & Document;
+export type ManeuverTableDocument = HydratedDocument<ManeuverTableModel>;
 
 export interface ManeuverTableEntryModel {
   min: number | null;

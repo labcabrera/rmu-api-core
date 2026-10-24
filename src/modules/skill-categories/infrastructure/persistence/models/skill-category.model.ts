@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import type { ManeuverProfile } from '../../../domain/value-objects/maneuver-profile.vo.js';
 
-export type SkillCategoryDocument = SkillCategoryModel & Document;
+export type SkillCategoryDocument = HydratedDocument<SkillCategoryModel>;
 
 @Schema({ collection: 'skill-categories', id: true, versionKey: false })
 export class SkillCategoryModel {

@@ -15,7 +15,7 @@ export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocume
 
   protected mapToEntity(doc: RealmDocument): Realm {
     return Realm.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       name: doc.name,
       magicPresence: doc.magicPresence,
       shortDescription: doc.shortDescription,

@@ -13,50 +13,9 @@ export class MongoProfessionRepository extends MongoBaseRepository<Profession, P
     super(professionModel, rsqlParser);
   }
 
-  // async findById(id: string): Promise<Profession | null> {
-  //   const readed = await this.professionModel.findById(id);
-  //   return readed ? this.toEntity(readed) : null;
-  // }
-
-  // async findByRsql(rsql: string, page: number, size: number): Promise<Page<Profession>> {
-  //   const skip = page * size;
-  //   const mongoQuery = this.rsqlParser.parse(rsql);
-  //   const [professionsDocs, totalElements] = await Promise.all([
-  //     this.professionModel.find(mongoQuery).skip(skip).limit(size).sort({ _id: 1 }),
-  //     this.professionModel.countDocuments(mongoQuery),
-  //   ]);
-  //   const content = professionsDocs.map((doc) => this.toEntity(doc));
-  //   return new Page<Profession>(content, page, size, totalElements);
-  // }
-
-  // async save(profession: Profession): Promise<Profession> {
-  //   const props = profession.toProps();
-  //   const model = new this.professionModel({ ...props, _id: profession.id });
-  //   await model.save();
-  //   return this.toEntity(model);
-  // }
-
-  // async update(id: string, request: Partial<Profession>): Promise<Profession> {
-  //   const updatedProfession = await this.professionModel.findByIdAndUpdate(id, request, { new: true });
-  //   if (!updatedProfession) {
-  //     throw new NotFoundError('Profession', id);
-  //   }
-  //   return this.toEntity(updatedProfession);
-  // }
-
-  // async deleteById(id: string): Promise<Profession | null> {
-  //   const result = await this.professionModel.findByIdAndDelete(id);
-  //   return result ? this.toEntity(result) : null;
-  // }
-
-  // async existsById(id: string): Promise<boolean> {
-  //   const exists = await this.professionModel.exists({ _id: id });
-  //   return exists !== null;
-  // }
-
   protected mapToEntity(doc: ProfessionDocument): Profession {
     return Profession.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       archetype: doc.archetype,
       availableRealmTypes: doc.availableRealmTypes,
       fixedRealmTypes: doc.fixedRealmTypes,
