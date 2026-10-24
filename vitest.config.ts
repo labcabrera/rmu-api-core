@@ -13,7 +13,7 @@ export default defineConfig({
       exclude: ['src/main.ts', 'src/**/*.module.ts'],
       reporter: ['text', 'lcov', 'html'],
       // Floor of the unit and e2e suites together (spec 018): raise it as coverage grows, never lower it.
-      thresholds: { lines: 95, statements: 95, functions: 96, branches: 87 },
+      thresholds: { lines: 95, statements: 95, functions: 97, branches: 89 },
     },
     projects: [
       {
