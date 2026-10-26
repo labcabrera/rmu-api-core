@@ -124,6 +124,7 @@ describe('Catalogs and calculations (e2e)', () => {
             requiresSkills: [],
             requiresTraits: ['e2e-talent'],
             equipment: [],
+            description: '- E2E text.',
           },
         ],
       };

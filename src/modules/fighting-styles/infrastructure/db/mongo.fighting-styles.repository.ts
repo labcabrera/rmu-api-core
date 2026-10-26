@@ -35,6 +35,7 @@ export class MongoFightingStylesRepository implements FightingStylesRepository {
         requiresSkills: [...(ability.requiresSkills || [])],
         requiresTraits: [...(ability.requiresTraits || [])],
         equipment: equipment(ability.equipment),
+        description: ability.description ?? null,
       })),
     };
   }

@@ -58,6 +58,8 @@ export interface StyleAbility {
   /** Talents the character needs. */
   requiresTraits: string[];
   equipment: StyleEquipment;
+  /** Rule text of the ability (Markdown), imported with the catalog; null when it has none. */
+  description: string | null;
 }
 
 /** An ability of a style with the ranks it costs in that style. */

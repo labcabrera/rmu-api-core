@@ -29,6 +29,7 @@ const CATALOG: FightingStyleCatalog = {
       requiresSkills: [],
       requiresTraits: [],
       equipment: [],
+      description: 'Test text.',
     },
   ],
 };
@@ -80,6 +81,7 @@ describe('MongoFightingStylesRepository.mapToCatalog', () => {
           requiresSkills: [],
           requiresTraits: [],
           equipment: [],
+          description: null,
         },
       ],
     });

@@ -45,6 +45,9 @@ export class StyleAbilityDto {
     items: { type: 'array', items: { $ref: '#/components/schemas/StyleConditionDto' } },
   })
   equipment: StyleConditionDto[][];
+
+  @ApiProperty({ type: String, nullable: true, description: 'Rule text of the ability (Markdown)' })
+  description: string | null;
 }
 
 export class FightingStyleAbilityDto {
