@@ -203,6 +203,7 @@ data/scripts/run.sh data/scripts/import-healing-tables.js data/core-law/healing-
 data/scripts/run.sh data/scripts/import-psychology-tables.js data/core-law/psychology-tables.json
 data/scripts/run.sh data/scripts/import-maneuver-profiles.js data/core-law/maneuver-profiles.json
 OWNER=<keycloak-user-id> data/scripts/run.sh data/scripts/import-maneuver-modifiers.js data/core-law/maneuver-modifiers.json
+data/scripts/run.sh data/scripts/import-skill-difficulties.js data/character-companion/skill-difficulties.json
 ```
 
 - `GET /v1/healing-tables` also returns `treatmentDifficulties` (`procedure`, `injuryType`, `severity` and the
@@ -213,6 +214,12 @@ OWNER=<keycloak-user-id> data/scripts/run.sh data/scripts/import-maneuver-modifi
   tables and the resistance roll table, all as numbers and result keys.
 - The maneuver profile has a `resultKind`: `standard` (the `resultTable` or the percent table), `morale` (the morale
   and rally tables, Leadership) or `price` (an opposed percent maneuver whose result is a price, Trading).
+- `GET /v1/skill-difficulties/{skillId}` returns the example difficulties of a skill (Character Companion), one text
+  per difficulty key in `en` and, when translated, `es`. A skill with no guide gets the `general` scale with
+  `fallback: true`, and the endpoint answers 404 only when `general` itself has not been imported.
+  `GET /v1/skill-difficulties` returns every guide. Both need `rmu-core-law` (or `rmu-admin`), like the other tables.
+- `specializationOptional` on a skill means the specialization may be left empty (the crafting skills); without it, a
+  skill with a `specialization` category needs one.
 
 === HTTP contract
 

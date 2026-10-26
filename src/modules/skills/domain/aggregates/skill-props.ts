@@ -7,6 +7,8 @@ export interface SkillProps {
   categoryId: string;
   bonus: string[];
   specialization: EnumerationCategory | null;
+  /** The specialization is suggested, not required: the skill can be developed without one (spec 037). */
+  specializationOptional?: boolean;
   owner: string;
   accessType: AccessType;
   /** Own maneuver profile: only the fields that override the category profile. */

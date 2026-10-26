@@ -38,6 +38,7 @@ export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, S
       categoryId: command.categoryId,
       bonus: command.bonus,
       specialization: command.specialization,
+      specializationOptional: command.specializationOptional,
       owner: command.userId,
       accessType: command.accessType,
       maneuver: command.maneuver,

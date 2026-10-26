@@ -24,6 +24,9 @@ export class SkillModel {
   @Prop({ type: String, required: false })
   specialization: EnumerationCategory | null;
 
+  @Prop({ type: Boolean, required: false })
+  specializationOptional?: boolean;
+
   @Prop({ type: String, required: true })
   owner: string;
 

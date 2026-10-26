@@ -36,6 +36,18 @@ describe('Skill', () => {
     expect(skill.updatedAt).toBeUndefined();
   });
 
+  it('stores an optional specialization only when it is true, and clears it on false', () => {
+    const skill = Skill.create({ ...baseProps(), specialization: 'skill-culinary', specializationOptional: true });
+    expect(skill.specializationOptional).toBe(true);
+
+    skill.update({ specializationOptional: false });
+    expect(skill.getProps().specializationOptional).toBeUndefined();
+    expect(skill.specializationOptional).toBe(false);
+
+    const plain = Skill.create({ ...baseProps(), specializationOptional: false });
+    expect(plain.getProps().specializationOptional).toBeUndefined();
+  });
+
   it('rehydrates persisted props exactly', () => {
     const props = baseProps();
 

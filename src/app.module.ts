@@ -21,6 +21,7 @@ import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-m
 import { HealingTablesModule } from './modules/healing-tables/healing-tables.module.js';
 import { PsychologyTablesModule } from './modules/psychology-tables/psychology-tables.module.js';
 import { FightingStylesModule } from './modules/fighting-styles/fighting-styles.module.js';
+import { SkillDifficultiesModule } from './modules/skill-difficulties/skill-difficulties.module.js';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { FightingStylesModule } from './modules/fighting-styles/fighting-styles.
     HealingTablesModule,
     PsychologyTablesModule,
     FightingStylesModule,
+    SkillDifficultiesModule,
   ],
 })
 export class AppModule {}

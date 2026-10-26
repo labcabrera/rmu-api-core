@@ -13,6 +13,7 @@ export class CreateSkillCommand extends AuthenticatedCommand {
     public readonly maneuver: ManeuverProfile | undefined,
     userId: string,
     roles: string[],
+    public readonly specializationOptional?: boolean,
   ) {
     super(userId, roles);
   }
