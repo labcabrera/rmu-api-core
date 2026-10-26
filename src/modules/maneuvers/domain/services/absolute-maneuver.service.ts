@@ -40,9 +40,20 @@ export class AbsoluteManeuverService {
 
     const result: AbsoluteManeuverResult = { ...entry.result };
     if (entry.result.effects) result.effects = entry.result.effects.map(effect => ({ ...effect }));
+    if (entry.result.messageTranslations) result.messageTranslations = { ...entry.result.messageTranslations };
     if (unusualEvent && table.unusualEvent) {
       result.message = `${entry.result.message} ${table.unusualEvent}`;
       result.unusualEvent = table.unusualEvent;
+      // Each language joins its own texts, falling back to English for the part that is not translated.
+      const event = table.unusualEventTranslations ?? {};
+      const message = entry.result.messageTranslations ?? {};
+      const languages = new Set([...Object.keys(event), ...Object.keys(message)]);
+      if (languages.size > 0) {
+        result.messageTranslations = Object.fromEntries(
+          [...languages].map(lang => [lang, `${message[lang] ?? entry.result.message} ${event[lang] ?? table.unusualEvent}`]),
+        );
+        result.unusualEventTranslations = { ...event };
+      }
     }
     return result;
   }
