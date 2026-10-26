@@ -53,6 +53,7 @@ export class MongoManeuverModifierRepository
       min: doc.min ?? undefined,
       max: doc.max ?? undefined,
       description: doc.description ?? undefined,
+      reference: doc.reference === true ? true : undefined,
       owner: doc.owner,
       accessType: doc.accessType,
       createdAt: doc.createdAt,

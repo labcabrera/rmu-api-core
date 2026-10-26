@@ -45,6 +45,9 @@ export class ManeuverModifierModel {
   @Prop({ type: String, required: false })
   description?: string;
 
+  @Prop({ type: Boolean, required: false })
+  reference?: boolean;
+
   @Prop({ type: String, required: true })
   owner: string;
 
