@@ -49,6 +49,10 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     return this.props.description;
   }
 
+  get reference(): boolean {
+    return this.props.reference === true;
+  }
+
   get owner() {
     return this.props.owner;
   }
@@ -109,6 +113,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     this.props.min = definition.min;
     this.props.max = definition.max;
     this.props.description = definition.description;
+    this.props.reference = definition.reference;
     if (changes.accessType) this.props.accessType = changes.accessType;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
@@ -133,6 +138,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
       min: this.props.min,
       max: this.props.max,
       description: this.props.description,
+      reference: this.props.reference,
     };
   }
 
@@ -145,6 +151,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     if (categoryIds.length > 0) scope.categoryIds = categoryIds;
     const normalized: ManeuverModifierDefinition = { key: definition.key?.trim(), scope, type: definition.type };
     if (definition.description) normalized.description = definition.description;
+    if (definition.reference === true) normalized.reference = true;
     switch (definition.type) {
       case 'flag':
         normalized.value = definition.value;

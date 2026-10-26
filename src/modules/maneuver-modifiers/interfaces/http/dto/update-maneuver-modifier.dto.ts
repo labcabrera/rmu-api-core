@@ -42,6 +42,7 @@ export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefin
         min: dto.min,
         max: dto.max,
         description: dto.description,
+        reference: dto.reference,
         accessType: dto.accessType,
       },
       userId,

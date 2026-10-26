@@ -24,6 +24,10 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     return this.props.specialization;
   }
 
+  get specializationOptional() {
+    return this.props.specializationOptional === true;
+  }
+
   get owner() {
     return this.props.owner;
   }
@@ -46,7 +50,13 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
 
   static create(props: Omit<SkillProps, 'createdAt' | 'updatedAt'>) {
     ManeuverProfiles.validate(props.maneuver);
-    return new Skill({ ...props, createdAt: new Date(), updatedAt: undefined, maneuver: ManeuverProfiles.normalize(props.maneuver) });
+    return new Skill({
+      ...props,
+      specializationOptional: props.specializationOptional || undefined,
+      createdAt: new Date(),
+      updatedAt: undefined,
+      maneuver: ManeuverProfiles.normalize(props.maneuver),
+    });
   }
 
   static fromProps(props: SkillProps) {
@@ -63,6 +73,10 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     }
     if (props.specialization) {
       this.props.specialization = props.specialization;
+    }
+    if (props.specializationOptional !== undefined) {
+      // Only true is stored: false clears the field.
+      this.props.specializationOptional = props.specializationOptional || undefined;
     }
     if (props.accessType) {
       this.props.accessType = props.accessType;

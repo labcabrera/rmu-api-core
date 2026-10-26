@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
@@ -66,6 +66,9 @@ export class ManeuverModifierDto {
   @ApiProperty({ required: false })
   description?: string;
 
+  @ApiProperty({ description: 'Reference only: listed, never added to a maneuver roll (OB/DB modifiers)', example: false })
+  reference: boolean;
+
   @ApiProperty({ type: String, example: 'public' })
   accessType: AccessType;
 
@@ -85,6 +88,7 @@ export class ManeuverModifierDto {
     dto.min = entity.min;
     dto.max = entity.max;
     dto.description = entity.description;
+    dto.reference = entity.reference;
     dto.accessType = entity.accessType;
     dto.owner = entity.owner;
     return dto;
@@ -136,4 +140,9 @@ export class ManeuverModifierDefinitionFields {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiProperty({ required: false, description: 'Reference only: listed, never added to a maneuver roll' })
+  @IsBoolean()
+  @IsOptional()
+  reference?: boolean;
 }

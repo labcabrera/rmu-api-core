@@ -93,4 +93,19 @@ describe('ManeuverModifier', () => {
     expect(modifier.accessType).toBe('private');
     expect(modifier.updatedAt).toBeInstanceOf(Date);
   });
+
+  it('stores reference only when true, and clears it with false', () => {
+    expect(create({}).reference).toBe(false);
+    expect(create({ reference: false }).getProps().reference).toBeUndefined();
+
+    const modifier = create({ reference: true });
+    expect(modifier.reference).toBe(true);
+
+    modifier.update({ description: 'other' });
+    expect(modifier.reference).toBe(true);
+
+    modifier.update({ reference: false });
+    expect(modifier.reference).toBe(false);
+    expect(modifier.getProps().reference).toBeUndefined();
+  });
 });

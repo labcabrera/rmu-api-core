@@ -24,6 +24,7 @@ export class MongoManeuverTableRepository implements ManeuverTableRepository {
       doc._id,
       (doc.table || []).map(entry => ({ min: entry.min ?? null, max: entry.max ?? null, result: entry.result })),
       doc.unusualEvent ?? '',
+      doc.unusualEventTranslations ?? undefined,
     );
   }
 }

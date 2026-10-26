@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { HydratedDocument } from 'mongoose';
 import type { AbsoluteManeuverResult } from '../../../domain/value-objects/absolute-maneuver-result.vo.js';
+import type { Translations } from '../../../domain/value-objects/translations.vo.js';
 
 export type ManeuverTableDocument = HydratedDocument<ManeuverTableModel>;
 
@@ -21,6 +22,9 @@ export class ManeuverTableModel {
 
   @Prop({ type: String, required: false })
   unusualEvent?: string;
+
+  @Prop({ type: Object, required: false })
+  unusualEventTranslations?: Translations;
 }
 
 export const ManeuverTableSchema = SchemaFactory.createForClass(ManeuverTableModel);

@@ -12,6 +12,8 @@ export interface ManeuverModifierProps {
   min?: number;
   max?: number;
   description?: string;
+  /** Reference only (e.g. OB/DB modifiers of a combat skill): listed, never added to a maneuver roll. */
+  reference?: boolean;
   owner: string;
   accessType: AccessType;
   createdAt: Date;
@@ -20,5 +22,5 @@ export interface ManeuverModifierProps {
 
 export type ManeuverModifierDefinition = Pick<
   ManeuverModifierProps,
-  'key' | 'scope' | 'type' | 'value' | 'options' | 'perUnit' | 'min' | 'max' | 'description'
+  'key' | 'scope' | 'type' | 'value' | 'options' | 'perUnit' | 'min' | 'max' | 'description' | 'reference'
 >;

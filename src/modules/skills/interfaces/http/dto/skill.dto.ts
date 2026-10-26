@@ -21,6 +21,9 @@ export class SkillDto {
   @ApiProperty({ type: String, description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
   specialization: EnumerationCategory | null;
 
+  @ApiProperty({ description: 'The specialization is suggested, not required (spec 037)', example: false })
+  specializationOptional: boolean;
+
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   accessType: AccessType;
 
@@ -45,6 +48,7 @@ export class SkillDto {
     dto.categoryId = entity.categoryId;
     dto.bonus = entity.bonus || [];
     dto.specialization = entity.specialization;
+    dto.specializationOptional = entity.specializationOptional;
     dto.accessType = entity.accessType;
     dto.maneuver = EffectiveManeuverProfileDto.fromProfile(view.maneuver);
     dto.maneuverOverrides = ManeuverProfileDto.fromProfile(entity.maneuver);

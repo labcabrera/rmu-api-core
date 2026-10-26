@@ -6,8 +6,11 @@ export class EnduranceManeuverResultDto {
   @ApiProperty({ type: String, description: 'The result value', example: 'success', required: true })
   result: ResultCode;
 
-  @ApiProperty({ description: 'The critical severity level', example: 'A', required: false })
+  @ApiProperty({ description: 'Result text (followed by the unusual event text when requested)', required: true })
   message: string;
+
+  @ApiProperty({ description: 'Translations of message by language code', required: false })
+  messageTranslations?: Record<string, string>;
 
   @ApiProperty({ description: 'The fatigue points. Values over 0 indicate fatigue applied to the character', example: 2, required: true })
   fatigue: number;
@@ -22,6 +25,7 @@ export class EnduranceManeuverResultDto {
     const dto = new EnduranceManeuverResultDto();
     dto.result = entity.result;
     dto.message = entity.message;
+    dto.messageTranslations = entity.messageTranslations;
     dto.fatigue = entity.fatigue;
     dto.hitPoints = entity.hitPoints;
     dto.bonus = entity.bonus;

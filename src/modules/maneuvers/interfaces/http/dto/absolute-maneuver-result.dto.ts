@@ -31,6 +31,9 @@ export class AbsoluteManeuverResultDto {
   @ApiProperty({ description: 'Result text (followed by the unusual event text when requested)', example: 'Success.', required: true })
   message: string;
 
+  @ApiProperty({ description: 'Translations of message by language code', example: { es: 'Éxito.' }, required: false })
+  messageTranslations?: Record<string, string>;
+
   @ApiProperty({ description: 'Result effects', type: [ManeuverEffectDto], required: false })
   effects?: ManeuverEffectDto[];
 
@@ -43,14 +46,19 @@ export class AbsoluteManeuverResultDto {
   @ApiProperty({ description: 'Unusual event text of the table, only when unusualEvent=true', required: false })
   unusualEvent?: string;
 
+  @ApiProperty({ description: 'Translations of unusualEvent by language code', required: false })
+  unusualEventTranslations?: Record<string, string>;
+
   static fromEntity(entity: AbsoluteManeuverResult) {
     const dto = new AbsoluteManeuverResultDto();
     dto.result = entity.result;
     dto.message = entity.message;
+    dto.messageTranslations = entity.messageTranslations;
     dto.effects = entity.effects?.map(effect => ManeuverEffectDto.fromEntity(effect));
     dto.bonusUntilAbsoluteFailure = entity.bonusUntilAbsoluteFailure;
     dto.penaltyUntilAbsoluteSuccess = entity.penaltyUntilAbsoluteSuccess;
     dto.unusualEvent = entity.unusualEvent;
+    dto.unusualEventTranslations = entity.unusualEventTranslations;
     return dto;
   }
 }

@@ -17,6 +17,7 @@ export const ENUMERATION_CATEGORIES = [
   'skill-directed-spell',
   'skill-culinary',
   'skill-fabric-craft',
+  'skill-flying',
   'skill-administration',
   'skill-trade',
   'skill-service',

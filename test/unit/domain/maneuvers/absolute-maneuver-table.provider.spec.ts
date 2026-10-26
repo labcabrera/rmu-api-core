@@ -64,6 +64,24 @@ describe('AbsoluteManeuverTableProvider', () => {
     });
   });
 
+  it('carries the translations and joins them with the unusual event, per language', () => {
+    const table = MongoManeuverTableRepository.mapToTable({
+      ...storedDoc,
+      table: storedDoc.table.map((entry, i) =>
+        i === 3 ? { ...entry, result: { ...entry.result, messageTranslations: { es: 'Éxito de prueba.' } } } : entry,
+      ),
+      unusualEventTranslations: { es: 'Evento de prueba.' },
+    });
+
+    expect(service.resolve(table, 100, false).messageTranslations).toEqual({ es: 'Éxito de prueba.' });
+    expect(service.resolve(table, 100, true)).toMatchObject({
+      messageTranslations: { es: 'Éxito de prueba. Evento de prueba.' },
+      unusualEventTranslations: { es: 'Evento de prueba.' },
+    });
+    // A row without translation keeps the English text before the translated event.
+    expect(service.resolve(table, 5, true).messageTranslations).toEqual({ es: 'Test absolute failure. Evento de prueba.' });
+  });
+
   it('lists code tables followed by the stored ones without duplicates', async () => {
     const names = await provider.getTableNames();
 

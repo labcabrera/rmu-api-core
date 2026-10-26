@@ -27,6 +27,9 @@ export class AbsoluteManeuverTableDto {
   @ApiProperty({ description: 'Unusual event description', example: 'Some effect.', required: true })
   unusualEvent: string;
 
+  @ApiProperty({ description: 'Translations of unusualEvent by language code', example: { es: 'Algún efecto.' }, required: false })
+  unusualEventTranslations?: Record<string, string>;
+
   static fromEntity(entity: AbsoluteManeuverTable): AbsoluteManeuverTableDto {
     const dto = new AbsoluteManeuverTableDto();
     dto.name = entity.name;
@@ -38,6 +41,7 @@ export class AbsoluteManeuverTableDto {
       return e;
     });
     dto.unusualEvent = entity.unusualEvent;
+    dto.unusualEventTranslations = entity.unusualEventTranslations;
     return dto;
   }
 }

@@ -32,6 +32,7 @@ export class CreateManeuverModifierDto extends ManeuverModifierDefinitionFields 
         min: dto.min,
         max: dto.max,
         description: dto.description,
+        reference: dto.reference,
       },
       dto.accessType,
       userId,

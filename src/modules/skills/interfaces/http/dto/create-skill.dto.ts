@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
@@ -26,6 +26,11 @@ export class CreateSkillDto {
   @IsOptional()
   specialization: EnumerationCategory | null;
 
+  @ApiProperty({ description: 'The specialization is suggested, not required', required: false, example: false })
+  @IsBoolean()
+  @IsOptional()
+  specializationOptional?: boolean;
+
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   @IsString()
   accessType: AccessType;
@@ -46,6 +51,7 @@ export class CreateSkillDto {
       ManeuverProfileDto.toProfile(dto.maneuver),
       userId,
       roles,
+      dto.specializationOptional,
     );
   }
 }

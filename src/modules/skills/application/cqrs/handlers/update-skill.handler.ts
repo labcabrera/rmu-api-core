@@ -41,6 +41,7 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
       categoryId: command.categoryId,
       bonus: command.bonus,
       specialization: command.specialization,
+      specializationOptional: command.specializationOptional,
       accessType: command.accessType,
       maneuver: command.maneuver,
     });

@@ -16,6 +16,8 @@ export class UpdateSkillCommand extends AuthenticatedCommand {
     roles: string[],
     /** The version the client read; undefined skips the concurrency check. */
     public readonly expectedVersion?: number,
+    /** undefined keeps the current value. */
+    public readonly specializationOptional?: boolean,
   ) {
     super(userId, roles);
   }
