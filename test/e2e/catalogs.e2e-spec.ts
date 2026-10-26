@@ -92,6 +92,49 @@ describe('Catalogs and calculations (e2e)', () => {
     });
   });
 
+  describe('fighting styles', () => {
+    it('requires Core Law access', async () => {
+      await request(e2e.server).get('/v1/fighting-styles').expect(401);
+      const res = await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('owner')).expect(403);
+      expect(res.body).toMatchObject({ statusCode: 403, error: 'ForbiddenError', path: '/v1/fighting-styles' });
+    });
+
+    it('answers 404 while the styles have not been imported, and returns them once they are', async () => {
+      await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('coreLaw')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook styles.
+      const catalog = {
+        styles: [
+          {
+            id: 'e2e-style',
+            skillId: 'combat-styles',
+            abilities: [{ abilityId: 'e2e-ability', cost: 3 }],
+            requiresSkills: ['e2e-skill'],
+            requiresTraits: [],
+            equipment: [[{ kind: 'weapon-skill', value: 'melee-weapon@blade' }], [{ kind: 'unarmed' }]],
+          },
+        ],
+        abilities: [
+          {
+            id: 'e2e-ability',
+            types: ['combat'],
+            repeatable: true,
+            maxTimes: 2,
+            requiresAbilities: [],
+            requiresSkills: [],
+            requiresTraits: ['e2e-talent'],
+            equipment: [],
+          },
+        ],
+      };
+      await e2e.connection.collection('fighting-styles').insertOne({ _id: 'character-companion', ...catalog } as never);
+
+      const res = await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual(catalog);
+      await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('admin')).expect(200);
+    });
+  });
+
   describe('psychology tables', () => {
     it('requires Core Law access', async () => {
       await request(e2e.server).get('/v1/psychology-tables').expect(401);
