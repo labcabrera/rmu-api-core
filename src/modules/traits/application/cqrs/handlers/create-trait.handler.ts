@@ -27,6 +27,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
       adquisitionCost: command.adquisitionCost,
       tierCost: command.tierCost,
       description: command.description,
+      ...command.details,
       owner: command.userId,
     });
     const existing = await this.traitRepository.findById(trait.id);

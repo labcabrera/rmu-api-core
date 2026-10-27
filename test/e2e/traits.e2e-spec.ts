@@ -66,6 +66,41 @@ describe('Traits (e2e)', () => {
       ]);
     });
 
+    it('stores the Character Companion details and the new categories and specializations', async () => {
+      const auth = e2e.auth('owner');
+      const created = await create('owner', {
+        name: 'Fixture companion talent',
+        category: 'epic',
+        specialization: 'skill-category',
+        talentCategory: 'combat-expertise',
+        prerequisites: [{ type: 'natural' }, { type: 'profession', value: 'ranger,druid' }, { type: 'milestone', description: 'a feat' }],
+        possibleFlaws: ['fixture-flaw'],
+        source: 'character-companion',
+      });
+      expect(created).toMatchObject({
+        category: 'epic',
+        specialization: 'skill-category',
+        talentCategory: 'combat-expertise',
+        prerequisites: [{ type: 'natural' }, { type: 'profession', value: 'ranger,druid' }, { type: 'milestone', description: 'a feat' }],
+        possibleFlaws: ['fixture-flaw'],
+        source: 'character-companion',
+      });
+
+      const updated = await request(e2e.server)
+        .patch(`/v1/traits/${created.id}`)
+        .set('Authorization', auth)
+        .send({ prerequisites: [{ type: 'training' }], possibleFlaws: [] })
+        .expect(200);
+      expect(updated.body).toMatchObject({ prerequisites: [{ type: 'training' }], possibleFlaws: [], talentCategory: 'combat-expertise' });
+
+      await request(e2e.server)
+        .patch(`/v1/traits/${created.id}`)
+        .set('Authorization', auth)
+        .send({ prerequisites: [{ type: 'bribe' }] })
+        .expect(400);
+      await request(e2e.server).delete(`/v1/traits/${created.id}`).set('Authorization', auth).expect(204);
+    });
+
     it('searches with RSQL and pages the results, up to the catalog page size', async () => {
       const auth = e2e.auth('owner');
       for (const name of ['Search A', 'Search B', 'Search C']) await create('owner', { name, category: 'discipline' });

@@ -51,6 +51,18 @@ describe('Trait domain aggregate', () => {
     });
   });
 
+  it('keeps the Character Companion details and changes only the ones given', () => {
+    const trait = Trait.fromProps(
+      makeTraitProps({ talentCategory: 'rage', prerequisites: [{ type: 'natural' }], possibleFlaws: ['bad-temper'], source: 'core-law' }),
+    );
+    trait.update({ prerequisites: [{ type: 'skill', value: 'mental-focus' }] });
+    expect(trait.talentCategory).toBe('rage');
+    expect(trait.prerequisites).toEqual([{ type: 'skill', value: 'mental-focus' }]);
+    expect(trait.possibleFlaws).toEqual(['bad-temper']);
+    expect(trait.source).toBe('core-law');
+    expect(trait.hasChanges()).toBe(true);
+  });
+
   it.each([
     ['Ágil y rápido', 'agil-y-rapido'],
     ['Visión nocturna', 'vision-nocturna'],

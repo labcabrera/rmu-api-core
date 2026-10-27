@@ -1,5 +1,6 @@
 import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
 import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import type { TraitDetails } from '../../../domain/value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class UpdateTraitCommand extends AuthenticatedCommand {
@@ -18,6 +19,7 @@ export class UpdateTraitCommand extends AuthenticatedCommand {
     roles: string[],
     /** The version the client read; undefined skips the concurrency check. */
     public readonly expectedVersion?: number,
+    public readonly details: TraitDetails = {},
   ) {
     super(userId, roles);
   }

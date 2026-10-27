@@ -12,4 +12,7 @@ export type TraitSpecialization =
   | 'elemental-type'
   | 'sense'
   | 'language'
-  | 'animal-type';
+  | 'animal-type'
+  | 'skill-category'
+  | 'race'
+  | 'text';

@@ -1,5 +1,6 @@
 import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
 import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import type { TraitDetails } from '../../../domain/value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class CreateTraitCommand extends AuthenticatedCommand {
@@ -15,6 +16,7 @@ export class CreateTraitCommand extends AuthenticatedCommand {
     public readonly description: string | undefined,
     userId: string,
     roles: string[],
+    public readonly details: TraitDetails = {},
   ) {
     super(userId, roles);
   }

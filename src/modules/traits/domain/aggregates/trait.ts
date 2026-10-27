@@ -45,6 +45,22 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
     return this.props.description;
   }
 
+  get talentCategory() {
+    return this.props.talentCategory;
+  }
+
+  get prerequisites() {
+    return this.props.prerequisites;
+  }
+
+  get possibleFlaws() {
+    return this.props.possibleFlaws;
+  }
+
+  get source() {
+    return this.props.source;
+  }
+
   get owner() {
     return this.props.owner;
   }
@@ -87,6 +103,7 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
 
   update(props: Partial<Omit<TraitProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>): void {
     const { name, category, isTalent, specialization, isTierBased, maxTier, adquisitionCost, tierCost, description } = props;
+    const { talentCategory, prerequisites, possibleFlaws, source } = props;
     if (name !== undefined) this.props.name = name;
     if (category !== undefined) this.props.category = category;
     if (isTalent !== undefined) this.props.isTalent = isTalent;
@@ -96,6 +113,10 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
     if (adquisitionCost !== undefined) this.props.adquisitionCost = adquisitionCost;
     if (tierCost !== undefined) this.props.tierCost = tierCost;
     if (description !== undefined) this.props.description = description;
+    if (talentCategory !== undefined) this.props.talentCategory = talentCategory;
+    if (prerequisites !== undefined) this.props.prerequisites = prerequisites;
+    if (possibleFlaws !== undefined) this.props.possibleFlaws = possibleFlaws;
+    if (source !== undefined) this.props.source = source;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new TraitUpdatedEvent(this.getProps()));

@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsNumber, IsBoolean, IsInt, Min } from 'class-validator';
 import { UpdateTraitCommand } from '../../../application/cqrs/commands/update-trait.command.js';
-import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import { TRAIT_CATEGORIES, type TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import { TraitDetailsDto } from './trait-details.dto.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
-export class UpdateTraitDto {
+export class UpdateTraitDto extends TraitDetailsDto {
   @ApiProperty({ type: String, description: 'Name of the trait', required: false, example: 'Courage' })
   @IsString()
   @IsOptional()
@@ -14,7 +15,7 @@ export class UpdateTraitDto {
     description: 'Category of the trait',
     required: false,
     example: 'combat',
-    enum: ['combat', 'discipline', 'magical', 'physical', 'racial', 'senses', 'other'],
+    enum: TRAIT_CATEGORIES,
   })
   @IsString()
   @IsOptional()
@@ -81,6 +82,7 @@ export class UpdateTraitDto {
       userId,
       roles,
       dto.version,
+      TraitDetailsDto.toDetails(dto),
     );
   }
 }
