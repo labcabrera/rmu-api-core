@@ -32,6 +32,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       adquisitionCost: command.adquisitionCost,
       tierCost: command.tierCost,
       description: command.description,
+      ...command.details,
     });
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
     if (!trait.hasChanges()) return trait;

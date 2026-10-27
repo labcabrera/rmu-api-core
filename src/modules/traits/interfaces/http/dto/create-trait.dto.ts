@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 import { CreateTraitCommand } from '../../../application/cqrs/commands/create-trait.command.js';
-import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import { TRAIT_CATEGORIES, type TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import { TraitDetailsDto } from './trait-details.dto.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
-export class CreateTraitDto {
+export class CreateTraitDto extends TraitDetailsDto {
   @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
   @IsString()
   @IsNotEmpty()
@@ -13,7 +14,7 @@ export class CreateTraitDto {
   @ApiProperty({
     description: 'Category of the trait',
     example: 'combat',
-    enum: ['combat', 'discipline', 'magical', 'physical', 'racial', 'senses', 'other'],
+    enum: TRAIT_CATEGORIES,
   })
   @IsString()
   @IsNotEmpty()
@@ -69,6 +70,7 @@ export class CreateTraitDto {
       dto.description,
       userId,
       userRoles,
+      TraitDetailsDto.toDetails(dto),
     );
   }
 }

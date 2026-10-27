@@ -1,7 +1,8 @@
 import type { TraitCategory } from '../value-objects/trait-category.vo.js';
+import type { TraitDetails } from '../value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../value-objects/trait-specialization.vo.js';
 
-export interface TraitProps {
+export interface TraitProps extends TraitDetails {
   id: string;
   name: string;
   category: TraitCategory;

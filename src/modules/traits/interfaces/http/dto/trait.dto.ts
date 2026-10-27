@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 import { Trait } from '../../../domain/aggregates/trait.js';
+import type { TraitSource } from '../../../domain/value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import { TraitPrerequisiteDto } from './trait-details.dto.js';
 
 export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
@@ -37,6 +39,18 @@ export class TraitDto {
   @ApiProperty({ description: 'Description of the trait', required: false, example: 'A trait representing courage and bravery' })
   description?: string;
 
+  @ApiProperty({ type: String, description: 'Training category of the talent (Character Companion)', required: false })
+  talentCategory?: string | null;
+
+  @ApiProperty({ type: [TraitPrerequisiteDto], description: 'Prerequisites, one of them per tier', required: false })
+  prerequisites?: TraitPrerequisiteDto[];
+
+  @ApiProperty({ type: [String], description: 'Ids of the flaws that may be taken with the talent', required: false })
+  possibleFlaws?: string[];
+
+  @ApiProperty({ type: String, description: 'Rulebook of the trait', required: false, example: 'character-companion' })
+  source?: TraitSource | null;
+
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
@@ -50,6 +64,10 @@ export class TraitDto {
     dto.adquisitionCost = entity.adquisitionCost;
     dto.tierCost = entity.tierCost;
     dto.description = entity.description;
+    dto.talentCategory = entity.talentCategory;
+    dto.prerequisites = entity.prerequisites;
+    dto.possibleFlaws = entity.possibleFlaws;
+    dto.source = entity.source;
     return dto;
   }
 }

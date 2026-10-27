@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { HydratedDocument } from 'mongoose';
 import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import type { TraitPrerequisite, TraitSource } from '../../../domain/value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export type TraitDocument = HydratedDocument<TraitModel>;
@@ -40,6 +41,18 @@ export class TraitModel {
 
   @Prop({ required: false })
   description?: string;
+
+  @Prop({ type: String, required: false })
+  talentCategory?: string | null;
+
+  @Prop({ type: [{ _id: false, type: { type: String }, value: String, description: String }], required: false, default: undefined })
+  prerequisites?: TraitPrerequisite[];
+
+  @Prop({ type: [String], required: false, default: undefined })
+  possibleFlaws?: string[];
+
+  @Prop({ type: String, required: false })
+  source?: TraitSource | null;
 
   @Prop({ required: true })
   owner: string;
