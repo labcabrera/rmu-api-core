@@ -92,6 +92,34 @@ describe('Catalogs and calculations (e2e)', () => {
     });
   });
 
+  describe('poison tables', () => {
+    it('requires Core Law access, answers 404 until imported and returns the rows once they are', async () => {
+      await request(e2e.server).get('/v1/poison-tables').expect(401);
+      await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook table.
+      const row = {
+        category: 'respiratory',
+        severity: 'severe',
+        start: { min: 3, max: 9, unit: 'round' },
+        duration: null,
+        penalty: { min: -40, max: -20 },
+        hitsPerRound: { min: 1, max: 4 },
+        hitsRounds: { min: 2, max: 5 },
+        condition: 'unconscious',
+        conditionDelay: { min: 1, max: 2, unit: 'minute' },
+        conditionDuration: { min: 1, max: 6, unit: 'hour' },
+        permanent: false,
+      };
+      await e2e.connection.collection('poison-tables').insertOne({ _id: 'core-law', rows: [row] } as never);
+
+      const res = await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual({ rows: [row] });
+      await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('admin')).expect(200);
+    });
+  });
+
   describe('fighting styles', () => {
     it('requires Core Law access', async () => {
       await request(e2e.server).get('/v1/fighting-styles').expect(401);
