@@ -23,6 +23,18 @@ const tables = [
 ];
 
 describe('absolute maneuver tables', () => {
+  // Both are modifiers added to the roll (spec 044, decision 6): the penalty is always negative, the bonus positive.
+  it('store penaltyUntilAbsoluteSuccess as a negative and bonusUntilAbsoluteFailure as a positive modifier', () => {
+    const effects = tables.flatMap(table => table.table.flatMap(entry => entry.result.effects ?? []));
+    const penalties = effects.filter(effect => effect.status === 'penaltyUntilAbsoluteSuccess');
+    const bonuses = effects.filter(effect => effect.status === 'bonusUntilAbsoluteFailure');
+
+    expect(penalties.length).toBeGreaterThan(0);
+    penalties.forEach(effect => expect(effect.value).toBeLessThan(0));
+    expect(bonuses.length).toBeGreaterThan(0);
+    bonuses.forEach(effect => expect(effect.value).toBeGreaterThan(0));
+  });
+
   it('are value objects with a name, unusual event, and five ordered result entries', () => {
     tables.forEach(table => {
       expect(table).toBeInstanceOf(AbsoluteManeuverTable);

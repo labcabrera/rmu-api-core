@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsOptional, IsString, ValidateNested, IsInt, Min } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString, ValidateNested, IsInt, Min, IsIn } from 'class-validator';
 import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { UpdateSkillCommand } from '../../../application/cqrs/commands/update-skill.command.js';
 
 export class UpdateSkillDto {
@@ -28,7 +28,7 @@ export class UpdateSkillDto {
   specializationOptional?: boolean;
 
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public', required: false })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   @IsOptional()
   accessType: AccessType;
 

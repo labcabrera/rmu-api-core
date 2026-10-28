@@ -26,7 +26,7 @@ describe('Professions (e2e)', () => {
   };
 
   describe('CRUD', () => {
-    it('creates, reads, lists, updates and deletes a profession, publishing its deletion', async () => {
+    it('creates, reads, lists, updates and deletes a profession, publishing its events', async () => {
       const auth = e2e.auth('owner');
       takeTopics(e2e.events);
 
@@ -59,8 +59,11 @@ describe('Professions (e2e)', () => {
       await request(e2e.server).get('/v1/professions/fighter').set('Authorization', auth).expect(404);
       await request(e2e.server).delete('/v1/professions/fighter').set('Authorization', auth).expect(404);
 
-      // Only the deletion is published.
-      expect(takeTopics(e2e.events)).toEqual(['internal.rmu-core.profession.deleted.v1']);
+      expect(takeTopics(e2e.events)).toEqual([
+        'internal.rmu-core.profession.created.v1',
+        'internal.rmu-core.profession.updated.v1',
+        'internal.rmu-core.profession.deleted.v1',
+      ]);
     });
 
     it('searches with RSQL and pages the results', async () => {
@@ -85,6 +88,21 @@ describe('Professions (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an access type other than public or private, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      const created = await request(e2e.server)
+        .post('/v1/professions')
+        .set('Authorization', auth)
+        .send(professionBody('wild-profession', { accessType: 'wild' }))
+        .expect(400);
+      expect(created.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      await request(e2e.server)
+        .patch(`/v1/professions/${(await create('owner')).id}`)
+        .set('Authorization', auth)
+        .send({ accessType: 'wild' })
+        .expect(400);
+    });
+
     it('rejects an empty body', async () => {
       const res = await request(e2e.server).post('/v1/professions').set('Authorization', e2e.auth('owner')).send({}).expect(400);
       expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/professions' });
@@ -116,6 +134,31 @@ describe('Professions (e2e)', () => {
         .set('Authorization', auth)
         .send({ fixedRealmTypes: 'x' })
         .expect(400);
+    });
+
+    it('validates the costs of each skill category, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      for (const skillCosts of [{ animal: 'cheap' }, { animal: [2, 'x'] }, { awareness: [1.5] }, { brawn: 3 }]) {
+        await request(e2e.server)
+          .post('/v1/professions')
+          .set('Authorization', auth)
+          .send(professionBody('invalid-costs', { skillCosts }))
+          .expect(400);
+      }
+
+      const profession = await create('owner');
+      const path = `/v1/professions/${profession.id}`;
+      await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ skillCosts: { animal: ['x'] } })
+        .expect(400);
+      const updated = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ skillCosts: { animal: [1, 2], lore: [3] } })
+        .expect(200);
+      expect(updated.body).toMatchObject({ skillCosts: { animal: [1, 2], lore: [3] } });
     });
 
     it('drops unknown fields of the body', async () => {

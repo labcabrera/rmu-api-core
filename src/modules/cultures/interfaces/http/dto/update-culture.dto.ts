@@ -1,14 +1,16 @@
-import { IsArray, IsOptional, IsString, ValidateNested, IsInt, Min } from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested, IsInt, Min, IsIn, IsNotEmpty, ValidateIf } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UpdateCultureCommand } from '../../../application/cqrs/commands/update-culture.command.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
 
 export class UpdateCultureDto {
   @ApiProperty({ description: 'Name of the culture', example: 'Nomad', required: false })
+  // Absent keeps the name; null or '' is a 400 (a name cannot be cleared).
+  @ValidateIf((_, value) => value !== undefined)
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   name?: string;
 
   @ApiProperty({ description: 'Description of the culture', required: false })
@@ -22,7 +24,7 @@ export class UpdateCultureDto {
   imageUrl?: string;
 
   @ApiProperty({ type: String, description: 'Access type', required: false, example: 'private' })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   @IsOptional()
   accessType?: AccessType;
 

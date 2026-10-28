@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait.js';
 import type { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props.js';
 import { TraitGuardAdapter } from '../../../../src/modules/traits/infrastructure/security/trait-guard.adapter.js';
+import type { TraitGuardPort } from '../../../../src/modules/traits/application/ports/trait-guard.port.js';
 import { ConflictError, ForbiddenError, NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 import { CreateTraitHandler } from '../../../../src/modules/traits/application/cqrs/handlers/create-trait.handler.js';
 import { CreateTraitCommand } from '../../../../src/modules/traits/application/cqrs/commands/create-trait.command.js';
@@ -11,7 +12,12 @@ import { DeleteTraitHandler } from '../../../../src/modules/traits/application/c
 import { DeleteTraitCommand } from '../../../../src/modules/traits/application/cqrs/commands/delete-trait.command.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
-import { ADMIN, OTHER, OWNER } from '../../support/users.js';
+import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
+import { GetTraitHandler } from '../../../../src/modules/traits/application/cqrs/handlers/get-trait.handler.js';
+import { GetTraitQuery } from '../../../../src/modules/traits/application/cqrs/queries/get-trait.query.js';
+import { GetTraitsHandler } from '../../../../src/modules/traits/application/cqrs/handlers/get-traits.handler.js';
+import { GetTraitsQuery } from '../../../../src/modules/traits/application/cqrs/queries/get-traits.query.js';
+import { QueryCriteria } from '../../../../src/modules/shared/application/criteria/query-criteria.js';
 
 const trait = (overrides: Partial<TraitProps> = {}) =>
   Trait.fromProps({
@@ -34,7 +40,7 @@ const trait = (overrides: Partial<TraitProps> = {}) =>
 describe('trait command handlers', () => {
   let traits: InMemoryRepository<Trait>;
   let events: RecordingEventPublisher;
-  const guard = new TraitGuardAdapter();
+  const guard: TraitGuardPort = new TraitGuardAdapter();
 
   beforeEach(() => {
     traits = new InMemoryRepository(trait());
@@ -42,11 +48,11 @@ describe('trait command handlers', () => {
   });
 
   describe('CreateTraitHandler', () => {
-    const command = (name: string, user = OWNER) =>
+    const command = (name: string, user: { id: string; roles: readonly string[] } = OWNER) =>
       new CreateTraitCommand(name, 'combat', true, 'skill', true, 3, 20, 10, 'A trait', user.id, [...user.roles]);
 
     it('creates the trait with an id derived from its name, owned by the user, and publishes trait.created', async () => {
-      const created = await new CreateTraitHandler(traits, events).execute(command(' Blind Fighting! '));
+      const created = await new CreateTraitHandler(traits, guard, events).execute(command(' Blind Fighting! '));
 
       expect(created).toMatchObject({
         id: 'blind-fighting',
@@ -67,9 +73,18 @@ describe('trait command handlers', () => {
     });
 
     it('rejects a name whose id already exists, without saving or publishing', async () => {
-      await expect(new CreateTraitHandler(traits, events).execute(command('Night Vision'))).rejects.toThrow(ConflictError);
+      await expect(new CreateTraitHandler(traits, guard, events).execute(command('Night Vision'))).rejects.toThrow(ConflictError);
 
       expect(traits.items.get('night-vision')?.category).toBe('senses');
+      expect(events.topics).toEqual([]);
+    });
+
+    it('rejects a user without the player or admin role', async () => {
+      await expect(new CreateTraitHandler(traits, guard, events).execute(command('Blind Fighting', NO_ROLES))).rejects.toThrow(
+        ForbiddenError,
+      );
+
+      expect(traits.items.size).toBe(1);
       expect(events.topics).toEqual([]);
     });
   });
@@ -143,6 +158,29 @@ describe('trait command handlers', () => {
         NotFoundError,
       );
       expect(events.topics).toEqual([]);
+    });
+  });
+
+  describe('public reads', () => {
+    it.each([
+      ['the owner', OWNER],
+      ['another user', OTHER],
+      ['a user without roles', NO_ROLES],
+      ['an admin', ADMIN],
+    ])('lets %s read any trait', async (_, user) => {
+      const found = await new GetTraitHandler(traits, guard).execute(new GetTraitQuery('night-vision', user.id, [...user.roles]));
+
+      expect(found.id).toBe('night-vision');
+    });
+
+    it.each([
+      ['another user', OTHER],
+      ['an admin', ADMIN],
+    ])('lists every trait for %s, without an owner filter', async (_, user) => {
+      expect(guard.buildQueryPredicate(user.id, [...user.roles])).toEqual(QueryCriteria.empty());
+
+      const page = await new GetTraitsHandler(traits, guard).execute(new GetTraitsQuery(undefined, 0, 10, user.id, [...user.roles]));
+      expect(page.content.map(t => t.id)).toEqual(['night-vision']);
     });
   });
 });

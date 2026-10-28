@@ -1,3 +1,4 @@
+import { ValidationError } from '../../../shared/domain/errors/errors.js';
 import type { EnduranceManeuverResult } from '../value-objects/endurance-maneuver-result.vo.js';
 
 const UNUSUAL_EVENT =
@@ -87,7 +88,7 @@ export class EnduranceManeuverService {
   execute(roll: number, unusualEvent: boolean): EnduranceManeuverResult {
     const entry = ENDURANCE_TABLE.find(row => roll >= row.min && roll <= row.max);
     if (!entry) {
-      throw new Error('Roll out of bounds');
+      throw new ValidationError(`Roll ${roll} out of bounds`);
     }
     return {
       ...entry.result,

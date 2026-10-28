@@ -66,11 +66,12 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
     if (props.realmId) {
       this.props.realmId = props.realmId;
     }
-    if (props.description) {
-      this.props.description = props.description;
+    // undefined keeps the value; null or '' clears it (as in realms, spec 018).
+    if (props.description !== undefined) {
+      this.props.description = props.description || null;
     }
-    if (props.imageUrl) {
-      this.props.imageUrl = props.imageUrl;
+    if (props.imageUrl !== undefined) {
+      this.props.imageUrl = props.imageUrl || null;
     }
     if (props.accessType) {
       this.props.accessType = props.accessType;

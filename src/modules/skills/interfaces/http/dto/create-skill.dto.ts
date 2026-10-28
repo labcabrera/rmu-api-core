@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested, IsIn } from 'class-validator';
 import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CreateSkillCommand } from '../../../application/cqrs/commands/create-skill.command.js';
 
 export class CreateSkillDto {
@@ -32,7 +32,7 @@ export class CreateSkillDto {
   specializationOptional?: boolean;
 
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
   @ApiProperty({ description: 'Maneuver profile values that override the category profile', type: ManeuverProfileDto, required: false })

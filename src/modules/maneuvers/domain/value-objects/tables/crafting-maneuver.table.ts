@@ -16,7 +16,7 @@ export const CRAFTING_MANEUVER_TABLE = new AbsoluteManeuverTable(
         effects: [
           {
             status: 'penaltyUntilAbsoluteSuccess',
-            value: 25,
+            value: -25,
           },
         ],
       },

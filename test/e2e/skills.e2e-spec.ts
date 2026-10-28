@@ -120,6 +120,21 @@ describe('Skills (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an access type other than public or private, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      const created = await request(e2e.server)
+        .post('/v1/skills')
+        .set('Authorization', auth)
+        .send(skillBody('wild-skill', CATEGORY, { accessType: 'wild' }))
+        .expect(400);
+      expect(created.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      await request(e2e.server)
+        .patch(`/v1/skills/${(await create('owner')).id}`)
+        .set('Authorization', auth)
+        .send({ accessType: 'wild' })
+        .expect(400);
+    });
+
     it('rejects an empty body', async () => {
       const res = await request(e2e.server).post('/v1/skills').set('Authorization', e2e.auth('owner')).send({}).expect(400);
       expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/skills' });

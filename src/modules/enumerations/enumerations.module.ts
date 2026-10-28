@@ -4,6 +4,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
 import { EnumerationController } from './interfaces/http/enumeration.controller.js';
 import { SharedModule } from '../shared/shared.module.js';
+import { RealmsModule } from '../realms/realms.module.js';
 import { MongoEnumerationRepository } from './infrastructure/db/mongo.enumeration.repository.js';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GetEnumerationHandler } from './application/cqrs/handlers/get-enumeration.handler.js';
@@ -24,6 +25,7 @@ import { ENUMERATION_REPOSITORY } from './application/ports/enumeration-reposito
     MongooseModule.forFeature([{ name: EnumerationModel.name, schema: EnumerationSchema }]),
     AuthModule,
     SharedModule,
+    RealmsModule,
   ],
   controllers: [EnumerationController, EnumerationCategoryController],
   providers: [

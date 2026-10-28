@@ -119,6 +119,38 @@ describe('Traits (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an unknown category or specialization, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      for (const body of [{ category: 'cooking' }, { specialization: 'pastry' }, { category: '' }]) {
+        const res = await request(e2e.server)
+          .post('/v1/traits')
+          .set('Authorization', auth)
+          .send(traitBody({ name: 'Invalid trait', ...body }))
+          .expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+
+      const trait = await create('owner', { name: 'Specialized trait', category: 'mental', specialization: 'spell-list' });
+      const path = `/v1/traits/${trait.id}`;
+      await request(e2e.server).patch(path).set('Authorization', auth).send({ category: 'cooking' }).expect(400);
+      await request(e2e.server).patch(path).set('Authorization', auth).send({ specialization: 'pastry' }).expect(400);
+      const updated = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ category: 'epic', specialization: null })
+        .expect(200);
+      expect(updated.body).toMatchObject({ category: 'epic', specialization: null });
+    });
+
+    it('rejects an empty or null name on update', async () => {
+      const auth = e2e.auth('owner');
+      const path = `/v1/traits/${(await create('owner', { name: 'Named trait' })).id}`;
+      for (const name of ['', null]) {
+        const res = await request(e2e.server).patch(path).set('Authorization', auth).send({ name }).expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+    });
+
     it('rejects an empty body', async () => {
       const res = await request(e2e.server).post('/v1/traits').set('Authorization', e2e.auth('owner')).send({}).expect(400);
       expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/traits' });
@@ -171,6 +203,25 @@ describe('Traits (e2e)', () => {
       expect(ids(ofAdmin.body)).toContain(trait.id);
 
       await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
+    });
+
+    it('lets players and admins create traits, but not a user without a role', async () => {
+      await request(e2e.server)
+        .post('/v1/traits')
+        .set('Authorization', e2e.auth('noRole'))
+        .send(traitBody({ name: 'By guest' }))
+        .expect(403);
+      await create('admin', { name: 'By admin' });
+    });
+
+    it('lets every authenticated user read and list any trait', async () => {
+      const trait = await create('owner', { name: 'Shared trait' });
+
+      for (const user of ['other', 'noRole'] as const) {
+        await request(e2e.server).get(`/v1/traits/${trait.id}`).set('Authorization', e2e.auth(user)).expect(200);
+        const listed = await request(e2e.server).get('/v1/traits?size=1000').set('Authorization', e2e.auth(user)).expect(200);
+        expect(ids(listed.body)).toContain(trait.id);
+      }
     });
 
     it('rejects a request without a token', async () => {

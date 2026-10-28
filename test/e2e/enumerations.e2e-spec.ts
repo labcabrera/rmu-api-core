@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { type E2eApp, ids, startApp, takeTopics, type UserName } from './support/app.js';
-import { enumerationBody } from './support/fixtures.js';
+import { enumerationBody, realmBody } from './support/fixtures.js';
 
 describe('Enumerations (e2e)', () => {
   let e2e: E2eApp;
@@ -87,6 +87,21 @@ describe('Enumerations (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an access type other than public or private, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      const created = await request(e2e.server)
+        .post('/v1/enumerations')
+        .set('Authorization', auth)
+        .send(enumerationBody({ key: 'wild', accessType: 'wild' }))
+        .expect(400);
+      expect(created.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      await request(e2e.server)
+        .patch(`/v1/enumerations/${(await create('owner')).id}`)
+        .set('Authorization', auth)
+        .send({ accessType: 'wild' })
+        .expect(400);
+    });
+
     it('rejects an empty body', async () => {
       const res = await request(e2e.server).post('/v1/enumerations').set('Authorization', e2e.auth('owner')).send({}).expect(400);
       expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/enumerations' });
@@ -111,6 +126,35 @@ describe('Enumerations (e2e)', () => {
         .set('Authorization', auth)
         .send({ category: 'dragon' })
         .expect(400);
+    });
+
+    it('clears the description and the image with null or an empty string, and keeps them when absent', async () => {
+      const auth = e2e.auth('owner');
+      const enumeration = await create('owner', { key: 'clearable', description: 'Old', imageUrl: 'old.png' });
+      const path = `/v1/enumerations/${enumeration.id}`;
+
+      const kept = await request(e2e.server).patch(path).set('Authorization', auth).send({ key: 'clearable-2' }).expect(200);
+      expect(kept.body).toMatchObject({ description: 'Old', imageUrl: 'old.png' });
+      const cleared = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ description: '', imageUrl: null })
+        .expect(200);
+      expect(cleared.body).toMatchObject({ description: null, imageUrl: null });
+    });
+
+    it('checks duplicates on update by key, category and realm, as on create', async () => {
+      const auth = e2e.auth('owner');
+      const realm = await request(e2e.server).post('/v1/realms').set('Authorization', auth).send(realmBody()).expect(201);
+      const realmId = (realm.body as { id: string }).id;
+      await create('owner', { key: 'dwarvish', category: 'language', realmId });
+      const global = await create('owner', { key: 'khuzdul', category: 'language' });
+
+      // The same key in another realm is not a duplicate...
+      await request(e2e.server).patch(`/v1/enumerations/${global.id}`).set('Authorization', auth).send({ key: 'dwarvish' }).expect(200);
+      // ...but moving it into the realm that has that key is.
+      const res = await request(e2e.server).patch(`/v1/enumerations/${global.id}`).set('Authorization', auth).send({ realmId }).expect(409);
+      expect(res.body).toMatchObject({ code: 'duplicate-key' });
     });
 
     it('rejects a key that already exists in the category, on create and on update', async () => {
@@ -142,6 +186,30 @@ describe('Enumerations (e2e)', () => {
         .set('Authorization', e2e.auth('noRole'))
         .send(enumerationBody({ key: 'by-guest' }))
         .expect(403);
+    });
+
+    it.each(['private', 'public'])('adds enumerations to a %s realm only for its owner and admins', async accessType => {
+      const realm = await request(e2e.server)
+        .post('/v1/realms')
+        .set('Authorization', e2e.auth('owner'))
+        .send(realmBody({ accessType }))
+        .expect(201);
+      const realmId = (realm.body as { id: string }).id;
+      const post = (user: UserName) =>
+        request(e2e.server)
+          .post('/v1/enumerations')
+          .set('Authorization', e2e.auth(user))
+          .send(enumerationBody({ key: `realm-${user}`, realmId }));
+
+      await post('other').expect(403);
+      await post('owner').expect(201);
+      await post('admin').expect(201);
+      const missing = await request(e2e.server)
+        .post('/v1/enumerations')
+        .set('Authorization', e2e.auth('owner'))
+        .send(enumerationBody({ key: 'missing-realm', realmId: 'missing' }))
+        .expect(400);
+      expect(missing.body).toMatchObject({ error: 'ValidationError' });
     });
 
     it('shows a private enumeration only to its owner and admins, and lets only them change it', async () => {

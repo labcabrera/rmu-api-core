@@ -4,11 +4,13 @@ import { ForbiddenError } from '../../../shared/domain/errors/errors.js';
 import { RMU_ADMIN, RMU_USER } from '../../../shared/domain/entities/user-roles.js';
 import { QueryCriteria } from '../../../shared/application/criteria/query-criteria.js';
 
+/**
+ * Traits are public and have no accessType (spec 016, decision 4): races and characters of any user reference them,
+ * so every authenticated user reads and lists all of them. Only the owner or an admin changes or deletes one.
+ * BaseEntityGuard needs accessType, hence this own guard.
+ */
 export class TraitGuardAdapter implements TraitGuardPort {
-  checkRead(entity: Trait, userId: string, roles: string[]): void {
-    if (this.canAccess(entity, userId, roles)) return;
-    throw new ForbiddenError('You do not have permission to read this entity');
-  }
+  checkRead(): void {}
 
   checkCreate(roles: string[]): void {
     if (roles.includes(RMU_ADMIN)) return;
@@ -17,21 +19,20 @@ export class TraitGuardAdapter implements TraitGuardPort {
   }
 
   checkUpdate(entity: Trait, userId: string, roles: string[]): void {
-    if (this.canAccess(entity, userId, roles)) return;
+    if (this.canChange(entity, userId, roles)) return;
     throw new ForbiddenError('You do not have permission to update this entity');
   }
 
   checkDelete(entity: Trait, userId: string, roles: string[]): void {
-    if (this.canAccess(entity, userId, roles)) return;
+    if (this.canChange(entity, userId, roles)) return;
     throw new ForbiddenError('You do not have permission to delete this entity');
   }
 
-  buildQueryPredicate(userId: string, roles: string[]): QueryCriteria {
-    if (roles.includes(RMU_ADMIN)) return QueryCriteria.empty();
-    return QueryCriteria.eq('owner', userId);
+  buildQueryPredicate(): QueryCriteria {
+    return QueryCriteria.empty();
   }
 
-  private canAccess(entity: Trait, userId: string, roles: string[]): boolean {
+  private canChange(entity: Trait, userId: string, roles: string[]): boolean {
     if (roles.includes(RMU_ADMIN)) return true;
     return entity.owner === userId;
   }

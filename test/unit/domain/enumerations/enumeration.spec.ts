@@ -90,6 +90,16 @@ describe('Enumeration', () => {
     expect(enumeration.hasChanges()).toBe(true);
   });
 
+  it.each([null, ''])('clears the description and the image with %j, and keeps them when undefined', cleared => {
+    const enumeration = Enumeration.fromProps({ ...baseProps(), description: 'Old', imageUrl: 'old.png' });
+
+    enumeration.update({ description: undefined, imageUrl: undefined });
+    expect(enumeration.getProps()).toMatchObject({ description: 'Old', imageUrl: 'old.png' });
+
+    enumeration.update({ description: cleared, imageUrl: cleared });
+    expect(enumeration.getProps()).toMatchObject({ description: null, imageUrl: null });
+  });
+
   it('exposes the expected enumeration category catalog without duplicates', () => {
     expect(ENUMERATION_CATEGORIES).toContain('language');
     expect(ENUMERATION_CATEGORIES).toContain('skill-influence');

@@ -98,6 +98,17 @@ describe('Skill categories (e2e)', () => {
       await request(e2e.server).get('/v1/skill-categories/readable').expect(401);
     });
 
+    it('lets only an admin create a category', async () => {
+      for (const user of ['owner', 'noRole'] as const) {
+        await request(e2e.server)
+          .post('/v1/skill-categories')
+          .set('Authorization', e2e.auth(user))
+          .send(skillCategoryBody(`by-${user}`))
+          .expect(403);
+      }
+      await create('admin', 'by-admin');
+    });
+
     it('answers 404 for a skill category that does not exist', async () => {
       await request(e2e.server).get('/v1/skill-categories/missing').set('Authorization', e2e.auth('admin')).expect(404);
     });

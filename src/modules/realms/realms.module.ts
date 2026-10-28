@@ -40,6 +40,6 @@ import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
       useClass: RealmGuardAdapter,
     },
   ],
-  exports: [REALM_REPOSITORY],
+  exports: [REALM_REPOSITORY, REALM_GUARD],
 })
 export class RealmsModule {}

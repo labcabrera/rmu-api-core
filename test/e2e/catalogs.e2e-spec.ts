@@ -25,9 +25,11 @@ describe('Catalogs and calculations (e2e)', () => {
       expect(found.body).toEqual({ id: 10, name: 'Plate' });
     });
 
-    it('answers 404 for an unknown armor type and 401 without a token', async () => {
+    it('answers 404 for an unknown armor type, 400 for a non-integer id and 401 without a token', async () => {
       await request(e2e.server).get('/v1/armor-types/99').set('Authorization', e2e.auth('owner')).expect(404);
-      await request(e2e.server).get('/v1/armor-types/plate').set('Authorization', e2e.auth('owner')).expect(404);
+      const plate = await request(e2e.server).get('/v1/armor-types/plate').set('Authorization', e2e.auth('owner')).expect(400);
+      expect(plate.body).toMatchObject({ statusCode: 400, path: '/v1/armor-types/plate' });
+      await request(e2e.server).get('/v1/armor-types/1.5').set('Authorization', e2e.auth('owner')).expect(400);
       await request(e2e.server).get('/v1/armor-types').expect(401);
       await request(e2e.server).get('/v1/armor-types/1').expect(401);
     });
@@ -218,6 +220,11 @@ describe('Catalogs and calculations (e2e)', () => {
       const critical = await request(e2e.server).get('/v1/maneuvers/percent?roll=-150').set('Authorization', auth).expect(200);
       expect(critical.body).toMatchObject({ percent: 0, critical: 'E' });
       await request(e2e.server).get('/v1/maneuvers/percent?roll=55').expect(401);
+      for (const roll of ['abc', '10.5', '']) {
+        const res = await request(e2e.server).get(`/v1/maneuvers/percent?roll=${roll}`).set('Authorization', auth).expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+      await request(e2e.server).get('/v1/maneuvers/percent').set('Authorization', auth).expect(400);
     });
 
     it('resolves an absolute maneuver roll, on the generic table by default', async () => {
@@ -241,6 +248,8 @@ describe('Catalogs and calculations (e2e)', () => {
 
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=50&table=missing').set('Authorization', auth).expect(404);
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=abc').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute?roll=50.5').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute').set('Authorization', auth).expect(400);
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=50').expect(401);
     });
 
@@ -281,16 +290,20 @@ describe('Catalogs and calculations (e2e)', () => {
         .expect(200);
       expect((unusual.body as { message: string }).message.length).toBeGreaterThan((res.body as { message: string }).message.length);
       await request(e2e.server).get('/v1/maneuvers/endurance?roll=120').expect(401);
+      for (const roll of ['abc', '10.5', '']) {
+        await request(e2e.server).get(`/v1/maneuvers/endurance?roll=${roll}`).set('Authorization', auth).expect(400);
+      }
+      await request(e2e.server).get('/v1/maneuvers/endurance?unusualEvent=true').set('Authorization', auth).expect(400);
     });
   });
 
   describe('resistance rolls', () => {
-    it('resolves a resistance roll with its modifiers', async () => {
+    it('resolves a resistance roll with its modifiers, answering 200 (a calculation)', async () => {
       const res = await request(e2e.server)
         .post('/v1/resistance-rolls')
         .set('Authorization', e2e.auth('owner'))
         .send({ attackLevel: 5, targetLevel: 3, roll: 40, modifiers: [{ key: 'e2e-bonus', value: 6 }] })
-        .expect(201);
+        .expect(200);
       expect(res.body).toEqual({
         result: 'mild-failure',
         modifiers: [
@@ -307,7 +320,7 @@ describe('Catalogs and calculations (e2e)', () => {
         .post('/v1/resistance-rolls')
         .set('Authorization', e2e.auth('owner'))
         .send({ attackLevel: 1, targetLevel: 1, roll: 90 })
-        .expect(201);
+        .expect(200);
       expect(success.body).toMatchObject({ result: 'success', totalRoll: 90, failure: 0 });
     });
 
@@ -322,6 +335,18 @@ describe('Catalogs and calculations (e2e)', () => {
         .send({ attackLevel: 'high', targetLevel: 1, roll: 50 })
         .expect(400);
       await request(e2e.server).post('/v1/resistance-rolls').send({ attackLevel: 1, targetLevel: 1, roll: 50 }).expect(401);
+    });
+
+    it('validates each modifier', async () => {
+      const auth = e2e.auth('owner');
+      for (const modifiers of [[{ key: 'bonus', value: 'abc' }], [{ key: '', value: 5 }], [{ value: 5 }], ['bonus'], [null]]) {
+        const res = await request(e2e.server)
+          .post('/v1/resistance-rolls')
+          .set('Authorization', auth)
+          .send({ attackLevel: 5, targetLevel: 3, roll: 40, modifiers })
+          .expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
     });
   });
 });

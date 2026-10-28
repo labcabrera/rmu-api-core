@@ -28,7 +28,8 @@ import { DeleteRacesByRealmHandler } from '../../../../src/modules/races/applica
 import { DeleteRacesByRealmCommand } from '../../../../src/modules/races/application/cqrs/commands/delete-races-by-realm.command.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
-import { ADMIN, OTHER, OWNER } from '../../support/users.js';
+import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
+import { RealmGuardAdapter } from '../../../../src/modules/realms/infrastructure/security/realm-guard.adapter.js';
 
 class InMemoryRaceRepository extends InMemoryRepository<Race> implements RaceRepository {
   findByRealmId(realmId: string): Promise<Race[]> {
@@ -104,7 +105,7 @@ describe('race command handlers', () => {
   const realmRepository = () => realms as unknown as RealmRepository;
 
   describe('CreateRaceHandler', () => {
-    const command = (realmId: string, user = OWNER) =>
+    const command = (realmId: string, user: { id: string; roles: readonly string[] } = OWNER) =>
       new CreateRaceCommand(
         'Elf',
         'elf',
@@ -129,16 +130,39 @@ describe('race command handlers', () => {
         [...user.roles],
       );
 
+    const handler = () => new CreateRaceHandler(races, realmRepository(), guard, new RealmGuardAdapter(), events);
+
     it('creates the race with the realm access type, owned by the user, and publishes race.created', async () => {
-      const created = await new CreateRaceHandler(races, realmRepository(), events).execute(command('realm-1'));
+      const created = await handler().execute(command('realm-1'));
 
       expect(created).toMatchObject({ name: 'Elf', realmId: 'realm-1', owner: OWNER.id, accessType: 'private' });
       expect(races.items.get(created.id)).toBe(created);
       expect(events.topics).toEqual(['race.created']);
     });
 
+    it('lets an admin create a race in the realm of another user', async () => {
+      const created = await handler().execute(command('realm-1', ADMIN));
+
+      expect(created).toMatchObject({ realmId: 'realm-1', owner: ADMIN.id });
+      expect(events.topics).toEqual(['race.created']);
+    });
+
     it('rejects an unknown realm', async () => {
-      await expect(new CreateRaceHandler(races, realmRepository(), events).execute(command('missing'))).rejects.toThrow(ValidationError);
+      await expect(handler().execute(command('missing'))).rejects.toThrow(ValidationError);
+      expect(events.topics).toEqual([]);
+    });
+
+    it('rejects a user without the player or admin role', async () => {
+      await expect(handler().execute(command('realm-1', NO_ROLES))).rejects.toThrow(ForbiddenError);
+      expect(races.items.size).toBe(1);
+      expect(events.topics).toEqual([]);
+    });
+
+    it.each(['private', 'public'] as const)('rejects another user in a %s realm of the owner', async accessType => {
+      realms.items.set('realm-1', Realm.fromProps({ ...realm.getProps(), accessType }));
+
+      await expect(handler().execute(command('realm-1', OTHER))).rejects.toThrow(ForbiddenError);
+      expect(races.items.size).toBe(1);
       expect(events.topics).toEqual([]);
     });
   });

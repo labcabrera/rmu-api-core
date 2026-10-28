@@ -3,6 +3,7 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { CreateTraitCommand } from '../commands/create-trait.command.js';
 import { Trait } from '../../../domain/aggregates/trait.js';
 import { TRAIT_REPOSITORY, type TraitRepository } from '../../ports/trait-repository.port.js';
+import { TRAIT_GUARD, type TraitGuardPort } from '../../ports/trait-guard.port.js';
 import { ConflictError } from '../../../../shared/domain/errors/errors.js';
 import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
@@ -12,10 +13,12 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
 
   constructor(
     @Inject(TRAIT_REPOSITORY) private readonly traitRepository: TraitRepository,
+    @Inject(TRAIT_GUARD) private readonly guard: TraitGuardPort,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateTraitCommand): Promise<Trait> {
+    this.guard.checkCreate(command.roles);
     this.logger.log(`Creating trait ${command.name} for user ${command.userId}`);
     const trait = Trait.create({
       name: command.name,

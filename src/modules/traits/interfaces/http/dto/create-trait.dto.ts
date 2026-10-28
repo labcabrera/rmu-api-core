@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsIn } from 'class-validator';
 import { CreateTraitCommand } from '../../../application/cqrs/commands/create-trait.command.js';
 import { TRAIT_CATEGORIES, type TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import { TraitDetailsDto } from './trait-details.dto.js';
-import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import { TRAIT_SPECIALIZATIONS, type TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class CreateTraitDto extends TraitDetailsDto {
   @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
@@ -16,16 +16,22 @@ export class CreateTraitDto extends TraitDetailsDto {
     example: 'combat',
     enum: TRAIT_CATEGORIES,
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsIn(TRAIT_CATEGORIES)
   category: TraitCategory;
 
   @ApiProperty({ description: 'Indicates if the trait is a talent', required: true, example: true })
   @IsBoolean()
   isTalent: boolean;
 
-  @ApiProperty({ type: String, description: 'Trait specialization', required: false, example: 'none' })
-  @IsString()
+  @ApiProperty({
+    type: String,
+    description: 'Trait specialization',
+    required: false,
+    nullable: true,
+    example: 'skill',
+    enum: TRAIT_SPECIALIZATIONS,
+  })
+  @IsIn(TRAIT_SPECIALIZATIONS)
   @IsOptional()
   specialization: TraitSpecialization | null;
 

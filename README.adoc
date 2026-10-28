@@ -188,6 +188,14 @@ Conventions:
 - `armor-types` and `character-sizes` are fixed catalogs served from memory, and `resistance-rolls` and `maneuvers` are
   calculations: they have no aggregates, persistence or events, and that is on purpose. A module only gets the full
   CQRS and Mongo layout when its data can change.
+- **Permissions.** The guards (`<entity>-guard.adapter.ts`) extend `BaseEntityGuard`: `rmu-user` or `rmu-admin`
+  creates, a `public` entity is read by everyone and a `private` one by its owner and admins, and only the owner or an
+  admin changes or deletes it. Exceptions:
+  * traits are the only public resource without `accessType` (`TraitGuardAdapter`): every authenticated user reads
+    and lists all of them, because races and characters of any user reference them;
+  * a race, or an enumeration with a `realmId`, is created only by who can change that realm (`REALM_GUARD`, exported
+    by `RealmsModule`): 400 if the realm does not exist, 403 if it belongs to someone else;
+  * skill categories are a catalog without owner: only `rmu-admin` creates them, a check that lives in the handler.
 
 === Rulebook data
 

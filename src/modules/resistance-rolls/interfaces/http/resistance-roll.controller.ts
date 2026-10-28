@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
@@ -17,9 +17,11 @@ export class ResistanceRollController {
   constructor(private queryBus: QueryBus) {}
 
   @Post()
+  // A calculation that creates nothing: 200, not the 201 of a POST.
+  @HttpCode(200)
   @ApiOperation({ operationId: 'resistanceRoll', summary: 'Get resistance roll result' })
   @ApiOkResponse({ type: ResistanceRollResultDto, description: 'Success' })
-  @ApiErrors()
+  @ApiErrors({ 400: 'Bad request, invalid data' })
   async resistanceRoll(@Body() dto: ResistanceRollQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<ResistanceRollResultDto> {
     const userId = user.id;
     const roles = user.roles;

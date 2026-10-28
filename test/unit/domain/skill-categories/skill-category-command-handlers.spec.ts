@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { SkillCategory } from '../../../../src/modules/skill-categories/domain/entities/skill-category.js';
 import type { SkillCategoryRepository } from '../../../../src/modules/skill-categories/application/ports/skill-category-repository.port.js';
 import type { ManeuverProfile } from '../../../../src/modules/skill-categories/domain/value-objects/maneuver-profile.vo.js';
-import { ConflictError, ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { ConflictError, ForbiddenError, ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
 import { CreateSkillCategoryHandler } from '../../../../src/modules/skill-categories/application/cqrs/handlers/create-skill-category.handler.js';
 import { CreateSkillCategoryCommand } from '../../../../src/modules/skill-categories/application/cqrs/commands/create-skill-category.command.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
-import { OWNER } from '../../support/users.js';
+import { ADMIN, OWNER } from '../../support/users.js';
 
 class InMemorySkillCategoryRepository extends InMemoryRepository<SkillCategory> implements SkillCategoryRepository {
   findByIds(ids: string[]): Promise<SkillCategory[]> {
@@ -22,8 +22,19 @@ describe('skill category command handlers', () => {
   });
 
   describe('CreateSkillCategoryHandler', () => {
-    const command = (id: string, maneuver: ManeuverProfile | undefined, realmBonus: number | null = 5) =>
-      new CreateSkillCategoryCommand(id, ['pr', 'em'], realmBonus, maneuver, OWNER.id, [...OWNER.roles]);
+    const command = (
+      id: string,
+      maneuver: ManeuverProfile | undefined,
+      realmBonus: number | null = 5,
+      user: { id: string; roles: readonly string[] } = ADMIN,
+    ) => new CreateSkillCategoryCommand(id, ['pr', 'em'], realmBonus, maneuver, user.id, [...user.roles]);
+
+    it('forbids a user who is not an admin', async () => {
+      await expect(new CreateSkillCategoryHandler(categories).execute(command('social', undefined, 5, OWNER))).rejects.toThrow(
+        ForbiddenError,
+      );
+      expect(categories.items.has('social')).toBe(false);
+    });
 
     it('creates the skill category with a normalized maneuver profile', async () => {
       const maneuver: ManeuverProfile = { defaultType: 'percent', resultTable: '', light: 'helpful', actionPoints: { min: 1, max: 2 } };

@@ -1,6 +1,8 @@
 import type { ProfessionProps } from './profession-props.js';
 import type { RbacEntity } from '../../../shared/domain/entities/rbac-entity.js';
 import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import { ProfessionCreatedEvent } from '../events/profession-created.event.js';
+import { ProfessionUpdatedEvent } from '../events/profession-updated.event.js';
 
 export class Profession extends BaseAggregateRoot<ProfessionProps> implements RbacEntity {
   private constructor(props: ProfessionProps) {
@@ -57,6 +59,7 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
 
   static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
     const profession = new Profession({ ...props, createdAt: new Date(), updatedAt: undefined });
+    profession.apply(new ProfessionCreatedEvent(profession.getProps()));
     return profession;
   }
 
@@ -71,7 +74,9 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
     if (props.accessType) this.props.accessType = props.accessType;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
-    if (this.hasChanges()) this.props.updatedAt = new Date();
+    if (!this.hasChanges()) return;
+    this.props.updatedAt = new Date();
+    this.apply(new ProfessionUpdatedEvent(this.getProps()));
   }
 
   static fromProps(props: ProfessionProps): Profession {
