@@ -29,6 +29,7 @@ describe('AbsoluteManeuverService', () => {
 
   it('returns table-specific effects without stripping their metadata', () => {
     expect(service.execute(0, false, 'adrenal').effects).toEqual([{ status: 'penaltyUntilAbsoluteSuccess', value: -25 }]);
+    expect(service.execute(0, false, 'crafting').effects).toEqual([{ status: 'penaltyUntilAbsoluteSuccess', value: -25 }]);
     expect(service.execute(76, false, 'awareness').effects).toEqual([{ status: 'retryBonus', value: 10, roundDelay: 6 }]);
     expect(service.execute(176, false, 'medical').effects).toEqual([{ status: 'recoveryRollModifier', value: 25 }]);
   });
