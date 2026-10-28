@@ -13,7 +13,7 @@ import { AbsoluteManeuverTableProvider } from '../../application/services/absolu
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
 import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
-import { ManeuverRollQueryDto } from './dto/maneuver-roll-query.dto.js';
+import { ManeuverRollQueryDto, UnusualEventManeuverRollQueryDto } from './dto/maneuver-roll-query.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuvers')
@@ -44,16 +44,14 @@ export class ManeuverController {
     description: 'The table is looked up in code first and then in the maneuver-tables collection (default generic).',
   })
   @ApiQuery({ name: 'table', type: String, required: false, example: 'generic' })
-  @ApiQuery({ name: 'unusualEvent', type: Boolean, required: false })
   @ApiOkResponse({ type: AbsoluteManeuverResultDto, description: 'Success' })
-  @ApiErrors({ 400: 'Missing or non-integer roll', 404: 'Unknown absolute maneuver table' })
+  @ApiErrors({ 400: 'Missing or non-integer roll, or an unusualEvent that is not true or false', 404: 'Unknown absolute maneuver table' })
   async absoluteManeuver(
-    @Query() rollQuery: ManeuverRollQueryDto,
-    @Query('unusualEvent') unusualEvent: boolean = false,
+    @Query() rollQuery: UnusualEventManeuverRollQueryDto,
     @Query('table') table: string | undefined,
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<AbsoluteManeuverResultDto> {
-    const query = new AbsoluteManeuverQuery(rollQuery.roll, table, unusualEvent, user.id, user.roles);
+    const query = new AbsoluteManeuverQuery(rollQuery.roll, table, rollQuery.unusualEvent, user.id, user.roles);
     const entity = await this.queryBus.execute<AbsoluteManeuverQuery, AbsoluteManeuverResultDto>(query);
     return AbsoluteManeuverResultDto.fromEntity(entity);
   }
@@ -78,13 +76,12 @@ export class ManeuverController {
   @Get('/endurance')
   @ApiOperation({ operationId: 'enduranceManeuver', summary: 'Get endurance maneuver result' })
   @ApiOkResponse({ type: EnduranceManeuverResultDto, description: 'Success' })
-  @ApiErrors({ 400: 'Missing or non-integer roll' })
+  @ApiErrors({ 400: 'Missing or non-integer roll, or an unusualEvent that is not true or false' })
   async enduranceManeuver(
-    @Query() rollQuery: ManeuverRollQueryDto,
-    @Query('unusualEvent') unusualEvent: boolean = false,
+    @Query() rollQuery: UnusualEventManeuverRollQueryDto,
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<EnduranceManeuverResultDto> {
-    const query = new EnduranceManeuverQuery(rollQuery.roll, unusualEvent, user.id, user.roles);
+    const query = new EnduranceManeuverQuery(rollQuery.roll, rollQuery.unusualEvent, user.id, user.roles);
     const entity = await this.queryBus.execute<EnduranceManeuverQuery, EnduranceManeuverResultDto>(query);
     return EnduranceManeuverResultDto.fromEntity(entity);
   }
