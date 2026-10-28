@@ -128,6 +128,21 @@ describe('Enumerations (e2e)', () => {
         .expect(400);
     });
 
+    it('clears the description and the image with null or an empty string, and keeps them when absent', async () => {
+      const auth = e2e.auth('owner');
+      const enumeration = await create('owner', { key: 'clearable', description: 'Old', imageUrl: 'old.png' });
+      const path = `/v1/enumerations/${enumeration.id}`;
+
+      const kept = await request(e2e.server).patch(path).set('Authorization', auth).send({ key: 'clearable-2' }).expect(200);
+      expect(kept.body).toMatchObject({ description: 'Old', imageUrl: 'old.png' });
+      const cleared = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ description: '', imageUrl: null })
+        .expect(200);
+      expect(cleared.body).toMatchObject({ description: null, imageUrl: null });
+    });
+
     it('checks duplicates on update by key, category and realm, as on create', async () => {
       const auth = e2e.auth('owner');
       const realm = await request(e2e.server).post('/v1/realms').set('Authorization', auth).send(realmBody()).expect(201);

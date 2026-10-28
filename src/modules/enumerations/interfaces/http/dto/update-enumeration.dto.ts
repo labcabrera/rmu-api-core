@@ -31,12 +31,24 @@ export class UpdateEnumerationDto {
   @IsIn(ACCESS_TYPES)
   accessType: AccessType | undefined;
 
-  @ApiProperty({ type: String, description: 'Description', example: 'A large hoofed mammal', required: false })
+  @ApiProperty({
+    type: String,
+    description: 'Description; empty or null clears it',
+    example: 'A large hoofed mammal',
+    required: false,
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   description?: string | null | undefined;
 
-  @ApiProperty({ type: String, description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @ApiProperty({
+    type: String,
+    description: 'Image URL; empty or null clears it',
+    example: 'https://example.com/horse.png',
+    required: false,
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   imageUrl?: string | null | undefined;
@@ -53,8 +65,8 @@ export class UpdateEnumerationDto {
       dto.key,
       dto.category,
       dto.realmId,
-      dto.description ?? null,
-      dto.imageUrl ?? null,
+      dto.description,
+      dto.imageUrl,
       dto.accessType,
       userId,
       roles,
