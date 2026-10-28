@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsBoolean, IsInt, Min, IsNotEmpty, ValidateIf } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean, IsInt, Min, IsNotEmpty, ValidateIf, IsIn } from 'class-validator';
 import { UpdateTraitCommand } from '../../../application/cqrs/commands/update-trait.command.js';
 import { TRAIT_CATEGORIES, type TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import { TraitDetailsDto } from './trait-details.dto.js';
-import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import { TRAIT_SPECIALIZATIONS, type TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 
 export class UpdateTraitDto extends TraitDetailsDto {
   @ApiProperty({ type: String, description: 'Name of the trait', required: false, example: 'Courage' })
@@ -19,7 +19,7 @@ export class UpdateTraitDto extends TraitDetailsDto {
     example: 'combat',
     enum: TRAIT_CATEGORIES,
   })
-  @IsString()
+  @IsIn(TRAIT_CATEGORIES)
   @IsOptional()
   category: TraitCategory | undefined;
 
@@ -28,9 +28,16 @@ export class UpdateTraitDto extends TraitDetailsDto {
   @IsBoolean()
   isTalent: boolean | undefined;
 
-  @ApiProperty({ type: String, description: 'Trait specialization', required: false, example: 'none' })
+  @ApiProperty({
+    type: String,
+    description: 'Trait specialization; null clears it',
+    required: false,
+    nullable: true,
+    example: 'skill',
+    enum: TRAIT_SPECIALIZATIONS,
+  })
   @IsOptional()
-  @IsString()
+  @IsIn(TRAIT_SPECIALIZATIONS)
   specialization: TraitSpecialization | undefined;
 
   @ApiProperty({ type: Boolean, description: 'Indicates if the trait is tier based', required: false, example: true })

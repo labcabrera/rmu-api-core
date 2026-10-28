@@ -119,6 +119,29 @@ describe('Traits (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an unknown category or specialization, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      for (const body of [{ category: 'cooking' }, { specialization: 'pastry' }, { category: '' }]) {
+        const res = await request(e2e.server)
+          .post('/v1/traits')
+          .set('Authorization', auth)
+          .send(traitBody({ name: 'Invalid trait', ...body }))
+          .expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+
+      const trait = await create('owner', { name: 'Specialized trait', category: 'mental', specialization: 'spell-list' });
+      const path = `/v1/traits/${trait.id}`;
+      await request(e2e.server).patch(path).set('Authorization', auth).send({ category: 'cooking' }).expect(400);
+      await request(e2e.server).patch(path).set('Authorization', auth).send({ specialization: 'pastry' }).expect(400);
+      const updated = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ category: 'epic', specialization: null })
+        .expect(200);
+      expect(updated.body).toMatchObject({ category: 'epic', specialization: null });
+    });
+
     it('rejects an empty or null name on update', async () => {
       const auth = e2e.auth('owner');
       const path = `/v1/traits/${(await create('owner', { name: 'Named trait' })).id}`;
