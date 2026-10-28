@@ -4,7 +4,9 @@ import { UpdateEnumerationCommand } from '../../../../src/modules/enumerations/a
 import type { EnumerationRepository } from '../../../../src/modules/enumerations/application/ports/enumeration-repository.port.js';
 import type { EnumerationGuardPort } from '../../../../src/modules/enumerations/application/ports/enumeration-guard.port.js';
 import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration.js';
-import { ConflictError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import type { RealmRepository } from '../../../../src/modules/realms/application/ports/realm-repository.port.js';
+import type { RealmGuardPort } from '../../../../src/modules/realms/application/ports/realm-guard.port.js';
+import { ConflictError, ForbiddenError, ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const westron = () =>
   Enumeration.fromProps({
@@ -36,11 +38,44 @@ const setup = (existing: Enumeration[] = []) => {
     update: vi.fn((entity: Enumeration) => Promise.resolve(entity)),
   };
   const guard = { checkUpdate: vi.fn() };
-  const handler = new UpdateEnumerationHandler(repository as unknown as EnumerationRepository, guard as unknown as EnumerationGuardPort);
-  return { handler, repository };
+  const realmRepository = { findById: vi.fn((id: string) => Promise.resolve(id === 'missing-realm' ? null : { id })) };
+  const realmGuard = {
+    checkUpdate: vi.fn((realm: { id: string }) => {
+      if (realm.id === 'foreign-realm') throw new ForbiddenError('Not your realm');
+    }),
+  };
+  const handler = new UpdateEnumerationHandler(
+    repository as unknown as EnumerationRepository,
+    guard as unknown as EnumerationGuardPort,
+    realmRepository as unknown as RealmRepository,
+    realmGuard as unknown as RealmGuardPort,
+  );
+  return { handler, repository, realmGuard };
 };
 
 describe('UpdateEnumerationHandler', () => {
+  it('rejects moving it to a realm the user cannot change (spec 044)', async () => {
+    const { handler, repository } = setup();
+
+    await expect(handler.execute(command({ realmId: 'foreign-realm' }))).rejects.toThrow(ForbiddenError);
+    expect(repository.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects moving it to a realm that does not exist', async () => {
+    const { handler } = setup();
+
+    await expect(handler.execute(command({ realmId: 'missing-realm' }))).rejects.toThrow(ValidationError);
+  });
+
+  it('moves it to a realm the user can change', async () => {
+    const { handler, realmGuard } = setup();
+
+    const updated = await handler.execute(command({ realmId: 'own-realm' }));
+
+    expect(realmGuard.checkUpdate).toHaveBeenCalledOnce();
+    expect(updated.realmId).toBe('own-realm');
+  });
+
   it('returns the current enumeration without saving when nothing changes', async () => {
     const { handler, repository } = setup();
 

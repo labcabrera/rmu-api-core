@@ -2,7 +2,9 @@ import { Inject, Logger } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 import { ENUMERATION_REPOSITORY, type EnumerationRepository } from '../../ports/enumeration-repository.port.js';
 import { ENUMERATION_GUARD, type EnumerationGuardPort } from '../../ports/enumeration-guard.port.js';
-import { ConflictError, NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { ConflictError, NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../../../realms/application/ports/realm-repository.port.js';
+import { REALM_GUARD, type RealmGuardPort } from '../../../../realms/application/ports/realm-guard.port.js';
 import { Enumeration } from '../../../domain/aggregates/enumeration.js';
 import { UpdateEnumerationCommand } from '../commands/update-enumeration.command.js';
 
@@ -13,6 +15,8 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
   constructor(
     @Inject(ENUMERATION_REPOSITORY) private readonly enumerationRepository: EnumerationRepository,
     @Inject(ENUMERATION_GUARD) private readonly guard: EnumerationGuardPort,
+    @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
+    @Inject(REALM_GUARD) private readonly realmGuard: RealmGuardPort,
   ) {}
 
   async execute(command: UpdateEnumerationCommand): Promise<Enumeration> {
@@ -22,6 +26,13 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
     this.guard.checkUpdate(current, command.userId, command.roles);
 
     current.checkVersion(command.expectedVersion);
+
+    // Moving it to another realm follows the create rule: only who can change that realm adds to it.
+    if (command.realmId && command.realmId !== current.realmId) {
+      const realm = await this.realmRepository.findById(command.realmId);
+      if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
+      this.realmGuard.checkUpdate(realm, command.userId, command.roles);
+    }
 
     // The same uniqueness as on create: key, category and realm (the update never clears the realm).
     const key = command.key || current.key;
