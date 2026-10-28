@@ -253,6 +253,15 @@ describe('Catalogs and calculations (e2e)', () => {
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=50').expect(401);
     });
 
+    it('repeats the lasting penalty and bonus effects in their own fields', async () => {
+      const auth = e2e.auth('owner');
+      const failure = await request(e2e.server).get('/v1/maneuvers/absolute?table=crafting&roll=0').set('Authorization', auth).expect(200);
+      expect(failure.body).toMatchObject({ result: 'absolute-failure', penaltyUntilAbsoluteSuccess: -25 });
+
+      const success = await request(e2e.server).get('/v1/maneuvers/absolute?table=animal&roll=180').set('Authorization', auth).expect(200);
+      expect(success.body).toMatchObject({ result: 'absolute-success', bonusUntilAbsoluteFailure: 30 });
+    });
+
     it('lists the absolute maneuver tables, with the stored ones after the code ones', async () => {
       const auth = e2e.auth('owner');
       await e2e.connection.collection('maneuver-tables').insertOne({
