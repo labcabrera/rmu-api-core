@@ -218,6 +218,8 @@ describe('Races (e2e)', () => {
         { traits: ['night-vision'] },
         { talents: [1] },
         { strideBonus: 'fast' },
+        { name: '' },
+        { name: null },
       ]) {
         const res = await patch(body).expect(400);
         expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });

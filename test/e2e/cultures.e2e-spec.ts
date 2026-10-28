@@ -102,6 +102,15 @@ describe('Cultures (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an empty or null name on update', async () => {
+      const auth = e2e.auth('owner');
+      const path = `/v1/cultures/${(await create('owner')).id}`;
+      for (const name of ['', null]) {
+        const res = await request(e2e.server).patch(path).set('Authorization', auth).send({ name }).expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+    });
+
     it('rejects an access type other than public or private, on create and on update', async () => {
       const auth = e2e.auth('owner');
       const created = await request(e2e.server)

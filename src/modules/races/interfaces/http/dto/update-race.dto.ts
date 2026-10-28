@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString, ValidateNested, IsInt, Min } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested, IsInt, Min, IsNotEmpty, ValidateIf } from 'class-validator';
 import { RaceResistancesDto } from './race-resistances.dto.js';
 import { RaceStatsDto } from './race-stats.dto.js';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
@@ -9,8 +9,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf', required: false })
+  // Absent keeps the name; null or '' is a 400 (a name cannot be cleared).
+  @ValidateIf((_, value) => value !== undefined)
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   name?: string;
 
   @ApiProperty({ description: 'Archetype of the race', example: 'wood-elf', required: false })
