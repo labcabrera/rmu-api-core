@@ -323,5 +323,17 @@ describe('Catalogs and calculations (e2e)', () => {
         .expect(400);
       await request(e2e.server).post('/v1/resistance-rolls').send({ attackLevel: 1, targetLevel: 1, roll: 50 }).expect(401);
     });
+
+    it('validates each modifier', async () => {
+      const auth = e2e.auth('owner');
+      for (const modifiers of [[{ key: 'bonus', value: 'abc' }], [{ key: '', value: 5 }], [{ value: 5 }], ['bonus'], [null]]) {
+        const res = await request(e2e.server)
+          .post('/v1/resistance-rolls')
+          .set('Authorization', auth)
+          .send({ attackLevel: 5, targetLevel: 3, roll: 40, modifiers })
+          .expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+    });
   });
 });
