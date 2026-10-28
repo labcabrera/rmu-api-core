@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
-import { IsArray, IsObject, IsOptional, IsString, IsInt, Min, IsIn } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString, IsInt, Min, IsIn, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { UpdateProfessionCommand } from '../../../application/cqrs/commands/update-profession.command.js';
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
@@ -26,6 +27,8 @@ export class UpdateProfessionDto {
 
   @ApiProperty({ description: 'Skill costs associated with the profession', required: false })
   @IsObject()
+  @ValidateNested()
+  @Type(() => ProfessionSkillCostsDto)
   @IsOptional()
   skillCosts: ProfessionSkillCostsDto | undefined;
 

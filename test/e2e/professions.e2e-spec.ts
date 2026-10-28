@@ -136,6 +136,31 @@ describe('Professions (e2e)', () => {
         .expect(400);
     });
 
+    it('validates the costs of each skill category, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      for (const skillCosts of [{ animal: 'cheap' }, { animal: [2, 'x'] }, { awareness: [1.5] }, { brawn: 3 }]) {
+        await request(e2e.server)
+          .post('/v1/professions')
+          .set('Authorization', auth)
+          .send(professionBody('invalid-costs', { skillCosts }))
+          .expect(400);
+      }
+
+      const profession = await create('owner');
+      const path = `/v1/professions/${profession.id}`;
+      await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ skillCosts: { animal: ['x'] } })
+        .expect(400);
+      const updated = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', auth)
+        .send({ skillCosts: { animal: [1, 2], lore: [3] } })
+        .expect(200);
+      expect(updated.body).toMatchObject({ skillCosts: { animal: [1, 2], lore: [3] } });
+    });
+
     it('drops unknown fields of the body', async () => {
       const profession = await create('owner', { owner: 'someone-else', entitySource: 'system', unknown: 'value' });
       expect(profession).toMatchObject({ owner: 'e2e-owner', entitySource: 'user' });
