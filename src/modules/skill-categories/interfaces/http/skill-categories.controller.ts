@@ -50,7 +50,11 @@ export class SkillCategoryController {
   @Post('')
   @ApiOperation({ operationId: 'createSkillCategory', summary: 'Create a new skill category' })
   @ApiOkResponse({ type: SkillCategoryDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, skill category already exists' })
+  @ApiErrors({
+    400: 'Bad request, invalid data',
+    403: 'Only an admin creates skill categories',
+    409: 'Conflict, skill category already exists',
+  })
   async create(@Body() createSkillCategoryDto: CreateSkillCategoryDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

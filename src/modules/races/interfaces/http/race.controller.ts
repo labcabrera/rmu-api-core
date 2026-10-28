@@ -60,7 +60,11 @@ export class RaceController {
   @Post('')
   @ApiOperation({ operationId: 'createRace', summary: 'Create a new race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, race already exists' })
+  @ApiErrors({
+    400: 'Bad request, invalid data or unknown realm',
+    403: 'Missing role or no permission to change the realm',
+    409: 'Conflict, race already exists',
+  })
   async create(@Body() createRaceDto: CreateRaceDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

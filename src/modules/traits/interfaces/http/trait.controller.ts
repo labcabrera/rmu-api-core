@@ -51,7 +51,7 @@ export class TraitController {
   @ApiBody({ type: CreateTraitDto })
   @ApiOperation({ operationId: 'createTrait', summary: 'Create a new Trait' })
   @ApiOkResponse({ type: TraitDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, Trait already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: 'Missing role', 409: 'Conflict, Trait already exists' })
   async create(@Body() dto: CreateTraitDto, @CurrentUser() user: AuthenticatedUser) {
     const command = CreateTraitDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateTraitCommand, Trait>(command);

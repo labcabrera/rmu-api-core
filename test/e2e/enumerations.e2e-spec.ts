@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { type E2eApp, ids, startApp, takeTopics, type UserName } from './support/app.js';
-import { enumerationBody } from './support/fixtures.js';
+import { enumerationBody, realmBody } from './support/fixtures.js';
 
 describe('Enumerations (e2e)', () => {
   let e2e: E2eApp;
@@ -142,6 +142,30 @@ describe('Enumerations (e2e)', () => {
         .set('Authorization', e2e.auth('noRole'))
         .send(enumerationBody({ key: 'by-guest' }))
         .expect(403);
+    });
+
+    it.each(['private', 'public'])('adds enumerations to a %s realm only for its owner and admins', async accessType => {
+      const realm = await request(e2e.server)
+        .post('/v1/realms')
+        .set('Authorization', e2e.auth('owner'))
+        .send(realmBody({ accessType }))
+        .expect(201);
+      const realmId = (realm.body as { id: string }).id;
+      const post = (user: UserName) =>
+        request(e2e.server)
+          .post('/v1/enumerations')
+          .set('Authorization', e2e.auth(user))
+          .send(enumerationBody({ key: `realm-${user}`, realmId }));
+
+      await post('other').expect(403);
+      await post('owner').expect(201);
+      await post('admin').expect(201);
+      const missing = await request(e2e.server)
+        .post('/v1/enumerations')
+        .set('Authorization', e2e.auth('owner'))
+        .send(enumerationBody({ key: 'missing-realm', realmId: 'missing' }))
+        .expect(400);
+      expect(missing.body).toMatchObject({ error: 'ValidationError' });
     });
 
     it('shows a private enumeration only to its owner and admins, and lets only them change it', async () => {

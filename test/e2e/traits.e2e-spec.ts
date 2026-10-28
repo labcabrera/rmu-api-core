@@ -173,6 +173,15 @@ describe('Traits (e2e)', () => {
       await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
     });
 
+    it('lets players and admins create traits, but not a user without a role', async () => {
+      await request(e2e.server)
+        .post('/v1/traits')
+        .set('Authorization', e2e.auth('noRole'))
+        .send(traitBody({ name: 'By guest' }))
+        .expect(403);
+      await create('admin', { name: 'By admin' });
+    });
+
     it('rejects a request without a token', async () => {
       await request(e2e.server).get('/v1/traits').expect(401);
       await request(e2e.server).post('/v1/traits').send(traitBody()).expect(401);

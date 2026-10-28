@@ -210,6 +210,17 @@ describe('Races (e2e)', () => {
   });
 
   describe('permissions', () => {
+    it.each(['private', 'public'])('creates races in a %s realm only for its owner and admins', async accessType => {
+      const realm = await createRealm('owner', { accessType });
+      const post = (user: UserName) => request(e2e.server).post('/v1/races').set('Authorization', e2e.auth(user)).send(raceBody(realm.id));
+
+      const forbidden = await post('other').expect(403);
+      expect(forbidden.body).toMatchObject({ statusCode: 403, code: 'forbidden' });
+      await post('noRole').expect(403);
+      await post('owner').expect(201);
+      await post('admin').expect(201);
+    });
+
     it('a non-admin owner can delete their own race', async () => {
       const race = await create('owner', (await createRealm('owner')).id);
       await request(e2e.server).delete(`/v1/races/${race.id}`).set('Authorization', e2e.auth('owner')).expect(204);

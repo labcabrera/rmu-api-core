@@ -52,7 +52,11 @@ export class EnumerationController {
   @Post('')
   @HttpCode(201)
   @ApiOperation({ operationId: 'createEnumeration', summary: 'Create enumeration' })
-  @ApiErrors()
+  @ApiErrors({
+    400: 'Bad request, invalid data or unknown realm',
+    403: 'Missing role or no permission to change the realm',
+    409: 'Conflict, enumeration already exists',
+  })
   async create(@Body() createSkillDto: CreateEnumerationDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

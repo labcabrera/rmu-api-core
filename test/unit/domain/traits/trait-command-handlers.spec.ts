@@ -11,7 +11,7 @@ import { DeleteTraitHandler } from '../../../../src/modules/traits/application/c
 import { DeleteTraitCommand } from '../../../../src/modules/traits/application/cqrs/commands/delete-trait.command.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
-import { ADMIN, OTHER, OWNER } from '../../support/users.js';
+import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
 
 const trait = (overrides: Partial<TraitProps> = {}) =>
   Trait.fromProps({
@@ -42,11 +42,11 @@ describe('trait command handlers', () => {
   });
 
   describe('CreateTraitHandler', () => {
-    const command = (name: string, user = OWNER) =>
+    const command = (name: string, user: { id: string; roles: readonly string[] } = OWNER) =>
       new CreateTraitCommand(name, 'combat', true, 'skill', true, 3, 20, 10, 'A trait', user.id, [...user.roles]);
 
     it('creates the trait with an id derived from its name, owned by the user, and publishes trait.created', async () => {
-      const created = await new CreateTraitHandler(traits, events).execute(command(' Blind Fighting! '));
+      const created = await new CreateTraitHandler(traits, guard, events).execute(command(' Blind Fighting! '));
 
       expect(created).toMatchObject({
         id: 'blind-fighting',
@@ -67,9 +67,18 @@ describe('trait command handlers', () => {
     });
 
     it('rejects a name whose id already exists, without saving or publishing', async () => {
-      await expect(new CreateTraitHandler(traits, events).execute(command('Night Vision'))).rejects.toThrow(ConflictError);
+      await expect(new CreateTraitHandler(traits, guard, events).execute(command('Night Vision'))).rejects.toThrow(ConflictError);
 
       expect(traits.items.get('night-vision')?.category).toBe('senses');
+      expect(events.topics).toEqual([]);
+    });
+
+    it('rejects a user without the player or admin role', async () => {
+      await expect(new CreateTraitHandler(traits, guard, events).execute(command('Blind Fighting', NO_ROLES))).rejects.toThrow(
+        ForbiddenError,
+      );
+
+      expect(traits.items.size).toBe(1);
       expect(events.topics).toEqual([]);
     });
   });
