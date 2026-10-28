@@ -25,9 +25,11 @@ describe('Catalogs and calculations (e2e)', () => {
       expect(found.body).toEqual({ id: 10, name: 'Plate' });
     });
 
-    it('answers 404 for an unknown armor type and 401 without a token', async () => {
+    it('answers 404 for an unknown armor type, 400 for a non-integer id and 401 without a token', async () => {
       await request(e2e.server).get('/v1/armor-types/99').set('Authorization', e2e.auth('owner')).expect(404);
-      await request(e2e.server).get('/v1/armor-types/plate').set('Authorization', e2e.auth('owner')).expect(404);
+      const plate = await request(e2e.server).get('/v1/armor-types/plate').set('Authorization', e2e.auth('owner')).expect(400);
+      expect(plate.body).toMatchObject({ statusCode: 400, path: '/v1/armor-types/plate' });
+      await request(e2e.server).get('/v1/armor-types/1.5').set('Authorization', e2e.auth('owner')).expect(400);
       await request(e2e.server).get('/v1/armor-types').expect(401);
       await request(e2e.server).get('/v1/armor-types/1').expect(401);
     });
