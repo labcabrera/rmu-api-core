@@ -23,12 +23,17 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
 
     current.checkVersion(command.expectedVersion);
 
-    const key = command.key ?? current.key;
-    const category = command.category ?? current.category;
-    if (key !== current.key || category !== current.category) {
-      const page = await this.enumerationRepository.findByRsql(`key=="${key}";category=="${category}";id!="${current.id}"`, 0, 1);
-      if (page.pagination.totalElements > 0) {
-        throw new ConflictError(`Enumeration with key ${key} and category ${category} already exists`, 'duplicate-key');
+    // The same uniqueness as on create: key, category and realm (the update never clears the realm).
+    const key = command.key || current.key;
+    const category = command.category || current.category;
+    const realmId = command.realmId || current.realmId;
+    if (key !== current.key || category !== current.category || realmId !== current.realmId) {
+      const existing = await this.enumerationRepository.findByKeyCategoryAndRealm(key, category, realmId);
+      if (existing && existing.id !== current.id) {
+        throw new ConflictError(
+          `Enumeration with key ${key} and category ${category} already exists${realmId ? ` for realm ${realmId}` : ''}`,
+          'duplicate-key',
+        );
       }
     }
 

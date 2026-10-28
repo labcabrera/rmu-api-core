@@ -128,6 +128,20 @@ describe('Enumerations (e2e)', () => {
         .expect(400);
     });
 
+    it('checks duplicates on update by key, category and realm, as on create', async () => {
+      const auth = e2e.auth('owner');
+      const realm = await request(e2e.server).post('/v1/realms').set('Authorization', auth).send(realmBody()).expect(201);
+      const realmId = (realm.body as { id: string }).id;
+      await create('owner', { key: 'dwarvish', category: 'language', realmId });
+      const global = await create('owner', { key: 'khuzdul', category: 'language' });
+
+      // The same key in another realm is not a duplicate...
+      await request(e2e.server).patch(`/v1/enumerations/${global.id}`).set('Authorization', auth).send({ key: 'dwarvish' }).expect(200);
+      // ...but moving it into the realm that has that key is.
+      const res = await request(e2e.server).patch(`/v1/enumerations/${global.id}`).set('Authorization', auth).send({ realmId }).expect(409);
+      expect(res.body).toMatchObject({ code: 'duplicate-key' });
+    });
+
     it('rejects a key that already exists in the category, on create and on update', async () => {
       const auth = e2e.auth('owner');
       await create('owner', { key: 'elvish', category: 'language' });
