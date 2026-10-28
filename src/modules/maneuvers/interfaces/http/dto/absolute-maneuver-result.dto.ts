@@ -37,10 +37,10 @@ export class AbsoluteManeuverResultDto {
   @ApiProperty({ description: 'Result effects', type: [ManeuverEffectDto], required: false })
   effects?: ManeuverEffectDto[];
 
-  @ApiProperty({ description: 'Bonus until absolute success is achieved', example: 2, required: false })
+  @ApiProperty({ description: 'Penalty until an absolute success is achieved (negative), from the effects', example: -25, required: false })
   penaltyUntilAbsoluteSuccess?: number;
 
-  @ApiProperty({ description: 'Bonus until absolute failure is achieved', example: 1, required: false })
+  @ApiProperty({ description: 'Bonus until an absolute failure is achieved, from the effects', example: 10, required: false })
   bonusUntilAbsoluteFailure?: number;
 
   @ApiProperty({ description: 'Unusual event text of the table, only when unusualEvent=true', required: false })
@@ -55,10 +55,18 @@ export class AbsoluteManeuverResultDto {
     dto.message = entity.message;
     dto.messageTranslations = entity.messageTranslations;
     dto.effects = entity.effects?.map(effect => ManeuverEffectDto.fromEntity(effect));
-    dto.bonusUntilAbsoluteFailure = entity.bonusUntilAbsoluteFailure;
-    dto.penaltyUntilAbsoluteSuccess = entity.penaltyUntilAbsoluteSuccess;
+    // The tables keep them as effects; the fields repeat them for the clients that read them directly.
+    dto.bonusUntilAbsoluteFailure = entity.bonusUntilAbsoluteFailure ?? effectValue(entity, 'bonusUntilAbsoluteFailure');
+    dto.penaltyUntilAbsoluteSuccess = entity.penaltyUntilAbsoluteSuccess ?? effectValue(entity, 'penaltyUntilAbsoluteSuccess');
     dto.unusualEvent = entity.unusualEvent;
     dto.unusualEventTranslations = entity.unusualEventTranslations;
     return dto;
   }
+}
+
+function effectValue(
+  entity: AbsoluteManeuverResult,
+  status: 'penaltyUntilAbsoluteSuccess' | 'bonusUntilAbsoluteFailure',
+): number | undefined {
+  return entity.effects?.find(effect => effect.status === status)?.value;
 }
