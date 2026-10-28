@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait.js';
 import type { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props.js';
 import { TraitGuardAdapter } from '../../../../src/modules/traits/infrastructure/security/trait-guard.adapter.js';
+import type { TraitGuardPort } from '../../../../src/modules/traits/application/ports/trait-guard.port.js';
 import { ConflictError, ForbiddenError, NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 import { CreateTraitHandler } from '../../../../src/modules/traits/application/cqrs/handlers/create-trait.handler.js';
 import { CreateTraitCommand } from '../../../../src/modules/traits/application/cqrs/commands/create-trait.command.js';
@@ -12,6 +13,11 @@ import { DeleteTraitCommand } from '../../../../src/modules/traits/application/c
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
 import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
+import { GetTraitHandler } from '../../../../src/modules/traits/application/cqrs/handlers/get-trait.handler.js';
+import { GetTraitQuery } from '../../../../src/modules/traits/application/cqrs/queries/get-trait.query.js';
+import { GetTraitsHandler } from '../../../../src/modules/traits/application/cqrs/handlers/get-traits.handler.js';
+import { GetTraitsQuery } from '../../../../src/modules/traits/application/cqrs/queries/get-traits.query.js';
+import { QueryCriteria } from '../../../../src/modules/shared/application/criteria/query-criteria.js';
 
 const trait = (overrides: Partial<TraitProps> = {}) =>
   Trait.fromProps({
@@ -34,7 +40,7 @@ const trait = (overrides: Partial<TraitProps> = {}) =>
 describe('trait command handlers', () => {
   let traits: InMemoryRepository<Trait>;
   let events: RecordingEventPublisher;
-  const guard = new TraitGuardAdapter();
+  const guard: TraitGuardPort = new TraitGuardAdapter();
 
   beforeEach(() => {
     traits = new InMemoryRepository(trait());
@@ -152,6 +158,29 @@ describe('trait command handlers', () => {
         NotFoundError,
       );
       expect(events.topics).toEqual([]);
+    });
+  });
+
+  describe('public reads', () => {
+    it.each([
+      ['the owner', OWNER],
+      ['another user', OTHER],
+      ['a user without roles', NO_ROLES],
+      ['an admin', ADMIN],
+    ])('lets %s read any trait', async (_, user) => {
+      const found = await new GetTraitHandler(traits, guard).execute(new GetTraitQuery('night-vision', user.id, [...user.roles]));
+
+      expect(found.id).toBe('night-vision');
+    });
+
+    it.each([
+      ['another user', OTHER],
+      ['an admin', ADMIN],
+    ])('lists every trait for %s, without an owner filter', async (_, user) => {
+      expect(guard.buildQueryPredicate(user.id, [...user.roles])).toEqual(QueryCriteria.empty());
+
+      const page = await new GetTraitsHandler(traits, guard).execute(new GetTraitsQuery(undefined, 0, 10, user.id, [...user.roles]));
+      expect(page.content.map(t => t.id)).toEqual(['night-vision']);
     });
   });
 });

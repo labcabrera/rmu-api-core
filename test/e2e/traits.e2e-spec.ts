@@ -182,6 +182,16 @@ describe('Traits (e2e)', () => {
       await create('admin', { name: 'By admin' });
     });
 
+    it('lets every authenticated user read and list any trait', async () => {
+      const trait = await create('owner', { name: 'Shared trait' });
+
+      for (const user of ['other', 'noRole'] as const) {
+        await request(e2e.server).get(`/v1/traits/${trait.id}`).set('Authorization', e2e.auth(user)).expect(200);
+        const listed = await request(e2e.server).get('/v1/traits?size=1000').set('Authorization', e2e.auth(user)).expect(200);
+        expect(ids(listed.body)).toContain(trait.id);
+      }
+    });
+
     it('rejects a request without a token', async () => {
       await request(e2e.server).get('/v1/traits').expect(401);
       await request(e2e.server).post('/v1/traits').send(traitBody()).expect(401);
