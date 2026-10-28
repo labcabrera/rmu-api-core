@@ -100,7 +100,7 @@ describe('profession command handlers', () => {
       ['a user', OWNER, 'user'],
       ['an admin', ADMIN, 'system'],
     ])('lets %s create the profession, owned by them, with entity source %s', async (_, user, entitySource) => {
-      const created = await new CreateProfessionHandler(professions, guard).execute(command('mage', user));
+      const created = await new CreateProfessionHandler(professions, guard, events).execute(command('mage', user));
 
       expect(created).toMatchObject({
         id: 'mage',
@@ -117,15 +117,21 @@ describe('profession command handlers', () => {
         updatedAt: undefined,
       });
       expect(professions.items.get('mage')).toBe(created);
+      expect(events.topics).toEqual(['profession.created']);
     });
 
     it('forbids a user without the user or admin role', async () => {
-      await expect(new CreateProfessionHandler(professions, guard).execute(command('mage', NO_ROLES))).rejects.toThrow(ForbiddenError);
+      await expect(new CreateProfessionHandler(professions, guard, events).execute(command('mage', NO_ROLES))).rejects.toThrow(
+        ForbiddenError,
+      );
       expect(professions.items.has('mage')).toBe(false);
+      expect(events.topics).toEqual([]);
     });
 
     it('rejects an id that already exists', async () => {
-      await expect(new CreateProfessionHandler(professions, guard).execute(command('fighter', OWNER))).rejects.toThrow(ConflictError);
+      await expect(new CreateProfessionHandler(professions, guard, events).execute(command('fighter', OWNER))).rejects.toThrow(
+        ConflictError,
+      );
       expect(professions.items.get('fighter')?.archetype).toBe('non-spellcaster');
     });
   });
@@ -141,7 +147,7 @@ describe('profession command handlers', () => {
       ['the owner', OWNER],
       ['an admin', ADMIN],
     ])('lets %s update the profession', async (_, user) => {
-      const updated = await new UpdateProfessionHandler(professions, guard).execute(command('fighter', user));
+      const updated = await new UpdateProfessionHandler(professions, guard, events).execute(command('fighter', user));
 
       expect(updated).toMatchObject({
         id: 'fighter',
@@ -155,10 +161,35 @@ describe('profession command handlers', () => {
       });
       expect(updated.updatedAt).toBeInstanceOf(Date);
       expect(professions.items.get('fighter')).toBe(updated);
+      expect(events.topics).toEqual(['profession.updated']);
+      expect(events.published[0].event.data).toMatchObject({ id: 'fighter', archetype: 'hybrid' });
+    });
+
+    it('neither writes nor publishes an update that changes nothing', async () => {
+      const unchanged = new UpdateProfessionCommand(
+        'fighter',
+        'non-spellcaster',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        'A fighter',
+        undefined,
+        undefined,
+        OWNER.id,
+        [...OWNER.roles],
+      );
+
+      const result = await new UpdateProfessionHandler(professions, guard, events).execute(unchanged);
+
+      expect(result.updatedAt).toBeUndefined();
+      expect(events.topics).toEqual([]);
     });
 
     it('forbids another user', async () => {
-      await expect(new UpdateProfessionHandler(professions, guard).execute(command('fighter', OTHER))).rejects.toThrow(ForbiddenError);
+      await expect(new UpdateProfessionHandler(professions, guard, events).execute(command('fighter', OTHER))).rejects.toThrow(
+        ForbiddenError,
+      );
       expect(professions.items.get('fighter')).toMatchObject({
         archetype: 'non-spellcaster',
         description: 'A fighter',
@@ -167,7 +198,9 @@ describe('profession command handlers', () => {
     });
 
     it('fails on an unknown profession', async () => {
-      await expect(new UpdateProfessionHandler(professions, guard).execute(command('missing', OWNER))).rejects.toThrow(NotFoundError);
+      await expect(new UpdateProfessionHandler(professions, guard, events).execute(command('missing', OWNER))).rejects.toThrow(
+        NotFoundError,
+      );
     });
   });
 

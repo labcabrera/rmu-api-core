@@ -26,7 +26,7 @@ describe('Professions (e2e)', () => {
   };
 
   describe('CRUD', () => {
-    it('creates, reads, lists, updates and deletes a profession, publishing its deletion', async () => {
+    it('creates, reads, lists, updates and deletes a profession, publishing its events', async () => {
       const auth = e2e.auth('owner');
       takeTopics(e2e.events);
 
@@ -59,8 +59,11 @@ describe('Professions (e2e)', () => {
       await request(e2e.server).get('/v1/professions/fighter').set('Authorization', auth).expect(404);
       await request(e2e.server).delete('/v1/professions/fighter').set('Authorization', auth).expect(404);
 
-      // Only the deletion is published.
-      expect(takeTopics(e2e.events)).toEqual(['internal.rmu-core.profession.deleted.v1']);
+      expect(takeTopics(e2e.events)).toEqual([
+        'internal.rmu-core.profession.created.v1',
+        'internal.rmu-core.profession.updated.v1',
+        'internal.rmu-core.profession.deleted.v1',
+      ]);
     });
 
     it('searches with RSQL and pages the results', async () => {

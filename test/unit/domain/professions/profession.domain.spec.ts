@@ -56,7 +56,7 @@ const makeProfessionProps = (overrides: Partial<ProfessionProps> = {}): Professi
 });
 
 describe('Profession domain aggregate', () => {
-  it('creates a profession using the provided id and no domain events', () => {
+  it('creates a profession using the provided id and applies profession created', () => {
     const props = makeProfessionProps({ id: 'profession-created' });
 
     const profession = Profession.create(props);
@@ -71,7 +71,7 @@ describe('Profession domain aggregate', () => {
       description: undefined,
       imageUrl: undefined,
     });
-    expect(profession.getUncommittedEvents()).toEqual([]);
+    expect(profession.getUncommittedEvents()).toEqual([expect.objectContaining({ eventType: 'created', data: profession.getProps() })]);
   });
 
   it('hydrates from props without changing dates or value objects', () => {
@@ -113,6 +113,16 @@ describe('Profession domain aggregate', () => {
       accessType: 'private',
     });
     expect(profession.updatedAt).toBeInstanceOf(Date);
+    expect(profession.getUncommittedEvents()).toEqual([expect.objectContaining({ eventType: 'updated', data: profession.getProps() })]);
+  });
+
+  it('applies no event and keeps updatedAt when the update changes nothing', () => {
+    const profession = Profession.fromProps(makeProfessionProps());
+    profession.restoreVersion(0);
+
+    profession.update({ archetype: profession.archetype });
+
+    expect(profession.updatedAt).toBeUndefined();
     expect(profession.getUncommittedEvents()).toEqual([]);
   });
 

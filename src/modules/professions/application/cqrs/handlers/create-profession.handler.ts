@@ -5,6 +5,7 @@ import { CreateProfessionCommand } from '../commands/create-profession.command.j
 import { Profession } from '../../../domain/aggregates/profession.js';
 import { PROFESSION_REPOSITORY, type ProfessionRepository } from '../../ports/profession-repository.port.js';
 import { PROFESSION_GUARD, type ProfessionGuardPort } from '../../ports/profession-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles.js';
 
 @CommandHandler(CreateProfessionCommand)
@@ -12,6 +13,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
   constructor(
     @Inject(PROFESSION_REPOSITORY) private readonly professionRepository: ProfessionRepository,
     @Inject(PROFESSION_GUARD) private readonly professionGuard: ProfessionGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateProfessionCommand): Promise<Profession> {
@@ -35,6 +37,8 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
       owner: command.userId,
       accessType: command.accessType,
     });
-    return await this.professionRepository.save(profession);
+    const saved = await this.professionRepository.save(profession);
+    await this.events.publishChanges('profession', profession);
+    return saved;
   }
 }
