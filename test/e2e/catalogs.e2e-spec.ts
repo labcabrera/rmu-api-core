@@ -285,12 +285,12 @@ describe('Catalogs and calculations (e2e)', () => {
   });
 
   describe('resistance rolls', () => {
-    it('resolves a resistance roll with its modifiers', async () => {
+    it('resolves a resistance roll with its modifiers, answering 200 (a calculation)', async () => {
       const res = await request(e2e.server)
         .post('/v1/resistance-rolls')
         .set('Authorization', e2e.auth('owner'))
         .send({ attackLevel: 5, targetLevel: 3, roll: 40, modifiers: [{ key: 'e2e-bonus', value: 6 }] })
-        .expect(201);
+        .expect(200);
       expect(res.body).toEqual({
         result: 'mild-failure',
         modifiers: [
@@ -307,7 +307,7 @@ describe('Catalogs and calculations (e2e)', () => {
         .post('/v1/resistance-rolls')
         .set('Authorization', e2e.auth('owner'))
         .send({ attackLevel: 1, targetLevel: 1, roll: 90 })
-        .expect(201);
+        .expect(200);
       expect(success.body).toMatchObject({ result: 'success', totalRoll: 90, failure: 0 });
     });
 
