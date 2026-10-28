@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested, IsIn } from 'class-validator';
 import { CreateCultureCommand } from '../../../application/cqrs/commands/create-culture.command.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
 
 export class CreateCultureDto {
@@ -22,7 +22,7 @@ export class CreateCultureDto {
   imageUrl: string | null;
 
   @ApiProperty({ type: String, description: 'Access type', required: true, example: 'private' })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
   @ApiProperty({ description: 'Culture ranks entries', required: false, type: [CultureSkillRankDto] })

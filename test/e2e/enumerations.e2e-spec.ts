@@ -87,6 +87,21 @@ describe('Enumerations (e2e)', () => {
   });
 
   describe('validation', () => {
+    it('rejects an access type other than public or private, on create and on update', async () => {
+      const auth = e2e.auth('owner');
+      const created = await request(e2e.server)
+        .post('/v1/enumerations')
+        .set('Authorization', auth)
+        .send(enumerationBody({ key: 'wild', accessType: 'wild' }))
+        .expect(400);
+      expect(created.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      await request(e2e.server)
+        .patch(`/v1/enumerations/${(await create('owner')).id}`)
+        .set('Authorization', auth)
+        .send({ accessType: 'wild' })
+        .expect(400);
+    });
+
     it('rejects an empty body', async () => {
       const res = await request(e2e.server).post('/v1/enumerations').set('Authorization', e2e.auth('owner')).send({}).expect(400);
       expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/enumerations' });

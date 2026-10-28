@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
 import { CreateProfessionCommand } from '../../../application/cqrs/commands/create-profession.command.js';
-import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString, IsIn } from 'class-validator';
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class CreateProfessionDto {
   @ApiProperty({ description: 'Profession ID', example: 'warrior' })
@@ -45,7 +45,7 @@ export class CreateProfessionDto {
   imageUrl?: string | undefined;
 
   @ApiProperty({ type: String, description: 'Access type', required: true, example: 'public' })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
   static toCommand(dto: CreateProfessionDto, userId: string, roles: string[]): CreateProfessionCommand {

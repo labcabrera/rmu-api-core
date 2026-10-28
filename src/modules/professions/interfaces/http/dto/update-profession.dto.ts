@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
-import { IsArray, IsObject, IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString, IsInt, Min, IsIn } from 'class-validator';
 import { UpdateProfessionCommand } from '../../../application/cqrs/commands/update-profession.command.js';
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateProfessionDto {
   @ApiProperty({ description: 'Available realm types for the profession', required: false, example: ['channeling'] })
@@ -51,7 +51,7 @@ export class UpdateProfessionDto {
   imageUrl: string | undefined;
 
   @ApiProperty({ type: String, description: 'Access type for the profession', example: 'public', required: false })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   @IsOptional()
   accessType: AccessType | undefined;
 

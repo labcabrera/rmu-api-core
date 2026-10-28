@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsIn } from 'class-validator';
 import { CreateRealmCommand } from '../../../application/cqrs/commands/create-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
-import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class CreateRealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
@@ -46,7 +46,7 @@ export class CreateRealmDto {
   imageUrl: string | undefined;
 
   @ApiProperty({ type: String, description: 'Access type', example: 'public' })
-  @IsString()
+  @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
   static toCommand(dto: CreateRealmDto, userId: string, userRoles: string[]) {
