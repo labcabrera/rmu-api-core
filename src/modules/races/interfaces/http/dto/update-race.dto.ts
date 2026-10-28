@@ -18,7 +18,10 @@ export class UpdateRaceDto {
   @IsOptional()
   archetype?: string;
 
-  @ApiProperty({ description: 'Realm identifier', required: false })
+  // A race cannot move to another realm: the realm sync owns its owner and accessType. The field is accepted, because
+  // the edit form sends back the whole race, and ignored (it never reaches the command).
+  @ApiProperty({ description: 'Ignored: a race cannot move to another realm', required: false, deprecated: true })
+  @IsString()
   @IsOptional()
   realmId?: string;
 
@@ -35,21 +38,29 @@ export class UpdateRaceDto {
 
   @ApiProperty({ description: 'Resistances of the race', required: false, type: Object })
   @IsOptional()
+  @ValidateNested()
+  @Type(() => RaceResistancesDto)
   resistances?: RaceResistancesDto;
 
   @ApiProperty({ description: 'Average height by sex', required: false, type: Object })
   @IsOptional()
+  @ValidateNested()
+  @Type(() => SexBasedAttributeDto)
   averageHeight?: SexBasedAttributeDto;
 
   @ApiProperty({ description: 'Average weight by sex', required: false, type: Object })
   @IsOptional()
+  @ValidateNested()
+  @Type(() => SexBasedAttributeDto)
   averageWeight?: SexBasedAttributeDto;
 
   @ApiProperty({ description: 'Stride bonus for the race', required: false })
+  @IsNumber()
   @IsOptional()
   strideBonus?: number;
 
   @ApiProperty({ description: 'Endurance bonus for the race', required: false })
+  @IsNumber()
   @IsOptional()
   enduranceBonus?: number;
 
@@ -75,15 +86,19 @@ export class UpdateRaceDto {
 
   @ApiProperty({ description: 'List of talents identifiers', type: [String], required: false })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   talents?: string[];
 
   @ApiProperty({ description: 'List of race traits', type: [RaceTraitDto], required: false })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RaceTraitDto)
   @IsOptional()
   traits?: RaceTraitDto[];
 
   @ApiProperty({ description: 'Default language identifier of the race', type: String, required: false })
+  @IsString()
   @IsOptional()
   defaultLanguage?: string;
 

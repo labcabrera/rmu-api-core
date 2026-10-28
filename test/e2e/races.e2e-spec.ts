@@ -202,6 +202,42 @@ describe('Races (e2e)', () => {
       await request(e2e.server).post(`/v1/races/${race.id}/skill-bonuses`).set('Authorization', auth).send({ skillId: 'x' }).expect(400);
     });
 
+    it('validates the nested objects of a PATCH and ignores its realm', async () => {
+      const auth = e2e.auth('owner');
+      const realm = await createRealm('owner');
+      const race = await create('owner', realm.id);
+      const patch = (body: Record<string, unknown>) =>
+        request(e2e.server).patch(`/v1/races/${race.id}`).set('Authorization', auth).send(body);
+
+      for (const body of [
+        { resistances: { channeling: 'x' } },
+        { resistances: 'strong' },
+        { averageHeight: { male: 'tall', female: 170 } },
+        { averageWeight: { male: 80 } },
+        { traits: [{ traitId: 'night-vision' }] },
+        { traits: ['night-vision'] },
+        { talents: [1] },
+        { strideBonus: 'fast' },
+      ]) {
+        const res = await patch(body).expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+
+      const other = await createRealm('owner');
+      const updated = await patch({
+        realmId: other.id,
+        resistances: { channeling: 1, mentalism: 2, essence: 3, physical: 4, poison: 5, disease: 6, fear: 7 },
+        averageHeight: { male: 190, female: 180 },
+        traits: [{ id: 't-1', traitId: 'night-vision', isTalent: false, tier: 1 }],
+      }).expect(200);
+      expect(updated.body).toMatchObject({
+        realmId: realm.id,
+        resistances: { channeling: 1, fear: 7 },
+        averageHeight: { male: 190, female: 180 },
+        traits: [expect.objectContaining({ traitId: 'night-vision', tier: 1 })],
+      });
+    });
+
     it('drops unknown fields of the body', async () => {
       const race = await create('owner', (await createRealm('owner')).id, { owner: 'someone-else', unknown: 'value' });
       expect(race).toMatchObject({ owner: 'e2e-owner' });
