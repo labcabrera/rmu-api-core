@@ -218,6 +218,11 @@ describe('Catalogs and calculations (e2e)', () => {
       const critical = await request(e2e.server).get('/v1/maneuvers/percent?roll=-150').set('Authorization', auth).expect(200);
       expect(critical.body).toMatchObject({ percent: 0, critical: 'E' });
       await request(e2e.server).get('/v1/maneuvers/percent?roll=55').expect(401);
+      for (const roll of ['abc', '10.5', '']) {
+        const res = await request(e2e.server).get(`/v1/maneuvers/percent?roll=${roll}`).set('Authorization', auth).expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+      await request(e2e.server).get('/v1/maneuvers/percent').set('Authorization', auth).expect(400);
     });
 
     it('resolves an absolute maneuver roll, on the generic table by default', async () => {
@@ -241,6 +246,8 @@ describe('Catalogs and calculations (e2e)', () => {
 
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=50&table=missing').set('Authorization', auth).expect(404);
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=abc').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute?roll=50.5').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute').set('Authorization', auth).expect(400);
       await request(e2e.server).get('/v1/maneuvers/absolute?roll=50').expect(401);
     });
 
@@ -281,6 +288,10 @@ describe('Catalogs and calculations (e2e)', () => {
         .expect(200);
       expect((unusual.body as { message: string }).message.length).toBeGreaterThan((res.body as { message: string }).message.length);
       await request(e2e.server).get('/v1/maneuvers/endurance?roll=120').expect(401);
+      for (const roll of ['abc', '10.5', '']) {
+        await request(e2e.server).get(`/v1/maneuvers/endurance?roll=${roll}`).set('Authorization', auth).expect(400);
+      }
+      await request(e2e.server).get('/v1/maneuvers/endurance?unusualEvent=true').set('Authorization', auth).expect(400);
     });
   });
 
