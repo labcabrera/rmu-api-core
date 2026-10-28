@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsInt } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional } from 'class-validator';
 
 /**
  * The roll of a maneuver: the open-ended roll plus every bonus, so any integer (the tables cover all of them).
@@ -15,4 +15,17 @@ export class ManeuverRollQueryDto {
   })
   @IsInt()
   roll: number;
+}
+
+/** The roll of the maneuvers that can trigger an unusual event (absolute and endurance). */
+export class UnusualEventManeuverRollQueryDto extends ManeuverRollQueryDto {
+  @ApiPropertyOptional({ type: Boolean, description: 'Whether the roll is an unusual event', default: false })
+  // Only 'true' and 'false' are booleans; anything else is left for @IsBoolean to reject (spec 044).
+  @Transform(({ obj, key }: { obj: Record<string, unknown>; key: string }) => {
+    const raw = obj[key];
+    return raw === 'true' ? true : raw === 'false' ? false : raw;
+  })
+  @IsBoolean()
+  @IsOptional()
+  unusualEvent: boolean = false;
 }
