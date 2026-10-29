@@ -2,7 +2,11 @@ import { randomUUID } from 'crypto';
 import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import { ValidationError } from '../../../shared/domain/errors/errors.js';
-import { MANEUVER_MODIFIER_TYPES, type ManeuverModifierScope } from '../value-objects/maneuver-modifier-type.vo.js';
+import {
+  MANEUVER_MODIFIER_CONTEXTS,
+  MANEUVER_MODIFIER_TYPES,
+  type ManeuverModifierScope,
+} from '../value-objects/maneuver-modifier-type.vo.js';
 import type { ManeuverModifierDefinition, ManeuverModifierProps } from './maneuver-modifier-props.js';
 
 export type ManeuverModifierUpdate = Partial<ManeuverModifierDefinition> & { accessType?: AccessType };
@@ -149,6 +153,8 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     const categoryIds = [...new Set(definition.scope?.categoryIds ?? [])];
     if (skillIds.length > 0) scope.skillIds = skillIds;
     if (categoryIds.length > 0) scope.categoryIds = categoryIds;
+    const contexts = [...new Set(definition.scope?.contexts ?? [])];
+    if (contexts.length > 0) scope.contexts = contexts;
     const normalized: ManeuverModifierDefinition = { key: definition.key?.trim(), scope, type: definition.type };
     if (definition.description) normalized.description = definition.description;
     if (definition.reference === true) normalized.reference = true;
@@ -170,6 +176,8 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
 
   static validate(definition: ManeuverModifierDefinition): void {
     if (!definition.key) throw new ValidationError('Maneuver modifier key is required');
+    const context = definition.scope.contexts?.find(value => !MANEUVER_MODIFIER_CONTEXTS.includes(value));
+    if (context) throw new ValidationError(`Maneuver modifier ${definition.key} has an unknown context: ${context}`);
     if (!definition.scope.skillIds?.length && !definition.scope.categoryIds?.length) {
       throw new ValidationError(`Maneuver modifier ${definition.key} needs at least one skillId or categoryId in its scope`);
     }

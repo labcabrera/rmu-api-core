@@ -45,6 +45,7 @@ export class MongoManeuverModifierRepository
       scope: {
         ...(doc.scope?.skillIds?.length ? { skillIds: doc.scope.skillIds } : {}),
         ...(doc.scope?.categoryIds?.length ? { categoryIds: doc.scope.categoryIds } : {}),
+        ...(doc.scope?.contexts?.length ? { contexts: doc.scope.contexts } : {}),
       },
       type: doc.type,
       value: doc.value ?? undefined,

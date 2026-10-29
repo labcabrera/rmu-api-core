@@ -24,6 +24,23 @@ describe('Maneuver modifiers (e2e)', () => {
 
   const keys = (body: unknown) => (body as { key: string }[]).map(item => item.key);
 
+  describe('contexts', () => {
+    it('keeps the contexts of a Trading modifier, filters by them and rejects unknown ones', async () => {
+      const auth = e2e.auth('owner');
+      const created = await create('owner', 'e2e-perishable', { scope: { skillIds: ['e2e-skill'], contexts: ['sale', 'sale'] } });
+      expect(created).toMatchObject({ scope: { skillIds: ['e2e-skill'], contexts: ['sale'] } });
+
+      const listed = await request(e2e.server).get('/v1/maneuver-modifiers?q=scope.contexts==sale').set('Authorization', auth).expect(200);
+      expect(ids(listed.body)).toContain(created.id);
+
+      await request(e2e.server)
+        .post('/v1/maneuver-modifiers')
+        .set('Authorization', auth)
+        .send(maneuverModifierBody('e2e-bad-context', { scope: { skillIds: ['e2e-skill'], contexts: ['rent'] } }))
+        .expect(400);
+    });
+  });
+
   describe('CRUD', () => {
     it('creates, reads, lists, updates and deletes a maneuver modifier, without events', async () => {
       const auth = e2e.auth('owner');

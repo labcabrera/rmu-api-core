@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
-import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
-import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
+import { MANEUVER_MODIFIER_CONTEXTS, MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
+import type { ManeuverModifierContext, ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 
 export class ManeuverModifierOptionDto {
   @ApiProperty({ description: 'Option key', example: 'option-a' })
@@ -30,6 +30,17 @@ export class ManeuverModifierScopeDto {
   @IsString({ each: true })
   @IsOptional()
   categoryIds?: string[];
+
+  @ApiProperty({
+    description: 'Contexts the modifier is limited to (Trading: buying or selling); every one when missing',
+    enum: MANEUVER_MODIFIER_CONTEXTS,
+    isArray: true,
+    required: false,
+  })
+  @IsArray()
+  @IsIn(MANEUVER_MODIFIER_CONTEXTS, { each: true })
+  @IsOptional()
+  contexts?: ManeuverModifierContext[];
 }
 
 export class ManeuverModifierDto {
