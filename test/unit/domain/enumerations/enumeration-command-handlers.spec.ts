@@ -26,6 +26,7 @@ const enumeration = (overrides: Partial<EnumerationProps> = {}) =>
   Enumeration.fromProps({
     id: 'enum-1',
     key: 'westron',
+    name: 'Westron',
     category: 'language',
     realmId: null,
     description: null,
@@ -63,18 +64,19 @@ describe('enumeration command handlers', () => {
   });
 
   describe('CreateEnumerationHandler', () => {
-    const command = (key: string, realmId: string | null, user: User = OWNER) =>
-      new CreateEnumerationCommand(key, 'language', realmId, 'A tongue', null, 'public', user.id, [...user.roles]);
+    const command = (key: string, realmId: string | null, user: User = OWNER, name = key) =>
+      new CreateEnumerationCommand(key, name, 'language', realmId, 'A tongue', null, 'public', user.id, [...user.roles]);
 
     const handler = () => new CreateEnumerationHandler(enumerations, guard, realms, new RealmGuardAdapter());
 
-    it('stores a user enumeration owned by the user', async () => {
-      const created = await handler().execute(command('quenya', null));
+    it('stores a user enumeration owned by the user, with the key normalized from the name (spec 050)', async () => {
+      const created = await handler().execute(command('Black Speech', 'realm-1', OWNER, 'Black Speech'));
 
       expect(created).toMatchObject({
-        key: 'quenya',
+        key: 'black-speech',
+        name: 'Black Speech',
         category: 'language',
-        realmId: null,
+        realmId: 'realm-1',
         description: 'A tongue',
         owner: OWNER.id,
         accessType: 'public',
@@ -90,9 +92,19 @@ describe('enumeration command handlers', () => {
       expect(enumerations.items.size).toBe(2);
     });
 
-    it('rejects a duplicated key, category and realm', async () => {
-      await expect(handler().execute(command('westron', null))).rejects.toThrow(ConflictError);
+    it('rejects a duplicated key, category and realm, also in another spelling', async () => {
+      await expect(handler().execute(command('westron', null, ADMIN))).rejects.toThrow(ConflictError);
+      await expect(handler().execute(command('Westron ', null, ADMIN))).rejects.toThrow(ConflictError);
       expect(enumerations.items.size).toBe(1);
+    });
+
+    it('leaves the global scope to admins (spec 050)', async () => {
+      await expect(handler().execute(command('quenya', null))).rejects.toMatchObject({ code: 'enumeration-global-admin-only' });
+      expect((await handler().execute(command('quenya', null, ADMIN))).realmId).toBeNull();
+    });
+
+    it('rejects a name without letters or digits', async () => {
+      await expect(handler().execute(command('--', 'realm-1'))).rejects.toMatchObject({ code: 'invalid-enumeration-key' });
     });
 
     it('rejects a user without the player or admin role', async () => {

@@ -11,6 +11,10 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
     return this.props.key;
   }
 
+  get name() {
+    return this.props.name;
+  }
+
   get category() {
     return this.props.category;
   }
@@ -56,9 +60,9 @@ export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
   }
 
   /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
-  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>): void {
-    if (props.key) {
-      this.props.key = props.key;
+  update(props: Omit<Partial<EnumerationProps>, 'id' | 'key' | 'createdAt' | 'updatedAt'>): void {
+    if (props.name) {
+      this.props.name = props.name;
     }
     if (props.category) {
       this.props.category = props.category;

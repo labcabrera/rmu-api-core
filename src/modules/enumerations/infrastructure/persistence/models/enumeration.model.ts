@@ -18,6 +18,10 @@ export class EnumerationModel {
   @Prop({ type: String, required: true })
   key: string;
 
+  /** Missing in documents stored before spec 050: the key is shown instead. */
+  @Prop({ type: String, required: false })
+  name?: string;
+
   @Prop({ type: String, required: true })
   category: EnumerationCategory;
 
@@ -50,5 +54,6 @@ export const EnumerationSchema = SchemaFactory.createForClass(EnumerationModel);
 // owner and accessType back the access filter of every listing (an $or that uses one index per branch).
 EnumerationSchema.index({ owner: 1 });
 EnumerationSchema.index({ accessType: 1 });
-EnumerationSchema.index({ key: 1, category: 1 });
+// Spec 050: a key is unique in its category and realm (null is the global scope).
+EnumerationSchema.index({ category: 1, realmId: 1, key: 1 }, { unique: true });
 EnumerationSchema.index({ realmId: 1 });

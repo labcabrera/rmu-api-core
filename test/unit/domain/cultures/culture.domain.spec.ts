@@ -122,4 +122,13 @@ describe('Culture domain aggregate', () => {
     expect(() => culture.deleteSkillRank(-1)).toThrow(NotFoundError);
     expect(culture.skillRanks).toHaveLength(1);
   });
+
+  it('stores the languages and the skill specializations as normalized keys (spec 050)', () => {
+    const culture = Culture.fromProps(makeCultureProps());
+
+    culture.update({ languages: ['Black Speech', 'black-speech', 'Adûnaic'] });
+
+    expect(culture.languages).toEqual(['black-speech', 'adunaic']);
+    expect(skill('language-spoken', 2, 'Orcish tongues').specialization).toBe('orcish-tongues');
+  });
 });

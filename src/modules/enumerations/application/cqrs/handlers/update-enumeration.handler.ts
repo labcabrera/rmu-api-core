@@ -6,6 +6,7 @@ import { ConflictError, NotFoundError, ValidationError } from '../../../../share
 import { REALM_REPOSITORY, type RealmRepository } from '../../../../realms/application/ports/realm-repository.port.js';
 import { REALM_GUARD, type RealmGuardPort } from '../../../../realms/application/ports/realm-guard.port.js';
 import { Enumeration } from '../../../domain/aggregates/enumeration.js';
+import { toKey } from '../../../../shared/domain/services/key.js';
 import { UpdateEnumerationCommand } from '../commands/update-enumeration.command.js';
 
 @CommandHandler(UpdateEnumerationCommand)
@@ -34,8 +35,12 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
       this.realmGuard.checkUpdate(realm, command.userId, command.roles);
     }
 
+    // The key is what references store (spec 050): it never changes, so a client may only send it back as it is
+    if (command.key && toKey(command.key) !== current.key) {
+      throw new ValidationError(`The key of enumeration ${current.id} cannot change`, 'enumeration-key-immutable');
+    }
     // The same uniqueness as on create: key, category and realm (the update never clears the realm).
-    const key = command.key || current.key;
+    const key = current.key;
     const category = command.category || current.category;
     const realmId = command.realmId || current.realmId;
     if (key !== current.key || category !== current.category || realmId !== current.realmId) {
@@ -49,7 +54,7 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
     }
 
     current.update({
-      key: command.key,
+      name: command.name,
       category: command.category,
       realmId: command.realmId,
       description: command.description,

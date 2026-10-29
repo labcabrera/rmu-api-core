@@ -12,10 +12,10 @@ export class EnumerationDto {
   @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
   version: number;
 
-  @ApiProperty({ description: 'Category ID of the skill', example: 'animal', required: true })
+  @ApiProperty({ description: 'Normalized key that references store', example: 'black-speech', required: true })
   key: string;
 
-  @ApiProperty({ description: 'Human readable name', example: 'Horse', required: true })
+  @ApiProperty({ description: 'Name as the user wrote it', example: 'Black Speech', required: true })
   name: string;
 
   @ApiProperty({
@@ -50,6 +50,7 @@ export class EnumerationDto {
     dto.id = entity.id;
     dto.version = entity.version;
     dto.key = entity.key;
+    dto.name = entity.name;
     dto.category = entity.category;
     dto.realmId = entity.realmId;
     dto.description = entity.description;

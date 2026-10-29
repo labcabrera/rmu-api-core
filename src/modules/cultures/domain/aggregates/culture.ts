@@ -5,6 +5,13 @@ import type { CreateCultureProps, CultureProps, UpdateCultureProps } from './cul
 import { CultureCreatedEvent } from '../events/culture-created.event.js';
 import { CultureSkillRank } from '../value-objects/culture-skill-rank.js';
 import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { toKey } from '../../../shared/domain/services/key.js';
+
+/** Languages are enumeration keys (spec 050): normalized and without repeats. */
+function normalizeLanguages(languages: string[] | undefined): string[] | undefined {
+  if (!languages) return languages;
+  return [...new Set(languages.map(toKey).filter(Boolean))];
+}
 
 export class Culture extends BaseAggregateRoot<CultureProps> {
   private constructor(props: CultureProps) {
@@ -60,6 +67,7 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
       ...props,
       id: randomUUID(),
       skillRanks: props.skillRanks ?? [],
+      languages: normalizeLanguages(props.languages),
       createdAt: new Date(),
       updatedAt: null,
     });
@@ -77,7 +85,7 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
     if (props.accessType !== undefined) this.props.accessType = props.accessType;
     if (props.skillRanks !== undefined) this.props.skillRanks = props.skillRanks;
-    if (props.languages !== undefined) this.props.languages = props.languages;
+    if (props.languages !== undefined) this.props.languages = normalizeLanguages(props.languages);
     if (props.suggestedCrafts !== undefined) this.props.suggestedCrafts = props.suggestedCrafts;
     if (props.suggestedVocations !== undefined) this.props.suggestedVocations = props.suggestedVocations;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.

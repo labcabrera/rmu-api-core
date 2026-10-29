@@ -229,4 +229,17 @@ describe('Race domain aggregate', () => {
       description: undefined,
     });
   });
+
+  it('stores the bonus specializations and the default language as normalized keys (spec 050)', () => {
+    const race = Race.fromProps(makeRaceProps({ skillBonuses: [] }));
+
+    race.addSkillBonus('language-spoken', 'Orcish tongues', 20);
+    race.addSkillBonus('language-spoken', 'Orcish-Tongues', 25);
+    race.update({ defaultLanguage: 'Black Speech' });
+
+    expect(race.skillBonuses).toEqual([expect.objectContaining({ specialization: 'orcish-tongues', bonus: 25 })]);
+    expect(race.defaultLanguage).toBe('black-speech');
+    race.removeSkillBonus('language-spoken', 'Orcish tongues');
+    expect(race.skillBonuses).toEqual([]);
+  });
 });

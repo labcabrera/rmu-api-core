@@ -12,6 +12,7 @@ const westron = () =>
   Enumeration.fromProps({
     id: 'enum-1',
     key: 'westron',
+    name: 'Westron',
     category: 'language',
     realmId: null,
     description: null,
@@ -23,10 +24,19 @@ const westron = () =>
     updatedAt: undefined,
   });
 
-const command = (changes: { key?: string; realmId?: string; description?: string | null }) =>
-  new UpdateEnumerationCommand('enum-1', changes.key, undefined, changes.realmId, changes.description, undefined, undefined, 'user-1', [
-    'rmu-user',
-  ]);
+const command = (changes: { key?: string; name?: string; realmId?: string; description?: string | null }) =>
+  new UpdateEnumerationCommand(
+    'enum-1',
+    changes.key,
+    changes.name,
+    undefined,
+    changes.realmId,
+    changes.description,
+    undefined,
+    undefined,
+    'user-1',
+    ['rmu-user'],
+  );
 
 const setup = (existing: Enumeration[] = []) => {
   const repository = {
@@ -94,22 +104,19 @@ describe('UpdateEnumerationHandler', () => {
     expect(repository.update).toHaveBeenCalledOnce();
   });
 
-  it('rejects a key that another enumeration of the same category and realm has', async () => {
-    const quenya = Enumeration.fromProps({ ...westron().getProps(), id: 'enum-2', key: 'quenya' });
-    const { handler, repository } = setup([quenya]);
+  it('rejects a change of key: references store it (spec 050)', async () => {
+    const { handler, repository } = setup();
 
-    await expect(handler.execute(command({ key: 'quenya' }))).rejects.toThrow(ConflictError);
-    expect(repository.findByKeyCategoryAndRealm).toHaveBeenCalledWith('quenya', 'language', null);
+    await expect(handler.execute(command({ key: 'quenya' }))).rejects.toMatchObject({ code: 'enumeration-key-immutable' });
     expect(repository.update).not.toHaveBeenCalled();
   });
 
-  it('allows a key that only exists in another realm', async () => {
-    const quenya = Enumeration.fromProps({ ...westron().getProps(), id: 'enum-2', key: 'quenya', realmId: 'realm-1' });
-    const { handler, repository } = setup([quenya]);
+  it('accepts the key sent back in another spelling and renames the enumeration', async () => {
+    const { handler, repository } = setup();
 
-    const updated = await handler.execute(command({ key: 'quenya' }));
+    const updated = await handler.execute(command({ key: 'Westron', name: 'Common Speech' }));
 
-    expect(updated.key).toBe('quenya');
+    expect(updated).toMatchObject({ key: 'westron', name: 'Common Speech' });
     expect(repository.update).toHaveBeenCalledOnce();
   });
 

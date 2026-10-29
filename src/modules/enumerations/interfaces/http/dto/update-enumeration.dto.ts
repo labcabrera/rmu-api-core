@@ -1,14 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsString, IsOptional, IsInt, Min } from 'class-validator';
+import { IsIn, IsString, IsOptional, IsInt, IsNotEmpty, Min } from 'class-validator';
 import { UpdateEnumerationCommand } from '../../../application/cqrs/commands/update-enumeration.command.js';
 import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 
 export class UpdateEnumerationDto {
-  @ApiProperty({ type: String, description: 'Enumeration key', example: 'horse' })
+  @ApiProperty({
+    type: String,
+    description: 'Key; it cannot change (spec 050), so it is only accepted when it normalizes to the stored one',
+    example: 'black-speech',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   key: string | undefined;
+
+  @ApiProperty({ type: String, description: 'Name as the user writes it', example: 'Black Speech', required: false })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  name: string | undefined;
 
   @ApiProperty({
     description: 'Enumeration category',
@@ -63,6 +74,7 @@ export class UpdateEnumerationDto {
     return new UpdateEnumerationCommand(
       id,
       dto.key,
+      dto.name?.trim(),
       dto.category,
       dto.realmId,
       dto.description,
