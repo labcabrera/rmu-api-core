@@ -4,9 +4,13 @@ import { enumerationBody, realmBody } from './support/fixtures.js';
 
 describe('Enumerations (e2e)', () => {
   let e2e: E2eApp;
+  // Spec 050: users add enumerations to a realm they can change; the global scope is for admins
+  let ownRealm: string;
 
   beforeAll(async () => {
     e2e = await startApp();
+    const realm = await request(e2e.server).post('/v1/realms').set('Authorization', e2e.auth('owner')).send(realmBody()).expect(201);
+    ownRealm = (realm.body as { id: string }).id;
   });
 
   afterAll(async () => {
@@ -17,9 +21,9 @@ describe('Enumerations (e2e)', () => {
     const res = await request(e2e.server)
       .post('/v1/enumerations')
       .set('Authorization', e2e.auth(user))
-      .send(enumerationBody(overrides))
+      .send(enumerationBody({ realmId: ownRealm, ...overrides }))
       .expect(201);
-    return res.body as { id: string; key: string };
+    return res.body as { id: string; key: string; name: string };
   };
 
   describe('CRUD', () => {
@@ -30,8 +34,9 @@ describe('Enumerations (e2e)', () => {
       const created = await create('owner', { key: 'horse', category: 'animal-type', description: 'A hoofed mammal' });
       expect(created).toMatchObject({
         key: 'horse',
+        name: 'horse',
         category: 'animal-type',
-        realmId: null,
+        realmId: ownRealm,
         description: 'A hoofed mammal',
         imageUrl: null,
         owner: 'e2e-owner',
@@ -49,9 +54,14 @@ describe('Enumerations (e2e)', () => {
       const updated = await request(e2e.server)
         .patch(`/v1/enumerations/${created.id}`)
         .set('Authorization', auth)
-        .send({ key: 'pony', imageUrl: 'https://example.test/pony.png' })
+        .send({ name: 'Pony', imageUrl: 'https://example.test/pony.png' })
         .expect(200);
-      expect(updated.body).toMatchObject({ key: 'pony', imageUrl: 'https://example.test/pony.png', description: 'A hoofed mammal' });
+      expect(updated.body).toMatchObject({
+        key: 'horse',
+        name: 'Pony',
+        imageUrl: 'https://example.test/pony.png',
+        description: 'A hoofed mammal',
+      });
 
       await request(e2e.server).delete(`/v1/enumerations/${created.id}`).set('Authorization', auth).expect(204);
       await request(e2e.server).get(`/v1/enumerations/${created.id}`).set('Authorization', auth).expect(404);
@@ -128,12 +138,33 @@ describe('Enumerations (e2e)', () => {
         .expect(400);
     });
 
+    it('derives a normalized key from the name and keeps the name as written (spec 050)', async () => {
+      const auth = e2e.auth('owner');
+      const created = await create('owner', { key: undefined, name: 'Black Speech', category: 'language' });
+      expect(created).toMatchObject({ key: 'black-speech', name: 'Black Speech' });
+      const fromKey = await create('owner', { key: 'Adûnaic', category: 'language' });
+      expect(fromKey).toMatchObject({ key: 'adunaic', name: 'Adûnaic' });
+
+      const renamed = await request(e2e.server)
+        .patch(`/v1/enumerations/${created.id}`)
+        .set('Authorization', auth)
+        .send({ key: 'Black-Speech', name: 'Black speech of Mordor' })
+        .expect(200);
+      expect(renamed.body).toMatchObject({ key: 'black-speech', name: 'Black speech of Mordor' });
+      const moved = await request(e2e.server)
+        .patch(`/v1/enumerations/${created.id}`)
+        .set('Authorization', auth)
+        .send({ key: 'orcish' })
+        .expect(400);
+      expect(moved.body).toMatchObject({ code: 'enumeration-key-immutable' });
+    });
+
     it('clears the description and the image with null or an empty string, and keeps them when absent', async () => {
       const auth = e2e.auth('owner');
       const enumeration = await create('owner', { key: 'clearable', description: 'Old', imageUrl: 'old.png' });
       const path = `/v1/enumerations/${enumeration.id}`;
 
-      const kept = await request(e2e.server).patch(path).set('Authorization', auth).send({ key: 'clearable-2' }).expect(200);
+      const kept = await request(e2e.server).patch(path).set('Authorization', auth).send({ name: 'Clearable 2' }).expect(200);
       expect(kept.body).toMatchObject({ description: 'Old', imageUrl: 'old.png' });
       const cleared = await request(e2e.server)
         .patch(path)
@@ -144,26 +175,27 @@ describe('Enumerations (e2e)', () => {
     });
 
     it('checks duplicates on update by key, category and realm, as on create', async () => {
-      const auth = e2e.auth('owner');
-      const realm = await request(e2e.server).post('/v1/realms').set('Authorization', auth).send(realmBody()).expect(201);
-      const realmId = (realm.body as { id: string }).id;
-      await create('owner', { key: 'dwarvish', category: 'language', realmId });
-      const global = await create('owner', { key: 'khuzdul', category: 'language' });
-
-      // The same key in another realm is not a duplicate...
-      await request(e2e.server).patch(`/v1/enumerations/${global.id}`).set('Authorization', auth).send({ key: 'dwarvish' }).expect(200);
+      const auth = e2e.auth('admin');
+      await create('owner', { key: 'dwarvish', category: 'language' });
+      // The same key in another scope is not a duplicate...
+      const global = await create('admin', { key: 'dwarvish', category: 'language', realmId: null });
       // ...but moving it into the realm that has that key is.
-      const res = await request(e2e.server).patch(`/v1/enumerations/${global.id}`).set('Authorization', auth).send({ realmId }).expect(409);
+      const res = await request(e2e.server)
+        .patch(`/v1/enumerations/${global.id}`)
+        .set('Authorization', auth)
+        .send({ realmId: ownRealm })
+        .expect(409);
       expect(res.body).toMatchObject({ code: 'duplicate-key' });
     });
 
     it('rejects a key that already exists in the category, on create and on update', async () => {
       const auth = e2e.auth('owner');
       await create('owner', { key: 'elvish', category: 'language' });
+      // Another spelling of the same name is the same key (spec 050)
       const res = await request(e2e.server)
         .post('/v1/enumerations')
         .set('Authorization', auth)
-        .send(enumerationBody({ key: 'elvish', category: 'language' }))
+        .send(enumerationBody({ key: undefined, name: 'Elvish ', category: 'language', realmId: ownRealm }))
         .expect(409);
       expect(res.body).toMatchObject({ statusCode: 409, error: 'ConflictError' });
 
@@ -181,6 +213,13 @@ describe('Enumerations (e2e)', () => {
     it('lets players and admins create enumerations, but not a user without a role', async () => {
       await create('owner', { key: 'by-owner' });
       await create('admin', { key: 'by-admin' });
+      await create('admin', { key: 'by-admin', realmId: null });
+      const global = await request(e2e.server)
+        .post('/v1/enumerations')
+        .set('Authorization', e2e.auth('owner'))
+        .send(enumerationBody({ key: 'global-by-owner' }))
+        .expect(403);
+      expect(global.body).toMatchObject({ code: 'enumeration-global-admin-only' });
       await request(e2e.server)
         .post('/v1/enumerations')
         .set('Authorization', e2e.auth('noRole'))

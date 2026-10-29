@@ -4,7 +4,10 @@ import type { EntitySource } from '../../../shared/domain/entities/entity-source
 
 export interface EnumerationProps {
   id: string;
+  /** Normalized key (spec 050): what references store. Derived from the name and never changed. */
   key: string;
+  /** The name as the user wrote it, shown when the key has no translation. */
+  name: string;
   category: EnumerationCategory;
   realmId: string | null;
   description: string | null;

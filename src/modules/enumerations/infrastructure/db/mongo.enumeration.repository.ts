@@ -26,6 +26,7 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
     return Enumeration.fromProps({
       id: doc._id,
       key: doc.key,
+      name: doc.name ?? doc.key,
       category: doc.category,
       realmId: doc.realmId ?? null,
       description: doc.description ?? null,

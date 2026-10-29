@@ -6,6 +6,7 @@ import { ENUMERATION_CATEGORIES } from '../../../../src/modules/enumerations/dom
 const baseProps = (): EnumerationProps => ({
   id: 'enum-1',
   key: 'westron',
+  name: 'Westron',
   category: 'language',
   realmId: null,
   description: null,
@@ -21,6 +22,7 @@ describe('Enumeration', () => {
   it('creates an enumeration with generated identity and nullable fields', () => {
     const enumeration = Enumeration.create({
       key: 'mithril',
+      name: 'Mithril',
       category: 'material-lore',
       realmId: null,
       description: null,
@@ -57,7 +59,7 @@ describe('Enumeration', () => {
     const enumeration = Enumeration.fromProps(baseProps());
 
     enumeration.update({
-      key: 'quenya',
+      name: 'Quenya',
       category: 'language',
       realmId: 'realm-1',
       description: 'Elven language',
@@ -67,7 +69,8 @@ describe('Enumeration', () => {
     });
 
     expect(enumeration.getProps()).toMatchObject({
-      key: 'quenya',
+      key: 'westron',
+      name: 'Quenya',
       category: 'language',
       realmId: 'realm-1',
       description: 'Elven language',
@@ -83,10 +86,10 @@ describe('Enumeration', () => {
     const enumeration = Enumeration.fromProps(baseProps()).restoreVersion(0);
 
     enumeration.update({});
-    enumeration.update({ key: 'westron' });
+    enumeration.update({ name: 'Westron' });
     expect(enumeration.hasChanges()).toBe(false);
 
-    enumeration.update({ key: 'adunaic' });
+    enumeration.update({ name: 'Adûnaic' });
     expect(enumeration.hasChanges()).toBe(true);
   });
 

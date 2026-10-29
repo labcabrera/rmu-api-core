@@ -6,6 +6,7 @@ import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggreg
 import type { RaceProps } from './race-props.js';
 import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo.js';
 import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { toOptionalKey } from '../../../shared/domain/services/key.js';
 
 export class Race extends BaseAggregateRoot<RaceProps> {
   private constructor(props: RaceProps) {
@@ -109,7 +110,13 @@ export class Race extends BaseAggregateRoot<RaceProps> {
   }
 
   static create(props: Omit<RaceProps, 'id' | 'createdAt' | 'updatedAt'>) {
-    const race = new Race({ ...props, id: randomUUID(), createdAt: new Date(), updatedAt: null });
+    const race = new Race({
+      ...props,
+      defaultLanguage: toOptionalKey(props.defaultLanguage),
+      id: randomUUID(),
+      createdAt: new Date(),
+      updatedAt: null,
+    });
     race.apply(new RaceCreatedEvent(race.getProps()));
     return race;
   }
@@ -131,7 +138,8 @@ export class Race extends BaseAggregateRoot<RaceProps> {
   }
 
   /** Sets the bonus of a skill and specialization, adding the entry when the race does not have it. */
-  addSkillBonus(skillId: string, specialization: string | null, bonus: number) {
+  addSkillBonus(skillId: string, rawSpecialization: string | null, bonus: number) {
+    const specialization = toOptionalKey(rawSpecialization);
     const others = this.props.skillBonuses.filter(sb => !(sb.skillId === skillId && sb.specialization === specialization));
     const index = this.props.skillBonuses.findIndex(sb => sb.skillId === skillId && sb.specialization === specialization);
     const entry = new RaceSkillBonus(skillId, specialization, bonus);
@@ -139,7 +147,8 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     this.changed({ skillBonuses });
   }
 
-  removeSkillBonus(skillId: string, specialization: string | null) {
+  removeSkillBonus(skillId: string, rawSpecialization: string | null) {
+    const specialization = toOptionalKey(rawSpecialization);
     const matches = (sb: RaceSkillBonus) =>
       sb.skillId === skillId && (sb.specialization === specialization || (!sb.specialization && !specialization));
     if (!this.props.skillBonuses.some(matches)) throw new NotFoundError('Race skill bonus', skillId);
@@ -169,7 +178,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     if (props.baseHits !== undefined) this.props.baseHits = props.baseHits;
     if (props.baseDevPoints !== undefined) this.props.baseDevPoints = props.baseDevPoints;
     if (props.baseAt !== undefined) this.props.baseAt = props.baseAt;
-    if (props.defaultLanguage !== undefined) this.props.defaultLanguage = props.defaultLanguage;
+    if (props.defaultLanguage !== undefined) this.props.defaultLanguage = toOptionalKey(props.defaultLanguage);
     if (props.talents) this.props.talents = props.talents;
     if (props.traits) this.props.traits = props.traits;
     if (props.description !== undefined) this.props.description = props.description;

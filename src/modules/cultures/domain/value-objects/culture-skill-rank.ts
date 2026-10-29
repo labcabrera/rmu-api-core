@@ -1,4 +1,5 @@
 import { ValidationError } from '../../../shared/domain/errors/errors.js';
+import { toOptionalKey } from '../../../shared/domain/services/key.js';
 
 export const CULTURE_SKILL_RANK_TYPES = ['skill', 'skill-choice', 'category-pool', 'languages', 'region'] as const;
 
@@ -46,7 +47,8 @@ export class CultureSkillRank {
       props.ranks,
       props.skillId ?? undefined,
       props.skillIds ?? undefined,
-      props.specialization ?? undefined,
+      // A normalized key, as in the characters that receive the ranks (spec 050)
+      toOptionalKey(props.specialization) ?? undefined,
       props.categoryIds ?? undefined,
       props.maxRanksPerSkill ?? undefined,
       props.region ?? undefined,
