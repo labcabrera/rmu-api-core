@@ -122,6 +122,27 @@ describe('Catalogs and calculations (e2e)', () => {
     });
   });
 
+  describe('trading tables', () => {
+    it('requires Core Law access, answers 404 until imported and returns the tables once they are', async () => {
+      await request(e2e.server).get('/v1/trading-tables').expect(401);
+      await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook tables.
+      const tables = {
+        negotiation: [
+          { min: null, max: 0, purchase: null, sale: null, outcome: 'no-agreement' },
+          { min: 1, max: null, purchase: 90, sale: 60 },
+        ],
+        priceFactors: [{ key: 'e2e-demand', type: 'choice', mode: 'multiplier', options: [{ key: 'high', value: 2 }], contexts: ['sale'] }],
+      };
+      await e2e.connection.collection('trading-tables').insertOne({ _id: 'treasure-law', ...tables } as never);
+
+      const res = await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual(tables);
+    });
+  });
+
   describe('fighting styles', () => {
     it('requires Core Law access', async () => {
       await request(e2e.server).get('/v1/fighting-styles').expect(401);

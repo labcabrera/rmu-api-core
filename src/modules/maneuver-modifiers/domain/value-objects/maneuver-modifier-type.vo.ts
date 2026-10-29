@@ -12,8 +12,13 @@ export interface ManeuverModifierOption {
   value: number;
 }
 
-/** Skills and skill categories a modifier applies to. */
+/** Sides of a deal (workspace spec 048): a Trading modifier can apply only to buying or only to selling. */
+export const MANEUVER_MODIFIER_CONTEXTS = ['purchase', 'sale'] as const;
+export type ManeuverModifierContext = (typeof MANEUVER_MODIFIER_CONTEXTS)[number];
+
+/** Skills and skill categories a modifier applies to, and the contexts it is limited to (every one when missing). */
 export interface ManeuverModifierScope {
   skillIds?: string[];
   categoryIds?: string[];
+  contexts?: ManeuverModifierContext[];
 }
