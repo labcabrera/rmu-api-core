@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf, IsInt, Min } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf, IsInt, Min, IsBoolean } from 'class-validator';
 import { UpdateRealmCommand } from '../../../application/cqrs/commands/update-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
@@ -55,6 +55,11 @@ export class UpdateRealmDto {
   @IsOptional()
   accessType: AccessType | undefined;
 
+  @ApiProperty({ type: Boolean, description: 'Generic realm, usable from any campaign (only an admin changes it)', required: false })
+  @IsBoolean()
+  @IsOptional()
+  generic?: boolean;
+
   @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
   @IsInt()
   @Min(0)
@@ -73,6 +78,7 @@ export class UpdateRealmDto {
       userId,
       roles,
       dto.version,
+      dto.generic ?? undefined,
     );
   }
 }

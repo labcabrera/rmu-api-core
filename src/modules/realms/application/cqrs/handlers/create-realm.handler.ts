@@ -19,6 +19,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
   async execute(command: CreateRealmCommand): Promise<Realm> {
     this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
     this.realmGuard.checkCreate(command.roles);
+    if (command.generic) this.realmGuard.checkGeneric(command.roles);
     const realm = Realm.create({
       name: command.name,
       magicPresence: command.magicPresence,
@@ -27,6 +28,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: command.accessType,
+      generic: command.generic,
     });
     const savedRealm = await this.realmRepository.save(realm);
     await this.events.publishChanges('realm', realm);

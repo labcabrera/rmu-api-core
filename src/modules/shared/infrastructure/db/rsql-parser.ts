@@ -3,7 +3,7 @@ import { parse } from '@rsql/parser';
 import { InvalidSearchExpression } from '../../domain/errors/errors.js';
 
 type MongoQuery = Record<string, unknown>;
-type MongoValue = string | number | null;
+type MongoValue = string | number | boolean | null;
 
 // @rsql/ast is only a transitive dependency, so its node types are derived from parse().
 type ExpressionNode = ReturnType<typeof parse>;
@@ -90,10 +90,16 @@ export class RsqlParser {
 
 const toArray = (raw: string | string[]): string[] => (Array.isArray(raw) ? raw : [raw]);
 
-/** `null` (any case) becomes null and numeric strings become numbers; anything else stays a string. */
+/**
+ * `null` (any case) becomes null, `true` and `false` (any case) become booleans and numeric strings become numbers;
+ * anything else stays a string.
+ */
 function coerce(raw: string | undefined): MongoValue {
   if (raw === undefined) throw new InvalidSearchExpression('Missing comparison value');
-  if (raw.trim().toLowerCase() === 'null') return null;
+  const lower = raw.trim().toLowerCase();
+  if (lower === 'null') return null;
+  if (lower === 'true') return true;
+  if (lower === 'false') return false;
   if (raw.trim() !== '') {
     const num = Number(raw);
     if (Number.isFinite(num)) return num;

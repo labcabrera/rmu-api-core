@@ -14,6 +14,7 @@ const baseProps = (): RealmProps => ({
   imageUrl: 'https://example.test/shadow.png',
   owner: 'user-1',
   accessType: 'private',
+  generic: false,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-02T00:00:00.000Z'),
 });
@@ -28,6 +29,7 @@ describe('Realm', () => {
       imageUrl: undefined,
       owner: 'user-1',
       accessType: 'public',
+      generic: false,
     });
 
     expect(realm.id).toEqual(expect.any(String));
@@ -92,6 +94,20 @@ describe('Realm', () => {
 
     expect(realm.name).toBe('Shadow World');
     expect(realm.magicPresence).toBe('limited');
+  });
+
+  it('marks and unmarks the realm as generic, and carries it in the updated event', () => {
+    const realm = Realm.fromProps(baseProps());
+
+    realm.update({ generic: true });
+    expect(realm.generic).toBe(true);
+    expect(realm.getUncommittedEvents()[0]).toMatchObject({ eventType: 'updated', data: { generic: true } });
+
+    realm.update({ name: 'Other' });
+    expect(realm.generic).toBe(true);
+
+    realm.update({ generic: false });
+    expect(realm.generic).toBe(false);
   });
 
   it('builds realm lifecycle events with the expected event types', () => {

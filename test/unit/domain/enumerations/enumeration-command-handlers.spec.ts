@@ -49,6 +49,7 @@ const realm = (accessType: 'private' | 'public' = 'private') =>
     imageUrl: undefined,
     owner: OWNER.id,
     accessType,
+    generic: false,
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: undefined,
   });

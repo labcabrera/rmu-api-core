@@ -12,6 +12,7 @@ export class CreateRealmCommand extends AuthenticatedCommand {
     public readonly accessType: AccessType,
     userId: string,
     roles: string[],
+    public readonly generic: boolean = false,
   ) {
     super(userId, roles);
   }

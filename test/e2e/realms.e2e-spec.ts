@@ -79,6 +79,65 @@ describe('Realms (e2e)', () => {
     });
   });
 
+  describe('generic', () => {
+    it('lets only an admin set or change generic, filters on it and carries it in the events', async () => {
+      const plain = await create('owner', { name: 'Not generic' });
+      expect(plain).toMatchObject({ generic: false });
+      takeTopics(e2e.events);
+
+      const forbidden = await request(e2e.server)
+        .post('/v1/realms')
+        .set('Authorization', e2e.auth('owner'))
+        .send(realmBody({ generic: true }))
+        .expect(403);
+      expect(forbidden.body).toMatchObject({ statusCode: 403, code: 'forbidden' });
+      await request(e2e.server).patch(`/v1/realms/${plain.id}`).set('Authorization', e2e.auth('owner')).send({ generic: true }).expect(403);
+      // The stored value sent back by the form is not a change.
+      await request(e2e.server)
+        .patch(`/v1/realms/${plain.id}`)
+        .set('Authorization', e2e.auth('owner'))
+        .send({ generic: false })
+        .expect(200);
+
+      const generic = await create('admin', { name: 'Generic realm', accessType: 'public', generic: true });
+      expect(generic).toMatchObject({ generic: true });
+      const changed = await request(e2e.server)
+        .patch(`/v1/realms/${plain.id}`)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ generic: true })
+        .expect(200);
+      expect(changed.body).toMatchObject({ generic: true });
+
+      const listed = await request(e2e.server)
+        .get('/v1/realms?q=generic==true&size=100')
+        .set('Authorization', e2e.auth('admin'))
+        .expect(200);
+      expect(ids(listed.body).sort()).toEqual([generic.id, plain.id].sort());
+      const ofOther = await request(e2e.server)
+        .get('/v1/realms?q=generic==true&size=100')
+        .set('Authorization', e2e.auth('other'))
+        .expect(200);
+      expect(ids(ofOther.body)).toEqual([generic.id]);
+
+      const published = e2e.events.splice(0).map(e => (e.message as { data: { generic: boolean } }).data.generic);
+      expect(published).toEqual([true, true]);
+
+      await request(e2e.server)
+        .patch(`/v1/realms/${plain.id}`)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ generic: 'yes' })
+        .expect(400);
+    });
+
+    it('reads a document stored without generic as false', async () => {
+      const realm = await create('owner', { name: 'Old realm' });
+      await e2e.connection.collection('realms').updateOne({ _id: realm.id } as never, { $unset: { generic: '' } });
+
+      const found = await request(e2e.server).get(`/v1/realms/${realm.id}`).set('Authorization', e2e.auth('owner')).expect(200);
+      expect(found.body).toMatchObject({ generic: false });
+    });
+  });
+
   describe('validation', () => {
     it('rejects an access type other than public or private, on create and on update', async () => {
       const auth = e2e.auth('owner');
