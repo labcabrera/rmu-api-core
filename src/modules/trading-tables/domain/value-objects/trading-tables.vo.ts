@@ -49,6 +49,16 @@ export interface PriceFactor {
   description?: string;
 }
 
+/** One row of the taxes and tolls (Treasure Law Table 2-2i, spec 062): a reference table that no rule reads. */
+export interface TaxRow {
+  key: string;
+  /** Gold; null when the tax has no fixed cost (a percent, a varying fee) */
+  cost: number | null;
+  /** What the cost is charged per, as printed */
+  unit: string | null;
+  notes: string | null;
+}
+
 /**
  * Tables of buying and selling (workspace spec 048): the negotiation table and the price factors of the expected
  * price. The values come from the rulebook and are imported from the gitignored data directory
@@ -57,4 +67,6 @@ export interface PriceFactor {
 export interface TradingTables {
   negotiation: NegotiationRow[];
   priceFactors: PriceFactor[];
+  /** Taxes and tolls (spec 062), stored in their own document; empty until imported */
+  taxation: TaxRow[];
 }

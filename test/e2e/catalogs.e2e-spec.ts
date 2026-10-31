@@ -139,7 +139,20 @@ describe('Catalogs and calculations (e2e)', () => {
       await e2e.connection.collection('trading-tables').insertOne({ _id: 'treasure-law', ...tables } as never);
 
       const res = await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
-      expect(res.body).toEqual(tables);
+      expect(res.body).toEqual({ ...tables, taxation: [] });
+
+      // Spec 062: the taxes and tolls, in their own document of the collection. Made-up rows.
+      const rows = [
+        { key: 'e2e-bridge', cost: 0.2, unit: 'per crossing', notes: 'Made-up note' },
+        { key: 'e2e-tithe', cost: null, unit: null },
+      ];
+      await e2e.connection.collection('trading-tables').insertOne({ _id: 'taxation', rows } as never);
+      const withTaxes = await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(withTaxes.body).toEqual({ ...tables, taxation: [rows[0], { ...rows[1], notes: null }] });
+    });
+
+    it('does not serve the taxes without Core Law access', async () => {
+      await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('owner')).expect(403);
     });
   });
 
