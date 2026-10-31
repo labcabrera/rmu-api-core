@@ -3,12 +3,12 @@ import { ForbiddenError, NotFoundError } from '../../../../src/modules/shared/do
 import { GetTradingTablesHandler } from '../../../../src/modules/trading-tables/application/cqrs/handlers/get-trading-tables.handler.js';
 import { GetTradingTablesQuery } from '../../../../src/modules/trading-tables/application/cqrs/queries/get-trading-tables.query.js';
 import type { TradingTablesRepository } from '../../../../src/modules/trading-tables/application/ports/trading-tables-repository.port.js';
-import type { TradingTables } from '../../../../src/modules/trading-tables/domain/value-objects/trading-tables.vo.js';
+import type { TaxRow, TradingTables } from '../../../../src/modules/trading-tables/domain/value-objects/trading-tables.vo.js';
 import { MongoTradingTablesRepository } from '../../../../src/modules/trading-tables/infrastructure/db/mongo.trading-tables.repository.js';
 import type { TradingTablesModel } from '../../../../src/modules/trading-tables/infrastructure/persistence/models/trading-tables.model.js';
 
 // Fixture values, not the rulebook ones
-const TABLES: TradingTables = {
+const TABLES: Omit<TradingTables, 'taxation'> = {
   negotiation: [
     { min: null, max: 0, purchase: null, sale: null, outcome: 'no-agreement' },
     { min: 1, max: 50, purchase: 120, sale: 40 },
@@ -20,13 +20,34 @@ const TABLES: TradingTables = {
   ],
 };
 
-const repository = (tables: TradingTables | null): TradingTablesRepository => ({ findById: () => Promise.resolve(tables) });
+const TAXATION: TaxRow[] = [
+  { key: 'e2e-gate-fee', cost: 0.5, unit: 'per wagon', notes: null },
+  { key: 'e2e-levy', cost: null, unit: null, notes: 'Made-up note' },
+];
+
+const repository = (tables: Omit<TradingTables, 'taxation'> | null, taxation: TaxRow[] = []): TradingTablesRepository => ({
+  findById: () => Promise.resolve(tables),
+  findTaxation: () => Promise.resolve(taxation),
+});
 
 describe('GetTradingTablesHandler', () => {
   it('returns the stored tables to Core Law users and administrators', async () => {
     const handler = new GetTradingTablesHandler(repository(TABLES));
-    await expect(handler.execute(new GetTradingTablesQuery('user', ['rmu-core-law']))).resolves.toEqual(TABLES);
-    await expect(handler.execute(new GetTradingTablesQuery('service', ['rmu-admin']))).resolves.toEqual(TABLES);
+    await expect(handler.execute(new GetTradingTablesQuery('user', ['rmu-core-law']))).resolves.toEqual({ ...TABLES, taxation: [] });
+    await expect(handler.execute(new GetTradingTablesQuery('service', ['rmu-admin']))).resolves.toEqual({ ...TABLES, taxation: [] });
+  });
+
+  it('adds the taxes and tolls of their own document (spec 062)', async () => {
+    const handler = new GetTradingTablesHandler(repository(TABLES, TAXATION));
+    await expect(handler.execute(new GetTradingTablesQuery('user', ['rmu-core-law']))).resolves.toEqual({ ...TABLES, taxation: TAXATION });
+  });
+
+  it('maps the stored tax rows with the missing fields as null', () => {
+    expect(MongoTradingTablesRepository.mapToTaxRows([{ key: 'e2e-toll' } as TaxRow, TAXATION[0]])).toEqual([
+      { key: 'e2e-toll', cost: null, unit: null, notes: null },
+      TAXATION[0],
+    ]);
+    expect(MongoTradingTablesRepository.mapToTaxRows(undefined)).toEqual([]);
   });
 
   it('rejects users without Core Law access', async () => {

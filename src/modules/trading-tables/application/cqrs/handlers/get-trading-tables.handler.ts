@@ -15,6 +15,8 @@ export class GetTradingTablesHandler implements IQueryHandler<GetTradingTablesQu
     checkCoreLawAccess(query.roles);
     const tables = await this.repository.findById(query.id);
     if (!tables) throw new NotFoundError('Trading tables', query.id);
-    return tables;
+    // Spec 062: the taxes and tolls are a reference table of their own document
+    const taxation = await this.repository.findTaxation();
+    return { ...tables, taxation };
   }
 }

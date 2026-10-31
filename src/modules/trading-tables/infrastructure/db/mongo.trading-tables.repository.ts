@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { TradingTablesRepository } from '../../application/ports/trading-tables-repository.port.js';
-import type { NegotiationRow, PriceFactor, TradingTables } from '../../domain/value-objects/trading-tables.vo.js';
+import { TAXATION_ID, type TradingTablesRepository } from '../../application/ports/trading-tables-repository.port.js';
+import type { NegotiationRow, PriceFactor, TaxRow, TradingTables } from '../../domain/value-objects/trading-tables.vo.js';
 import { type TradingTablesDocument, TradingTablesModel } from '../persistence/models/trading-tables.model.js';
 
 const optional = <T extends object>(entries: T): T =>
@@ -12,12 +12,21 @@ const optional = <T extends object>(entries: T): T =>
 export class MongoTradingTablesRepository implements TradingTablesRepository {
   constructor(@InjectModel(TradingTablesModel.name) private readonly model: Model<TradingTablesDocument>) {}
 
-  async findById(id: string): Promise<TradingTables | null> {
+  async findById(id: string): Promise<Omit<TradingTables, 'taxation'> | null> {
     const doc = await this.model.findById(id).lean<TradingTablesModel>();
     return doc ? MongoTradingTablesRepository.mapToTables(doc) : null;
   }
 
-  static mapToTables(doc: TradingTablesModel): TradingTables {
+  async findTaxation(): Promise<TaxRow[]> {
+    const doc = await this.model.findById(TAXATION_ID).lean<TradingTablesModel>();
+    return MongoTradingTablesRepository.mapToTaxRows(doc?.rows);
+  }
+
+  static mapToTaxRows(rows: TaxRow[] | null | undefined): TaxRow[] {
+    return (rows || []).map(row => ({ key: row.key, cost: row.cost ?? null, unit: row.unit ?? null, notes: row.notes ?? null }));
+  }
+
+  static mapToTables(doc: TradingTablesModel): Omit<TradingTables, 'taxation'> {
     return {
       negotiation: (doc.negotiation || []).map((row): NegotiationRow => ({
         min: row.min ?? null,

@@ -68,12 +68,30 @@ export class PriceFactorDto {
   description?: string;
 }
 
+/** A row of the taxes and tolls (Treasure Law Table 2-2i, spec 062). */
+export class TaxRowDto {
+  @ApiProperty({ example: 'bridge-toll' })
+  key: string;
+
+  @ApiProperty({ type: Number, nullable: true, description: 'Gold; null when it has no fixed cost' })
+  cost: number | null;
+
+  @ApiProperty({ type: String, nullable: true, description: 'What the cost is charged per, as printed' })
+  unit: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  notes: string | null;
+}
+
 export class TradingTablesDto {
   @ApiProperty({ type: [NegotiationRowDto], description: 'Negotiation table: percent of the expected price by total' })
   negotiation: NegotiationRowDto[];
 
   @ApiProperty({ type: [PriceFactorDto], description: 'Market conditions of the expected price' })
   priceFactors: PriceFactorDto[];
+
+  @ApiProperty({ type: [TaxRowDto], description: 'Taxes and tolls (spec 062); empty until imported' })
+  taxation: TaxRowDto[];
 
   static fromEntity(entity: TradingTables): TradingTablesDto {
     return Object.assign(new TradingTablesDto(), entity);

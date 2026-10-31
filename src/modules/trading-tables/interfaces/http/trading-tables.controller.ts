@@ -21,7 +21,7 @@ export class TradingTablesController {
     summary: 'Get the trading tables',
     description:
       'Negotiation table (percent of the expected price by total, buying and selling) and the market conditions of ' +
-      'the expected price. Requires Core Law access.',
+      'the expected price, and the taxes and tolls as a reference table. Requires Core Law access.',
   })
   @ApiOkResponse({ type: TradingTablesDto, description: 'Success' })
   @ApiErrors({ 403: 'The user has no Core Law access', 404: 'The trading tables have not been imported' })
