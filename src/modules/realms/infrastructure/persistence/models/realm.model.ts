@@ -35,6 +35,10 @@ export class RealmModel {
   @Prop({ type: String, required: true })
   accessType: AccessType;
 
+  /** Spec 055: missing in documents stored before, which read as false. */
+  @Prop({ type: Boolean, default: false })
+  generic: boolean;
+
   @Prop({ required: true })
   createdAt: Date;
 

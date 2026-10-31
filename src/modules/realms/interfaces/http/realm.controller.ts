@@ -53,7 +53,7 @@ export class RealmController {
   @ApiBody({ type: CreateRealmDto })
   @ApiOperation({ operationId: 'createRealm', summary: 'Create a new realm' })
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, realm already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: 'Only an admin sets generic', 409: 'Conflict, realm already exists' })
   async create(@Body() dto: CreateRealmDto, @CurrentUser() user: AuthenticatedUser) {
     const command = CreateRealmDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateRealmCommand, Realm>(command);
@@ -63,7 +63,7 @@ export class RealmController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm' })
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Realm not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: 'Forbidden, or generic changed by a non-admin', 404: 'Realm not found' })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @CurrentUser() user: AuthenticatedUser) {
     const command = UpdateRealmDto.toCommand(id, dto, user.id, user.roles);
     const entity = await this.commandBus.execute<UpdateRealmCommand, Realm>(command);

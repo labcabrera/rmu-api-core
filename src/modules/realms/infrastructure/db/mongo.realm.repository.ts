@@ -23,6 +23,7 @@ export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocume
       imageUrl: doc.imageUrl,
       owner: doc.owner,
       accessType: doc.accessType,
+      generic: doc.generic ?? false,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

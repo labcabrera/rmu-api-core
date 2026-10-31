@@ -25,6 +25,9 @@ describe('RsqlParser', () => {
     ['sizeId=in=(small,medium)', { sizeId: { $in: ['small', 'medium'] } }],
     ['baseAt=in=(1,null)', { baseAt: { $in: [1, null] } }],
     ['sizeId=out=(small,medium)', { sizeId: { $nin: ['small', 'medium'] } }],
+    ['generic==true', { generic: true }],
+    ['generic==FALSE', { generic: false }],
+    ['generic=in=(true,null)', { generic: { $in: [true, null] } }],
     ['name=re=lord', { name: { $regex: 'lord', $options: 'i' } }],
   ])('translates %s', (rsql, expected) => {
     expect(parser.parse(rsql)).toEqual(expected);

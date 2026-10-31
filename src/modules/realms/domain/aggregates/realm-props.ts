@@ -10,6 +10,8 @@ export interface RealmProps {
   imageUrl?: string;
   owner: string;
   accessType: AccessType;
+  /** A realm of generic content (RMU Core, spec 055) usable from any campaign. Only an admin sets it. */
+  generic: boolean;
   createdAt: Date;
   updatedAt?: Date;
 }

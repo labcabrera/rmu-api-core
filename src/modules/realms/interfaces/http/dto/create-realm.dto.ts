@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsIn, IsBoolean } from 'class-validator';
 import { CreateRealmCommand } from '../../../application/cqrs/commands/create-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
@@ -49,6 +49,16 @@ export class CreateRealmDto {
   @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
+  @ApiProperty({
+    type: Boolean,
+    description: 'Generic realm, usable from any campaign (only an admin sets it)',
+    required: false,
+    default: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  generic?: boolean;
+
   static toCommand(dto: CreateRealmDto, userId: string, userRoles: string[]) {
     return new CreateRealmCommand(
       dto.name,
@@ -59,6 +69,7 @@ export class CreateRealmDto {
       dto.accessType,
       userId,
       userRoles,
+      dto.generic ?? false,
     );
   }
 }

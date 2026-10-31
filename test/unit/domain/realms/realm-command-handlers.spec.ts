@@ -25,6 +25,7 @@ const realm = (overrides: Partial<RealmProps> = {}) =>
     imageUrl: undefined,
     owner: OWNER.id,
     accessType: 'private',
+    generic: false,
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: undefined,
     ...overrides,
@@ -64,6 +65,48 @@ describe('realm command handlers', () => {
       expect(realms.items.get(created.id)).toBe(created);
       expect(events.topics).toEqual(['realm.created']);
       expect((events.published[0].event.data as RealmProps).id).toBe(created.id);
+    });
+
+    it('lets an admin create a generic realm and carries it in realm.created', async () => {
+      const generic = new CreateRealmCommand(
+        'RMU Core',
+        undefined,
+        undefined,
+        undefined,
+        'limited',
+        'public',
+        ADMIN.id,
+        [...ADMIN.roles],
+        true,
+      );
+
+      const created = await new CreateRealmHandler(realms, guard, events).execute(generic);
+
+      expect(created.generic).toBe(true);
+      expect((events.published[0].event.data as RealmProps).generic).toBe(true);
+    });
+
+    it('creates a realm that is not generic by default', async () => {
+      const created = await new CreateRealmHandler(realms, guard, events).execute(command(OWNER));
+      expect(created.generic).toBe(false);
+    });
+
+    it('forbids a player to create a generic realm', async () => {
+      const generic = new CreateRealmCommand(
+        'Mine',
+        undefined,
+        undefined,
+        undefined,
+        'limited',
+        'public',
+        OWNER.id,
+        [...OWNER.roles],
+        true,
+      );
+
+      await expect(new CreateRealmHandler(realms, guard, events).execute(generic)).rejects.toThrow(ForbiddenError);
+      expect([...realms.items.keys()]).toEqual(['realm-1']);
+      expect(events.topics).toEqual([]);
     });
 
     it('forbids a user without roles', async () => {
@@ -108,6 +151,39 @@ describe('realm command handlers', () => {
       expect(updated).toMatchObject({ name: 'Middle-earth', magicPresence: 'limited', accessType: 'private', imageUrl: undefined });
       expect(updated.updatedAt).toBeUndefined();
       expect(update).not.toHaveBeenCalled();
+      expect(events.topics).toEqual([]);
+    });
+
+    const genericCommand = (generic: boolean, user: User) =>
+      new UpdateRealmCommand(
+        'realm-1',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        user.id,
+        [...user.roles],
+        undefined,
+        generic,
+      );
+
+    it('lets an admin mark and unmark the realm as generic', async () => {
+      const handler = new UpdateRealmHandler(realms, guard, events);
+
+      expect((await handler.execute(genericCommand(true, ADMIN))).generic).toBe(true);
+      expect((events.published[0].event.data as RealmProps).generic).toBe(true);
+      expect((await handler.execute(genericCommand(false, ADMIN))).generic).toBe(false);
+      expect(events.topics).toEqual(['realm.updated', 'realm.updated']);
+    });
+
+    it('forbids the owner to change generic, but accepts the stored value sent back', async () => {
+      const handler = new UpdateRealmHandler(realms, guard, events);
+
+      await expect(handler.execute(genericCommand(true, OWNER))).rejects.toThrow(ForbiddenError);
+      expect(realms.items.get('realm-1')?.generic).toBe(false);
+      await expect(handler.execute(genericCommand(false, OWNER))).resolves.toMatchObject({ generic: false });
       expect(events.topics).toEqual([]);
     });
 

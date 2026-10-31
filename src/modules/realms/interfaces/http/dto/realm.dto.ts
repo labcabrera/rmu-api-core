@@ -31,6 +31,9 @@ export class RealmDto {
   @ApiProperty({ type: String, description: 'Access type', example: 'public' })
   accessType: AccessType;
 
+  @ApiProperty({ description: 'Generic realm (RMU Core), usable from any campaign', example: false })
+  generic: boolean;
+
   static fromEntity(entity: Realm): RealmDto {
     const dto = new RealmDto();
     dto.id = entity.id;
@@ -42,6 +45,7 @@ export class RealmDto {
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;
     dto.accessType = entity.accessType;
+    dto.generic = entity.generic;
     return dto;
   }
 }

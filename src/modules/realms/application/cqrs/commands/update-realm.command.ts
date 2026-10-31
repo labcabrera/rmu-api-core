@@ -15,6 +15,7 @@ export class UpdateRealmCommand extends AuthenticatedCommand {
     roles: string[],
     /** The version the client read; undefined skips the concurrency check. */
     public readonly expectedVersion?: number,
+    public readonly generic?: boolean,
   ) {
     super(userId, roles);
   }
