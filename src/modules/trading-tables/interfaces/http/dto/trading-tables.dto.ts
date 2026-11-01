@@ -12,16 +12,16 @@ import {
 } from '../../../domain/value-objects/trading-tables.vo.js';
 
 export class NegotiationRowDto {
-  @ApiProperty({ nullable: true, example: 1, description: 'Lowest total of the row; null has no limit' })
+  @ApiProperty({ type: Number, nullable: true, example: 1, description: 'Lowest total of the row; null has no limit' })
   min: number | null;
 
-  @ApiProperty({ nullable: true, example: 10, description: 'Highest total of the row; null has no limit' })
+  @ApiProperty({ type: Number, nullable: true, example: 10, description: 'Highest total of the row; null has no limit' })
   max: number | null;
 
-  @ApiProperty({ nullable: true, description: 'Percent of the expected price when buying' })
+  @ApiProperty({ type: Number, nullable: true, description: 'Percent of the expected price when buying' })
   purchase: number | null;
 
-  @ApiProperty({ nullable: true, description: 'Percent of the expected price when selling' })
+  @ApiProperty({ type: Number, nullable: true, description: 'Percent of the expected price when selling' })
   sale: number | null;
 
   @ApiProperty({ type: String, enum: NEGOTIATION_OUTCOMES, required: false })
