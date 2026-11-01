@@ -3,6 +3,7 @@ import type { HydratedDocument } from 'mongoose';
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
 import type { ManeuverProfile } from '../../../../skill-categories/domain/value-objects/maneuver-profile.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export type SkillDocument = HydratedDocument<SkillModel>;
 
@@ -29,6 +30,10 @@ export class SkillModel {
 
   @Prop({ type: String, required: true })
   owner: string;
+
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
+  entitySource: EntitySource;
 
   @Prop({ type: String, required: true })
   accessType: AccessType;

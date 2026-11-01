@@ -5,6 +5,7 @@ import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-
 import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { ManeuverModifierDefinitionFields } from './maneuver-modifier.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefinitionFields) {
   @ApiProperty({ required: false })
@@ -29,6 +30,16 @@ export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefin
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateManeuverModifierDto, userId: string, roles: string[]): UpdateManeuverModifierCommand {
     return new UpdateManeuverModifierCommand(
       id,
@@ -48,6 +59,7 @@ export class UpdateManeuverModifierDto extends PartialType(ManeuverModifierDefin
       userId,
       roles,
       dto.version,
+      dto.entitySource,
     );
   }
 }

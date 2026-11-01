@@ -20,6 +20,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
     this.logger.log(`Creating realm ${command.name} for user ${command.userId}`);
     this.realmGuard.checkCreate(command.roles);
     if (command.generic) this.realmGuard.checkGeneric(command.roles);
+    this.realmGuard.checkEntitySource(command.roles, command.entitySource);
     const realm = Realm.create({
       name: command.name,
       magicPresence: command.magicPresence,
@@ -29,6 +30,7 @@ export class CreateRealmHandler implements ICommandHandler<CreateRealmCommand, R
       owner: command.userId,
       accessType: command.accessType,
       generic: command.generic,
+      entitySource: command.entitySource ?? 'user',
     });
     const savedRealm = await this.realmRepository.save(realm);
     await this.events.publishChanges('realm', realm);

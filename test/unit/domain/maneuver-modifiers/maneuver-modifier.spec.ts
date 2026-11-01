@@ -11,6 +11,7 @@ const create = (definition: Partial<ManeuverModifierDefinition>) =>
     value: 5,
     ...definition,
     owner: 'user-1',
+    entitySource: 'user',
     accessType: 'public',
   });
 

@@ -6,6 +6,7 @@ import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.j
 import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
 import { MANEUVER_MODIFIER_CONTEXTS, MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 import type { ManeuverModifierContext, ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class ManeuverModifierOptionDto {
   @ApiProperty({ description: 'Option key', example: 'option-a' })
@@ -86,6 +87,14 @@ export class ManeuverModifierDto {
   @ApiProperty()
   owner: string;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
   static fromEntity(entity: ManeuverModifier): ManeuverModifierDto {
     const dto = new ManeuverModifierDto();
     dto.id = entity.id;
@@ -102,6 +111,7 @@ export class ManeuverModifierDto {
     dto.reference = entity.reference;
     dto.accessType = entity.accessType;
     dto.owner = entity.owner;
+    dto.entitySource = entity.entitySource;
     return dto;
   }
 }

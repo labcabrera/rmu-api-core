@@ -17,6 +17,7 @@ const makeTraitProps = (overrides: Partial<TraitProps> = {}): TraitProps => ({
   tierCost: undefined,
   description: undefined,
   owner: 'owner-1',
+  entitySource: 'user',
   createdAt: new Date('2025-01-01T00:00:00.000Z'),
   updatedAt: undefined,
   ...overrides,
@@ -35,6 +36,7 @@ describe('Trait domain aggregate', () => {
       tierCost: 0,
       description: undefined,
       owner: 'owner-1',
+      entitySource: 'user',
     });
 
     expect(trait.id).toBe('night-vision');

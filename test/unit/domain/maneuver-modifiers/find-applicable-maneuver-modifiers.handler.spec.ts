@@ -9,7 +9,7 @@ import type { SkillRepository } from '../../../../src/modules/skills/application
 import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
 
 const modifier = (key: string, scope: { skillIds?: string[]; categoryIds?: string[] }, accessType: 'public' | 'private' = 'public') =>
-  ManeuverModifier.create({ key, scope, type: 'flag', value: 1, owner: 'owner-1', accessType });
+  ManeuverModifier.create({ key, scope, type: 'flag', value: 1, owner: 'owner-1', entitySource: 'user', accessType });
 
 const modifiers = [
   modifier('m-skill', { skillIds: ['skill-a'] }),
@@ -27,7 +27,15 @@ const skillRepository = {
   findById: (id: string) =>
     Promise.resolve(
       id === 'skill-a'
-        ? Skill.create({ id, categoryId: 'category-a', bonus: [], specialization: null, owner: 'owner-1', accessType: 'public' })
+        ? Skill.create({
+            id,
+            categoryId: 'category-a',
+            bonus: [],
+            specialization: null,
+            owner: 'owner-1',
+            entitySource: 'user',
+            accessType: 'public',
+          })
         : null,
     ),
 } as unknown as SkillRepository;

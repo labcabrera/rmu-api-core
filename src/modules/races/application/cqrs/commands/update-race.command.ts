@@ -3,6 +3,7 @@ import { RaceStats } from '../../../domain/value-objects/race-stats.vo.js';
 import type { SexBasedAttribute } from '../../../domain/value-objects/sex-based-attribute.vo.js';
 import { RaceTrait } from '../../../domain/value-objects/race-trait.vo.js';
 import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateRaceCommand extends AuthenticatedCommand {
   constructor(
@@ -29,6 +30,8 @@ export class UpdateRaceCommand extends AuthenticatedCommand {
     roles: string[],
     /** The version the client read; undefined skips the concurrency check. */
     public readonly expectedVersion?: number,
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

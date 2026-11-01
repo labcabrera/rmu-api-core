@@ -1,6 +1,7 @@
 import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateRealmCommand extends AuthenticatedCommand {
   constructor(
@@ -13,6 +14,8 @@ export class CreateRealmCommand extends AuthenticatedCommand {
     userId: string,
     roles: string[],
     public readonly generic: boolean = false,
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

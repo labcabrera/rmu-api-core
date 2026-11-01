@@ -5,6 +5,7 @@ import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CreateSkillCommand } from '../../../application/cqrs/commands/create-skill.command.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateSkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
@@ -41,6 +42,16 @@ export class CreateSkillDto {
   @IsOptional()
   maneuver?: ManeuverProfileDto;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateSkillDto, userId: string, roles: string[]): CreateSkillCommand {
     return new CreateSkillCommand(
       dto.id,
@@ -52,6 +63,7 @@ export class CreateSkillDto {
       userId,
       roles,
       dto.specializationOptional,
+      dto.entitySource,
     );
   }
 }

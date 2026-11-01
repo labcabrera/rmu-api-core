@@ -24,12 +24,14 @@ export class CreateCultureHandler implements ICommandHandler<CreateCultureComman
   async execute(command: CreateCultureCommand): Promise<CultureView> {
     this.logger.log(`Creating culture ${command.name} for user ${command.userId}`);
     this.cultureGuard.checkCreate(command.roles);
+    this.cultureGuard.checkEntitySource(command.roles, command.entitySource);
     const props: CreateCultureProps = {
       name: command.name,
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: command.accessType,
+      entitySource: command.entitySource ?? 'user',
       skillRanks: (command.skillRanks ?? []).map(s => CultureSkillRank.create(s)),
       languages: command.languages,
       suggestedCrafts: command.suggestedCrafts,

@@ -65,6 +65,10 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
     return this.props.owner;
   }
 
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -117,6 +121,7 @@ export class Trait extends BaseAggregateRoot<TraitProps> {
     if (prerequisites !== undefined) this.props.prerequisites = prerequisites;
     if (possibleFlaws !== undefined) this.props.possibleFlaws = possibleFlaws;
     if (source !== undefined) this.props.source = source;
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new TraitUpdatedEvent(this.getProps()));

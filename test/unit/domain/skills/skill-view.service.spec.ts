@@ -14,7 +14,7 @@ const repository = {
 } as unknown as SkillCategoryRepository;
 
 const skill = (id: string, categoryId: string, maneuver?: Skill['maneuver']) =>
-  Skill.create({ id, categoryId, bonus: [], specialization: null, owner: 'user-1', accessType: 'public', maneuver });
+  Skill.create({ id, categoryId, bonus: [], specialization: null, owner: 'user-1', entitySource: 'user', accessType: 'public', maneuver });
 
 describe('SkillViewService', () => {
   const service = new SkillViewService(repository);

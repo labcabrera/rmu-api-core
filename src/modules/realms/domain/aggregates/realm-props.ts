@@ -1,5 +1,6 @@
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import type { MagicPresence } from '../value-objects/realm-magic-type.vo.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 
 export interface RealmProps {
   id: string;
@@ -10,6 +11,8 @@ export interface RealmProps {
   imageUrl?: string;
   owner: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin-only changes) or user content (spec 063). */
+  entitySource: EntitySource;
   /** A realm of generic content (RMU Core, spec 055) usable from any campaign. Only an admin sets it. */
   generic: boolean;
   createdAt: Date;

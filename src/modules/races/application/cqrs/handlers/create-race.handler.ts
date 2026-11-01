@@ -25,6 +25,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
     this.logger.log(`Creating race ${command.name} for user ${command.userId} in realm ${command.realmId}`);
 
     this.raceGuard.checkCreate(command.roles);
+    this.raceGuard.checkEntitySource(command.roles, command.entitySource);
     const realm = await this.realmRepository.findById(command.realmId);
     if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
     // A race belongs to its realm (the realm sync copies the realm owner): only who can change the realm adds races to it.
@@ -53,6 +54,7 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: realm.accessType,
+      entitySource: command.entitySource ?? 'user',
     });
     const savedRace = await this.raceRepository.save(race);
     await this.events.publishChanges('race', race);

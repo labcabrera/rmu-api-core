@@ -8,6 +8,7 @@ const baseProps = (): SkillProps => ({
   bonus: ['strength'],
   specialization: null,
   owner: 'user-1',
+  entitySource: 'user',
   accessType: 'private',
   createdAt: new Date('2026-03-01T00:00:00.000Z'),
   updatedAt: undefined,
@@ -21,6 +22,7 @@ describe('Skill', () => {
       bonus: ['presence', 'empathy'],
       specialization: 'skill-influence',
       owner: 'user-1',
+      entitySource: 'user',
       accessType: 'public',
     });
 

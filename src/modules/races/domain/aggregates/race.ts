@@ -97,6 +97,10 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     return this.props.owner;
   }
 
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
   get accessType() {
     return this.props.accessType;
   }
@@ -183,6 +187,7 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     if (props.traits) this.props.traits = props.traits;
     if (props.description !== undefined) this.props.description = props.description;
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new RaceUpdatedEvent(this.getProps()));

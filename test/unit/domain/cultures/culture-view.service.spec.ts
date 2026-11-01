@@ -6,7 +6,16 @@ import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js
 import type { SkillRepository } from '../../../../src/modules/skills/application/ports/skill-repository.port.js';
 
 const makeSkill = (id: string, categoryId: string) =>
-  Skill.fromProps({ id, categoryId, bonus: [], specialization: null, owner: 'owner', accessType: 'public', createdAt: new Date() });
+  Skill.fromProps({
+    id,
+    categoryId,
+    bonus: [],
+    specialization: null,
+    owner: 'owner',
+    entitySource: 'user',
+    accessType: 'public',
+    createdAt: new Date(),
+  });
 
 const catalog = new Map([
   ['skill-a', makeSkill('skill-a', 'combat-training')],
@@ -20,6 +29,7 @@ const makeCulture = (skillRanks: CultureSkillRank[]) =>
     description: null,
     imageUrl: null,
     owner: 'owner',
+    entitySource: 'user',
     accessType: 'public',
     skillRanks,
     createdAt: new Date(),

@@ -26,6 +26,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
     if (!culture) throw new NotFoundError('Culture', command.id);
 
     this.cultureGuard.checkUpdate(culture, command.userId, command.roles);
+    this.cultureGuard.checkEntitySource(command.roles, command.entitySource);
 
     culture.checkVersion(command.expectedVersion);
 
@@ -34,6 +35,7 @@ export class UpdateCultureHandler implements ICommandHandler<UpdateCultureComman
       description: command.description,
       imageUrl: command.imageUrl,
       accessType: command.accessType,
+      entitySource: command.entitySource,
       skillRanks: command.skillRanks?.map(s => CultureSkillRank.create(s)),
       languages: command.languages,
       suggestedCrafts: command.suggestedCrafts,

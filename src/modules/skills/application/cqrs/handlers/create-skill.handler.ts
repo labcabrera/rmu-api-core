@@ -26,6 +26,7 @@ export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, S
   async execute(command: CreateSkillCommand): Promise<SkillView> {
     this.logger.log(`Creating skill ${command.id} for user ${command.userId}`);
     this.skillGuard.checkCreate(command.roles);
+    this.skillGuard.checkEntitySource(command.roles, command.entitySource);
 
     const current = await this.skillRepository.findById(command.id);
     if (current) throw new ConflictError(`Skill with id ${command.id} already exists`, 'duplicate-key');
@@ -41,6 +42,7 @@ export class CreateSkillHandler implements ICommandHandler<CreateSkillCommand, S
       specializationOptional: command.specializationOptional,
       owner: command.userId,
       accessType: command.accessType,
+      entitySource: command.entitySource ?? 'user',
       maneuver: command.maneuver,
     });
     const saved = await this.skillRepository.save(skill);

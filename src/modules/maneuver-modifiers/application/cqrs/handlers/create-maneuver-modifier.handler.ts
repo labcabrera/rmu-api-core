@@ -18,7 +18,13 @@ export class CreateManeuverModifierHandler implements ICommandHandler<CreateMane
   async execute(command: CreateManeuverModifierCommand): Promise<ManeuverModifier> {
     this.logger.log(`Creating maneuver modifier ${command.definition.key} for user ${command.userId}`);
     this.guard.checkCreate(command.roles);
-    const modifier = ManeuverModifier.create({ ...command.definition, owner: command.userId, accessType: command.accessType });
+    this.guard.checkEntitySource(command.roles, command.entitySource);
+    const modifier = ManeuverModifier.create({
+      ...command.definition,
+      owner: command.userId,
+      accessType: command.accessType,
+      entitySource: command.entitySource ?? 'user',
+    });
     if (await this.repository.findByKey(modifier.key)) {
       throw new ConflictError(`Maneuver modifier with key ${modifier.key} already exists`, 'duplicate-key');
     }

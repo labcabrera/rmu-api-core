@@ -21,6 +21,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       throw new NotFoundError('Trait', command.id);
     }
     this.traitGuard.checkUpdate(trait, command.userId, command.roles);
+    this.traitGuard.checkEntitySource(command.roles, command.entitySource);
     trait.checkVersion(command.expectedVersion);
     trait.update({
       name: command.name,
@@ -33,6 +34,7 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       tierCost: command.tierCost,
       description: command.description,
       ...command.details,
+      entitySource: command.entitySource,
     });
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
     if (!trait.hasChanges()) return trait;

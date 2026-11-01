@@ -19,6 +19,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
 
   async execute(command: CreateTraitCommand): Promise<Trait> {
     this.guard.checkCreate(command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
     this.logger.log(`Creating trait ${command.name} for user ${command.userId}`);
     const trait = Trait.create({
       name: command.name,
@@ -32,6 +33,7 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
       description: command.description,
       ...command.details,
       owner: command.userId,
+      entitySource: command.entitySource ?? 'user',
     });
     const existing = await this.traitRepository.findById(trait.id);
     if (existing) {

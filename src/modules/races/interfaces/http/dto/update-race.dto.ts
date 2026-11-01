@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString, ValidateNested, IsInt, Min, IsNotEmpty, ValidateIf } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested, IsInt, Min, IsNotEmpty, ValidateIf, IsIn } from 'class-validator';
 import { RaceResistancesDto } from './race-resistances.dto.js';
 import { RaceStatsDto } from './race-stats.dto.js';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
@@ -6,6 +6,7 @@ import { UpdateRaceCommand } from '../../../application/cqrs/commands/update-rac
 import { RaceTraitDto } from './race-trait.dto.js';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateRaceDto {
   @ApiProperty({ description: 'Name of the race', example: 'Elf', required: false })
@@ -120,6 +121,16 @@ export class UpdateRaceDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateRaceDto, userId: string, roles: string[]): UpdateRaceCommand {
     return new UpdateRaceCommand(
       id,
@@ -144,6 +155,7 @@ export class UpdateRaceDto {
       userId,
       roles,
       dto.version,
+      dto.entitySource,
     );
   }
 }

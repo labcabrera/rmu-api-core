@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray, IsOptional, IsIn } from 'class-validator';
 import { RaceResistancesDto } from './race-resistances.dto.js';
 import { CreateRaceCommand } from '../../../application/cqrs/commands/create-race.command.js';
 import { RaceStatsDto } from './race-stats.dto.js';
 import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
 import { RaceTraitDto } from './race-trait.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 // realmId is a string identifier
 
 export class CreateRaceDto {
@@ -99,6 +100,16 @@ export class CreateRaceDto {
   @IsOptional()
   imageUrl: string | null;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
     return new CreateRaceCommand(
       dto.name,
@@ -122,6 +133,7 @@ export class CreateRaceDto {
       dto.imageUrl,
       userId,
       roles,
+      dto.entitySource,
     );
   }
 }

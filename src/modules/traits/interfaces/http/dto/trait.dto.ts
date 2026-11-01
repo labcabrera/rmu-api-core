@@ -4,6 +4,7 @@ import { Trait } from '../../../domain/aggregates/trait.js';
 import type { TraitSource } from '../../../domain/value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
 import { TraitPrerequisiteDto } from './trait-details.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class TraitDto {
   @ApiProperty({ description: 'Unique identifier for the trait', example: 'ambidextrous' })
@@ -51,6 +52,17 @@ export class TraitDto {
   @ApiProperty({ type: String, description: 'Rulebook of the trait', required: false, example: 'character-companion' })
   source?: TraitSource | null;
 
+  @ApiProperty({ description: 'Owner of the trait: the user that created it', example: 'user123', required: true })
+  owner: string;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
   static fromEntity(entity: Trait): TraitDto {
     const dto = new TraitDto();
     dto.id = entity.id;
@@ -68,6 +80,8 @@ export class TraitDto {
     dto.prerequisites = entity.prerequisites;
     dto.possibleFlaws = entity.possibleFlaws;
     dto.source = entity.source;
+    dto.owner = entity.owner;
+    dto.entitySource = entity.entitySource;
     return dto;
   }
 }

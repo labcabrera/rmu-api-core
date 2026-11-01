@@ -21,6 +21,7 @@ export class MongoSkillRepository extends MongoBaseRepository<Skill, SkillDocume
       specialization: doc.specialization,
       specializationOptional: doc.specializationOptional ?? undefined,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
       maneuver: doc.maneuver ?? undefined,
       createdAt: doc.createdAt,

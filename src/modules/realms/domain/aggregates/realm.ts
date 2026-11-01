@@ -6,7 +6,7 @@ import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggreg
 
 type Clearable<T> = { [K in keyof T]?: T[K] | null };
 
-export type RealmUpdate = Partial<Pick<RealmProps, 'name' | 'magicPresence' | 'accessType' | 'generic'>> &
+export type RealmUpdate = Partial<Pick<RealmProps, 'name' | 'magicPresence' | 'accessType' | 'generic' | 'entitySource'>> &
   Clearable<Pick<RealmProps, 'shortDescription' | 'description' | 'imageUrl'>>;
 
 export class Realm extends BaseAggregateRoot<RealmProps> {
@@ -36,6 +36,10 @@ export class Realm extends BaseAggregateRoot<RealmProps> {
 
   get owner() {
     return this.props.owner;
+  }
+
+  get entitySource() {
+    return this.props.entitySource;
   }
 
   get accessType() {
@@ -75,6 +79,7 @@ export class Realm extends BaseAggregateRoot<RealmProps> {
     if (changes.imageUrl !== undefined) this.props.imageUrl = changes.imageUrl || undefined;
     if (changes.accessType) this.props.accessType = changes.accessType;
     if (changes.generic !== undefined) this.props.generic = changes.generic;
+    if (changes.entitySource !== undefined) this.props.entitySource = changes.entitySource;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new RealmUpdatedEvent(this.getProps()));

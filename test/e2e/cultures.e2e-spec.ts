@@ -217,4 +217,38 @@ describe('Cultures (e2e)', () => {
       await request(e2e.server).delete('/v1/cultures/missing/skill-ranks/0').set('Authorization', auth).expect(404);
     });
   });
+  describe('entity source (spec 063)', () => {
+    it('lets only an admin change a system culture and its skill ranks', async () => {
+      const culture = await create('admin', { name: 'Rulebook culture', entitySource: 'system' });
+      expect(culture).toMatchObject({ entitySource: 'system' });
+      await e2e.connection.collection('cultures').updateOne({ _id: culture.id as never }, { $set: { owner: 'e2e-owner' } });
+      const path = `/v1/cultures/${culture.id}`;
+      const forbidden = { statusCode: 403, code: 'system-entity-admin-only' };
+      const owner = e2e.auth('owner');
+
+      expect((await request(e2e.server).patch(path).set('Authorization', owner).send({ name: 'Mine' }).expect(403)).body).toMatchObject(
+        forbidden,
+      );
+      const rank = await request(e2e.server)
+        .post(`${path}/skill-ranks`)
+        .set('Authorization', owner)
+        .send({ type: 'languages', ranks: 1 })
+        .expect(403);
+      expect(rank.body).toMatchObject(forbidden);
+      await request(e2e.server).delete(`${path}/skill-ranks/0`).set('Authorization', owner).expect(403);
+      await request(e2e.server).delete(path).set('Authorization', owner).expect(403);
+
+      await request(e2e.server).delete(`${path}/skill-ranks/0`).set('Authorization', e2e.auth('admin')).expect(200);
+      await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
+    });
+
+    it('forbids a player to create a system culture', async () => {
+      const res = await request(e2e.server)
+        .post('/v1/cultures')
+        .set('Authorization', e2e.auth('owner'))
+        .send(cultureBody({ entitySource: 'system' }))
+        .expect(403);
+      expect(res.body).toMatchObject({ code: 'system-entity-admin-only' });
+    });
+  });
 });

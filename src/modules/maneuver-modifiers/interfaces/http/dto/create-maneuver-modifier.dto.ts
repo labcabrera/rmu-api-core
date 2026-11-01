@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { CreateManeuverModifierCommand } from '../../../application/cqrs/commands/create-maneuver-modifier.command.js';
 import { MANEUVER_MODIFIER_TYPES } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 import type { ManeuverModifierType } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { ManeuverModifierDefinitionFields } from './maneuver-modifier.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateManeuverModifierDto extends ManeuverModifierDefinitionFields {
   @ApiProperty({ description: 'Unique key', example: 'some-modifier' })
@@ -19,6 +20,16 @@ export class CreateManeuverModifierDto extends ManeuverModifierDefinitionFields 
   @ApiProperty({ type: String, example: 'public' })
   @IsIn(['public', 'private'])
   accessType: AccessType;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
 
   static toCommand(dto: CreateManeuverModifierDto, userId: string, roles: string[]): CreateManeuverModifierCommand {
     return new CreateManeuverModifierCommand(
@@ -37,6 +48,7 @@ export class CreateManeuverModifierDto extends ManeuverModifierDefinitionFields 
       dto.accessType,
       userId,
       roles,
+      dto.entitySource,
     );
   }
 }

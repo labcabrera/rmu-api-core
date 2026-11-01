@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { HydratedDocument } from 'mongoose';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export type RealmDocument = HydratedDocument<RealmModel>;
 
@@ -31,6 +32,10 @@ export class RealmModel {
 
   @Prop({ required: true })
   owner: string;
+
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
+  entitySource: EntitySource;
 
   @Prop({ type: String, required: true })
   accessType: AccessType;

@@ -30,6 +30,7 @@ const skill = (overrides: Partial<SkillProps> = {}) =>
     bonus: ['ag', 'st'],
     specialization: null,
     owner: OWNER.id,
+    entitySource: 'user',
     accessType: 'private',
     maneuver: undefined,
     createdAt: new Date('2026-01-01T00:00:00Z'),

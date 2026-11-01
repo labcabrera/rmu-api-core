@@ -20,6 +20,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
     if (!race) throw new NotFoundError('Race', command.id);
 
     this.raceGuard.checkUpdate(race, command.userId, command.roles);
+    this.raceGuard.checkEntitySource(command.roles, command.entitySource);
 
     race.checkVersion(command.expectedVersion);
 
@@ -42,6 +43,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       traits: command.traits,
       description: command.description,
       imageUrl: command.imageUrl,
+      entitySource: command.entitySource,
     });
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
     if (!race.hasChanges()) return race;

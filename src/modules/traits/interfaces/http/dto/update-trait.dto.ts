@@ -4,6 +4,7 @@ import { UpdateTraitCommand } from '../../../application/cqrs/commands/update-tr
 import { TRAIT_CATEGORIES, type TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import { TraitDetailsDto } from './trait-details.dto.js';
 import { TRAIT_SPECIALIZATIONS, type TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateTraitDto extends TraitDetailsDto {
   @ApiProperty({ type: String, description: 'Name of the trait', required: false, example: 'Courage' })
@@ -76,6 +77,16 @@ export class UpdateTraitDto extends TraitDetailsDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateTraitDto, userId: string, roles: string[]) {
     return new UpdateTraitCommand(
       id,
@@ -92,6 +103,7 @@ export class UpdateTraitDto extends TraitDetailsDto {
       roles,
       dto.version,
       TraitDetailsDto.toDetails(dto),
+      dto.entitySource,
     );
   }
 }
