@@ -29,6 +29,14 @@ export class ProfessionDto {
   professionalSkills: string[];
 
   @ApiProperty({
+    type: Number,
+    nullable: true,
+    description: 'Most base lists of the profession a character develops as base lists (spec 064); null has no limit',
+    example: 6,
+  })
+  baseListLimit: number | null;
+
+  @ApiProperty({
     enum: ENTITY_SOURCES,
     description: 'Source: system (rulebook, admin-only changes) or user',
     required: true,
@@ -62,6 +70,7 @@ export class ProfessionDto {
       fixedRealmTypes: entity.fixedRealmTypes,
       skillCosts: ProfessionSkillCostsDto.fromEntity(entity.skillCosts),
       professionalSkills: entity.professionalSkills,
+      baseListLimit: entity.baseListLimit,
       entitySource: entity.entitySource,
       description: entity.description,
       imageUrl: entity.imageUrl,

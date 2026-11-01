@@ -85,6 +85,30 @@ describe('Professions (e2e)', () => {
       expect(await create('admin')).toMatchObject({ entitySource: 'user', owner: 'e2e-admin' });
       expect(await create('admin', { entitySource: 'system' })).toMatchObject({ entitySource: 'system', owner: 'e2e-admin' });
     });
+
+    it('round-trips the base list limit, null when missing, and rejects one below 1 (spec 064)', async () => {
+      const auth = e2e.auth('owner');
+      expect(await create('owner')).toMatchObject({ baseListLimit: null });
+
+      const limited = await create('owner', { baseListLimit: 6 });
+      expect(limited).toMatchObject({ baseListLimit: 6 });
+      const path = `/v1/professions/${limited.id}`;
+      const found = await request(e2e.server).get(path).set('Authorization', auth).expect(200);
+      expect(found.body).toMatchObject({ baseListLimit: 6 });
+
+      const kept = await request(e2e.server).patch(path).set('Authorization', auth).send({ description: 'Six lists' }).expect(200);
+      expect(kept.body).toMatchObject({ baseListLimit: 6 });
+      const removed = await request(e2e.server).patch(path).set('Authorization', auth).send({ baseListLimit: null }).expect(200);
+      expect(removed.body).toMatchObject({ baseListLimit: null });
+
+      await request(e2e.server).patch(path).set('Authorization', auth).send({ baseListLimit: 0 }).expect(400);
+      await request(e2e.server).patch(path).set('Authorization', auth).send({ baseListLimit: 1.5 }).expect(400);
+      await request(e2e.server)
+        .post('/v1/professions')
+        .set('Authorization', auth)
+        .send(professionBody(`e2e-profession-${++sequence}`, { baseListLimit: 0 }))
+        .expect(400);
+    });
   });
 
   describe('validation', () => {

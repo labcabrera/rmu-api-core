@@ -32,6 +32,10 @@ export class ProfessionModel {
   @Prop({ type: [String], required: true })
   professionalSkills: string[];
 
+  /** Spec 064: null (or missing in documents stored before) has no limit */
+  @Prop({ type: Number, required: false, default: null })
+  baseListLimit: number | null;
+
   @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
   entitySource: EntitySource;
 

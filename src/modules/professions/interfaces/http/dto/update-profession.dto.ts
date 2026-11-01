@@ -66,6 +66,19 @@ export class UpdateProfessionDto {
   version?: number;
 
   @ApiProperty({
+    type: Number,
+    nullable: true,
+    required: false,
+    description:
+      'Most base lists of the profession a character develops as base lists (spec 064). null removes the limit; missing leaves it',
+    example: 6,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  baseListLimit?: number | null;
+
+  @ApiProperty({
     enum: ENTITY_SOURCES,
     description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
     required: false,
@@ -90,6 +103,7 @@ export class UpdateProfessionDto {
       roles,
       dto.version,
       dto.entitySource,
+      dto.baseListLimit,
     );
   }
 }

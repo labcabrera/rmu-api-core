@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
 import { CreateProfessionCommand } from '../../../application/cqrs/commands/create-profession.command.js';
-import { IsArray, IsObject, IsOptional, IsString, IsIn, ValidateNested } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString, IsIn, IsInt, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
@@ -53,6 +53,18 @@ export class CreateProfessionDto {
   accessType: AccessType;
 
   @ApiProperty({
+    type: Number,
+    nullable: true,
+    required: false,
+    description: 'Most base lists of the profession a character develops as base lists (spec 064). Missing or null has no limit',
+    example: 6,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  baseListLimit?: number | null;
+
+  @ApiProperty({
     enum: ENTITY_SOURCES,
     description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
     required: false,
@@ -76,6 +88,7 @@ export class CreateProfessionDto {
       userId,
       roles,
       dto.entitySource,
+      dto.baseListLimit,
     );
   }
 }
