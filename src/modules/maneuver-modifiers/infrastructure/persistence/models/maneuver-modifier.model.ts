@@ -6,6 +6,7 @@ import type {
   ManeuverModifierScope,
   ManeuverModifierType,
 } from '../../../domain/value-objects/maneuver-modifier-type.vo.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export type ManeuverModifierDocument = HydratedDocument<ManeuverModifierModel>;
 
@@ -50,6 +51,10 @@ export class ManeuverModifierModel {
 
   @Prop({ type: String, required: true })
   owner: string;
+
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
+  entitySource: EntitySource;
 
   @Prop({ type: String, required: true })
   accessType: AccessType;

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Enumeration } from '../../../domain/aggregates/enumeration.js';
 import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
-import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 
 export class EnumerationDto {
@@ -42,7 +42,12 @@ export class EnumerationDto {
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public', required: true })
   accessType: AccessType;
 
-  @ApiProperty({ type: String, description: 'Entity source', example: 'user', required: true })
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
   entitySource: EntitySource;
 
   static fromEntity(entity: Enumeration): EnumerationDto {

@@ -5,6 +5,7 @@ import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http
 import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { UpdateSkillCommand } from '../../../application/cqrs/commands/update-skill.command.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateSkillDto {
   @ApiProperty({ type: String, description: 'Category identifier of the skill', example: 'animal', required: false })
@@ -48,6 +49,16 @@ export class UpdateSkillDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateSkillDto, userId: string, roles: string[]): UpdateSkillCommand {
     return new UpdateSkillCommand(
       id,
@@ -60,6 +71,7 @@ export class UpdateSkillDto {
       roles,
       dto.version,
       dto.specializationOptional,
+      dto.entitySource,
     );
   }
 }

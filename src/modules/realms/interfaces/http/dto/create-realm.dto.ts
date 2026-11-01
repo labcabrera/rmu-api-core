@@ -3,6 +3,7 @@ import { IsString, IsNotEmpty, IsOptional, IsIn, IsBoolean } from 'class-validat
 import { CreateRealmCommand } from '../../../application/cqrs/commands/create-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateRealmDto {
   @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
@@ -59,6 +60,16 @@ export class CreateRealmDto {
   @IsOptional()
   generic?: boolean;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateRealmDto, userId: string, userRoles: string[]) {
     return new CreateRealmCommand(
       dto.name,
@@ -70,6 +81,7 @@ export class CreateRealmDto {
       userId,
       userRoles,
       dto.generic ?? false,
+      dto.entitySource,
     );
   }
 }

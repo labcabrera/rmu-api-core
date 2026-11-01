@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Realm } from '../../../domain/aggregates/realm.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class RealmDto {
   @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })
@@ -31,6 +32,14 @@ export class RealmDto {
   @ApiProperty({ type: String, description: 'Access type', example: 'public' })
   accessType: AccessType;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
   @ApiProperty({ description: 'Generic realm (RMU Core), usable from any campaign', example: false })
   generic: boolean;
 
@@ -45,6 +54,7 @@ export class RealmDto {
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;
     dto.accessType = entity.accessType;
+    dto.entitySource = entity.entitySource;
     dto.generic = entity.generic;
     return dto;
   }

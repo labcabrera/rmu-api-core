@@ -15,6 +15,7 @@ const makeCultureProps = (overrides: Partial<CultureProps> = {}): CultureProps =
   description: null,
   imageUrl: null,
   owner: 'owner-1',
+  entitySource: 'user',
   accessType: 'private',
   skillRanks: [skill('skill-1', 2)],
   languages: undefined,
@@ -32,6 +33,7 @@ describe('Culture domain aggregate', () => {
       description: null,
       imageUrl: null,
       owner: 'owner-1',
+      entitySource: 'user',
       accessType: 'public',
       skillRanks: undefined as unknown as CultureSkillRank[],
     });

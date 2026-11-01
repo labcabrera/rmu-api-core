@@ -1,5 +1,6 @@
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import type { ManeuverModifierOption, ManeuverModifierScope, ManeuverModifierType } from '../value-objects/maneuver-modifier-type.vo.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 
 export interface ManeuverModifierProps {
   id: string;
@@ -16,6 +17,8 @@ export interface ManeuverModifierProps {
   reference?: boolean;
   owner: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin-only changes) or user content (spec 063). */
+  entitySource: EntitySource;
   createdAt: Date;
   updatedAt?: Date;
 }

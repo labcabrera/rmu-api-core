@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UpdateCultureCommand } from '../../../application/cqrs/commands/update-culture.command.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateCultureDto {
   @ApiProperty({ description: 'Name of the culture', example: 'Nomad', required: false })
@@ -61,6 +62,16 @@ export class UpdateCultureDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateCultureDto, userId: string, roles: string[]): UpdateCultureCommand {
     return new UpdateCultureCommand(
       id,
@@ -75,6 +86,7 @@ export class UpdateCultureDto {
       userId,
       roles,
       dto.version,
+      dto.entitySource,
     );
   }
 }

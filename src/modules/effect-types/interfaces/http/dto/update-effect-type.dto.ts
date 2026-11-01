@@ -6,6 +6,7 @@ import {
   type EffectPropertyRequirement,
 } from '../../../domain/value-objects/effect-property-requirement.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateEffectTypeDto {
   @ApiProperty({ type: Boolean, description: 'Indicates if the effect persists over time', example: true, required: false })
@@ -59,6 +60,16 @@ export class UpdateEffectTypeDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateEffectTypeDto, userId: string, roles: string[]): UpdateEffectTypeCommand {
     return new UpdateEffectTypeCommand(
       id,
@@ -74,6 +85,7 @@ export class UpdateEffectTypeDto {
       userId,
       roles,
       dto.version,
+      dto.entitySource,
     );
   }
 }

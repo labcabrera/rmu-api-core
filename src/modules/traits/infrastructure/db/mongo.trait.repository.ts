@@ -30,6 +30,7 @@ export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocume
       possibleFlaws: doc.possibleFlaws,
       source: doc.source,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

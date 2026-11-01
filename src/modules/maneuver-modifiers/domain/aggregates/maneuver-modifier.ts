@@ -8,8 +8,9 @@ import {
   type ManeuverModifierScope,
 } from '../value-objects/maneuver-modifier-type.vo.js';
 import type { ManeuverModifierDefinition, ManeuverModifierProps } from './maneuver-modifier-props.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 
-export type ManeuverModifierUpdate = Partial<ManeuverModifierDefinition> & { accessType?: AccessType };
+export type ManeuverModifierUpdate = Partial<ManeuverModifierDefinition> & { accessType?: AccessType; entitySource?: EntitySource };
 
 /** Skill specific maneuver modifier of the catalog. */
 export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
@@ -61,6 +62,10 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     return this.props.owner;
   }
 
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
   get accessType() {
     return this.props.accessType;
   }
@@ -73,7 +78,9 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     return this.props.updatedAt;
   }
 
-  static create(props: ManeuverModifierDefinition & { owner: string; accessType: AccessType }): ManeuverModifier {
+  static create(
+    props: ManeuverModifierDefinition & { owner: string; accessType: AccessType; entitySource: EntitySource },
+  ): ManeuverModifier {
     const definition = ManeuverModifier.normalize(props);
     ManeuverModifier.validate(definition);
     return ManeuverModifier.build({
@@ -81,6 +88,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
       id: randomUUID(),
       owner: props.owner,
       accessType: props.accessType,
+      entitySource: props.entitySource,
       createdAt: new Date(),
       updatedAt: undefined,
     });
@@ -98,7 +106,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
   resolve(changes: ManeuverModifierUpdate): ManeuverModifierDefinition {
     const merged: ManeuverModifierDefinition = { ...this.getDefinition() };
     (Object.keys(changes) as (keyof ManeuverModifierUpdate)[]).forEach(field => {
-      if (field === 'accessType' || changes[field] === undefined) return;
+      if (field === 'accessType' || field === 'entitySource' || changes[field] === undefined) return;
       (merged as unknown as Record<string, unknown>)[field] = changes[field];
     });
     const definition = ManeuverModifier.normalize(merged);
@@ -119,6 +127,7 @@ export class ManeuverModifier extends BaseAggregateRoot<ManeuverModifierProps> {
     this.props.description = definition.description;
     this.props.reference = definition.reference;
     if (changes.accessType) this.props.accessType = changes.accessType;
+    if (changes.entitySource !== undefined) this.props.entitySource = changes.entitySource;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
   }

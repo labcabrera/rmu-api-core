@@ -1,6 +1,8 @@
 import { ForbiddenError } from '../../domain/errors/errors.js';
 import { RMU_ADMIN, RMU_USER } from '../../domain/entities/user-roles.js';
 import type { RbacEntity } from '../../domain/entities/rbac-entity.js';
+import type { EntitySource } from '../../domain/entities/entity-source.js';
+import { assertCanChangeEntity, checkEntitySource } from '../../domain/services/entity-permissions.js';
 import { QueryCriteria } from '../../application/criteria/query-criteria.js';
 import type { EntityGuard } from '../../application/ports/entity-guard.port.js';
 
@@ -19,15 +21,15 @@ export abstract class BaseEntityGuard<E extends RbacEntity> implements EntityGua
   }
 
   checkUpdate(entity: E, userId: string, roles: string[]) {
-    if (roles.includes(RMU_ADMIN)) return;
-    if (entity.owner === userId) return;
-    throw new ForbiddenError('You do not have permission to update this entity');
+    assertCanChangeEntity(entity, userId, roles, 'update');
   }
 
   checkDelete(entity: E, userId: string, roles: string[]) {
-    if (roles.includes(RMU_ADMIN)) return;
-    if (entity.owner === userId) return;
-    throw new ForbiddenError('You do not have permission to delete this entity');
+    assertCanChangeEntity(entity, userId, roles, 'delete');
+  }
+
+  checkEntitySource(roles: string[], value: EntitySource | undefined) {
+    checkEntitySource(value, roles);
   }
 
   buildQueryPredicate(userId: string, roles: string[]): QueryCriteria {

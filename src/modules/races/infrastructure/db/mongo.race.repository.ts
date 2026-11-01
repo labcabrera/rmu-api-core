@@ -49,6 +49,7 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,

@@ -4,6 +4,7 @@ import { CreateTraitCommand } from '../../../application/cqrs/commands/create-tr
 import { TRAIT_CATEGORIES, type TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import { TraitDetailsDto } from './trait-details.dto.js';
 import { TRAIT_SPECIALIZATIONS, type TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateTraitDto extends TraitDetailsDto {
   @ApiProperty({ description: 'Name of the trait', example: 'Ambidextrous' })
@@ -63,6 +64,16 @@ export class CreateTraitDto extends TraitDetailsDto {
   @IsOptional()
   description: string | undefined;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateTraitDto, userId: string, userRoles: string[]) {
     return new CreateTraitCommand(
       dto.name,
@@ -77,6 +88,7 @@ export class CreateTraitDto extends TraitDetailsDto {
       userId,
       userRoles,
       TraitDetailsDto.toDetails(dto),
+      dto.entitySource,
     );
   }
 }

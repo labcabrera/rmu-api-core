@@ -81,7 +81,7 @@ describe('profession command handlers', () => {
   });
 
   describe('CreateProfessionHandler', () => {
-    const command = (id: string, user: { id: string; roles: readonly string[] }) =>
+    const command = (id: string, user: { id: string; roles: readonly string[] }, entitySource?: 'system' | 'user') =>
       new CreateProfessionCommand(
         id,
         'pure-spellcaster',
@@ -94,13 +94,17 @@ describe('profession command handlers', () => {
         'public',
         user.id,
         [...user.roles],
+        entitySource,
       );
 
+    // Spec 063: the source comes from the request, `user` by default, also for an admin (it used to follow the role).
     it.each([
-      ['a user', OWNER, 'user'],
-      ['an admin', ADMIN, 'system'],
-    ])('lets %s create the profession, owned by them, with entity source %s', async (_, user, entitySource) => {
-      const created = await new CreateProfessionHandler(professions, guard, events).execute(command('mage', user));
+      ['a user', OWNER, undefined, 'user'],
+      ['a user', OWNER, 'user', 'user'],
+      ['an admin', ADMIN, undefined, 'user'],
+      ['an admin', ADMIN, 'system', 'system'],
+    ] as const)('lets %s create the profession, owned by them, asking for %s and storing %s', async (_, user, asked, entitySource) => {
+      const created = await new CreateProfessionHandler(professions, guard, events).execute(command('mage', user, asked));
 
       expect(created).toMatchObject({
         id: 'mage',
@@ -118,6 +122,17 @@ describe('profession command handlers', () => {
       });
       expect(professions.items.get('mage')).toBe(created);
       expect(events.topics).toEqual(['profession.created']);
+    });
+
+    it('forbids a non-admin to create a system profession', async () => {
+      await expect(new CreateProfessionHandler(professions, guard, events).execute(command('mage', OWNER, 'system'))).rejects.toMatchObject(
+        {
+          statusCode: 403,
+          code: 'system-entity-admin-only',
+        },
+      );
+      expect(professions.items.has('mage')).toBe(false);
+      expect(events.topics).toEqual([]);
     });
 
     it('forbids a user without the user or admin role', async () => {
@@ -197,6 +212,53 @@ describe('profession command handlers', () => {
       });
     });
 
+    it('lets only an admin change a system profession, and change the source', async () => {
+      professions = new InMemoryRepository(profession({ entitySource: 'system' }));
+      const handler = new UpdateProfessionHandler(professions, guard, events);
+
+      await expect(handler.execute(command('fighter', OWNER))).rejects.toMatchObject({ code: 'system-entity-admin-only' });
+
+      const toUser = new UpdateProfessionCommand(
+        'fighter',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ADMIN.id,
+        [...ADMIN.roles],
+        undefined,
+        'user',
+      );
+      const updated = await handler.execute(toUser);
+      expect(updated).toMatchObject({ entitySource: 'user', owner: OWNER.id });
+    });
+
+    it('forbids the owner to turn a profession into a system one', async () => {
+      const toSystem = new UpdateProfessionCommand(
+        'fighter',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        OWNER.id,
+        [...OWNER.roles],
+        undefined,
+        'system',
+      );
+      await expect(new UpdateProfessionHandler(professions, guard, events).execute(toSystem)).rejects.toMatchObject({
+        code: 'system-entity-admin-only',
+      });
+      expect(professions.items.get('fighter')?.entitySource).toBe('user');
+    });
+
     it('fails on an unknown profession', async () => {
       await expect(new UpdateProfessionHandler(professions, guard, events).execute(command('missing', OWNER))).rejects.toThrow(
         NotFoundError,
@@ -215,6 +277,18 @@ describe('profession command handlers', () => {
 
       expect(professions.items.has('fighter')).toBe(false);
       expect(events.published.map(p => [p.topic, (p.event.data as ProfessionProps).id])).toEqual([['profession.deleted', 'fighter']]);
+    });
+
+    it('forbids the owner to delete a system profession', async () => {
+      professions = new InMemoryRepository(profession({ entitySource: 'system' }));
+      const handler = new DeleteProfessionHandler(professions, guard, events);
+
+      await expect(handler.execute(new DeleteProfessionCommand('fighter', OWNER.id, [...OWNER.roles]))).rejects.toMatchObject({
+        code: 'system-entity-admin-only',
+      });
+      expect(professions.items.has('fighter')).toBe(true);
+      await handler.execute(new DeleteProfessionCommand('fighter', ADMIN.id, [...ADMIN.roles]));
+      expect(professions.items.has('fighter')).toBe(false);
     });
 
     it('forbids another user', async () => {

@@ -6,6 +6,7 @@ import { Type } from 'class-transformer';
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateProfessionDto {
   @ApiProperty({ description: 'Profession ID', example: 'warrior' })
@@ -51,6 +52,16 @@ export class CreateProfessionDto {
   @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateProfessionDto, userId: string, roles: string[]): CreateProfessionCommand {
     return new CreateProfessionCommand(
       dto.id,
@@ -64,6 +75,7 @@ export class CreateProfessionDto {
       dto.accessType,
       userId,
       roles,
+      dto.entitySource,
     );
   }
 }

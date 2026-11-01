@@ -18,7 +18,7 @@ import { DeleteCultureSkillRankCommand } from '../../application/cqrs/commands/d
 import type { CultureView } from '../../application/read-models/culture-view.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/cultures')
@@ -57,7 +57,7 @@ export class CultureController {
   @Post('')
   @ApiOperation({ operationId: 'createCulture', summary: 'Create a new culture' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, culture already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, culture already exists' })
   async create(@Body() createCultureDto: CreateCultureDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -69,7 +69,7 @@ export class CultureController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateCulture', summary: 'Update culture by id' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Culture not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Culture not found' })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateCultureDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -81,7 +81,7 @@ export class CultureController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteCulture', summary: 'Delete culture by id' })
-  @ApiErrors({ 404: 'Culture not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Culture not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -93,7 +93,7 @@ export class CultureController {
   @HttpCode(200)
   @ApiOperation({ operationId: 'addCultureSkillRank', summary: 'Append a ranks entry to the culture' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Culture not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Culture not found' })
   async addSkillRank(@Param('id') id: string, @Body() dto: AddCultureSkillRankDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -107,7 +107,7 @@ export class CultureController {
   @ApiOperation({ operationId: 'deleteCultureSkillRank', summary: 'Delete the culture ranks entry at a position' })
   @ApiParam({ name: 'index', description: 'Zero-based position of the entry in skillRanks', type: Number })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiErrors({ 404: 'Culture or entry not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Culture or entry not found' })
   async deleteSkillRank(@Param('id') id: string, @Param('index', ParseIntPipe) index: number, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

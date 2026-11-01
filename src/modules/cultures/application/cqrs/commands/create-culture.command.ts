@@ -1,6 +1,7 @@
 import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import type { CultureSkillRankProps } from '../../../domain/value-objects/culture-skill-rank.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateCultureCommand extends AuthenticatedCommand {
   constructor(
@@ -14,6 +15,8 @@ export class CreateCultureCommand extends AuthenticatedCommand {
     public readonly suggestedVocations: string | undefined,
     userId: string,
     roles: string[],
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

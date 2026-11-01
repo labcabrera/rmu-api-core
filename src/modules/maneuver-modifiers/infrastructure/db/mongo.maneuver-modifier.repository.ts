@@ -56,6 +56,7 @@ export class MongoManeuverModifierRepository
       description: doc.description ?? undefined,
       reference: doc.reference === true ? true : undefined,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,

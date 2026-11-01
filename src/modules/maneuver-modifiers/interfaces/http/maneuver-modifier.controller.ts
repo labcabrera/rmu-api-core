@@ -16,7 +16,7 @@ import { ManeuverModifierDto, ManeuverModifierPageDto } from './dto/maneuver-mod
 import { UpdateManeuverModifierDto } from './dto/update-maneuver-modifier.dto.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/maneuver-modifiers')
@@ -74,7 +74,7 @@ export class ManeuverModifierController {
   @ApiBody({ type: CreateManeuverModifierDto })
   @ApiOperation({ operationId: 'createManeuverModifier', summary: 'Create maneuver modifier' })
   @ApiOkResponse({ type: ManeuverModifierDto })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, key already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, key already exists' })
   async create(@Body() dto: CreateManeuverModifierDto, @CurrentUser() user: AuthenticatedUser): Promise<ManeuverModifierDto> {
     const command = CreateManeuverModifierDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateManeuverModifierCommand, ManeuverModifier>(command);
@@ -85,7 +85,12 @@ export class ManeuverModifierController {
   @ApiBody({ type: UpdateManeuverModifierDto })
   @ApiOperation({ operationId: 'updateManeuverModifier', summary: 'Update maneuver modifier' })
   @ApiOkResponse({ type: ManeuverModifierDto })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Maneuver modifier not found', 409: 'Conflict, key already exists' })
+  @ApiErrors({
+    403: FORBIDDEN_CHANGE,
+    400: 'Bad request, invalid data',
+    404: 'Maneuver modifier not found',
+    409: 'Conflict, key already exists',
+  })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateManeuverModifierDto,
@@ -99,7 +104,7 @@ export class ManeuverModifierController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteManeuverModifier', summary: 'Delete maneuver modifier' })
-  @ApiErrors({ 404: 'Maneuver modifier not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Maneuver modifier not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser): Promise<void> {
     const command = new DeleteManeuverModifierCommand(id, user.id, user.roles);
     await this.commandBus.execute(command);

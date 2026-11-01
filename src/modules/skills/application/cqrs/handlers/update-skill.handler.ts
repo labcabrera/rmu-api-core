@@ -29,6 +29,7 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
     if (!current) throw new NotFoundError('Skill', command.id);
 
     this.skillGuard.checkUpdate(current, command.userId, command.roles);
+    this.skillGuard.checkEntitySource(command.roles, command.entitySource);
 
     current.checkVersion(command.expectedVersion);
 
@@ -43,6 +44,7 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
       specialization: command.specialization,
       specializationOptional: command.specializationOptional,
       accessType: command.accessType,
+      entitySource: command.entitySource,
       maneuver: command.maneuver,
     });
 

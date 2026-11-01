@@ -235,4 +235,83 @@ describe('Traits (e2e)', () => {
       await request(e2e.server).delete('/v1/traits/missing').set('Authorization', e2e.auth('admin')).expect(404);
     });
   });
+  describe('entity source (spec 063)', () => {
+    const forbidden = { statusCode: 403, code: 'system-entity-admin-only' };
+
+    it('lets only an admin change or delete a system trait, even its owner gets 403', async () => {
+      const trait = await create('admin', { name: 'Rulebook trait', entitySource: 'system' });
+      expect(trait).toMatchObject({ entitySource: 'system', owner: 'e2e-admin' });
+      await e2e.connection.collection('traits').updateOne({ _id: trait.id as never }, { $set: { owner: 'e2e-owner' } });
+      const path = `/v1/traits/${trait.id}`;
+
+      const patch = await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ adquisitionCost: 1 }).expect(403);
+      expect(patch.body).toMatchObject(forbidden);
+      const del = await request(e2e.server).delete(path).set('Authorization', e2e.auth('owner')).expect(403);
+      expect(del.body).toMatchObject(forbidden);
+
+      // Reading stays open to everyone.
+      await request(e2e.server).get(path).set('Authorization', e2e.auth('other')).expect(200);
+
+      const byAdmin = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ adquisitionCost: 7 })
+        .expect(200);
+      expect(byAdmin.body).toMatchObject({ adquisitionCost: 7, entitySource: 'system', owner: 'e2e-owner' });
+      await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
+    });
+
+    it('lets the owner and an admin change a user trait, and stores user by default', async () => {
+      const trait = await create('owner', { name: 'Homebrew trait' });
+      expect(trait).toMatchObject({ entitySource: 'user', owner: 'e2e-owner' });
+      const path = `/v1/traits/${trait.id}`;
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ adquisitionCost: 2 }).expect(200);
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('admin')).send({ adquisitionCost: 3 }).expect(200);
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('other')).send({ adquisitionCost: 4 }).expect(403);
+      await request(e2e.server).delete(path).set('Authorization', e2e.auth('owner')).expect(204);
+    });
+
+    it('forbids a player to create a system trait or to turn one into system', async () => {
+      const res = await request(e2e.server)
+        .post('/v1/traits')
+        .set('Authorization', e2e.auth('owner'))
+        .send(traitBody({ name: 'Sneaky system', entitySource: 'system' }))
+        .expect(403);
+      expect(res.body).toMatchObject(forbidden);
+      await request(e2e.server).get('/v1/traits/sneaky-system').set('Authorization', e2e.auth('admin')).expect(404);
+
+      const trait = await create('owner', { name: 'Promoted trait' });
+      const path = `/v1/traits/${trait.id}`;
+      const patch = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('owner'))
+        .send({ entitySource: 'system' })
+        .expect(403);
+      expect(patch.body).toMatchObject(forbidden);
+      const promoted = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ entitySource: 'system' })
+        .expect(200);
+      expect(promoted.body).toMatchObject({ entitySource: 'system', owner: 'e2e-owner' });
+    });
+
+    it('reads a document stored without the field as a user trait', async () => {
+      await e2e.connection.collection('traits').insertOne({
+        _id: 'legacy-trait' as never,
+        name: 'Legacy trait',
+        category: 'combat',
+        isTalent: true,
+        specialization: null,
+        isTierBased: false,
+        adquisitionCost: 5,
+        owner: 'e2e-owner',
+        createdAt: new Date(),
+      });
+      const path = '/v1/traits/legacy-trait';
+      const found = await request(e2e.server).get(path).set('Authorization', e2e.auth('owner')).expect(200);
+      expect(found.body).toMatchObject({ id: 'legacy-trait', entitySource: 'user', owner: 'e2e-owner' });
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ adquisitionCost: 6 }).expect(200);
+    });
+  });
 });

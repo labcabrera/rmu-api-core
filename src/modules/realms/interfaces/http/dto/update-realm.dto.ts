@@ -3,6 +3,7 @@ import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf, IsInt, Min, IsBoole
 import { UpdateRealmCommand } from '../../../application/cqrs/commands/update-realm.command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateRealmDto {
   @ApiProperty({ type: String, description: 'Name of the realm', example: 'Lord of the Rings', required: false })
@@ -66,6 +67,16 @@ export class UpdateRealmDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateRealmDto, userId: string, roles: string[]) {
     return new UpdateRealmCommand(
       id,
@@ -79,6 +90,7 @@ export class UpdateRealmDto {
       roles,
       dto.version,
       dto.generic ?? undefined,
+      dto.entitySource,
     );
   }
 }

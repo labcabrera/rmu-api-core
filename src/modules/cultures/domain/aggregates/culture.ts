@@ -34,6 +34,10 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     return this.props.owner;
   }
 
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
   get accessType() {
     return this.props.accessType;
   }
@@ -84,6 +88,7 @@ export class Culture extends BaseAggregateRoot<CultureProps> {
     if (props.description !== undefined) this.props.description = props.description;
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
     if (props.accessType !== undefined) this.props.accessType = props.accessType;
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
     if (props.skillRanks !== undefined) this.props.skillRanks = props.skillRanks;
     if (props.languages !== undefined) this.props.languages = normalizeLanguages(props.languages);
     if (props.suggestedCrafts !== undefined) this.props.suggestedCrafts = props.suggestedCrafts;

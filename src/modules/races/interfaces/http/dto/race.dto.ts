@@ -7,6 +7,7 @@ import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.j
 import { RaceTraitDto } from './race-trait.dto.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { RaceSkillBonusDto } from './race-skill-bonus.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class RaceDto {
   @ApiProperty({ description: 'Unique identifier for the race', example: 'elf' })
@@ -81,6 +82,14 @@ export class RaceDto {
   @ApiProperty({ type: String, description: 'Access type', required: true })
   accessType: AccessType;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
   static fromEntity(entity: Race): RaceDto {
     const dto = new RaceDto();
     dto.id = entity.id;
@@ -107,6 +116,7 @@ export class RaceDto {
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;
     dto.accessType = entity.accessType;
+    dto.entitySource = entity.entitySource;
     return dto;
   }
 }

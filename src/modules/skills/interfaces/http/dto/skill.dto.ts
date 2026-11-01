@@ -4,6 +4,7 @@ import type { AccessType } from '../../../../shared/domain/entities/access-type.
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 import type { SkillView } from '../../../application/read-models/skill-view.js';
 import { EffectiveManeuverProfileDto, ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class SkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
@@ -26,6 +27,17 @@ export class SkillDto {
 
   @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   accessType: AccessType;
+
+  @ApiProperty({ description: 'Owner of the skill: the user that created it', example: 'user123', required: true })
+  owner: string;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
 
   @ApiProperty({
     description: 'Effective maneuver profile: category profile overridden by the skill values, with defaults',
@@ -50,6 +62,8 @@ export class SkillDto {
     dto.specialization = entity.specialization;
     dto.specializationOptional = entity.specializationOptional;
     dto.accessType = entity.accessType;
+    dto.owner = entity.owner;
+    dto.entitySource = entity.entitySource;
     dto.maneuver = EffectiveManeuverProfileDto.fromProfile(view.maneuver);
     dto.maneuverOverrides = ManeuverProfileDto.fromProfile(entity.maneuver);
     return dto;

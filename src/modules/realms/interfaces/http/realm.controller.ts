@@ -15,7 +15,7 @@ import { Page } from '../../../shared/application/pagination/page.js';
 import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')
@@ -53,7 +53,11 @@ export class RealmController {
   @ApiBody({ type: CreateRealmDto })
   @ApiOperation({ operationId: 'createRealm', summary: 'Create a new realm' })
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 403: 'Only an admin sets generic', 409: 'Conflict, realm already exists' })
+  @ApiErrors({
+    400: 'Bad request, invalid data',
+    403: `${FORBIDDEN_CREATE}, or generic set by a non-admin`,
+    409: 'Conflict, realm already exists',
+  })
   async create(@Body() dto: CreateRealmDto, @CurrentUser() user: AuthenticatedUser) {
     const command = CreateRealmDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateRealmCommand, Realm>(command);
@@ -63,7 +67,7 @@ export class RealmController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateRealm', summary: 'Update realm' })
   @ApiOkResponse({ type: RealmDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 403: 'Forbidden, or generic changed by a non-admin', 404: 'Realm not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: `${FORBIDDEN_CHANGE}, or generic changed by a non-admin`, 404: 'Realm not found' })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @CurrentUser() user: AuthenticatedUser) {
     const command = UpdateRealmDto.toCommand(id, dto, user.id, user.roles);
     const entity = await this.commandBus.execute<UpdateRealmCommand, Realm>(command);
@@ -73,7 +77,7 @@ export class RealmController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete realm by id' })
-  @ApiErrors({ 404: 'Realm not found' })
+  @ApiErrors({ 403: `${FORBIDDEN_CHANGE}; a realm with system races, admin only`, 404: 'Realm not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const command = new DeleteRealmCommand(id, user.id, user.roles);
     await this.commandBus.execute(command);

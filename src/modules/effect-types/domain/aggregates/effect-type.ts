@@ -67,7 +67,7 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
   }
 
   /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
-  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner' | 'entitySource'>): void {
+  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner'>): void {
     if (props.isPersistent !== undefined) {
       this.props.isPersistent = props.isPersistent;
     }
@@ -95,6 +95,7 @@ export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
     if (props.accessType !== undefined) {
       this.props.accessType = props.accessType;
     }
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
     // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
     if (this.hasChanges()) this.props.updatedAt = new Date();
   }

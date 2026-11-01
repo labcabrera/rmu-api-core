@@ -5,6 +5,7 @@ import { RaceTrait } from './race-trait.model.js';
 // realm is now stored as realmId string
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { RaceSkillBonus } from './race-skill-bonus.model.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export type RaceDocument = HydratedDocument<RaceModel>;
 
@@ -79,6 +80,10 @@ export class RaceModel {
 
   @Prop({ type: String, required: true })
   owner: string;
+
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
+  entitySource: EntitySource;
 
   @Prop({ type: String, required: true })
   accessType: AccessType;

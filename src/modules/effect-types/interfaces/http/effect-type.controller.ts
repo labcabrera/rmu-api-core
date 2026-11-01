@@ -13,7 +13,7 @@ import { EffectTypeDto, EffectTypePageDto } from './dto/effect-type.dto.js';
 import { UpdateEffectTypeDto } from './dto/update-effect-type.dto.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/effect-types')
@@ -51,7 +51,7 @@ export class EffectTypeController {
   @Post('')
   @HttpCode(201)
   @ApiOperation({ operationId: 'createEffectType', summary: 'Create effect type' })
-  @ApiErrors()
+  @ApiErrors({ 403: FORBIDDEN_CREATE })
   async create(@Body() dto: CreateEffectTypeDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -62,7 +62,7 @@ export class EffectTypeController {
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateEffectType', summary: 'Update effect type' })
-  @ApiErrors({ 404: 'Effect type not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Effect type not found' })
   async update(@Param('id') id: string, @Body() dto: UpdateEffectTypeDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -74,7 +74,7 @@ export class EffectTypeController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteEffectType', summary: 'Delete effect type' })
-  @ApiErrors({ 404: 'Effect type not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Effect type not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

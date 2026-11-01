@@ -24,6 +24,7 @@ export class MongoCultureRepository extends MongoBaseRepository<Culture, Culture
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
       skillRanks: MongoCultureRepository.mapSkillRanks(doc),
       languages: doc.languages ? [...doc.languages] : undefined,

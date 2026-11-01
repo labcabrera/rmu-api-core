@@ -32,6 +32,7 @@ const trait = (overrides: Partial<TraitProps> = {}) =>
     tierCost: undefined,
     description: undefined,
     owner: OWNER.id,
+    entitySource: 'user',
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: undefined,
     ...overrides,

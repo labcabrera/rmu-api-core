@@ -6,7 +6,6 @@ import { Profession } from '../../../domain/aggregates/profession.js';
 import { PROFESSION_REPOSITORY, type ProfessionRepository } from '../../ports/profession-repository.port.js';
 import { PROFESSION_GUARD, type ProfessionGuardPort } from '../../ports/profession-guard.port.js';
 import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
-import { RMU_ADMIN } from '../../../../shared/domain/entities/user-roles.js';
 
 @CommandHandler(CreateProfessionCommand)
 export class CreateProfessionHandler implements ICommandHandler<CreateProfessionCommand, Profession> {
@@ -18,11 +17,10 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
 
   async execute(command: CreateProfessionCommand): Promise<Profession> {
     this.professionGuard.checkCreate(command.roles);
+    this.professionGuard.checkEntitySource(command.roles, command.entitySource);
 
     const current = await this.professionRepository.findById(command.id);
     if (current) throw new ConflictError(`Profession with id ${command.id} already exists`, 'duplicate-key');
-
-    const entitySource = command.roles.includes(RMU_ADMIN) ? 'system' : 'user';
 
     const profession = Profession.create({
       id: command.id,
@@ -31,7 +29,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
       fixedRealmTypes: command.fixedRealmTypes,
       skillCosts: command.skillCosts,
       professionalSkills: command.professionalSkills,
-      entitySource: entitySource,
+      entitySource: command.entitySource ?? 'user',
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,

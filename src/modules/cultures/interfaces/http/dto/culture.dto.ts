@@ -3,6 +3,7 @@ import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.j
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import type { CultureView } from '../../../application/read-models/culture-view.js';
 import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CultureDto {
   @ApiProperty({ description: 'Culture identifier', example: 'culture-001' })
@@ -45,6 +46,14 @@ export class CultureDto {
   @ApiProperty({ type: String, description: 'Access type', required: true, example: 'private' })
   accessType: AccessType;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
   static fromView(view: CultureView): CultureDto {
     const entity = view.culture;
     const dto = new CultureDto();
@@ -60,6 +69,7 @@ export class CultureDto {
     dto.imageUrl = entity.imageUrl;
     dto.owner = entity.owner;
     dto.accessType = entity.accessType;
+    dto.entitySource = entity.entitySource;
     return dto;
   }
 }

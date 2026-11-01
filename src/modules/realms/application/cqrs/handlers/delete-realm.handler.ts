@@ -5,6 +5,7 @@ import { REALM_REPOSITORY, type RealmRepository } from '../../ports/realm-reposi
 import { RealmDeletedEvent } from '../../../domain/events/realm-deleted.event.js';
 import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
 import { REALM_GUARD, type RealmGuardPort } from '../../ports/realm-guard.port.js';
+import { REALM_RACE_QUERY, type RealmRaceQueryPort } from '../../ports/realm-race-query.port.js';
 import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteRealmCommand)
@@ -15,6 +16,7 @@ export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
     @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
     @Inject(REALM_GUARD) private readonly realmGuard: RealmGuardPort,
     @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
+    @Inject(REALM_RACE_QUERY) private readonly realmRaces: RealmRaceQueryPort,
   ) {}
 
   async execute(command: DeleteRealmCommand): Promise<void> {
@@ -24,6 +26,8 @@ export class DeleteRealmHandler implements ICommandHandler<DeleteRealmCommand> {
     if (!current) throw new NotFoundError('Realm', command.id);
 
     this.realmGuard.checkDelete(current, command.userId, command.roles);
+    // The deletion cascades to the races of the realm (Kafka, DeleteRacesByRealmCommand): rulebook ones need an admin.
+    this.realmGuard.checkDeleteWithSystemRaces(command.roles, await this.realmRaces.countSystemRaces(current.id));
 
     const deleted = await this.realmRepository.deleteById(command.id);
     if (!deleted) throw new NotFoundError('Realm', command.id);

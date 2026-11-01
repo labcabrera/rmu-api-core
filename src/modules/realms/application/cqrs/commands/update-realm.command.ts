@@ -1,6 +1,7 @@
 import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateRealmCommand extends AuthenticatedCommand {
   constructor(
@@ -16,6 +17,8 @@ export class UpdateRealmCommand extends AuthenticatedCommand {
     /** The version the client read; undefined skips the concurrency check. */
     public readonly expectedVersion?: number,
     public readonly generic?: boolean,
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

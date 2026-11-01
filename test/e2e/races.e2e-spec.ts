@@ -323,4 +323,41 @@ describe('Races (e2e)', () => {
         .expect(404);
     });
   });
+  describe('entity source (spec 063)', () => {
+    it('lets only an admin change a system race and its traits and skill bonuses', async () => {
+      const race = await create('owner', (await createRealm('owner')).id, { name: 'Rulebook race' });
+      expect(race).toMatchObject({ entitySource: 'user', owner: 'e2e-owner' });
+      const path = `/v1/races/${race.id}`;
+      const promoted = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ entitySource: 'system' })
+        .expect(200);
+      expect(promoted.body).toMatchObject({ entitySource: 'system', owner: 'e2e-owner' });
+
+      const forbidden = { statusCode: 403, code: 'system-entity-admin-only' };
+      const owner = e2e.auth('owner');
+      expect((await request(e2e.server).patch(path).set('Authorization', owner).send({ name: 'Mine' }).expect(403)).body).toMatchObject(
+        forbidden,
+      );
+      const trait = await request(e2e.server)
+        .post(`${path}/traits`)
+        .set('Authorization', owner)
+        .send({ traitId: 'x', isTalent: false })
+        .expect(403);
+      expect(trait.body).toMatchObject(forbidden);
+      const bonus = await request(e2e.server)
+        .post(`${path}/skill-bonuses`)
+        .set('Authorization', owner)
+        .send({ skillId: 'x', bonus: 1 })
+        .expect(403);
+      expect(bonus.body).toMatchObject(forbidden);
+      await request(e2e.server).delete(`${path}/traits/x`).set('Authorization', owner).expect(403);
+      await request(e2e.server).delete(`${path}/skill-bonuses/x`).set('Authorization', owner).expect(403);
+      await request(e2e.server).delete(path).set('Authorization', owner).expect(403);
+
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('admin')).send({ name: 'Errata' }).expect(200);
+      await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
+    });
+  });
 });

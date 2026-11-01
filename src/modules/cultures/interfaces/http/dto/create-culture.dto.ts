@@ -4,6 +4,7 @@ import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested, IsIn } from 
 import { CreateCultureCommand } from '../../../application/cqrs/commands/create-culture.command.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { CultureSkillRankDto } from './culture-skill-rank.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateCultureDto {
   @ApiProperty({ description: 'Name of the culture', example: 'Nomad' })
@@ -48,6 +49,16 @@ export class CreateCultureDto {
   @IsOptional()
   suggestedVocations?: string;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateCultureDto, userId: string, roles: string[]): CreateCultureCommand {
     return new CreateCultureCommand(
       dto.name,
@@ -60,6 +71,7 @@ export class CreateCultureDto {
       dto.suggestedVocations,
       userId,
       roles,
+      dto.entitySource,
     );
   }
 }

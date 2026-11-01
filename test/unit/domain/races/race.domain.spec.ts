@@ -46,6 +46,7 @@ const makeRaceProps = (overrides: Partial<RaceProps> = {}): RaceProps => ({
   description: null,
   imageUrl: null,
   owner: 'owner-1',
+  entitySource: 'user',
   accessType: 'public',
   createdAt: new Date('2025-01-01T00:00:00.000Z'),
   updatedAt: null,

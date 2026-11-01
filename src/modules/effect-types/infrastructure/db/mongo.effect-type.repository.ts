@@ -26,7 +26,7 @@ export class MongoEffectTypeRepository extends MongoBaseRepository<EffectType, E
       delay: doc.delay,
       owner: doc.owner,
       accessType: doc.accessType,
-      entitySource: doc.entitySource,
+      entitySource: doc.entitySource ?? 'user',
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

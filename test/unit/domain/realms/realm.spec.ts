@@ -13,6 +13,7 @@ const baseProps = (): RealmProps => ({
   description: 'Long description',
   imageUrl: 'https://example.test/shadow.png',
   owner: 'user-1',
+  entitySource: 'user',
   accessType: 'private',
   generic: false,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
@@ -28,6 +29,7 @@ describe('Realm', () => {
       description: undefined,
       imageUrl: undefined,
       owner: 'user-1',
+      entitySource: 'user',
       accessType: 'public',
       generic: false,
     });

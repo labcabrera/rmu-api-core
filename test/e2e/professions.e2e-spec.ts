@@ -81,9 +81,9 @@ describe('Professions (e2e)', () => {
       expect(ids(none.body)).toEqual([]);
     });
 
-    it('marks the professions created by an admin as system ones', async () => {
-      const profession = await create('admin');
-      expect(profession).toMatchObject({ entitySource: 'system', owner: 'e2e-admin' });
+    it('stores user as the source of a profession created without one, by an admin too (spec 063)', async () => {
+      expect(await create('admin')).toMatchObject({ entitySource: 'user', owner: 'e2e-admin' });
+      expect(await create('admin', { entitySource: 'system' })).toMatchObject({ entitySource: 'system', owner: 'e2e-admin' });
     });
   });
 
@@ -100,6 +100,20 @@ describe('Professions (e2e)', () => {
         .patch(`/v1/professions/${(await create('owner')).id}`)
         .set('Authorization', auth)
         .send({ accessType: 'wild' })
+        .expect(400);
+    });
+
+    it('rejects an entity source other than system or user, on create and on update', async () => {
+      const auth = e2e.auth('admin');
+      await request(e2e.server)
+        .post('/v1/professions')
+        .set('Authorization', auth)
+        .send(professionBody('wild-source', { entitySource: 'book' }))
+        .expect(400);
+      await request(e2e.server)
+        .patch(`/v1/professions/${(await create('admin')).id}`)
+        .set('Authorization', auth)
+        .send({ entitySource: 'book' })
         .expect(400);
     });
 
@@ -162,7 +176,7 @@ describe('Professions (e2e)', () => {
     });
 
     it('drops unknown fields of the body', async () => {
-      const profession = await create('owner', { owner: 'someone-else', entitySource: 'system', unknown: 'value' });
+      const profession = await create('owner', { owner: 'someone-else', unknown: 'value' });
       expect(profession).toMatchObject({ owner: 'e2e-owner', entitySource: 'user' });
       expect(profession).not.toHaveProperty('unknown');
     });
@@ -218,6 +232,101 @@ describe('Professions (e2e)', () => {
         .set('Authorization', e2e.auth('admin'))
         .send({ description: 'X' })
         .expect(404);
+    });
+  });
+  describe('entity source (spec 063)', () => {
+    const forbidden = { statusCode: 403, code: 'system-entity-admin-only', path: expect.stringMatching(/^\/v1\/professions/) as unknown };
+
+    it('lets only an admin change or delete a system profession, even when another user owns it', async () => {
+      // A system profession owned by a player: the owner keeps no rights over rulebook content.
+      const profession = await create('admin', { entitySource: 'system', accessType: 'public' });
+      await e2e.connection.collection('professions').updateOne({ _id: profession.id as never }, { $set: { owner: 'e2e-owner' } });
+      const path = `/v1/professions/${profession.id}`;
+
+      const patch = await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ description: 'Mine' }).expect(403);
+      expect(patch.body).toMatchObject(forbidden);
+      const del = await request(e2e.server).delete(path).set('Authorization', e2e.auth('owner')).expect(403);
+      expect(del.body).toMatchObject(forbidden);
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('other')).send({ description: 'Taken' }).expect(403);
+
+      const byAdmin = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ description: 'Errata' })
+        .expect(200);
+      expect(byAdmin.body).toMatchObject({ description: 'Errata', entitySource: 'system', owner: 'e2e-owner' });
+      await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
+    });
+
+    it('lets the owner and an admin change a user profession', async () => {
+      const profession = await create('owner');
+      const path = `/v1/professions/${profession.id}`;
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ description: 'Mine' }).expect(200);
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('admin')).send({ description: 'By admin' }).expect(200);
+      await request(e2e.server).delete(path).set('Authorization', e2e.auth('owner')).expect(204);
+    });
+
+    it('forbids a player to create a system profession or to turn one into system', async () => {
+      const res = await request(e2e.server)
+        .post('/v1/professions')
+        .set('Authorization', e2e.auth('owner'))
+        .send(professionBody('player-system', { entitySource: 'system' }))
+        .expect(403);
+      expect(res.body).toMatchObject({ ...forbidden, error: 'ForbiddenError' });
+      await request(e2e.server).get('/v1/professions/player-system').set('Authorization', e2e.auth('admin')).expect(404);
+
+      const profession = await create('owner', { entitySource: 'user' });
+      const path = `/v1/professions/${profession.id}`;
+      const patch = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('owner'))
+        .send({ entitySource: 'system' })
+        .expect(403);
+      expect(patch.body).toMatchObject(forbidden);
+      const found = await request(e2e.server).get(path).set('Authorization', e2e.auth('owner')).expect(200);
+      expect(found.body).toMatchObject({ entitySource: 'user' });
+    });
+
+    it('lets an admin move a profession between system and user, keeping its owner', async () => {
+      const profession = await create('owner');
+      const path = `/v1/professions/${profession.id}`;
+      const toSystem = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ entitySource: 'system' })
+        .expect(200);
+      expect(toSystem.body).toMatchObject({ entitySource: 'system', owner: 'e2e-owner' });
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ description: 'Mine' }).expect(403);
+      const toUser = await request(e2e.server)
+        .patch(path)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ entitySource: 'user' })
+        .expect(200);
+      expect(toUser.body).toMatchObject({ entitySource: 'user', owner: 'e2e-owner' });
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ description: 'Mine' }).expect(200);
+    });
+
+    it('reads a document stored without the field as a user profession', async () => {
+      await e2e.connection.collection('professions').insertOne({
+        _id: 'legacy-profession' as never,
+        archetype: 'non-spellcaster',
+        availableRealmTypes: ['channeling'],
+        fixedRealmTypes: [],
+        skillCosts: { animal: [2, 4] },
+        professionalSkills: [],
+        owner: 'e2e-owner',
+        accessType: 'private',
+        createdAt: new Date(),
+      });
+      const path = '/v1/professions/legacy-profession';
+      const found = await request(e2e.server).get(path).set('Authorization', e2e.auth('owner')).expect(200);
+      expect(found.body).toMatchObject({ id: 'legacy-profession', entitySource: 'user' });
+      const listed = await request(e2e.server)
+        .get('/v1/professions?q=id==legacy-profession')
+        .set('Authorization', e2e.auth('owner'))
+        .expect(200);
+      expect(listed.body).toMatchObject({ content: [{ entitySource: 'user' }] });
+      await request(e2e.server).patch(path).set('Authorization', e2e.auth('owner')).send({ description: 'Still mine' }).expect(200);
     });
   });
 });

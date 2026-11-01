@@ -3,6 +3,7 @@ import type { HydratedDocument } from 'mongoose';
 import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
 import type { TraitPrerequisite, TraitSource } from '../../../domain/value-objects/trait-details.vo.js';
 import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export type TraitDocument = HydratedDocument<TraitModel>;
 
@@ -56,6 +57,10 @@ export class TraitModel {
 
   @Prop({ required: true })
   owner: string;
+
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
+  entitySource: EntitySource;
 
   @Prop({ required: true })
   createdAt: Date;

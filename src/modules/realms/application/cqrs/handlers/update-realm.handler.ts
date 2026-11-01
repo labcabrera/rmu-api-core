@@ -24,6 +24,7 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
     if (!realm) throw new NotFoundError('Realm', command.id);
 
     this.realmGuard.checkUpdate(realm, command.userId, command.roles);
+    this.realmGuard.checkEntitySource(command.roles, command.entitySource);
     // Sending the stored value back is not a change: the front sends the whole form.
     if (command.generic !== undefined && command.generic !== realm.generic) this.realmGuard.checkGeneric(command.roles);
 
@@ -37,6 +38,7 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
       imageUrl: command.imageUrl,
       accessType: command.accessType,
       generic: command.generic,
+      entitySource: command.entitySource,
     });
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
     if (!realm.hasChanges()) return realm;

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { HydratedDocument } from 'mongoose';
 import type { EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
-import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export type EffectTypeDocument = HydratedDocument<EffectTypeModel>;
 
@@ -45,7 +45,8 @@ export class EffectTypeModel {
   @Prop({ type: String, required: true })
   accessType: AccessType;
 
-  @Prop({ type: String, required: true })
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
   entitySource: EntitySource;
 
   @Prop({ type: Date, required: true })

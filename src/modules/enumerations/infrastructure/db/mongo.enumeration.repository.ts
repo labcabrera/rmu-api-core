@@ -33,7 +33,7 @@ export class MongoEnumerationRepository extends MongoBaseRepository<Enumeration,
       imageUrl: doc.imageUrl ?? null,
       owner: doc.owner,
       accessType: doc.accessType,
-      entitySource: doc.entitySource,
+      entitySource: doc.entitySource ?? 'user',
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

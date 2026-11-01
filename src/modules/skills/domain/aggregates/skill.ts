@@ -32,6 +32,10 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     return this.props.owner;
   }
 
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
   get accessType() {
     return this.props.accessType;
   }
@@ -81,6 +85,7 @@ export class Skill extends BaseAggregateRoot<SkillProps> {
     if (props.accessType) {
       this.props.accessType = props.accessType;
     }
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
     if (props.maneuver !== undefined) {
       ManeuverProfiles.validate(props.maneuver);
       const maneuver = ManeuverProfiles.normalize(props.maneuver);

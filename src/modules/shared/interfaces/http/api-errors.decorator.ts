@@ -16,3 +16,9 @@ export function ApiErrors(errors: Partial<Record<ErrorStatus, string>> = {}) {
     ...Object.entries(all).map(([status, description]) => ApiResponse({ status: Number(status), description, type: ErrorDto })),
   );
 }
+
+/** 403 of a change to an entity (PATCH, DELETE and its sub-resources), spec 063. */
+export const FORBIDDEN_CHANGE = 'Not the owner or an admin (system entities: admin only)';
+
+/** 403 of a create that checks the entity source, spec 063. */
+export const FORBIDDEN_CREATE = 'Missing role, or a system entity source asked by a non-admin';
