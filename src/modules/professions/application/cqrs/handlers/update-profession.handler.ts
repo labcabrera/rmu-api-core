@@ -20,6 +20,7 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
     if (!current) throw new NotFoundError('Profession', command.id);
 
     this.professionGuard.checkUpdate(current, command.userId, command.roles);
+    this.professionGuard.checkEntitySource(command.roles, command.entitySource);
 
     current.checkVersion(command.expectedVersion);
 
@@ -32,6 +33,7 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
       description: command.description,
       imageUrl: command.imageUrl,
       accessType: command.accessType,
+      entitySource: command.entitySource,
     });
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
     if (!current.hasChanges()) return current;

@@ -3,6 +3,7 @@ import { IsIn, IsNotEmpty, IsString, IsOptional, ValidateIf } from 'class-valida
 import { CreateEnumerationCommand } from '../../../application/cqrs/commands/create-enumeration.command.js';
 import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateEnumerationDto {
   @ApiProperty({ description: 'Name as the user writes it', example: 'Black Speech', required: false })
@@ -51,6 +52,16 @@ export class CreateEnumerationDto {
   @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateEnumerationDto, userId: string, roles: string[]): CreateEnumerationCommand {
     // Older clients only send the key: it is then the name too
     const name = (dto.name ?? dto.key ?? '').trim();
@@ -64,6 +75,7 @@ export class CreateEnumerationDto {
       dto.accessType,
       userId,
       roles,
+      dto.entitySource,
     );
   }
 }

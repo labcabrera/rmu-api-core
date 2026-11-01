@@ -23,6 +23,7 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
 
   async execute(command: CreateEnumerationCommand): Promise<Enumeration> {
     this.guard.checkCreate(command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
     const key = toKey(command.key);
     if (!key) throw new ValidationError(`Enumeration ${command.name} has no letters or digits to build its key`, 'invalid-enumeration-key');
     if (!command.realmId && !command.roles.includes(RMU_ADMIN)) {
@@ -44,8 +45,6 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
       );
     }
 
-    const entitySource = 'user';
-
     const enumeration = Enumeration.create({
       key,
       name: command.name,
@@ -55,7 +54,7 @@ export class CreateEnumerationHandler implements ICommandHandler<CreateEnumerati
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: command.accessType,
-      entitySource: entitySource,
+      entitySource: command.entitySource ?? 'user',
     });
     return await this.enumerationRepository.save(enumeration);
   }

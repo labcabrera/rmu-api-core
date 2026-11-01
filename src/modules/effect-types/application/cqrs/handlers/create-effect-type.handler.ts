@@ -17,6 +17,7 @@ export class CreateEffectTypeHandler implements ICommandHandler<CreateEffectType
 
   async execute(command: CreateEffectTypeCommand): Promise<EffectType> {
     this.guard.checkCreate(command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
 
     const current = await this.effectTypeRepository.findById(command.id);
     if (current) {
@@ -35,7 +36,7 @@ export class CreateEffectTypeHandler implements ICommandHandler<CreateEffectType
       delay: command.delay,
       owner: command.userId,
       accessType: command.accessType,
-      entitySource: 'user',
+      entitySource: command.entitySource ?? 'user',
     });
 
     return await this.effectTypeRepository.save(effectType);

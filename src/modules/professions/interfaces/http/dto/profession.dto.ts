@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Profession } from '../../../domain/aggregates/profession.js';
 import { ProfessionSkillCostsDto } from './profession-skill-cost.dto.js';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
-import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 
@@ -28,7 +28,12 @@ export class ProfessionDto {
   @ApiProperty({ description: 'List of available professional skills', required: true, example: ['riding', 'perception'] })
   professionalSkills: string[];
 
-  @ApiProperty({ type: String, description: 'Entity source of the profession', required: true })
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
   entitySource: EntitySource;
 
   @ApiProperty({

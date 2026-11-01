@@ -5,7 +5,7 @@ import {
   type EffectPropertyRequirement,
 } from '../../../domain/value-objects/effect-property-requirement.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
-import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 
 export class EffectTypeDto {
@@ -45,7 +45,12 @@ export class EffectTypeDto {
   @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public', required: true })
   accessType: AccessType;
 
-  @ApiProperty({ type: String, description: 'Entity source', example: 'user', required: true })
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
   entitySource: EntitySource;
 
   static fromEntity(entity: EffectType): EffectTypeDto {

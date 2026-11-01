@@ -21,7 +21,7 @@ export class MongoProfessionRepository extends MongoBaseRepository<Profession, P
       fixedRealmTypes: doc.fixedRealmTypes,
       skillCosts: doc.skillCosts,
       professionalSkills: doc.professionalSkills,
-      entitySource: doc.entitySource,
+      entitySource: doc.entitySource ?? 'user',
       description: doc.description,
       imageUrl: doc.imageUrl,
       createdAt: doc.createdAt,

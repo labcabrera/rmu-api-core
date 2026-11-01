@@ -25,6 +25,7 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
     if (!current) throw new NotFoundError('Enumeration', command.id);
 
     this.guard.checkUpdate(current, command.userId, command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
 
     current.checkVersion(command.expectedVersion);
 
@@ -60,6 +61,7 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
       description: command.description,
       imageUrl: command.imageUrl,
       accessType: command.accessType,
+      entitySource: command.entitySource,
     });
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
     if (!current.hasChanges()) return current;

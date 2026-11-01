@@ -47,7 +47,7 @@ const setup = (existing: Enumeration[] = []) => {
     ),
     update: vi.fn((entity: Enumeration) => Promise.resolve(entity)),
   };
-  const guard = { checkUpdate: vi.fn() };
+  const guard = { checkUpdate: vi.fn(), checkEntitySource: vi.fn() };
   const realmRepository = { findById: vi.fn((id: string) => Promise.resolve(id === 'missing-realm' ? null : { id })) };
   const realmGuard = {
     checkUpdate: vi.fn((realm: { id: string }) => {

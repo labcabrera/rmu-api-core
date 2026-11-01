@@ -6,6 +6,7 @@ import { UpdateProfessionCommand } from '../../../application/cqrs/commands/upda
 import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
 import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
 import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateProfessionDto {
   @ApiProperty({ description: 'Available realm types for the profession', required: false, example: ['channeling'] })
@@ -64,6 +65,16 @@ export class UpdateProfessionDto {
   @IsOptional()
   version?: number;
 
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(professionId: string, dto: UpdateProfessionDto, userId: string, roles: string[]): UpdateProfessionCommand {
     return new UpdateProfessionCommand(
       professionId,
@@ -78,6 +89,7 @@ export class UpdateProfessionDto {
       userId,
       roles,
       dto.version,
+      dto.entitySource,
     );
   }
 }
