@@ -45,6 +45,7 @@ const makeProfessionProps = (overrides: Partial<ProfessionProps> = {}): Professi
   fixedRealmTypes: ['channeling'],
   skillCosts: makeSkillCosts(),
   professionalSkills: ['skill-1'],
+  baseListLimit: null,
   entitySource: 'system',
   description: undefined,
   imageUrl: undefined,
@@ -124,6 +125,25 @@ describe('Profession domain aggregate', () => {
 
     expect(profession.updatedAt).toBeUndefined();
     expect(profession.getUncommittedEvents()).toEqual([]);
+  });
+
+  it('sets, keeps and removes the base list limit (spec 064)', () => {
+    const profession = Profession.fromProps(makeProfessionProps());
+    profession.restoreVersion(0);
+    expect(profession.baseListLimit).toBeNull();
+
+    profession.update({ baseListLimit: 6 });
+    expect(profession.baseListLimit).toBe(6);
+    expect(profession.hasChanges()).toBe(true);
+
+    profession.restoreVersion(1);
+    profession.update({ baseListLimit: undefined, description: profession.description });
+    expect(profession.baseListLimit).toBe(6);
+    expect(profession.hasChanges()).toBe(false);
+
+    profession.update({ baseListLimit: null });
+    expect(profession.baseListLimit).toBeNull();
+    expect(profession.hasChanges()).toBe(true);
   });
 
   it('preserves skill cost boundary arrays without coercion', () => {

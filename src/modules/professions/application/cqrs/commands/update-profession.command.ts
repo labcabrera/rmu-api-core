@@ -22,6 +22,8 @@ export class UpdateProfessionCommand extends AuthenticatedCommand {
     public readonly expectedVersion?: number,
     /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
     public readonly entitySource?: EntitySource,
+    /** Spec 064: most base lists developed as base; null removes the limit, undefined leaves it */
+    public readonly baseListLimit?: number | null,
   ) {
     super(userId, roles);
   }

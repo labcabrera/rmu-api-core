@@ -60,6 +60,7 @@ const profession = (overrides: Partial<ProfessionProps> = {}) =>
     fixedRealmTypes: [],
     skillCosts: skillCosts(2),
     professionalSkills: ['skill-1'],
+    baseListLimit: null,
     entitySource: 'user',
     description: 'A fighter',
     imageUrl: undefined,
@@ -81,7 +82,12 @@ describe('profession command handlers', () => {
   });
 
   describe('CreateProfessionHandler', () => {
-    const command = (id: string, user: { id: string; roles: readonly string[] }, entitySource?: 'system' | 'user') =>
+    const command = (
+      id: string,
+      user: { id: string; roles: readonly string[] },
+      entitySource?: 'system' | 'user',
+      baseListLimit?: number | null,
+    ) =>
       new CreateProfessionCommand(
         id,
         'pure-spellcaster',
@@ -95,6 +101,7 @@ describe('profession command handlers', () => {
         user.id,
         [...user.roles],
         entitySource,
+        baseListLimit,
       );
 
     // Spec 063: the source comes from the request, `user` by default, also for an admin (it used to follow the role).
@@ -122,6 +129,15 @@ describe('profession command handlers', () => {
       });
       expect(professions.items.get('mage')).toBe(created);
       expect(events.topics).toEqual(['profession.created']);
+    });
+
+    it.each([
+      [undefined, null],
+      [null, null],
+      [6, 6],
+    ] as const)('stores a base list limit of %s as %s (spec 064)', async (asked, stored) => {
+      const created = await new CreateProfessionHandler(professions, guard, events).execute(command('mage', OWNER, undefined, asked));
+      expect(created.baseListLimit).toBe(stored);
     });
 
     it('forbids a non-admin to create a system profession', async () => {
@@ -199,6 +215,32 @@ describe('profession command handlers', () => {
 
       expect(result.updatedAt).toBeUndefined();
       expect(events.topics).toEqual([]);
+    });
+
+    it('sets and removes the base list limit, and keeps it when the command leaves it out (spec 064)', async () => {
+      const handler = new UpdateProfessionHandler(professions, guard, events);
+      const limit = (baseListLimit: number | null | undefined) =>
+        new UpdateProfessionCommand(
+          'fighter',
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          OWNER.id,
+          [...OWNER.roles],
+          undefined,
+          undefined,
+          baseListLimit,
+        );
+
+      expect((await handler.execute(limit(6))).baseListLimit).toBe(6);
+      expect((await handler.execute(command('fighter', OWNER))).baseListLimit).toBe(6);
+      expect((await handler.execute(limit(null))).baseListLimit).toBeNull();
+      expect(events.topics).toEqual(['profession.updated', 'profession.updated', 'profession.updated']);
     });
 
     it('forbids another user', async () => {

@@ -29,6 +29,7 @@ export class CreateProfessionHandler implements ICommandHandler<CreateProfession
       fixedRealmTypes: command.fixedRealmTypes,
       skillCosts: command.skillCosts,
       professionalSkills: command.professionalSkills,
+      baseListLimit: command.baseListLimit ?? null,
       entitySource: command.entitySource ?? 'user',
       description: command.description,
       imageUrl: command.imageUrl,

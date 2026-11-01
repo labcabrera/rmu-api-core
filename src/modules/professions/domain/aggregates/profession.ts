@@ -29,6 +29,10 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
     return this.props.professionalSkills;
   }
 
+  get baseListLimit() {
+    return this.props.baseListLimit;
+  }
+
   get entitySource() {
     return this.props.entitySource;
   }
@@ -69,6 +73,7 @@ export class Profession extends BaseAggregateRoot<ProfessionProps> implements Rb
     if (props.fixedRealmTypes) this.props.fixedRealmTypes = props.fixedRealmTypes;
     if (props.skillCosts) this.props.skillCosts = props.skillCosts;
     if (props.professionalSkills) this.props.professionalSkills = props.professionalSkills;
+    if (props.baseListLimit !== undefined) this.props.baseListLimit = props.baseListLimit;
     if (props.entitySource) this.props.entitySource = props.entitySource;
     if (props.description !== undefined) this.props.description = props.description;
     if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;

@@ -11,6 +11,8 @@ export interface ProfessionProps {
   fixedRealmTypes: RealmType[];
   skillCosts: ProfessionSkillCosts;
   professionalSkills: string[];
+  /** Spec 064: most base lists of the profession a character develops as base; null has no limit */
+  baseListLimit: number | null;
   entitySource: EntitySource;
   description: string | undefined;
   imageUrl: string | undefined;

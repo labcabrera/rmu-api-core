@@ -30,6 +30,7 @@ export class UpdateProfessionHandler implements ICommandHandler<UpdateProfession
       availableRealmTypes: command.availableRealmTypes,
       fixedRealmTypes: command.fixedRealmTypes,
       professionalSkills: command.professionalSkills,
+      baseListLimit: command.baseListLimit,
       description: command.description,
       imageUrl: command.imageUrl,
       accessType: command.accessType,
