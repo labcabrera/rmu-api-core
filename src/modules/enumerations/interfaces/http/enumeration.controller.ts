@@ -14,7 +14,7 @@ import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete
 import { UpdateEnumerationDto } from './dto/update-enumeration.dto.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/enumerations')
@@ -54,7 +54,7 @@ export class EnumerationController {
   @ApiOperation({ operationId: 'createEnumeration', summary: 'Create enumeration' })
   @ApiErrors({
     400: 'Bad request, invalid data or unknown realm',
-    403: 'Missing role or no permission to change the realm',
+    403: `${FORBIDDEN_CREATE}, or no permission to change the realm`,
     409: 'Conflict, enumeration already exists',
   })
   async create(@Body() createSkillDto: CreateEnumerationDto, @CurrentUser() user: AuthenticatedUser) {
@@ -67,7 +67,7 @@ export class EnumerationController {
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateEnumeration', summary: 'Update enumeration' })
-  @ApiErrors()
+  @ApiErrors({ 403: FORBIDDEN_CHANGE })
   async update(@Param('id') id: string, @Body() dto: UpdateEnumerationDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -79,7 +79,7 @@ export class EnumerationController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteEnumeration', summary: 'Delete enumeration' })
-  @ApiErrors({ 404: 'Enumeration not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Enumeration not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

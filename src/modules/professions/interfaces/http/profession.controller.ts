@@ -15,7 +15,7 @@ import { CreateProfessionCommand } from '../../application/cqrs/commands/create-
 import { UpdateProfessionCommand } from '../../application/cqrs/commands/update-profession.command.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/professions')
@@ -54,7 +54,7 @@ export class ProfessionController {
   @Post('')
   @ApiOperation({ operationId: 'createProfession', summary: 'Create a new profession' })
   @ApiOkResponse({ type: ProfessionDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, profession already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, profession already exists' })
   async create(@Body() createProfessionDto: CreateProfessionDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -66,7 +66,7 @@ export class ProfessionController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateProfession', summary: 'Update profession by id' })
   @ApiOkResponse({ type: ProfessionDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Profession not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Profession not found' })
   async updateSettings(@Param('id') id: string, @Body() updateProfessionDto: UpdateProfessionDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -78,7 +78,7 @@ export class ProfessionController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteProfession', summary: 'Delete profession by id' })
-  @ApiErrors({ 404: 'Profession not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Profession not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

@@ -190,7 +190,15 @@ Conventions:
   CQRS and Mongo layout when its data can change.
 - **Permissions.** The guards (`<entity>-guard.adapter.ts`) extend `BaseEntityGuard`: `rmu-user` or `rmu-admin`
   creates, a `public` entity is read by everyone and a `private` one by its owner and admins, and only the owner or an
-  admin changes or deletes it. Exceptions:
+  admin changes or deletes it.
+  * **Entity source** (spec 063): cultures, effect types, enumerations, maneuver modifiers, professions, races, realms,
+    skills and traits carry `entitySource: 'system' | 'user'`. A `system` (rulebook) entity is changed or deleted, also
+    through its sub-resources, only by an admin: anyone else gets 403 `system-entity-admin-only`, its owner included.
+    The rule lives in `shared/domain/services/entity-permissions.ts`, which `BaseEntityGuard` and `TraitGuardAdapter`
+    call. Create and update DTOs take an optional `entitySource`: only an admin sends `system`, and a missing value
+    is `user` on create. A document stored without the field is read as `user`.
+
+  Exceptions:
   * traits are the only public resource without `accessType` (`TraitGuardAdapter`): every authenticated user reads
     and lists all of them, because races and characters of any user reference them;
   * a race, or an enumeration with a `realmId`, is created only by who can change that realm (`REALM_GUARD`, exported

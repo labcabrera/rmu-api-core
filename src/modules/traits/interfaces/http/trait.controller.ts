@@ -15,7 +15,7 @@ import { Page } from '../../../shared/application/pagination/page.js';
 import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/traits')
@@ -51,7 +51,7 @@ export class TraitController {
   @ApiBody({ type: CreateTraitDto })
   @ApiOperation({ operationId: 'createTrait', summary: 'Create a new Trait' })
   @ApiOkResponse({ type: TraitDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 403: 'Missing role', 409: 'Conflict, Trait already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, Trait already exists' })
   async create(@Body() dto: CreateTraitDto, @CurrentUser() user: AuthenticatedUser) {
     const command = CreateTraitDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateTraitCommand, Trait>(command);
@@ -61,7 +61,7 @@ export class TraitController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateTrait', summary: 'Update Trait' })
   @ApiOkResponse({ type: TraitDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Trait not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Trait not found' })
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateTraitDto, @CurrentUser() user: AuthenticatedUser) {
     const command = UpdateTraitDto.toCommand(id, dto, user.id, user.roles);
     const entity = await this.commandBus.execute<UpdateTraitCommand, Trait>(command);
@@ -71,7 +71,7 @@ export class TraitController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteTrait', summary: 'Delete Trait by id' })
-  @ApiErrors({ 404: 'Trait not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Trait not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const command = new DeleteTraitCommand(id, undefined, user.id, user.roles);
     await this.commandBus.execute(command);

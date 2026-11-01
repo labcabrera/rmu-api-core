@@ -15,7 +15,7 @@ import { UpdateSkillCommand } from '../../application/cqrs/commands/update-skill
 import { CreateSkillCommand } from '../../application/cqrs/commands/create-skill.command.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/skills')
@@ -56,7 +56,7 @@ export class SkillController {
   @ApiBody({ type: CreateSkillDto })
   @ApiOperation({ operationId: 'createSkill', summary: 'Create skill' })
   @ApiOkResponse({ type: SkillDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, skill already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, skill already exists' })
   async create(@Body() createSkillDto: CreateSkillDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -69,7 +69,7 @@ export class SkillController {
   @ApiBody({ type: UpdateSkillDto })
   @ApiOperation({ operationId: 'updateSkill', summary: 'Update skill' })
   @ApiOkResponse({ type: SkillDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Skill not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Skill not found' })
   async update(@Param('id') id: string, @Body() dto: UpdateSkillDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
@@ -82,7 +82,7 @@ export class SkillController {
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteSkill', summary: 'Delete skill' })
   @ApiOkResponse({ type: SkillDto, description: 'Success' })
-  @ApiErrors({ 404: 'Skill not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Skill not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;

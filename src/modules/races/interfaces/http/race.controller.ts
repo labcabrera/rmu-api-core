@@ -21,7 +21,7 @@ import { UpdateRaceCommand } from '../../application/cqrs/commands/update-race.c
 import { DeleteRaceSkillBonusCommand } from '../../application/cqrs/commands/delete-race-skill-bonus.command.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
-import { ApiErrors } from '../../../shared/interfaces/http/api-errors.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/races')
@@ -62,7 +62,7 @@ export class RaceController {
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
   @ApiErrors({
     400: 'Bad request, invalid data or unknown realm',
-    403: 'Missing role or no permission to change the realm',
+    403: `${FORBIDDEN_CREATE}, or no permission to change the realm`,
     409: 'Conflict, race already exists',
   })
   async create(@Body() createRaceDto: CreateRaceDto, @CurrentUser() user: AuthenticatedUser) {
@@ -76,7 +76,7 @@ export class RaceController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateRace', summary: 'Update race by id' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 404: 'Race not found' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Race not found' })
   async updateSettings(@Param('id') id: string, @Body() updateRaceDto: UpdateRaceDto, @CurrentUser() user: AuthenticatedUser) {
     const userId = user.id;
     const roles = user.roles;
@@ -88,7 +88,7 @@ export class RaceController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteRace', summary: 'Delete race by id' })
-  @ApiErrors({ 404: 'Race not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Race not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const userId = user.id;
     const roles = user.roles;
@@ -100,7 +100,7 @@ export class RaceController {
   @HttpCode(200)
   @ApiOperation({ operationId: 'addTrait', summary: 'Add a trait to a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, race already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 409: 'Conflict, race already exists' })
   async addTrait(@Param('id') id: string, @Body() addRaceTraitDto: AddRaceTraitDto, @CurrentUser() user: AuthenticatedUser) {
     const userId = user.id;
     const roles = user.roles;
@@ -113,7 +113,7 @@ export class RaceController {
   @HttpCode(200)
   @ApiOperation({ operationId: 'addSkillBonus', summary: 'Add a skill bonus to a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
-  @ApiErrors({ 400: 'Bad request, invalid data', 409: 'Conflict, race already exists' })
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 409: 'Conflict, race already exists' })
   async addSkillBonus(@Param('id') id: string, @Body() dto: AddRaceSkillBonusDto, @CurrentUser() user: AuthenticatedUser) {
     const userId = user.id;
     const roles = user.roles;
@@ -126,7 +126,7 @@ export class RaceController {
   @HttpCode(200)
   @ApiOperation({ operationId: 'removeTrait', summary: 'Remove a trait from a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
-  @ApiErrors({ 404: 'Race or trait not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Race or trait not found' })
   async removeTrait(@Param('id') id: string, @Param('traitId') traitId: string, @CurrentUser() user: AuthenticatedUser) {
     const userId = user.id;
     const roles = user.roles;
@@ -139,7 +139,7 @@ export class RaceController {
   @HttpCode(200)
   @ApiOperation({ operationId: 'removeSkillBonus', summary: 'Remove a skill bonus from a race' })
   @ApiOkResponse({ type: RaceDto, description: 'Success' })
-  @ApiErrors({ 404: 'Race or skill bonus not found' })
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Race or skill bonus not found' })
   async removeSkillBonus(
     @Param('id') id: string,
     @Param('skillId') skillId: string,
