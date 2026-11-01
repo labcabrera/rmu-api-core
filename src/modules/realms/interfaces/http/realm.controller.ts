@@ -77,7 +77,7 @@ export class RealmController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteRealm', summary: 'Delete realm by id' })
-  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Realm not found' })
+  @ApiErrors({ 403: `${FORBIDDEN_CHANGE}; a realm with system races, admin only`, 404: 'Realm not found' })
   async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const command = new DeleteRealmCommand(id, user.id, user.roles);
     await this.commandBus.execute(command);

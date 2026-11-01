@@ -197,6 +197,10 @@ Conventions:
     The rule lives in `shared/domain/services/entity-permissions.ts`, which `BaseEntityGuard` and `TraitGuardAdapter`
     call. Create and update DTOs take an optional `entitySource`: only an admin sends `system`, and a missing value
     is `user` on create. A document stored without the field is read as `user`.
+  * Deleting a realm cascades to its races (Kafka, `DeleteRacesByRealmCommand`, a system command without access
+    check). So a realm with at least one `system` race is deleted only by an admin: 403 `system-entity-admin-only`
+    for its owner. `DeleteRealmHandler` counts those races through `REALM_RACE_QUERY` (a realms port whose adapter
+    reads the `races` collection, since the races module imports the realms one and not the other way round).
 
   Exceptions:
   * traits are the only public resource without `accessType` (`TraitGuardAdapter`): every authenticated user reads

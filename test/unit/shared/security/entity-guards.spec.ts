@@ -88,6 +88,13 @@ describe('entity guards (spec 063)', () => {
     expect(() => new TraitGuardAdapter().checkRead()).not.toThrow();
   });
 
+  it('lets only an admin delete a realm with system races', () => {
+    const guard = new RealmGuardAdapter();
+    expect(errorCode(() => guard.checkDeleteWithSystemRaces([...OWNER.roles], 0))).toBeNull();
+    expect(errorCode(() => guard.checkDeleteWithSystemRaces([...ADMIN.roles], 3))).toBeNull();
+    expect(errorCode(() => guard.checkDeleteWithSystemRaces([...OWNER.roles], 1))).toBe('system-entity-admin-only');
+  });
+
   it('keeps the realm generic rule', () => {
     const guard = new RealmGuardAdapter();
     expect(errorCode(() => guard.checkGeneric([...ADMIN.roles]))).toBeNull();

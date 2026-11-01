@@ -201,11 +201,44 @@ describe('realm command handlers', () => {
   });
 
   describe('DeleteRealmHandler', () => {
+    /** The races of the realm, as the port counts them: `system` ones only. */
+    const systemRaces = (count: number) => ({ countSystemRaces: vi.fn((realmId: string) => Promise.resolve(realmId ? count : 0)) });
+    const noSystemRaces = systemRaces(0);
+
+    it('forbids the owner to delete a realm with system races, without deleting or publishing (spec 063)', async () => {
+      const races = systemRaces(2);
+      const handler = new DeleteRealmHandler(realms, guard, events, races);
+
+      await expect(handler.execute(new DeleteRealmCommand('realm-1', OWNER.id, [...OWNER.roles]))).rejects.toMatchObject({
+        statusCode: 403,
+        code: 'system-entity-admin-only',
+      });
+      expect(races.countSystemRaces).toHaveBeenCalledWith('realm-1');
+      expect(realms.items.has('realm-1')).toBe(true);
+      expect(events.topics).toEqual([]);
+    });
+
+    it('lets an admin delete a realm with system races', async () => {
+      await new DeleteRealmHandler(realms, guard, events, systemRaces(2)).execute(
+        new DeleteRealmCommand('realm-1', ADMIN.id, [...ADMIN.roles]),
+      );
+      expect(realms.items.has('realm-1')).toBe(false);
+      expect(events.topics).toEqual(['realm.deleted']);
+    });
+
+    it('checks the owner before counting the races', async () => {
+      const races = systemRaces(0);
+      await expect(
+        new DeleteRealmHandler(realms, guard, events, races).execute(new DeleteRealmCommand('realm-1', OTHER.id, [...OTHER.roles])),
+      ).rejects.toMatchObject({ code: 'forbidden' });
+      expect(races.countSystemRaces).not.toHaveBeenCalled();
+    });
+
     it.each([
       ['the owner', OWNER],
       ['an admin', ADMIN],
     ])('lets %s delete the realm and publishes realm.deleted with its last state', async (_, user) => {
-      const result = await new DeleteRealmHandler(realms, guard, events).execute(
+      const result = await new DeleteRealmHandler(realms, guard, events, noSystemRaces).execute(
         new DeleteRealmCommand('realm-1', user.id, [...user.roles]),
       );
 
@@ -215,14 +248,14 @@ describe('realm command handlers', () => {
     });
 
     it('forbids another user', async () => {
-      const handler = new DeleteRealmHandler(realms, guard, events);
+      const handler = new DeleteRealmHandler(realms, guard, events, noSystemRaces);
       await expect(handler.execute(new DeleteRealmCommand('realm-1', OTHER.id, [...OTHER.roles]))).rejects.toThrow(ForbiddenError);
       expect(realms.items.has('realm-1')).toBe(true);
       expect(events.topics).toEqual([]);
     });
 
     it('fails on an unknown realm', async () => {
-      const handler = new DeleteRealmHandler(realms, guard, events);
+      const handler = new DeleteRealmHandler(realms, guard, events, noSystemRaces);
       await expect(handler.execute(new DeleteRealmCommand('missing', OWNER.id, [...OWNER.roles]))).rejects.toThrow(NotFoundError);
       expect(events.topics).toEqual([]);
     });
@@ -233,7 +266,7 @@ describe('realm command handlers', () => {
           return Promise.resolve(null);
         }
       }
-      const handler = new DeleteRealmHandler(new VanishingRealmRepository(realm()), guard, events);
+      const handler = new DeleteRealmHandler(new VanishingRealmRepository(realm()), guard, events, noSystemRaces);
 
       await expect(handler.execute(new DeleteRealmCommand('realm-1', OWNER.id, [...OWNER.roles]))).rejects.toThrow(NotFoundError);
       expect(events.topics).toEqual([]);

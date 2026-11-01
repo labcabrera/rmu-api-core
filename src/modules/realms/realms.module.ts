@@ -15,6 +15,8 @@ import { SharedModule } from '../shared/shared.module.js';
 import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter.js';
 import { REALM_GUARD } from './application/ports/realm-guard.port.js';
 import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
+import { REALM_RACE_QUERY } from './application/ports/realm-race-query.port.js';
+import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race-query.adapter.js';
 
 @Module({
   imports: [
@@ -38,6 +40,10 @@ import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
     {
       provide: REALM_GUARD,
       useClass: RealmGuardAdapter,
+    },
+    {
+      provide: REALM_RACE_QUERY,
+      useClass: MongoRealmRaceQueryAdapter,
     },
   ],
   exports: [REALM_REPOSITORY, REALM_GUARD],
