@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import type { HealingTablesRepository } from '../../application/ports/healing-tables-repository.port.js';
-import type { HealingTables } from '../../domain/value-objects/healing-tables.vo.js';
+import type { HealingTables, TreatmentLimits } from '../../domain/value-objects/healing-tables.vo.js';
 import { type HealingTablesDocument, HealingTablesModel } from '../persistence/models/healing-tables.model.js';
 
 @Injectable()
@@ -47,6 +47,38 @@ export class MongoHealingTablesRepository implements HealingTablesRepository {
         cauterizePenaltyPerBleeding: doc.treatmentRules?.cauterizePenaltyPerBleeding ?? 0,
         bleedingProcedures: [...(doc.treatmentRules?.bleedingProcedures || [])],
         tourniquetLocations: [...(doc.treatmentRules?.tourniquetLocations || [])],
+      },
+      treatmentDurations: (doc.treatmentDurations || []).map(row => ({
+        procedure: row.procedure,
+        rounds: row.rounds ?? null,
+        perBleeding: row.perBleeding === true,
+      })),
+      cauterization: (doc.cauterization || []).map(row => ({
+        min: row.min ?? null,
+        max: row.max ?? null,
+        result: row.result,
+        bleeding: row.bleeding,
+        heatSeverity: row.heatSeverity ?? null,
+        hitsDice: row.hitsDice ?? 0,
+      })),
+      cauterizationUnusualRoll: doc.cauterizationUnusualRoll ?? null,
+      surgeryRequired: (doc.surgeryRequired || []).map(row => ({ injuryType: row.injuryType, severity: row.severity })),
+      treatmentLimits: MongoHealingTablesRepository.mapLimits(doc.treatmentLimits),
+      tourniquet: doc.tourniquet ? { ...doc.tourniquet } : null,
+      stabilize: doc.stabilize ? { ...doc.stabilize } : null,
+      salveModifier: doc.salveModifier ? { ...doc.salveModifier } : null,
+      combatItemAp: doc.combatItemAp ?? null,
+    };
+  }
+
+  /** Limits are only returned whole: a document without both procedures has none. */
+  private static mapLimits(limits: TreatmentLimits | null | undefined): TreatmentLimits | null {
+    if (!limits?.splint?.leg || !limits.splint.arm || !limits.cast?.leg) return null;
+    return {
+      splint: { leg: { pace: limits.splint.leg.pace }, arm: { limbUnusable: limits.splint.arm.limbUnusable === true } },
+      cast: {
+        leg: { pace: limits.cast.leg.pace, cane: limits.cast.leg.cane, crutches: limits.cast.leg.crutches },
+        maneuverPenaltyFactor: limits.cast.maneuverPenaltyFactor ?? 1,
       },
     };
   }

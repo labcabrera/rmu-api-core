@@ -1,12 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { HydratedDocument } from 'mongoose';
 import type {
+  CauterizationRow,
   HealingType,
   InjurySeverity,
   PermanentInjuryRow,
   RecoveryDaysRow,
+  SalveModifierRange,
   SeverityThreshold,
+  StabilizeRules,
+  SurgeryRequirement,
+  TourniquetRules,
   TreatmentDifficulty,
+  TreatmentDuration,
+  TreatmentLimits,
   TreatmentRules,
 } from '../../../domain/value-objects/healing-tables.vo.js';
 
@@ -56,6 +63,34 @@ export class HealingTablesModel {
 
   @Prop({ type: Object, required: false })
   treatmentRules?: TreatmentRules;
+
+  // Spec 068: optional, documents imported before do not have them.
+  @Prop({ type: [Object], required: false })
+  treatmentDurations?: TreatmentDuration[];
+
+  @Prop({ type: [Object], required: false })
+  cauterization?: CauterizationRow[];
+
+  @Prop({ type: Number, required: false })
+  cauterizationUnusualRoll?: number | null;
+
+  @Prop({ type: [Object], required: false })
+  surgeryRequired?: SurgeryRequirement[];
+
+  @Prop({ type: Object, required: false })
+  treatmentLimits?: TreatmentLimits | null;
+
+  @Prop({ type: Object, required: false })
+  tourniquet?: TourniquetRules | null;
+
+  @Prop({ type: Object, required: false })
+  stabilize?: StabilizeRules | null;
+
+  @Prop({ type: Object, required: false })
+  salveModifier?: SalveModifierRange | null;
+
+  @Prop({ type: Number, required: false })
+  combatItemAp?: number | null;
 }
 
 export const HealingTablesSchema = SchemaFactory.createForClass(HealingTablesModel);

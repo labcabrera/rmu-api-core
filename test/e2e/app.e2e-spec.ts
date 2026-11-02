@@ -57,6 +57,10 @@ describe('AppModule (e2e)', () => {
     expect(schemas.FearResultRowDto.properties.result.enum).toEqual(['balk', 'retreat', 'routed', 'broken']);
     expect(schemas.ResistanceRowDto.properties.severity.enum).toEqual(['mild', 'moderate', 'severe', 'extreme']);
     expect(schemas.TreatmentDifficultyDto.properties.procedure.enum).toContain('stitches');
+    expect(schemas.TreatmentDurationDto.properties.procedure.enum).toContain('stabilize');
+    expect(schemas.CauterizationRowDto.properties.bleeding.enum).toEqual(['unchanged', 'halved', 'stopped']);
+    expect(schemas.CastLegLimitsDto.properties.crutches.enum).toEqual(['creep', 'walk', 'jog', 'run', 'sprint', 'dash']);
+    expect(schemas.PsychologyTablesDto.properties).toHaveProperty('fallenThresholds');
     expect(schemas.EffectiveManeuverProfileDto.properties.resultKind.enum).toEqual(['standard', 'morale', 'price']);
   });
 

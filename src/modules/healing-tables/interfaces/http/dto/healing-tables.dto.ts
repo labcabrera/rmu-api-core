@@ -1,14 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  CAUTERIZATION_BLEEDING,
+  CRITICAL_SEVERITIES,
+  type CauterizationBleeding,
+  type CriticalSeverity,
   DIFFICULTY_KEYS,
   type DifficultyKey,
   type HealingTables,
   type HealingType,
   INJURY_SEVERITIES,
   type InjurySeverity,
+  MANEUVER_RESULTS,
+  type ManeuverResult,
+  PACES,
+  type Pace,
   type PermanentInjuryRow,
   type RecoveryDaysRow,
   type SeverityThreshold,
+  type RecoveryInjuryType,
   TREATMENT_INJURY_TYPES,
   TREATMENT_PROCEDURES,
   type TreatmentInjuryType,
@@ -41,6 +50,117 @@ export class TreatmentRulesDto {
 
   @ApiProperty({ type: [String], description: 'Locations where a tourniquet applies', example: ['arm', 'leg'] })
   tourniquetLocations: string[];
+}
+
+export class TreatmentDurationDto {
+  @ApiProperty({ type: String, enum: TREATMENT_PROCEDURES, example: 'tourniquet' })
+  procedure: TreatmentProcedure;
+
+  @ApiProperty({ type: Number, nullable: true, description: 'Rounds in tactical combat; null: not offered there', example: 2 })
+  rounds: number | null;
+
+  @ApiProperty({ description: 'The rounds are multiplied by the bleeding of the wound', example: false })
+  perBleeding: boolean;
+}
+
+export class CauterizationRowDto {
+  @ApiProperty({ type: Number, nullable: true, description: 'Lowest roll of the band (null is open)' })
+  min: number | null;
+
+  @ApiProperty({ type: Number, nullable: true, description: 'Highest roll of the band (null is open)' })
+  max: number | null;
+
+  @ApiProperty({ type: String, enum: MANEUVER_RESULTS })
+  result: ManeuverResult;
+
+  @ApiProperty({ type: String, enum: CAUTERIZATION_BLEEDING, description: 'Effect on the bleeding of the wound' })
+  bleeding: CauterizationBleeding;
+
+  @ApiProperty({ type: String, enum: CRITICAL_SEVERITIES, nullable: true, description: 'Heat critical taken (null: none)' })
+  heatSeverity: CriticalSeverity | null;
+
+  @ApiProperty({ description: 'Number of d10 hits taken', example: 1 })
+  hitsDice: number;
+}
+
+export class SurgeryRequirementDto {
+  @ApiProperty({ type: String, enum: TREATMENT_INJURY_TYPES.filter(t => t !== 'unknown'), example: 'bone' })
+  injuryType: RecoveryInjuryType;
+
+  @ApiProperty({ type: String, enum: INJURY_SEVERITIES, example: 'severe' })
+  severity: InjurySeverity;
+}
+
+export class PaceLimitDto {
+  @ApiProperty({ type: String, enum: PACES, description: 'Fastest pace' })
+  pace: Pace;
+}
+
+export class LimbUnusableDto {
+  @ApiProperty({ description: 'The limb cannot be used while treated' })
+  limbUnusable: boolean;
+}
+
+export class SplintLimitsDto {
+  @ApiProperty({ type: PaceLimitDto })
+  leg: PaceLimitDto;
+
+  @ApiProperty({ type: LimbUnusableDto })
+  arm: LimbUnusableDto;
+}
+
+export class CastLegLimitsDto {
+  @ApiProperty({ type: String, enum: PACES, description: 'Fastest pace without support' })
+  pace: Pace;
+
+  @ApiProperty({ type: String, enum: PACES, description: 'Fastest pace with a cane' })
+  cane: Pace;
+
+  @ApiProperty({ type: String, enum: PACES, description: 'Fastest pace with crutches' })
+  crutches: Pace;
+}
+
+export class CastLimitsDto {
+  @ApiProperty({ type: CastLegLimitsDto })
+  leg: CastLegLimitsDto;
+
+  @ApiProperty({ description: 'Factor of the maneuver penalty of the injury (not of the recovery)', example: 0.5 })
+  maneuverPenaltyFactor: number;
+}
+
+export class TreatmentLimitsDto {
+  @ApiProperty({ type: SplintLimitsDto })
+  splint: SplintLimitsDto;
+
+  @ApiProperty({ type: CastLimitsDto })
+  cast: CastLimitsDto;
+}
+
+export class TourniquetRulesDto {
+  @ApiProperty({ description: 'Rounds a tourniquet stays tight before it must be loosened' })
+  loosenEveryRounds: number;
+
+  @ApiProperty({ description: 'Rounds past that limit before the limb is lost' })
+  graceRounds: number;
+}
+
+export class StabilizeRulesDto {
+  @ApiProperty({ type: String, enum: DIFFICULTY_KEYS, description: 'Difficulty of the roll made each round' })
+  difficulty: DifficultyKey;
+
+  @ApiProperty({ description: 'Rounds of life gained on a success' })
+  successRounds: number;
+
+  @ApiProperty({ description: 'Rounds of life gained on an absolute success' })
+  absoluteRounds: number;
+}
+
+export class SalveModifierRangeDto {
+  @ApiProperty({ description: 'Lowest recovery modifier of a salve' })
+  min: number;
+
+  @ApiProperty({ description: 'Highest recovery modifier of a salve' })
+  max: number;
 }
 
 export class HealingTablesDto {
@@ -85,6 +205,33 @@ export class HealingTablesDto {
 
   @ApiProperty({ description: 'Rules over the treatment difficulties', type: TreatmentRulesDto })
   treatmentRules: TreatmentRulesDto;
+
+  @ApiProperty({ description: 'Rounds of each procedure in tactical combat', type: [TreatmentDurationDto] })
+  treatmentDurations: TreatmentDurationDto[];
+
+  @ApiProperty({ description: 'Cauterization result by roll band (Table 13-1c)', type: [CauterizationRowDto] })
+  cauterization: CauterizationRowDto[];
+
+  @ApiProperty({ type: Number, nullable: true, description: 'Unmodified roll of the cauterization unusual event' })
+  cauterizationUnusualRoll: number | null;
+
+  @ApiProperty({ description: 'Injuries that only surgery or magic can treat', type: [SurgeryRequirementDto] })
+  surgeryRequired: SurgeryRequirementDto[];
+
+  @ApiProperty({ description: 'Limits of a splinted or cast limb', type: TreatmentLimitsDto, nullable: true })
+  treatmentLimits: TreatmentLimitsDto | null;
+
+  @ApiProperty({ description: 'When a tourniquet must be loosened', type: TourniquetRulesDto, nullable: true })
+  tourniquet: TourniquetRulesDto | null;
+
+  @ApiProperty({ description: 'Keeping a character in system shock alive', type: StabilizeRulesDto, nullable: true })
+  stabilize: StabilizeRulesDto | null;
+
+  @ApiProperty({ description: 'Range of the recovery modifier of a salve', type: SalveModifierRangeDto, nullable: true })
+  salveModifier: SalveModifierRangeDto | null;
+
+  @ApiProperty({ type: Number, nullable: true, description: 'Action points of using a healing item in combat' })
+  combatItemAp: number | null;
 
   static fromEntity(entity: HealingTables): HealingTablesDto {
     return Object.assign(new HealingTablesDto(), entity);

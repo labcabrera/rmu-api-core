@@ -104,6 +104,21 @@ export interface ResistanceRollRules {
   fearIgnoresInjuryPenalties: boolean;
 }
 
+/** Share of a side's allies down or fled that suggests a fear check of a level (Table 14-3a). */
+export interface FallenThreshold {
+  /** Share of the allies, from 0 to 1. */
+  minShare: number;
+  /** The share must be greater than minShare instead of reaching it ("more than half"). */
+  exclusive: boolean;
+  frightLevel: number;
+}
+
+/** Revulsion flaw: fright level of the RR it asks for. */
+export interface RevulsionRules {
+  /** Level each bloody corpse in view counts as. */
+  corpseLevel: number;
+}
+
 /**
  * Psychology tables (fear, morale, rally) and the resistance roll table. The values come from the rulebook and are
  * imported from the gitignored data directory (data/core-law/psychology-tables.json), never written in code.
@@ -119,4 +134,7 @@ export interface PsychologyTables {
   rallyGroupModifier: RallyGroupModifier;
   resistance: ResistanceRow[];
   resistanceRoll: ResistanceRollRules;
+  /** Fear checks suggested by fallen allies (spec 068), from the lowest share; empty for tables imported before. */
+  fallenThresholds: FallenThreshold[];
+  revulsion: RevulsionRules | null;
 }
