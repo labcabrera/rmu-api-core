@@ -22,6 +22,7 @@ import { HealingTablesModule } from './modules/healing-tables/healing-tables.mod
 import { PoisonTablesModule } from './modules/poison-tables/poison-tables.module.js';
 import { TradingTablesModule } from './modules/trading-tables/trading-tables.module.js';
 import { AlchemyTablesModule } from './modules/alchemy-tables/alchemy-tables.module.js';
+import { TreasureTablesModule } from './modules/treasure-tables/treasure-tables.module.js';
 import { MaterialsModule } from './modules/materials/materials.module.js';
 import { PsychologyTablesModule } from './modules/psychology-tables/psychology-tables.module.js';
 import { FightingStylesModule } from './modules/fighting-styles/fighting-styles.module.js';
@@ -61,6 +62,7 @@ import { SkillDifficultiesModule } from './modules/skill-difficulties/skill-diff
     PoisonTablesModule,
     TradingTablesModule,
     AlchemyTablesModule,
+    TreasureTablesModule,
     MaterialsModule,
     PsychologyTablesModule,
     FightingStylesModule,
