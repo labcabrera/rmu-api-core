@@ -184,6 +184,47 @@ describe('Catalogs and calculations (e2e)', () => {
     });
   });
 
+  describe('treasure tables (spec 067)', () => {
+    it('requires Core Law access, answers 404 until imported and returns the tables once they are', async () => {
+      await request(e2e.server).get('/v1/treasure-tables').expect(401);
+      await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      const missing = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      expect(missing.body).toMatchObject({ statusCode: 404, code: 'treasure-tables-not-found', path: '/v1/treasure-tables' });
+
+      // A small invented document with the shape of the import, not the rulebook tables.
+      const codes = { wealth: { a: 'poor' }, lifestyle: { l: 'normal' }, magic: { u: 'rich' } };
+      const wealthRolls = [
+        { min: 41, max: 100, rolls: 2 },
+        { min: 1, max: 40, rolls: 1 },
+      ];
+      const melee = [{ min: 1, max: 300, label: 'E2E blade', price: { min: 5, max: 9 }, itemTypeId: 'e2e-blade' }];
+      const standardPricing = { weapon: [{ bonus: 5, days: 1, level: 1, price: 10 }] };
+      await e2e.connection
+        .collection('treasure-tables')
+        .insertOne({ _id: 'treasure', codes, wealthRolls, magicTables: { melee }, standardPricing, version: 3 } as never);
+
+      const res = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      const body = res.body as {
+        id: string;
+        version: number;
+        codes: object;
+        wealthRolls: object[];
+        magicTables: Record<string, object[]>;
+        standardPricing: Record<string, object[]>;
+        gems: object;
+      };
+      expect(body).toMatchObject({ id: 'treasure', codes, version: 3 });
+      expect(body.wealthRolls).toEqual([wealthRolls[1], wealthRolls[0]]);
+      expect(body.magicTables.melee).toEqual(melee);
+      expect(Object.keys(body.magicTables)).toHaveLength(6);
+      expect(body.magicTables.charged).toEqual([]);
+      expect(body.standardPricing.weapon).toEqual(standardPricing.weapon);
+      expect(body.standardPricing.potions).toEqual([]);
+      expect(body.gems).toEqual({ precious: { columns: [] }, semiPrecious: { columns: [] } });
+      await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('admin')).expect(200);
+    });
+  });
+
   describe('fighting styles', () => {
     it('requires Core Law access', async () => {
       await request(e2e.server).get('/v1/fighting-styles').expect(401);
