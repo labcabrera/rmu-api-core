@@ -12,7 +12,7 @@ import { CreateRealmCommand } from '../../application/cqrs/commands/create-realm
 import { DeleteRealmCommand } from '../../application/cqrs/commands/delete-realm.command.js';
 import { UpdateRealmCommand } from '../../application/cqrs/commands/update-realm.command.js';
 import { Page } from '../../../shared/application/pagination/page.js';
-import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { RealmQueryDto } from './dto/realm-query.dto.js';
 import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
 import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
 import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
@@ -33,19 +33,19 @@ export class RealmController {
   async findById(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     const query = new GetRealmQuery(id, user.id, user.roles);
     const entity = await this.queryBus.execute<GetRealmQuery, Realm>(query);
-    return RealmDto.fromEntity(entity);
+    return RealmDto.fromEntity(entity, user);
   }
 
   @Get('')
   @ApiOperation({ operationId: 'findRealms', summary: 'Find realms by RSQL' })
   @ApiOkResponse({ type: RealmPageDto, description: 'Success' })
   @ApiErrors({ 400: 'Invalid RSQL query' })
-  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
+  async find(@Query() dto: RealmQueryDto, @CurrentUser() user: AuthenticatedUser) {
     const userId: string = user.id;
     const roles: string[] = user.roles;
-    const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId, roles);
+    const query = new GetRealmsQuery(dto.q, dto.page, dto.size, userId, roles, dto.scope);
     const page = await this.queryBus.execute<GetRealmsQuery, Page<Realm>>(query);
-    const mapped = page.content.map(realm => RealmDto.fromEntity(realm));
+    const mapped = page.content.map(realm => RealmDto.fromEntity(realm, user));
     return new Page<RealmDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
@@ -61,7 +61,7 @@ export class RealmController {
   async create(@Body() dto: CreateRealmDto, @CurrentUser() user: AuthenticatedUser) {
     const command = CreateRealmDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateRealmCommand, Realm>(command);
-    return RealmDto.fromEntity(entity);
+    return RealmDto.fromEntity(entity, user);
   }
 
   @Patch(':id')
@@ -71,7 +71,7 @@ export class RealmController {
   async updateSettings(@Param('id') id: string, @Body() dto: UpdateRealmDto, @CurrentUser() user: AuthenticatedUser) {
     const command = UpdateRealmDto.toCommand(id, dto, user.id, user.roles);
     const entity = await this.commandBus.execute<UpdateRealmCommand, Realm>(command);
-    return RealmDto.fromEntity(entity);
+    return RealmDto.fromEntity(entity, user);
   }
 
   @Delete(':id')

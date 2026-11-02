@@ -24,6 +24,10 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
     if (!realm) throw new NotFoundError('Realm', command.id);
 
     this.realmGuard.checkUpdate(realm, command.userId, command.roles);
+    // A writer edits the realm, but its visibility stays with the owner and the admins (spec 069).
+    if (command.accessType !== undefined && command.accessType !== realm.accessType) {
+      this.realmGuard.checkManage(realm, command.userId, command.roles);
+    }
     this.realmGuard.checkEntitySource(command.roles, command.entitySource);
     // Sending the stored value back is not a change: the front sends the whole form.
     if (command.generic !== undefined && command.generic !== realm.generic) this.realmGuard.checkGeneric(command.roles);

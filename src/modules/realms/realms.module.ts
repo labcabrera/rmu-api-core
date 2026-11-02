@@ -17,6 +17,8 @@ import { REALM_GUARD } from './application/ports/realm-guard.port.js';
 import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
 import { REALM_RACE_QUERY } from './application/ports/realm-race-query.port.js';
 import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race-query.adapter.js';
+import { REALM_ACCESS } from './application/ports/realm-access.port.js';
+import { RealmAccessService } from './application/services/realm-access.service.js';
 
 @Module({
   imports: [
@@ -42,10 +44,14 @@ import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race
       useClass: RealmGuardAdapter,
     },
     {
+      provide: REALM_ACCESS,
+      useClass: RealmAccessService,
+    },
+    {
       provide: REALM_RACE_QUERY,
       useClass: MongoRealmRaceQueryAdapter,
     },
   ],
-  exports: [REALM_REPOSITORY, REALM_GUARD],
+  exports: [REALM_REPOSITORY, REALM_GUARD, REALM_ACCESS],
 })
 export class RealmsModule {}

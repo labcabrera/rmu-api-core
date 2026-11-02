@@ -19,7 +19,7 @@ export class DeleteEnumerationHandler implements ICommandHandler<DeleteEnumerati
     const current = await this.enumerationRepository.findById(command.enumerationId);
     if (!current) throw new NotFoundError('Enumeration', command.enumerationId);
 
-    this.guard.checkDelete(current, command.userId, command.roles);
+    await this.guard.checkDelete(current, command.userId, command.roles);
 
     await this.enumerationRepository.deleteById(command.enumerationId);
     return current;

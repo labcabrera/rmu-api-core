@@ -17,7 +17,7 @@ export class GetRaceHandler implements IQueryHandler<GetRaceQuery, Race> {
     const current = await this.raceRepository.findById(query.id);
     if (!current) throw new NotFoundError('Race', query.id);
 
-    this.raceGuardPort.checkRead(current, query.userId, query.roles);
+    await this.raceGuardPort.checkRead(current, query.userId, query.roles);
 
     return current;
   }

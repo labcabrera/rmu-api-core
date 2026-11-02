@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Delete, HttpCode, Patch } from '@nestjs/common';
+import { ENUMERATION_GUARD, type EnumerationGuardPort } from '../../application/ports/enumeration-guard.port.js';
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Delete, HttpCode, Patch, Inject } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
 import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto.js';
@@ -23,7 +24,18 @@ export class EnumerationController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    @Inject(ENUMERATION_GUARD) private readonly guard: EnumerationGuardPort,
   ) {}
+
+  /** `access` follows the realm (spec 069): one read of the realms per response. */
+  private async toDtos(entities: Enumeration[], user: AuthenticatedUser): Promise<EnumerationDto[]> {
+    const levels = await this.guard.accessOf(entities, user.id, user.roles);
+    return entities.map((entity, i) => EnumerationDto.fromEntity(entity, levels[i] === 'none' ? undefined : levels[i]));
+  }
+
+  private async toDto(entity: Enumeration, user: AuthenticatedUser): Promise<EnumerationDto> {
+    return (await this.toDtos([entity], user))[0];
+  }
 
   @Get(':id')
   @ApiOperation({ operationId: 'findEnumerationById', summary: 'Find enumeration by id' })
@@ -34,7 +46,7 @@ export class EnumerationController {
     const query = new GetEnumerationQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetEnumerationQuery, Enumeration>(query);
     if (!entity) throw new NotFoundError('Skill not found', id);
-    return EnumerationDto.fromEntity(entity);
+    return this.toDto(entity, user);
   }
 
   @Get('')
@@ -45,7 +57,7 @@ export class EnumerationController {
     const roles: string[] = user.roles;
     const query = new GetEnumerationsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetEnumerationsQuery, Page<Enumeration>>(query);
-    const mapped = page.content.map(category => EnumerationDto.fromEntity(category));
+    const mapped = await this.toDtos(page.content, user);
     return new Page<EnumerationDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
@@ -62,7 +74,7 @@ export class EnumerationController {
     const roles: string[] = user.roles;
     const command = CreateEnumerationDto.toCommand(createSkillDto, userId, roles);
     const result = await this.commandBus.execute<CreateEnumerationDto, Enumeration>(command);
-    return EnumerationDto.fromEntity(result);
+    return this.toDto(result, user);
   }
 
   @Patch(':id')
@@ -73,7 +85,7 @@ export class EnumerationController {
     const roles: string[] = user.roles;
     const command = UpdateEnumerationDto.toCommand(id, dto, userId, roles);
     const result = await this.commandBus.execute<UpdateEnumerationDto, Enumeration>(command);
-    return EnumerationDto.fromEntity(result);
+    return this.toDto(result, user);
   }
 
   @Delete(':id')

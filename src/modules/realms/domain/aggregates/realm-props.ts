@@ -1,6 +1,7 @@
 import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 import type { MagicPresence } from '../value-objects/realm-magic-type.vo.js';
 import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
+import type { EntityShare } from '../../../shared/domain/entities/entity-share.js';
 
 export interface RealmProps {
   id: string;
@@ -15,6 +16,8 @@ export interface RealmProps {
   entitySource: EntitySource;
   /** A realm of generic content (RMU Core, spec 055) usable from any campaign. Only an admin sets it. */
   generic: boolean;
+  /** Friends the owner gave read or write access (spec 069). Stored before: none. */
+  shares: EntityShare[];
   createdAt: Date;
   updatedAt?: Date;
 }
