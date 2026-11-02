@@ -1,97 +1,90 @@
-import { ProfessionSkillCosts } from '../value-objects/profession-skill-cost.vo';
-import { RealmType } from '../value-objects/realm-type.vo';
-import { ProfessionProps } from './profession-props';
-import { RbacEntity } from 'src/modules/shared/domain/entities/rbac-entity';
-import { ProfessionArchetype } from '../value-objects/profession-archetype.vo';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import type { ProfessionProps } from './profession-props.js';
+import type { RbacEntity } from '../../../shared/domain/entities/rbac-entity.js';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import { ProfessionCreatedEvent } from '../events/profession-created.event.js';
+import { ProfessionUpdatedEvent } from '../events/profession-updated.event.js';
 
 export class Profession extends BaseAggregateRoot<ProfessionProps> implements RbacEntity {
-  constructor(
-    id: string,
-    public archetype: ProfessionArchetype,
-    public availableRealmTypes: RealmType[],
-    public fixedRealmTypes: RealmType[],
-    public skillCosts: ProfessionSkillCosts,
-    public professionalSkills: string[],
-    public entitySource: EntitySource,
-    public description: string | undefined,
-    public imageUrl: string | undefined,
-    public owner: string,
-    public accessType: AccessType,
-    public createdAt: Date,
-    public updatedAt?: Date,
-  ) {
-    super(id);
+  private constructor(props: ProfessionProps) {
+    super(props);
+  }
+
+  get archetype() {
+    return this.props.archetype;
+  }
+
+  get availableRealmTypes() {
+    return this.props.availableRealmTypes;
+  }
+
+  get fixedRealmTypes() {
+    return this.props.fixedRealmTypes;
+  }
+
+  get skillCosts() {
+    return this.props.skillCosts;
+  }
+
+  get professionalSkills() {
+    return this.props.professionalSkills;
+  }
+
+  get baseListLimit() {
+    return this.props.baseListLimit;
+  }
+
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
+  get description() {
+    return this.props.description;
+  }
+
+  get imageUrl() {
+    return this.props.imageUrl;
+  }
+
+  get owner() {
+    return this.props.owner;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   static create(props: Omit<ProfessionProps, 'createdAt' | 'updatedAt'>): Profession {
-    const profession = new Profession(
-      props.id,
-      props.archetype,
-      props.availableRealmTypes,
-      props.fixedRealmTypes,
-      props.skillCosts,
-      props.professionalSkills,
-      props.entitySource,
-      props.description,
-      props.imageUrl,
-      props.owner,
-      props.accessType,
-      new Date(),
-      undefined,
-    );
+    const profession = new Profession({ ...props, createdAt: new Date(), updatedAt: undefined });
+    profession.apply(new ProfessionCreatedEvent(profession.getProps()));
     return profession;
   }
 
   update(props: Partial<Omit<ProfessionProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
-    if (props.archetype) this.archetype = props.archetype;
-    if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
-    if (props.fixedRealmTypes) this.fixedRealmTypes = props.fixedRealmTypes;
-    if (props.skillCosts) this.skillCosts = props.skillCosts;
-    if (props.professionalSkills) this.professionalSkills = props.professionalSkills;
-    if (props.availableRealmTypes) this.availableRealmTypes = props.availableRealmTypes;
-    if (props.entitySource) this.entitySource = props.entitySource;
-    if (props.description !== undefined) this.description = props.description;
-    if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
-    if (props.accessType) this.accessType = props.accessType;
-    this.updatedAt = new Date();
+    if (props.archetype) this.props.archetype = props.archetype;
+    if (props.availableRealmTypes) this.props.availableRealmTypes = props.availableRealmTypes;
+    if (props.fixedRealmTypes) this.props.fixedRealmTypes = props.fixedRealmTypes;
+    if (props.skillCosts) this.props.skillCosts = props.skillCosts;
+    if (props.professionalSkills) this.props.professionalSkills = props.professionalSkills;
+    if (props.baseListLimit !== undefined) this.props.baseListLimit = props.baseListLimit;
+    if (props.entitySource) this.props.entitySource = props.entitySource;
+    if (props.description !== undefined) this.props.description = props.description;
+    if (props.imageUrl !== undefined) this.props.imageUrl = props.imageUrl;
+    if (props.accessType) this.props.accessType = props.accessType;
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (!this.hasChanges()) return;
+    this.props.updatedAt = new Date();
+    this.apply(new ProfessionUpdatedEvent(this.getProps()));
   }
 
   static fromProps(props: ProfessionProps): Profession {
-    return new Profession(
-      props.id,
-      props.archetype,
-      props.availableRealmTypes,
-      props.fixedRealmTypes,
-      props.skillCosts,
-      props.professionalSkills,
-      props.entitySource,
-      props.description,
-      props.imageUrl,
-      props.owner,
-      props.accessType,
-      props.createdAt,
-      props.updatedAt,
-    );
-  }
-
-  getProps(): ProfessionProps {
-    return {
-      id: this.id,
-      archetype: this.archetype,
-      availableRealmTypes: this.availableRealmTypes,
-      fixedRealmTypes: this.fixedRealmTypes,
-      skillCosts: this.skillCosts,
-      professionalSkills: this.professionalSkills,
-      entitySource: this.entitySource,
-      description: this.description,
-      imageUrl: this.imageUrl,
-      owner: this.owner,
-      accessType: this.accessType,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
+    return new Profession({ ...props });
   }
 }

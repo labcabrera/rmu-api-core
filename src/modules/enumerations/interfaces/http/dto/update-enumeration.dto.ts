@@ -1,14 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsString, IsOptional } from 'class-validator';
-import { UpdateEnumerationCommand } from 'src/modules/enumerations/application/cqrs/commands/update-enumeration.command';
-import { ENUMERATION_CATEGORIES, type EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { IsIn, IsString, IsOptional, IsInt, IsNotEmpty, Min } from 'class-validator';
+import { UpdateEnumerationCommand } from '../../../application/cqrs/commands/update-enumeration.command.js';
+import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateEnumerationDto {
-  @ApiProperty({ description: 'Enumeration key', example: 'horse' })
+  @ApiProperty({
+    type: String,
+    description: 'Key; it cannot change (spec 050), so it is only accepted when it normalizes to the stored one',
+    example: 'black-speech',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   key: string | undefined;
+
+  @ApiProperty({ type: String, description: 'Name as the user writes it', example: 'Black Speech', required: false })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  name: string | undefined;
 
   @ApiProperty({
     description: 'Enumeration category',
@@ -21,36 +33,68 @@ export class UpdateEnumerationDto {
   @IsOptional()
   category: EnumerationCategory | undefined;
 
-  @ApiProperty({ description: 'Optional realm id for the enumeration', example: 'realm-123', required: false })
+  @ApiProperty({ type: String, description: 'Optional realm id for the enumeration', example: 'realm-123', required: false })
   @IsString()
   @IsOptional()
   realmId?: string | null | undefined;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   @IsOptional()
+  @IsIn(ACCESS_TYPES)
   accessType: AccessType | undefined;
 
-  @ApiProperty({ description: 'Description', example: 'A large hoofed mammal', required: false })
+  @ApiProperty({
+    type: String,
+    description: 'Description; empty or null clears it',
+    example: 'A large hoofed mammal',
+    required: false,
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   description?: string | null | undefined;
 
-  @ApiProperty({ description: 'Image URL', example: 'https://example.com/horse.png', required: false })
+  @ApiProperty({
+    type: String,
+    description: 'Image URL; empty or null clears it',
+    example: 'https://example.com/horse.png',
+    required: false,
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   imageUrl?: string | null | undefined;
+
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
 
   static toCommand(id: string, dto: UpdateEnumerationDto, userId: string, roles: string[]): UpdateEnumerationCommand {
     return new UpdateEnumerationCommand(
       id,
       dto.key,
+      dto.name?.trim(),
       dto.category,
       dto.realmId,
-      dto.description ?? null,
-      dto.imageUrl ?? null,
+      dto.description,
+      dto.imageUrl,
       dto.accessType,
       userId,
       roles,
+      dto.version,
+      dto.entitySource,
     );
   }
 }

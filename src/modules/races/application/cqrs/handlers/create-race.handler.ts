@@ -1,27 +1,35 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Race } from '../../../domain/aggregates/race';
-import { CreateRaceCommand } from '../commands/create-race.command';
-import type { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
-import type { RaceRepository } from '../../ports/race-repository';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Race } from '../../../domain/aggregates/race.js';
+import { CreateRaceCommand } from '../commands/create-race.command.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../../../realms/application/ports/realm-repository.port.js';
+import { REALM_GUARD, type RealmGuardPort } from '../../../../realms/application/ports/realm-guard.port.js';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
+import { RACE_GUARD, type RaceGuardPort } from '../../ports/race-guard.port.js';
+import { ValidationError } from '../../../../shared/domain/errors/errors.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(CreateRaceCommand)
 export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Race> {
   private readonly logger = new Logger(CreateRaceHandler.name);
 
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
+    @Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository,
+    @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
+    @Inject(RACE_GUARD) private readonly raceGuard: RaceGuardPort,
+    @Inject(REALM_GUARD) private readonly realmGuard: RealmGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateRaceCommand): Promise<Race> {
     this.logger.log(`Creating race ${command.name} for user ${command.userId} in realm ${command.realmId}`);
 
+    this.raceGuard.checkCreate(command.roles);
+    this.raceGuard.checkEntitySource(command.roles, command.entitySource);
     const realm = await this.realmRepository.findById(command.realmId);
     if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
+    // A race belongs to its realm (the realm sync copies the realm owner): only who can change the realm adds races to it.
+    this.realmGuard.checkUpdate(realm, command.userId, command.roles);
 
     const race = Race.create({
       name: command.name,
@@ -46,9 +54,10 @@ export class CreateRaceHandler implements ICommandHandler<CreateRaceCommand, Rac
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: realm.accessType,
+      entitySource: command.entitySource ?? 'user',
     });
     const savedRace = await this.raceRepository.save(race);
-    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
+    await this.events.publishChanges('race', race);
     return savedRace;
   }
 }

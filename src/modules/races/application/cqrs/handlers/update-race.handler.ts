@@ -1,18 +1,18 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Race } from '../../../domain/aggregates/race';
-import { UpdateRaceCommand } from '../commands/update-race.command';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import type { RaceGuardPort } from '../../ports/race-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Race } from '../../../domain/aggregates/race.js';
+import { UpdateRaceCommand } from '../commands/update-race.command.js';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { RACE_GUARD, type RaceGuardPort } from '../../ports/race-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(UpdateRaceCommand)
 export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Race> {
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RaceGuardPort') private readonly raceGuard: RaceGuardPort,
-    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
+    @Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository,
+    @Inject(RACE_GUARD) private readonly raceGuard: RaceGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: UpdateRaceCommand): Promise<Race> {
@@ -20,6 +20,9 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
     if (!race) throw new NotFoundError('Race', command.id);
 
     this.raceGuard.checkUpdate(race, command.userId, command.roles);
+    this.raceGuard.checkEntitySource(command.roles, command.entitySource);
+
+    race.checkVersion(command.expectedVersion);
 
     race.update({
       name: command.name,
@@ -40,9 +43,12 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
       traits: command.traits,
       description: command.description,
       imageUrl: command.imageUrl,
+      entitySource: command.entitySource,
     });
-    const updated = await this.raceRepository.update(command.id, race);
-    race.getUncommittedEvents().forEach(event => this.raceEventBus.publish(event));
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!race.hasChanges()) return race;
+    const updated = await this.raceRepository.update(race);
+    await this.events.publishChanges('race', race);
     return updated;
   }
 }

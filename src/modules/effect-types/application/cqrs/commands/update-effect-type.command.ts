@@ -1,6 +1,7 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { EffectPropertyRequirement } from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateEffectTypeCommand extends AuthenticatedCommand {
   constructor(
@@ -16,6 +17,10 @@ export class UpdateEffectTypeCommand extends AuthenticatedCommand {
     public readonly accessType: AccessType | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

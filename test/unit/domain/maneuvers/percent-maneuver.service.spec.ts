@@ -1,5 +1,6 @@
-import { describe, expect, it } from '@jest/globals';
-import { PercentManeuverService } from 'src/modules/maneuvers/domain/services/percent-maneuver.service';
+import { describe, expect, it } from 'vitest';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { PercentManeuverService } from '../../../../src/modules/maneuvers/domain/services/percent-maneuver.service.js';
 
 describe('PercentManeuverService', () => {
   const service = new PercentManeuverService();
@@ -41,5 +42,9 @@ describe('PercentManeuverService', () => {
     expect(service.execute(280)).toMatchObject({ percent: 150, message: 'Completed at 150%' });
     expect(service.execute(281)).toMatchObject({ percent: 150, message: 'Exceptional' });
     expect(service.execute(1000)).toMatchObject({ percent: 150, message: 'Exceptional' });
+  });
+
+  it.each([Number.NaN, 0.5, 10.5])('rejects a roll that fits no row (%s) with a ValidationError', x => {
+    expect(() => service.execute(x)).toThrow(ValidationError);
   });
 });

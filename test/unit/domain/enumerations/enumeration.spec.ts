@@ -1,12 +1,12 @@
-import { describe, expect, it } from '@jest/globals';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
-import { EnumerationProps } from 'src/modules/enumerations/domain/aggregates/enumeration-props';
-import { ENUMERATION_CATEGORIES } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
+import { describe, expect, it } from 'vitest';
+import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration.js';
+import type { EnumerationProps } from '../../../../src/modules/enumerations/domain/aggregates/enumeration-props.js';
+import { ENUMERATION_CATEGORIES } from '../../../../src/modules/enumerations/domain/value-objects/enumeration-category.vo.js';
 
 const baseProps = (): EnumerationProps => ({
   id: 'enum-1',
   key: 'westron',
+  name: 'Westron',
   category: 'language',
   realmId: null,
   description: null,
@@ -22,6 +22,7 @@ describe('Enumeration', () => {
   it('creates an enumeration with generated identity and nullable fields', () => {
     const enumeration = Enumeration.create({
       key: 'mithril',
+      name: 'Mithril',
       category: 'material-lore',
       realmId: null,
       description: null,
@@ -58,7 +59,7 @@ describe('Enumeration', () => {
     const enumeration = Enumeration.fromProps(baseProps());
 
     enumeration.update({
-      key: 'quenya',
+      name: 'Quenya',
       category: 'language',
       realmId: 'realm-1',
       description: 'Elven language',
@@ -68,7 +69,8 @@ describe('Enumeration', () => {
     });
 
     expect(enumeration.getProps()).toMatchObject({
-      key: 'quenya',
+      key: 'westron',
+      name: 'Quenya',
       category: 'language',
       realmId: 'realm-1',
       description: 'Elven language',
@@ -80,11 +82,25 @@ describe('Enumeration', () => {
     expect(enumeration.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('throws NotModifiedError when update has no effective changes', () => {
-    const enumeration = Enumeration.fromProps(baseProps());
+  it('reports no change when update has no effective changes', () => {
+    const enumeration = Enumeration.fromProps(baseProps()).restoreVersion(0);
 
-    expect(() => enumeration.update({})).toThrow(NotModifiedError);
-    expect(() => enumeration.update({ key: 'westron' })).toThrow('No changes detected');
+    enumeration.update({});
+    enumeration.update({ name: 'Westron' });
+    expect(enumeration.hasChanges()).toBe(false);
+
+    enumeration.update({ name: 'Adûnaic' });
+    expect(enumeration.hasChanges()).toBe(true);
+  });
+
+  it.each([null, ''])('clears the description and the image with %j, and keeps them when undefined', cleared => {
+    const enumeration = Enumeration.fromProps({ ...baseProps(), description: 'Old', imageUrl: 'old.png' });
+
+    enumeration.update({ description: undefined, imageUrl: undefined });
+    expect(enumeration.getProps()).toMatchObject({ description: 'Old', imageUrl: 'old.png' });
+
+    enumeration.update({ description: cleared, imageUrl: cleared });
+    expect(enumeration.getProps()).toMatchObject({ description: null, imageUrl: null });
   });
 
   it('exposes the expected enumeration category catalog without duplicates', () => {

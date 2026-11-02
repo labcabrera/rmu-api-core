@@ -1,107 +1,89 @@
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { EnumerationProps } from './enumeration-props';
-import { EnumerationCategory } from '../value-objects/enumeration-category.vo';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import type { EnumerationProps } from './enumeration-props.js';
 import { randomUUID } from 'crypto';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
 
 export class Enumeration extends BaseAggregateRoot<EnumerationProps> {
-  private constructor(
-    id: string,
-    public key: string,
-    public category: EnumerationCategory,
-    public realmId: string | null,
-    public description: string | null,
-    public imageUrl: string | null,
-    public owner: string,
-    public accessType: AccessType,
-    public entitySource: EntitySource,
-    public createdAt: Date,
-    public updatedAt?: Date,
-  ) {
-    super(id);
+  private constructor(props: EnumerationProps) {
+    super(props);
+  }
+
+  get key() {
+    return this.props.key;
+  }
+
+  get name() {
+    return this.props.name;
+  }
+
+  get category() {
+    return this.props.category;
+  }
+
+  get realmId() {
+    return this.props.realmId;
+  }
+
+  get description() {
+    return this.props.description;
+  }
+
+  get imageUrl() {
+    return this.props.imageUrl;
+  }
+
+  get owner() {
+    return this.props.owner;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   static create(props: Omit<EnumerationProps, 'id' | 'createdAt' | 'updatedAt'>) {
-    return new Enumeration(
-      randomUUID(),
-      props.key,
-      props.category,
-      props.realmId,
-      props.description,
-      props.imageUrl,
-      props.owner,
-      props.accessType,
-      props.entitySource,
-      new Date(),
-      undefined,
-    );
+    return new Enumeration({ ...props, id: randomUUID(), createdAt: new Date(), updatedAt: undefined });
   }
 
   static fromProps(props: EnumerationProps) {
-    return new Enumeration(
-      props.id,
-      props.key,
-      props.category,
-      props.realmId,
-      props.description,
-      props.imageUrl,
-      props.owner,
-      props.accessType,
-      props.entitySource,
-      props.createdAt,
-      props.updatedAt,
-    );
+    return new Enumeration({ ...props });
   }
 
-  update(props: Omit<Partial<EnumerationProps>, 'id' | 'createdAt' | 'updatedAt'>) {
-    let modified = false;
-    if (props.key) {
-      modified = this.key !== props.key;
-      this.key = props.key;
+  /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
+  update(props: Omit<Partial<EnumerationProps>, 'id' | 'key' | 'createdAt' | 'updatedAt'>): void {
+    if (props.name) {
+      this.props.name = props.name;
     }
     if (props.category) {
-      modified = modified || this.category !== props.category;
-      this.category = props.category;
+      this.props.category = props.category;
     }
     if (props.realmId) {
-      modified = modified || this.realmId !== props.realmId;
-      this.realmId = props.realmId;
+      this.props.realmId = props.realmId;
     }
-    if (props.description) {
-      modified = modified || this.description !== props.description;
-      this.description = props.description;
+    // undefined keeps the value; null or '' clears it (as in realms, spec 018).
+    if (props.description !== undefined) {
+      this.props.description = props.description || null;
     }
-    if (props.imageUrl) {
-      modified = modified || this.imageUrl !== props.imageUrl;
-      this.imageUrl = props.imageUrl;
+    if (props.imageUrl !== undefined) {
+      this.props.imageUrl = props.imageUrl || null;
     }
     if (props.accessType) {
-      modified = modified || this.accessType !== props.accessType;
-      this.accessType = props.accessType;
+      this.props.accessType = props.accessType;
     }
     if (props.entitySource) {
-      modified = modified || this.entitySource !== props.entitySource;
-      this.entitySource = props.entitySource;
+      this.props.entitySource = props.entitySource;
     }
-    if (!modified) throw new NotModifiedError('No changes detected');
-    this.updatedAt = new Date();
-  }
-
-  public getProps(): EnumerationProps {
-    return {
-      id: this.id,
-      key: this.key,
-      category: this.category,
-      realmId: this.realmId,
-      description: this.description,
-      imageUrl: this.imageUrl,
-      owner: this.owner,
-      accessType: this.accessType,
-      entitySource: this.entitySource,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 }

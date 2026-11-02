@@ -1,27 +1,26 @@
 import { Inject, Logger } from '@nestjs/common';
-import { DeleteRaceCommand } from '../commands/delete-race.command';
-import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import type { RaceRepository } from '../../ports/race-repository';
-import { DeleteRacesByRealmCommand } from '../commands/delete-races-by-realm.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
+import { DeleteRacesByRealmCommand } from '../commands/delete-races-by-realm.command.js';
+import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteRacesByRealmCommand)
 export class DeleteRacesByRealmHandler implements ICommandHandler<DeleteRacesByRealmCommand> {
   private readonly logger = new Logger(DeleteRacesByRealmHandler.name);
 
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
-    private readonly commandBus: CommandBus,
+    @Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
+  // Idempotent: a redelivered event finds no races left. No access check: the realm owner already deleted it.
   async execute(command: DeleteRacesByRealmCommand): Promise<void> {
-    this.logger.log(`Deleting races for realm ${command.realmId}`);
     const races = await this.raceRepository.findByRealmId(command.realmId);
-    //TODO async delete
+    this.logger.log(`Deleting ${races.length} races of realm ${command.realmId}`);
     for (const race of races) {
-      const deleteCmd = new DeleteRaceCommand(race.id, 'system', ['rmu-admin']);
-      await this.commandBus.execute(deleteCmd);
+      await this.raceRepository.deleteById(race.id);
+      await this.events.publish('race', new RaceDeletedEvent(race.getProps()));
     }
   }
 }

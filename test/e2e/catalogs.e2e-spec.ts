@@ -1,0 +1,514 @@
+import request from 'supertest';
+import { type E2eApp, startApp } from './support/app.js';
+
+// Read-only catalogs and calculation endpoints: no ownership, only authentication (and Core Law access for the
+// healing tables).
+describe('Catalogs and calculations (e2e)', () => {
+  let e2e: E2eApp;
+
+  beforeAll(async () => {
+    e2e = await startApp();
+  });
+
+  afterAll(async () => {
+    await e2e?.stop();
+  });
+
+  describe('armor types', () => {
+    it('lists the armor types and finds one by id', async () => {
+      const auth = e2e.auth('noRole');
+      const list = await request(e2e.server).get('/v1/armor-types').set('Authorization', auth).expect(200);
+      expect(list.body).toHaveLength(10);
+      expect(list.body).toContainEqual({ id: 1, name: 'None' });
+
+      const found = await request(e2e.server).get('/v1/armor-types/10').set('Authorization', auth).expect(200);
+      expect(found.body).toEqual({ id: 10, name: 'Plate' });
+    });
+
+    it('answers 404 for an unknown armor type, 400 for a non-integer id and 401 without a token', async () => {
+      await request(e2e.server).get('/v1/armor-types/99').set('Authorization', e2e.auth('owner')).expect(404);
+      const plate = await request(e2e.server).get('/v1/armor-types/plate').set('Authorization', e2e.auth('owner')).expect(400);
+      expect(plate.body).toMatchObject({ statusCode: 400, path: '/v1/armor-types/plate' });
+      await request(e2e.server).get('/v1/armor-types/1.5').set('Authorization', e2e.auth('owner')).expect(400);
+      await request(e2e.server).get('/v1/armor-types').expect(401);
+      await request(e2e.server).get('/v1/armor-types/1').expect(401);
+    });
+  });
+
+  describe('character sizes', () => {
+    it('lists the character sizes and finds one by id', async () => {
+      const auth = e2e.auth('noRole');
+      const list = await request(e2e.server).get('/v1/character-sizes').set('Authorization', auth).expect(200);
+      expect((list.body as { id: string }[]).map(size => size.id)).toEqual(expect.arrayContaining(['small', 'medium', 'large']));
+
+      const found = await request(e2e.server).get('/v1/character-sizes/medium').set('Authorization', auth).expect(200);
+      expect(found.body).toEqual({ id: 'medium', index: 5, name: 'Medium', hitMultiplier: 1 });
+    });
+
+    it('answers 404 for an unknown character size and 401 without a token', async () => {
+      await request(e2e.server).get('/v1/character-sizes/colossal').set('Authorization', e2e.auth('owner')).expect(404);
+      await request(e2e.server).get('/v1/character-sizes').expect(401);
+      await request(e2e.server).get('/v1/character-sizes/medium').expect(401);
+    });
+  });
+
+  describe('healing tables', () => {
+    it('requires Core Law access', async () => {
+      await request(e2e.server).get('/v1/healing-tables').expect(401);
+      const res = await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      expect(res.body).toMatchObject({ statusCode: 403, error: 'ForbiddenError' });
+      await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('noRole')).expect(403);
+    });
+
+    it('answers 404 while the tables have not been imported, and returns them once they are', async () => {
+      await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('admin')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook tables.
+      const tables = {
+        recoveryDays: [{ min: null, max: 10, days: { cut: 1 } }],
+        severityMultipliers: { light: 1, medium: 2, severe: 3 },
+        headMultiplier: 2,
+        severity: [{ severity: 'light', maxPenalty: -10, maxBleeding: 1 }],
+        healingTypeModifiers: { none: 0, medicine: 1, 'medicine-absolute': 2, 'magic-or-herbs': 3, 'magic-and-herbs': 4 },
+        herbalismBonus: 5,
+        permanentInjury: [{ min: 1, max: null, result: 'none', fraction: 0 }],
+        restHpPercentPerPeriod: 10,
+        restPeriodHours: 8,
+        fullRestDayMultiplier: 2,
+        talentMultipliers: { 'e2e-talent': 0.5 },
+        treatmentDifficulties: [{ procedure: 'dress', injuryType: 'skin-tissue', severity: 'medium', difficulty: 'h' }],
+        treatmentRules: {
+          headDifficultySteps: 3,
+          cauterizePenaltyPerBleeding: -2,
+          bleedingProcedures: ['pressure'],
+          tourniquetLocations: ['arm'],
+        },
+      };
+      await e2e.connection.collection('healing-tables').insertOne({ _id: 'core-law', ...tables } as never);
+
+      // A document imported before spec 068 gets the new fields empty.
+      const res = await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual({
+        ...tables,
+        treatmentDurations: [],
+        cauterization: [],
+        cauterizationUnusualRoll: null,
+        surgeryRequired: [],
+        treatmentLimits: null,
+        tourniquet: null,
+        stabilize: null,
+        salveModifier: null,
+        combatItemAp: null,
+      });
+      await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('admin')).expect(200);
+      await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('owner')).expect(403);
+
+      // Made-up values for the spec 068 fields.
+      const combat = {
+        treatmentDurations: [
+          { procedure: 'pressure', rounds: 3, perBleeding: true },
+          { procedure: 'surgery', rounds: null, perBleeding: false },
+        ],
+        cauterization: [
+          { min: null, max: 5, result: 'failure', bleeding: 'halved', heatSeverity: 'E', hitsDice: 7 },
+          { min: 6, max: null, result: 'success', bleeding: 'stopped', heatSeverity: null, hitsDice: 0 },
+        ],
+        cauterizationUnusualRoll: 33,
+        surgeryRequired: [{ injuryType: 'skin-tissue', severity: 'light' }],
+        treatmentLimits: {
+          splint: { leg: { pace: 'run' }, arm: { limbUnusable: true } },
+          cast: { leg: { pace: 'walk', cane: 'jog', crutches: 'run' }, maneuverPenaltyFactor: 0.25 },
+        },
+        tourniquet: { loosenEveryRounds: 7, graceRounds: 3 },
+        stabilize: { difficulty: 'h', successRounds: 2, absoluteRounds: 4 },
+        salveModifier: { min: -7, max: 9 },
+        combatItemAp: 3,
+      };
+      await e2e.connection.collection('healing-tables').replaceOne({ _id: 'core-law' } as never, { ...tables, ...combat });
+      const full = await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(full.body).toEqual({ ...tables, ...combat });
+    });
+  });
+
+  describe('poison tables', () => {
+    it('requires Core Law access, answers 404 until imported and returns the rows once they are', async () => {
+      await request(e2e.server).get('/v1/poison-tables').expect(401);
+      await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook table.
+      const row = {
+        category: 'respiratory',
+        severity: 'severe',
+        start: { min: 3, max: 9, unit: 'round' },
+        duration: null,
+        penalty: { min: -40, max: -20 },
+        hitsPerRound: { min: 1, max: 4 },
+        hitsRounds: { min: 2, max: 5 },
+        condition: 'unconscious',
+        conditionDelay: { min: 1, max: 2, unit: 'minute' },
+        conditionDuration: { min: 1, max: 6, unit: 'hour' },
+        permanent: false,
+      };
+      await e2e.connection.collection('poison-tables').insertOne({ _id: 'core-law', rows: [row] } as never);
+
+      const res = await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual({ rows: [row] });
+      await request(e2e.server).get('/v1/poison-tables').set('Authorization', e2e.auth('admin')).expect(200);
+    });
+  });
+
+  describe('trading tables', () => {
+    it('requires Core Law access, answers 404 until imported and returns the tables once they are', async () => {
+      await request(e2e.server).get('/v1/trading-tables').expect(401);
+      await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook tables.
+      const tables = {
+        negotiation: [
+          { min: null, max: 0, purchase: null, sale: null, outcome: 'no-agreement' },
+          { min: 1, max: null, purchase: 90, sale: 60 },
+        ],
+        priceFactors: [{ key: 'e2e-demand', type: 'choice', mode: 'multiplier', options: [{ key: 'high', value: 2 }], contexts: ['sale'] }],
+      };
+      await e2e.connection.collection('trading-tables').insertOne({ _id: 'treasure-law', ...tables } as never);
+
+      const res = await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual({ ...tables, taxation: [] });
+
+      // Spec 062: the taxes and tolls, in their own document of the collection. Made-up rows.
+      const rows = [
+        { key: 'e2e-bridge', cost: 0.2, unit: 'per crossing', notes: 'Made-up note' },
+        { key: 'e2e-tithe', cost: null, unit: null },
+      ];
+      await e2e.connection.collection('trading-tables').insertOne({ _id: 'taxation', rows } as never);
+      const withTaxes = await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(withTaxes.body).toEqual({ ...tables, taxation: [rows[0], { ...rows[1], notes: null }] });
+    });
+
+    it('does not serve the taxes without Core Law access', async () => {
+      await request(e2e.server).get('/v1/trading-tables').set('Authorization', e2e.auth('owner')).expect(403);
+    });
+  });
+
+  describe('alchemy tables (spec 064)', () => {
+    it('requires Core Law access, answers 404 until imported and returns the tables once they are', async () => {
+      await request(e2e.server).get('/v1/alchemy-tables').expect(401);
+      await request(e2e.server).get('/v1/alchemy-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      const missing = await request(e2e.server).get('/v1/alchemy-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      expect(missing.body).toMatchObject({ statusCode: 404, code: 'alchemy-tables-not-found', path: '/v1/alchemy-tables' });
+
+      // Made-up rows and multipliers with the shape of the import, not the rulebook tables.
+      const general = [
+        { min: 51, max: null, text: 'E2E: open row' },
+        { min: 1, max: 50, text: 'E2E: low row', serendipity: 'minor' },
+      ];
+      const powerLevels = { average: 2, superior: 1.5, heroic: 1, legendary: 0.8, epic: 0.6 };
+      await e2e.connection
+        .collection('alchemy-tables')
+        .insertOne({ _id: 'alchemy', failureTables: { general }, powerLevels, version: 2 } as never);
+
+      const res = await request(e2e.server).get('/v1/alchemy-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toMatchObject({ id: 'alchemy', powerLevels, version: 2 });
+      const { failureTables } = res.body as { failureTables: Record<string, unknown[]> };
+      expect(failureTables.general).toEqual([general[1], general[0]]);
+      expect(Object.keys(failureTables)).toHaveLength(10);
+      expect(failureTables['spell-power']).toEqual([]);
+      await request(e2e.server).get('/v1/alchemy-tables').set('Authorization', e2e.auth('admin')).expect(200);
+      await request(e2e.server).get('/v1/alchemy-tables').set('Authorization', e2e.auth('owner')).expect(403);
+    });
+  });
+
+  describe('treasure tables (spec 067)', () => {
+    it('requires Core Law access, answers 404 until imported and returns the tables once they are', async () => {
+      await request(e2e.server).get('/v1/treasure-tables').expect(401);
+      await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      const missing = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      expect(missing.body).toMatchObject({ statusCode: 404, code: 'treasure-tables-not-found', path: '/v1/treasure-tables' });
+
+      // A small invented document with the shape of the import, not the rulebook tables.
+      const codes = { wealth: { a: 'poor' }, lifestyle: { l: 'normal' }, magic: { u: 'rich' } };
+      const wealthRolls = [
+        { min: 41, max: 100, rolls: 2 },
+        { min: 1, max: 40, rolls: 1 },
+      ];
+      const melee = [{ min: 1, max: 300, label: 'E2E blade', price: { min: 5, max: 9 }, itemTypeId: 'e2e-blade' }];
+      const standardPricing = { weapon: [{ bonus: 5, days: 1, level: 1, price: 10 }] };
+      await e2e.connection
+        .collection('treasure-tables')
+        .insertOne({ _id: 'treasure', codes, wealthRolls, magicTables: { melee }, standardPricing, version: 3 } as never);
+
+      const res = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      const body = res.body as {
+        id: string;
+        version: number;
+        codes: object;
+        wealthRolls: object[];
+        magicTables: Record<string, object[]>;
+        standardPricing: Record<string, object[]>;
+        gems: object;
+      };
+      expect(body).toMatchObject({ id: 'treasure', codes, version: 3 });
+      expect(body.wealthRolls).toEqual([wealthRolls[1], wealthRolls[0]]);
+      expect(body.magicTables.melee).toEqual(melee);
+      expect(Object.keys(body.magicTables)).toHaveLength(6);
+      expect(body.magicTables.charged).toEqual([]);
+      expect(body.standardPricing.weapon).toEqual(standardPricing.weapon);
+      expect(body.standardPricing.potions).toEqual([]);
+      expect(body.gems).toEqual({ precious: { columns: [] }, semiPrecious: { columns: [] } });
+      await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('admin')).expect(200);
+    });
+  });
+
+  describe('fighting styles', () => {
+    it('requires Core Law access', async () => {
+      await request(e2e.server).get('/v1/fighting-styles').expect(401);
+      const res = await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('owner')).expect(403);
+      expect(res.body).toMatchObject({ statusCode: 403, error: 'ForbiddenError', path: '/v1/fighting-styles' });
+    });
+
+    it('answers 404 while the styles have not been imported, and returns them once they are', async () => {
+      await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('coreLaw')).expect(404);
+
+      // Made-up values with the shape of the import, not the rulebook styles.
+      const catalog = {
+        styles: [
+          {
+            id: 'e2e-style',
+            skillId: 'combat-styles',
+            abilities: [{ abilityId: 'e2e-ability', cost: 3 }],
+            requiresSkills: ['e2e-skill'],
+            requiresTraits: [],
+            equipment: [[{ kind: 'weapon-skill', value: 'melee-weapon@blade' }], [{ kind: 'unarmed' }]],
+          },
+        ],
+        abilities: [
+          {
+            id: 'e2e-ability',
+            types: ['combat'],
+            repeatable: true,
+            maxTimes: 2,
+            requiresAbilities: [],
+            requiresSkills: [],
+            requiresTraits: ['e2e-talent'],
+            equipment: [],
+            description: '- E2E text.',
+          },
+        ],
+      };
+      await e2e.connection.collection('fighting-styles').insertOne({ _id: 'character-companion', ...catalog } as never);
+
+      const res = await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual(catalog);
+      await request(e2e.server).get('/v1/fighting-styles').set('Authorization', e2e.auth('admin')).expect(200);
+    });
+  });
+
+  describe('psychology tables', () => {
+    it('requires Core Law access', async () => {
+      await request(e2e.server).get('/v1/psychology-tables').expect(401);
+      const res = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('owner')).expect(403);
+      expect(res.body).toMatchObject({ statusCode: 403, error: 'ForbiddenError', path: '/v1/psychology-tables' });
+      await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('noRole')).expect(403);
+    });
+
+    it('answers 404 while the tables have not been imported, and returns them once they are', async () => {
+      const missing = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      expect(missing.body).toMatchObject({ code: 'not-found' });
+
+      // Made-up values with the shape of the import, not the rulebook tables.
+      const tables = {
+        frightLevels: [{ key: 'e2e-danger', level: 4 }],
+        frightLevelModifiers: [{ key: 'e2e-magic', level: 2 }],
+        fearResults: [
+          { min: 1, max: 9, severity: 'mild', result: 'balk', rallyModifier: 0 },
+          { min: 10, max: null, severity: 'extreme', result: 'broken', rallyModifier: -9 },
+        ],
+        morale: [
+          { min: null, max: 0, result: 'absolute-failure', outcome: 'refuses-hostile', moraleModifier: -1, moraleModifierDays: null },
+        ],
+        moraleUnusualEvent: { roll: 22, outcome: 'e2e' },
+        rally: [{ min: 1, max: null, result: 'success', fearSeverityChange: -1 }],
+        rallyUnusualEvent: { roll: 22, outcome: 'e2e', leaderFearRrBonus: 2, leaderHits: 3, durationDays: 4 },
+        rallyGroupModifier: { followersPerStep: 5, modifier: -5 },
+        resistance: [{ min: 1, max: null, result: 'mild-failure', severity: 'mild' }],
+        resistanceRoll: {
+          requiredTotal: 40,
+          attackLevelMultiplier: -3,
+          targetLevelMultiplier: 3,
+          ownRealmBonus: 5,
+          stats: { physical: 'co', fear: 'sd', channeling: 'in', essence: 'em', mentalism: 'pr' },
+          fearIgnoresInjuryPenalties: true,
+        },
+      };
+      await e2e.connection.collection('psychology-tables').insertOne({ _id: 'core-law', ...tables } as never);
+
+      // A document imported before spec 068 gets the new fields empty.
+      const res = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(res.body).toEqual({ ...tables, fallenThresholds: [], revulsion: null });
+      await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('admin')).expect(200);
+      await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('owner')).expect(403);
+
+      // Made-up values for the spec 068 fields.
+      const fear = {
+        fallenThresholds: [
+          { minShare: 0.2, exclusive: false, frightLevel: 2 },
+          { minShare: 0.6, exclusive: true, frightLevel: 8 },
+        ],
+        revulsion: { corpseLevel: 4 },
+      };
+      await e2e.connection.collection('psychology-tables').replaceOne({ _id: 'core-law' } as never, { ...tables, ...fear });
+      const full = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(full.body).toEqual({ ...tables, ...fear });
+    });
+  });
+
+  describe('maneuvers', () => {
+    it('resolves a percent maneuver roll', async () => {
+      const auth = e2e.auth('owner');
+      const res = await request(e2e.server).get('/v1/maneuvers/percent?roll=55').set('Authorization', auth).expect(200);
+      expect(res.body).toMatchObject({ percent: 50, message: 'Completed at 50%' });
+      const critical = await request(e2e.server).get('/v1/maneuvers/percent?roll=-150').set('Authorization', auth).expect(200);
+      expect(critical.body).toMatchObject({ percent: 0, critical: 'E' });
+      await request(e2e.server).get('/v1/maneuvers/percent?roll=55').expect(401);
+      for (const roll of ['abc', '10.5', '']) {
+        const res = await request(e2e.server).get(`/v1/maneuvers/percent?roll=${roll}`).set('Authorization', auth).expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+      await request(e2e.server).get('/v1/maneuvers/percent').set('Authorization', auth).expect(400);
+    });
+
+    it('resolves an absolute maneuver roll, on the generic table by default', async () => {
+      const auth = e2e.auth('owner');
+      const res = await request(e2e.server).get('/v1/maneuvers/absolute?roll=50').set('Authorization', auth).expect(200);
+      expect(res.body).toMatchObject({ result: 'failure' });
+      expect(res.body).not.toHaveProperty('unusualEvent');
+
+      const unusual = await request(e2e.server)
+        .get('/v1/maneuvers/absolute?roll=50&table=generic&unusualEvent=true')
+        .set('Authorization', auth)
+        .expect(200);
+      expect(unusual.body).toMatchObject({ result: 'failure' });
+      expect(typeof (unusual.body as { unusualEvent?: unknown }).unusualEvent).toBe('string');
+
+      const usual = await request(e2e.server)
+        .get('/v1/maneuvers/absolute?roll=50&unusualEvent=false')
+        .set('Authorization', auth)
+        .expect(200);
+      expect(usual.body).not.toHaveProperty('unusualEvent');
+
+      await request(e2e.server).get('/v1/maneuvers/absolute?roll=50&table=missing').set('Authorization', auth).expect(404);
+      await request(e2e.server).get('/v1/maneuvers/absolute?roll=abc').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute?roll=50.5').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute').set('Authorization', auth).expect(400);
+      await request(e2e.server).get('/v1/maneuvers/absolute?roll=50').expect(401);
+    });
+
+    it('repeats the lasting penalty and bonus effects in their own fields', async () => {
+      const auth = e2e.auth('owner');
+      const failure = await request(e2e.server).get('/v1/maneuvers/absolute?table=crafting&roll=0').set('Authorization', auth).expect(200);
+      expect(failure.body).toMatchObject({ result: 'absolute-failure', penaltyUntilAbsoluteSuccess: -25 });
+
+      const success = await request(e2e.server).get('/v1/maneuvers/absolute?table=animal&roll=180').set('Authorization', auth).expect(200);
+      expect(success.body).toMatchObject({ result: 'absolute-success', bonusUntilAbsoluteFailure: 30 });
+    });
+
+    it('lists the absolute maneuver tables, with the stored ones after the code ones', async () => {
+      const auth = e2e.auth('owner');
+      await e2e.connection.collection('maneuver-tables').insertOne({
+        _id: 'e2e-stored',
+        table: [{ min: null, max: null, result: { result: 'success', message: 'E2E stored result' } }],
+      } as never);
+
+      const names = await request(e2e.server).get('/v1/maneuvers/absolute/tables').set('Authorization', auth).expect(200);
+      expect(names.body).toEqual(expect.arrayContaining(['generic', 'medical', 'e2e-stored']));
+      expect((names.body as string[]).at(-1)).toBe('e2e-stored');
+
+      const generic = await request(e2e.server).get('/v1/maneuvers/absolute/tables/generic').set('Authorization', auth).expect(200);
+      expect(generic.body).toMatchObject({ name: 'generic' });
+      expect((generic.body as { table: { max: number | null }[] }).table.map(row => row.max)).toContain(0);
+
+      const stored = await request(e2e.server).get('/v1/maneuvers/absolute/tables/e2e-stored').set('Authorization', auth).expect(200);
+      expect(stored.body).toMatchObject({ name: 'e2e-stored' });
+      const roll = await request(e2e.server).get('/v1/maneuvers/absolute?roll=7&table=e2e-stored').set('Authorization', auth).expect(200);
+      expect(roll.body).toMatchObject({ result: 'success', message: 'E2E stored result' });
+
+      await request(e2e.server).get('/v1/maneuvers/absolute/tables/missing').set('Authorization', auth).expect(404);
+      await request(e2e.server).get('/v1/maneuvers/absolute/tables').expect(401);
+      await request(e2e.server).get('/v1/maneuvers/absolute/tables/generic').expect(401);
+    });
+
+    it('resolves an endurance maneuver roll', async () => {
+      const auth = e2e.auth('owner');
+      const res = await request(e2e.server).get('/v1/maneuvers/endurance?roll=120').set('Authorization', auth).expect(200);
+      expect(res.body).toMatchObject({ result: 'success', fatigue: 0, hitPoints: 0, bonus: 0 });
+      const failure = await request(e2e.server).get('/v1/maneuvers/endurance?roll=-5').set('Authorization', auth).expect(200);
+      expect(failure.body).toMatchObject({ result: 'absolute-failure', fatigue: 20, hitPoints: 10 });
+      const unusual = await request(e2e.server)
+        .get('/v1/maneuvers/endurance?roll=120&unusualEvent=true')
+        .set('Authorization', auth)
+        .expect(200);
+      expect((unusual.body as { message: string }).message.length).toBeGreaterThan((res.body as { message: string }).message.length);
+      await request(e2e.server).get('/v1/maneuvers/endurance?roll=120').expect(401);
+      for (const roll of ['abc', '10.5', '']) {
+        await request(e2e.server).get(`/v1/maneuvers/endurance?roll=${roll}`).set('Authorization', auth).expect(400);
+      }
+      await request(e2e.server).get('/v1/maneuvers/endurance?unusualEvent=true').set('Authorization', auth).expect(400);
+    });
+  });
+
+  describe('resistance rolls', () => {
+    it('resolves a resistance roll with its modifiers, answering 200 (a calculation)', async () => {
+      const res = await request(e2e.server)
+        .post('/v1/resistance-rolls')
+        .set('Authorization', e2e.auth('owner'))
+        .send({ attackLevel: 5, targetLevel: 3, roll: 40, modifiers: [{ key: 'e2e-bonus', value: 6 }] })
+        .expect(200);
+      expect(res.body).toEqual({
+        result: 'mild-failure',
+        modifiers: [
+          { key: 'e2e-bonus', value: 6 },
+          { key: 'attack-level', value: -10 },
+          { key: 'target-level', value: 6 },
+          { key: 'roll', value: 40 },
+        ],
+        totalRoll: 42,
+        failure: 8,
+      });
+
+      const success = await request(e2e.server)
+        .post('/v1/resistance-rolls')
+        .set('Authorization', e2e.auth('owner'))
+        .send({ attackLevel: 1, targetLevel: 1, roll: 90 })
+        .expect(200);
+      expect(success.body).toMatchObject({ result: 'success', totalRoll: 90, failure: 0 });
+    });
+
+    it('rejects an empty body, a text level and a request without a token', async () => {
+      const auth = e2e.auth('owner');
+      const res = await request(e2e.server).post('/v1/resistance-rolls').set('Authorization', auth).send({}).expect(400);
+      expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException', path: '/v1/resistance-rolls' });
+      expect((res.body as { message: unknown }).message).toEqual(expect.arrayContaining([expect.any(String)]));
+      await request(e2e.server)
+        .post('/v1/resistance-rolls')
+        .set('Authorization', auth)
+        .send({ attackLevel: 'high', targetLevel: 1, roll: 50 })
+        .expect(400);
+      await request(e2e.server).post('/v1/resistance-rolls').send({ attackLevel: 1, targetLevel: 1, roll: 50 }).expect(401);
+    });
+
+    it('validates each modifier', async () => {
+      const auth = e2e.auth('owner');
+      for (const modifiers of [[{ key: 'bonus', value: 'abc' }], [{ key: '', value: 5 }], [{ value: 5 }], ['bonus'], [null]]) {
+        const res = await request(e2e.server)
+          .post('/v1/resistance-rolls')
+          .set('Authorization', auth)
+          .send({ attackLevel: 5, targetLevel: 3, roll: 40, modifiers })
+          .expect(400);
+        expect(res.body).toMatchObject({ statusCode: 400, error: 'BadRequestException' });
+      }
+    });
+  });
+});

@@ -1,13 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import type { EffectPropertyRequirement } from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
+import type { HydratedDocument } from 'mongoose';
+import type { EffectPropertyRequirement } from '../../../domain/value-objects/effect-property-requirement.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
-export type EffectTypeDocument = EffectTypeModel & Document;
+export type EffectTypeDocument = HydratedDocument<EffectTypeModel>;
 
 @Schema({ collection: 'effect-types', id: true, versionKey: false })
 export class EffectTypeModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
   @Prop({ type: String, required: true })
   _id: string;
 
@@ -41,7 +45,8 @@ export class EffectTypeModel {
   @Prop({ type: String, required: true })
   accessType: AccessType;
 
-  @Prop({ type: String, required: true })
+  /** Rulebook (`system`) or user content (spec 063). Documents stored before have none: they read as `user`. */
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
   entitySource: EntitySource;
 
   @Prop({ type: Date, required: true })
@@ -52,3 +57,6 @@ export class EffectTypeModel {
 }
 
 export const EffectTypeSchema = SchemaFactory.createForClass(EffectTypeModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+EffectTypeSchema.index({ owner: 1 });
+EffectTypeSchema.index({ accessType: 1 });

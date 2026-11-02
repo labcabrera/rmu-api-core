@@ -1,0 +1,64 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import type { HydratedDocument } from 'mongoose';
+import { ProfessionSkillCosts } from './profession-skill-costs.model.js';
+import type { RealmType } from '../../../domain/value-objects/realm-type.vo.js';
+import type { ProfessionArchetype } from '../../../domain/value-objects/profession-archetype.vo.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+
+export type ProfessionDocument = HydratedDocument<ProfessionModel>;
+
+@Schema({ collection: 'professions', id: true, versionKey: false })
+export class ProfessionModel {
+  /** Optimistic concurrency (spec 018): every update increments it. Missing in documents stored before. */
+  @Prop({ type: Number, default: 0 })
+  version: number;
+
+  @Prop({ required: true })
+  _id: string;
+
+  @Prop({ type: [String], required: true })
+  availableRealmTypes: RealmType[];
+
+  @Prop({ type: [String], required: true })
+  fixedRealmTypes: RealmType[];
+
+  @Prop({ type: String, required: true })
+  archetype: ProfessionArchetype;
+
+  @Prop({ required: true })
+  skillCosts: ProfessionSkillCosts;
+
+  @Prop({ type: [String], required: true })
+  professionalSkills: string[];
+
+  /** Spec 064: null (or missing in documents stored before) has no limit */
+  @Prop({ type: Number, required: false, default: null })
+  baseListLimit: number | null;
+
+  @Prop({ type: String, enum: ENTITY_SOURCES, required: true, default: 'user' })
+  entitySource: EntitySource;
+
+  @Prop({ type: String, required: false })
+  description: string | undefined;
+
+  @Prop({ type: String, required: false })
+  imageUrl: string | undefined;
+
+  @Prop({ type: String, required: true })
+  owner: string;
+
+  @Prop({ type: String, required: true })
+  accessType: AccessType;
+
+  @Prop({ required: true })
+  createdAt: Date;
+
+  @Prop({ required: false })
+  updatedAt?: Date;
+}
+
+export const ProfessionSchema = SchemaFactory.createForClass(ProfessionModel);
+// owner and accessType back the access filter of every listing (an $or that uses one index per branch).
+ProfessionSchema.index({ owner: 1 });
+ProfessionSchema.index({ accessType: 1 });

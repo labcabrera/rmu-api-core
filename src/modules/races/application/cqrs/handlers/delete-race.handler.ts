@@ -1,21 +1,20 @@
 import { Inject, Logger } from '@nestjs/common';
-import { DeleteRaceCommand } from '../commands/delete-race.command';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RaceDeletedEvent } from 'src/modules/races/domain/events/race-deleted.event';
-import type { RaceEventBusPort } from '../../ports/race-event-bus.port';
-import type { RaceRepository } from '../../ports/race-repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { CreateRaceHandler } from './create-race.handler';
-import type { RaceGuardPort } from '../../ports/race-guard.port';
+import { DeleteRaceCommand } from '../commands/delete-race.command.js';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { RaceDeletedEvent } from '../../../domain/events/race-deleted.event.js';
+import { RACE_REPOSITORY, type RaceRepository } from '../../ports/race-repository.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { RACE_GUARD, type RaceGuardPort } from '../../ports/race-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(DeleteRaceCommand)
 export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
-  private readonly logger = new Logger(CreateRaceHandler.name);
+  private readonly logger = new Logger(DeleteRaceHandler.name);
 
   constructor(
-    @Inject('RaceRepository') private readonly raceRepository: RaceRepository,
-    @Inject('RaceGuardPort') private readonly raceGuard: RaceGuardPort,
-    @Inject('RaceEventProducer') private readonly raceEventBus: RaceEventBusPort,
+    @Inject(RACE_REPOSITORY) private readonly raceRepository: RaceRepository,
+    @Inject(RACE_GUARD) private readonly raceGuard: RaceGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: DeleteRaceCommand): Promise<void> {
@@ -27,6 +26,6 @@ export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
     this.raceGuard.checkDelete(race, command.userId, command.roles);
 
     await this.raceRepository.deleteById(command.id);
-    this.raceEventBus.publish(new RaceDeletedEvent(race.getProps()));
+    await this.events.publish('race', new RaceDeletedEvent(race.getProps()));
   }
 }

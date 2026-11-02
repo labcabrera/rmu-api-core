@@ -1,39 +1,39 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './modules/auth/auth.module';
-import { ProfessionsModule } from './modules/professions/professions.module';
-import { RacesModule } from './modules/races/races.module';
-import { RealmsModule } from './modules/realms/realms.module';
-import { ManeuversModule } from './modules/maneuvers/maneuvers.module';
-import { TraitsModule } from './modules/traits/traits.module';
-import Joi from 'joi';
-import { SharedModule } from './modules/shared/shared.module';
-import { SkillsModule } from './modules/skills/skills.module';
-import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module';
-import { EnumerationsModule } from './modules/enumerations/enumerations.module';
-import { CharacterSizesModule } from './modules/character-sizes/character-sizes.module';
-import { ArmorTypesModule } from './modules/armor-types/amor-types.module';
-import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module';
-import { CulturesModule } from './modules/cultures/cultures.module';
-import { EffectTypesModule } from './modules/effect-types/effect-types.module';
+import { AuthModule } from './modules/shared/infrastructure/security/auth.module.js';
+import { ProfessionsModule } from './modules/professions/professions.module.js';
+import { RacesModule } from './modules/races/races.module.js';
+import { RealmsModule } from './modules/realms/realms.module.js';
+import { ManeuversModule } from './modules/maneuvers/maneuvers.module.js';
+import { TraitsModule } from './modules/traits/traits.module.js';
+import { envSchema } from './config/env.schema.js';
+import { SharedModule } from './modules/shared/shared.module.js';
+import { SkillsModule } from './modules/skills/skills.module.js';
+import { SkillCategoriesModule } from './modules/skill-categories/skill-categories.module.js';
+import { EnumerationsModule } from './modules/enumerations/enumerations.module.js';
+import { CharacterSizesModule } from './modules/character-sizes/character-sizes.module.js';
+import { ArmorTypesModule } from './modules/armor-types/armor-types.module.js';
+import { ResistanceRollsModule } from './modules/resistance-rolls/resistance-rolls.module.js';
+import { CulturesModule } from './modules/cultures/cultures.module.js';
+import { EffectTypesModule } from './modules/effect-types/effect-types.module.js';
+import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-modifiers.module.js';
+import { HealingTablesModule } from './modules/healing-tables/healing-tables.module.js';
+import { PoisonTablesModule } from './modules/poison-tables/poison-tables.module.js';
+import { TradingTablesModule } from './modules/trading-tables/trading-tables.module.js';
+import { AlchemyTablesModule } from './modules/alchemy-tables/alchemy-tables.module.js';
+import { TreasureTablesModule } from './modules/treasure-tables/treasure-tables.module.js';
+import { MaterialsModule } from './modules/materials/materials.module.js';
+import { PsychologyTablesModule } from './modules/psychology-tables/psychology-tables.module.js';
+import { FightingStylesModule } from './modules/fighting-styles/fighting-styles.module.js';
+import { SkillDifficultiesModule } from './modules/skill-difficulties/skill-difficulties.module.js';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      validationSchema: Joi.object({
-        PORT: Joi.number().positive().default(3001),
-        RMU_MONGO_CORE_URI: Joi.string().required(),
-        RMU_IAM_JWK_URI: Joi.string().uri().required(),
-        RMU_IAM_TOKEN_URI: Joi.string().uri().required(),
-        RMU_IAM_CLIENT_ID: Joi.string().required(),
-        RMU_IAM_CLIENT_SECRET: Joi.string().required(),
-        RMU_KAFKA_BROKERS: Joi.string().required(),
-        RMU_KAFKA_CLIENT_ID: Joi.string().required(),
-        RMU_KAFKA_DEFAULT_PARTITIONS: Joi.number().integer().min(1).default(1),
-      }),
+      validationSchema: envSchema,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -57,6 +57,16 @@ import { EffectTypesModule } from './modules/effect-types/effect-types.module';
     EffectTypesModule,
     ResistanceRollsModule,
     CulturesModule,
+    ManeuverModifiersModule,
+    HealingTablesModule,
+    PoisonTablesModule,
+    TradingTablesModule,
+    AlchemyTablesModule,
+    TreasureTablesModule,
+    MaterialsModule,
+    PsychologyTablesModule,
+    FightingStylesModule,
+    SkillDifficultiesModule,
   ],
 })
 export class AppModule {}

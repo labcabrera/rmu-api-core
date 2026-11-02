@@ -1,8 +1,9 @@
-import { describe, expect, it } from '@jest/globals';
-import { Trait } from 'src/modules/traits/domain/aggregates/trait';
-import { TraitProps } from 'src/modules/traits/domain/aggregates/trait-props';
-import { TraitCreatedEvent } from 'src/modules/traits/domain/events/trait-created.event';
-import { TraitUpdatedEvent } from 'src/modules/traits/domain/events/trait-updated.event';
+import { describe, expect, it } from 'vitest';
+import { Trait } from '../../../../src/modules/traits/domain/aggregates/trait.js';
+import type { TraitProps } from '../../../../src/modules/traits/domain/aggregates/trait-props.js';
+import { TraitCreatedEvent } from '../../../../src/modules/traits/domain/events/trait-created.event.js';
+import { TraitUpdatedEvent } from '../../../../src/modules/traits/domain/events/trait-updated.event.js';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const makeTraitProps = (overrides: Partial<TraitProps> = {}): TraitProps => ({
   id: 'trait-1',
@@ -16,6 +17,7 @@ const makeTraitProps = (overrides: Partial<TraitProps> = {}): TraitProps => ({
   tierCost: undefined,
   description: undefined,
   owner: 'owner-1',
+  entitySource: 'user',
   createdAt: new Date('2025-01-01T00:00:00.000Z'),
   updatedAt: undefined,
   ...overrides,
@@ -34,6 +36,7 @@ describe('Trait domain aggregate', () => {
       tierCost: 0,
       description: undefined,
       owner: 'owner-1',
+      entitySource: 'user',
     });
 
     expect(trait.id).toBe('night-vision');
@@ -48,6 +51,30 @@ describe('Trait domain aggregate', () => {
       eventType: 'created',
       data: trait.getProps(),
     });
+  });
+
+  it('keeps the Character Companion details and changes only the ones given', () => {
+    const trait = Trait.fromProps(
+      makeTraitProps({ talentCategory: 'rage', prerequisites: [{ type: 'natural' }], possibleFlaws: ['bad-temper'], source: 'core-law' }),
+    );
+    trait.update({ prerequisites: [{ type: 'skill', value: 'mental-focus' }] });
+    expect(trait.talentCategory).toBe('rage');
+    expect(trait.prerequisites).toEqual([{ type: 'skill', value: 'mental-focus' }]);
+    expect(trait.possibleFlaws).toEqual(['bad-temper']);
+    expect(trait.source).toBe('core-law');
+    expect(trait.hasChanges()).toBe(true);
+  });
+
+  it.each([
+    ['Ágil y rápido', 'agil-y-rapido'],
+    ['Visión nocturna', 'vision-nocturna'],
+    [' Blind Fighting! ', 'blind-fighting'],
+  ])('builds the id of %s without accents', (name, id) => {
+    expect(Trait.idFromName(name)).toBe(id);
+  });
+
+  it.each(['!!!', '   ', '¿?'])('rejects the name %j, which leaves an empty id', name => {
+    expect(() => Trait.idFromName(name)).toThrow(ValidationError);
   });
 
   it('hydrates from props without domain events', () => {

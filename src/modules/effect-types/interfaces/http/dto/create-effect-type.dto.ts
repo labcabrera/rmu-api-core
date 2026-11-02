@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsIn, IsNotEmpty, IsString } from 'class-validator';
-import { CreateEffectTypeCommand } from 'src/modules/effect-types/application/cqrs/commands/create-effect-type.command';
+import { IsBoolean, IsIn, IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { CreateEffectTypeCommand } from '../../../application/cqrs/commands/create-effect-type.command.js';
 import {
   EFFECT_PROPERTY_REQUIREMENTS,
   type EffectPropertyRequirement,
-} from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+} from '../../../domain/value-objects/effect-property-requirement.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateEffectTypeDto {
   @ApiProperty({ description: 'Effect type identifier', example: 'bleeding' })
@@ -45,9 +46,19 @@ export class CreateEffectTypeDto {
   @IsIn(EFFECT_PROPERTY_REQUIREMENTS)
   delay: EffectPropertyRequirement;
 
-  @ApiProperty({ description: 'Access type of the effect type', example: 'public' })
+  @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public' })
   @IsIn(['public', 'private'])
   accessType: AccessType;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
 
   static toCommand(dto: CreateEffectTypeDto, userId: string, roles: string[]): CreateEffectTypeCommand {
     return new CreateEffectTypeCommand(
@@ -63,6 +74,7 @@ export class CreateEffectTypeDto {
       dto.accessType,
       userId,
       roles,
+      dto.entitySource,
     );
   }
 }

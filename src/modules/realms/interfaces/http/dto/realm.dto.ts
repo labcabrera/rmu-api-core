@@ -1,0 +1,75 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Realm } from '../../../domain/aggregates/realm.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+
+export class RealmDto {
+  @ApiProperty({ description: 'Unique identifier for the realm', example: 'lotr' })
+  id: string;
+
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
+
+  @ApiProperty({ description: 'Name of the realm', example: 'Lord of the Rings' })
+  name: string;
+
+  @ApiProperty({ description: 'Magic presence in the realm', example: 'limited' })
+  magicPresence: string;
+
+  @ApiProperty({ description: 'Short description of the realm', required: false, example: 'A fantasy world' })
+  shortDescription?: string;
+
+  @ApiProperty({ description: 'Description of the realm', required: false, example: 'A fantasy world created by J.R.R. Tolkien' })
+  description?: string;
+
+  @ApiProperty({ description: 'Image URL of the realm', required: false, example: 'https://example.com/images/realms/lotr.jpg' })
+  imageUrl?: string;
+
+  @ApiProperty({ description: 'Owner of the realm', example: 'user123' })
+  owner: string;
+
+  @ApiProperty({ type: String, description: 'Access type', example: 'public' })
+  accessType: AccessType;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
+  @ApiProperty({ description: 'Generic realm (RMU Core), usable from any campaign', example: false })
+  generic: boolean;
+
+  static fromEntity(entity: Realm): RealmDto {
+    const dto = new RealmDto();
+    dto.id = entity.id;
+    dto.version = entity.version;
+    dto.name = entity.name;
+    dto.magicPresence = entity.magicPresence;
+    dto.shortDescription = entity.shortDescription;
+    dto.description = entity.description;
+    dto.imageUrl = entity.imageUrl;
+    dto.owner = entity.owner;
+    dto.accessType = entity.accessType;
+    dto.entitySource = entity.entitySource;
+    dto.generic = entity.generic;
+    return dto;
+  }
+}
+
+export class RealmPageDto {
+  @ApiProperty({
+    type: [RealmDto],
+    description: 'Realms',
+    isArray: true,
+  })
+  content: RealmDto[];
+  @ApiProperty({
+    type: PaginationDto,
+    description: 'Pagination information',
+  })
+  pagination: PaginationDto;
+}

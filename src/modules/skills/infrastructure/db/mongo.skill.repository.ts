@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SkillRepository } from '../../application/ports/skill-repository';
-import { Skill } from '../../domain/aggregates/skill';
-import { SkillDocument, SkillModel } from '../persistence/models/skill.model';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import type { SkillRepository } from '../../application/ports/skill-repository.port.js';
+import { Skill } from '../../domain/aggregates/skill.js';
+import { type SkillDocument, SkillModel } from '../persistence/models/skill.model.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()
 export class MongoSkillRepository extends MongoBaseRepository<Skill, SkillDocument> implements SkillRepository {
@@ -15,12 +15,15 @@ export class MongoSkillRepository extends MongoBaseRepository<Skill, SkillDocume
 
   protected mapToEntity(doc: SkillDocument): Skill {
     return Skill.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       categoryId: doc.categoryId,
       bonus: doc.bonus,
       specialization: doc.specialization,
+      specializationOptional: doc.specializationOptional ?? undefined,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
+      maneuver: doc.maneuver ?? undefined,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

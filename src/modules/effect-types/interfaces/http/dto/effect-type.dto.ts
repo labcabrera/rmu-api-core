@@ -1,16 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EffectType } from 'src/modules/effect-types/domain/aggregates/effect-type';
+import { EffectType } from '../../../domain/aggregates/effect-type.js';
 import {
   EFFECT_PROPERTY_REQUIREMENTS,
   type EffectPropertyRequirement,
-} from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import type { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
+} from '../../../domain/value-objects/effect-property-requirement.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
 
 export class EffectTypeDto {
   @ApiProperty({ description: 'Effect type identifier', example: 'bleeding', required: true })
   id: string;
+
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
 
   @ApiProperty({ description: 'Indicates if the effect persists over time', example: true, required: true })
   isPersistent: boolean;
@@ -39,15 +42,21 @@ export class EffectTypeDto {
   @ApiProperty({ description: 'Owner of the effect type', example: 'user123', required: true })
   owner: string;
 
-  @ApiProperty({ description: 'Access type of the effect type', example: 'public', required: true })
+  @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public', required: true })
   accessType: AccessType;
 
-  @ApiProperty({ description: 'Entity source', example: 'user', required: true })
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
   entitySource: EntitySource;
 
   static fromEntity(entity: EffectType): EffectTypeDto {
     const dto = new EffectTypeDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.isPersistent = entity.isPersistent;
     dto.isStackable = entity.isStackable;
     dto.value = entity.value;

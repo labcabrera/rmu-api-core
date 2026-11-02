@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsOptional, IsString } from 'class-validator';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { UpdateSkillCommand } from 'src/modules/skills/application/cqrs/commands/update-skill.command';
+import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsOptional, IsString, ValidateNested, IsInt, Min, IsIn } from 'class-validator';
+import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
+import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { UpdateSkillCommand } from '../../../application/cqrs/commands/update-skill.command.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateSkillDto {
-  @ApiProperty({ description: 'Category identifier of the skill', example: 'animal', required: false })
+  @ApiProperty({ type: String, description: 'Category identifier of the skill', example: 'animal', required: false })
   @IsString()
   @IsOptional()
   categoryId: string | undefined;
@@ -15,17 +18,60 @@ export class UpdateSkillDto {
   @IsOptional()
   bonus: string[] | undefined;
 
-  @ApiProperty({ description: 'Specialization of the skill', example: 'tracking', required: false })
+  @ApiProperty({ type: String, description: 'Specialization of the skill', example: 'tracking', required: false })
   @IsString()
   @IsOptional()
   specialization: EnumerationCategory | undefined;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public', required: false })
-  @IsString()
+  @ApiProperty({ description: 'The specialization is suggested, not required', required: false, example: true })
+  @IsBoolean()
+  @IsOptional()
+  specializationOptional?: boolean;
+
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public', required: false })
+  @IsIn(ACCESS_TYPES)
   @IsOptional()
   accessType: AccessType;
 
+  @ApiProperty({
+    description: 'Maneuver profile values that override the category profile (replaces the stored ones; null removes them)',
+    type: ManeuverProfileDto,
+    required: false,
+  })
+  @ValidateNested()
+  @Type(() => ManeuverProfileDto)
+  @IsOptional()
+  maneuver?: ManeuverProfileDto | null;
+
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(id: string, dto: UpdateSkillDto, userId: string, roles: string[]): UpdateSkillCommand {
-    return new UpdateSkillCommand(id, dto.categoryId, dto.bonus, dto.specialization, dto.accessType, userId, roles);
+    return new UpdateSkillCommand(
+      id,
+      dto.categoryId,
+      dto.bonus,
+      dto.specialization,
+      dto.accessType,
+      dto.maneuver === null ? null : ManeuverProfileDto.toProfile(dto.maneuver),
+      userId,
+      roles,
+      dto.version,
+      dto.specializationOptional,
+      dto.entitySource,
+    );
   }
 }

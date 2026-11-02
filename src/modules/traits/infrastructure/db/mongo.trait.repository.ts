@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
-import { TraitDocument, TraitModel } from '../persistence/models/trait-model';
-import { TraitRepository } from '../../application/ports/trait.repository';
-import { Trait } from '../../domain/aggregates/trait';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { InjectModel } from '@nestjs/mongoose';
+import { type TraitDocument, TraitModel } from '../persistence/models/trait.model.js';
+import type { TraitRepository } from '../../application/ports/trait-repository.port.js';
+import { Trait } from '../../domain/aggregates/trait.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()
 export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocument> implements TraitRepository {
@@ -15,7 +15,7 @@ export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocume
 
   protected mapToEntity(doc: TraitDocument): Trait {
     return Trait.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       name: doc.name,
       category: doc.category,
       isTalent: doc.isTalent,
@@ -25,7 +25,12 @@ export class MongoTraitRepository extends MongoBaseRepository<Trait, TraitDocume
       adquisitionCost: doc.adquisitionCost,
       tierCost: doc.tierCost,
       description: doc.description,
+      talentCategory: doc.talentCategory,
+      prerequisites: doc.prerequisites,
+      possibleFlaws: doc.possibleFlaws,
+      source: doc.source,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

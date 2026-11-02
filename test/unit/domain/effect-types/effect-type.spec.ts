@@ -1,12 +1,12 @@
-import { describe, expect, it } from '@jest/globals';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { EffectType } from 'src/modules/effect-types/domain/aggregates/effect-type';
+import { describe, expect, it } from 'vitest';
+import { EffectType } from '../../../../src/modules/effect-types/domain/aggregates/effect-type.js';
 
 describe('EffectType', () => {
   it('creates an effect type with caller-defined id', () => {
     const effectType = EffectType.create({
       id: 'bleeding',
       isPersistent: true,
+      isStackable: false,
       value: 'required',
       modifier: 'optional',
       rounds: 'required',
@@ -28,6 +28,7 @@ describe('EffectType', () => {
     const effectType = EffectType.create({
       id: 'stunned',
       isPersistent: true,
+      isStackable: false,
       value: 'forbidden',
       modifier: 'optional',
       rounds: 'required',
@@ -41,6 +42,7 @@ describe('EffectType', () => {
 
     effectType.update({
       isPersistent: false,
+      isStackable: false,
       value: 'optional',
       accessType: 'public',
     });
@@ -51,10 +53,11 @@ describe('EffectType', () => {
     expect(effectType.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('throws when update has no effective changes', () => {
+  it('reports no change when update has no effective changes, once stored', () => {
     const effectType = EffectType.create({
       id: 'prone',
       isPersistent: false,
+      isStackable: false,
       value: 'forbidden',
       modifier: 'forbidden',
       rounds: 'forbidden',
@@ -65,7 +68,11 @@ describe('EffectType', () => {
       accessType: 'public',
       entitySource: 'user',
     });
+    // Never stored: always has changes.
+    expect(effectType.hasChanges()).toBe(true);
+    effectType.restoreVersion(0);
 
-    expect(() => effectType.update({ isPersistent: false })).toThrow(NotModifiedError);
+    effectType.update({ isPersistent: false });
+    expect(effectType.hasChanges()).toBe(false);
   });
 });

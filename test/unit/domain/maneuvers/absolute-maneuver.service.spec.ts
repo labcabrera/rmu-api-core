@@ -1,6 +1,6 @@
-import { describe, expect, it } from '@jest/globals';
-import { ValidationError } from 'src/modules/shared/domain/errors/errors';
-import { AbsoluteManeuverService } from 'src/modules/maneuvers/domain/services/absolute-maneuver.service';
+import { describe, expect, it } from 'vitest';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { AbsoluteManeuverService } from '../../../../src/modules/maneuvers/domain/services/absolute-maneuver.service.js';
 
 describe('AbsoluteManeuverService', () => {
   const service = new AbsoluteManeuverService();
@@ -29,6 +29,7 @@ describe('AbsoluteManeuverService', () => {
 
   it('returns table-specific effects without stripping their metadata', () => {
     expect(service.execute(0, false, 'adrenal').effects).toEqual([{ status: 'penaltyUntilAbsoluteSuccess', value: -25 }]);
+    expect(service.execute(0, false, 'crafting').effects).toEqual([{ status: 'penaltyUntilAbsoluteSuccess', value: -25 }]);
     expect(service.execute(76, false, 'awareness').effects).toEqual([{ status: 'retryBonus', value: 10, roundDelay: 6 }]);
     expect(service.execute(176, false, 'medical').effects).toEqual([{ status: 'recoveryRollModifier', value: 25 }]);
   });
@@ -48,7 +49,7 @@ describe('AbsoluteManeuverService', () => {
   });
 
   it('rejects unknown table names', () => {
-    expect(() => service.execute(100, false, 'unknown')).toThrow(ValidationError);
-    expect(() => service.execute(100, false, 'unknown')).toThrow('Invalid absolute maneuver table');
+    expect(() => service.execute(100, false, 'unknown')).toThrow(NotFoundError);
+    expect(() => service.execute(100, false, 'unknown')).toThrow('Absolute maneuver table unknown not found');
   });
 });

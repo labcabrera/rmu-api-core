@@ -1,100 +1,87 @@
-import { RealmCreatedEvent } from '../events/realm-created.event';
-import { RealmUpdatedEvent } from '../events/realm-updated.event';
+import { RealmCreatedEvent } from '../events/realm-created.event.js';
+import { RealmUpdatedEvent } from '../events/realm-updated.event.js';
 import { randomUUID } from 'crypto';
-import { RealmProps } from './realm-props';
-import { MagicPresence } from '../value-objects/realm-magic-type.vo';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
+import type { RealmProps } from './realm-props.js';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+
+type Clearable<T> = { [K in keyof T]?: T[K] | null };
+
+export type RealmUpdate = Partial<Pick<RealmProps, 'name' | 'magicPresence' | 'accessType' | 'generic' | 'entitySource'>> &
+  Clearable<Pick<RealmProps, 'shortDescription' | 'description' | 'imageUrl'>>;
 
 export class Realm extends BaseAggregateRoot<RealmProps> {
-  public name: string;
-  public magicPresence: MagicPresence;
-  public shortDescription: string | undefined;
-  public description: string | undefined;
-  public imageUrl: string | undefined;
-  public owner: string;
-  public accessType: AccessType;
-  public createdAt: Date;
-  public updatedAt: Date | undefined;
+  private constructor(props: RealmProps) {
+    super(props);
+  }
 
-  private constructor(
-    id: string,
-    name: string,
-    magicPresence: MagicPresence,
-    shortDescription: string | undefined,
-    description: string | undefined,
-    imageUrl: string | undefined,
-    owner: string,
-    accessType: AccessType,
-    createdAt: Date,
-    updatedAt: Date | undefined,
-  ) {
-    super(id);
-    this.name = name;
-    this.magicPresence = magicPresence;
-    this.shortDescription = shortDescription;
-    this.description = description;
-    this.imageUrl = imageUrl;
-    this.owner = owner;
-    this.accessType = accessType;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+  get name() {
+    return this.props.name;
+  }
+
+  get magicPresence() {
+    return this.props.magicPresence;
+  }
+
+  get shortDescription() {
+    return this.props.shortDescription;
+  }
+
+  get description() {
+    return this.props.description;
+  }
+
+  get imageUrl() {
+    return this.props.imageUrl;
+  }
+
+  get owner() {
+    return this.props.owner;
+  }
+
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
+  get generic() {
+    return this.props.generic;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
   static create(props: Omit<RealmProps, 'id' | 'createdAt' | 'updatedAt'>) {
-    const realm = new Realm(
-      randomUUID(),
-      props.name,
-      props.magicPresence,
-      props.shortDescription,
-      props.description,
-      props.imageUrl,
-      props.owner,
-      props.accessType,
-      new Date(),
-      undefined,
-    );
+    const realm = new Realm({ ...props, id: randomUUID(), createdAt: new Date(), updatedAt: undefined });
     realm.apply(new RealmCreatedEvent(realm.getProps()));
     return realm;
   }
 
   static fromProps(props: RealmProps) {
-    return new Realm(
-      props.id,
-      props.name,
-      props.magicPresence,
-      props.shortDescription,
-      props.description,
-      props.imageUrl,
-      props.owner,
-      props.accessType,
-      props.createdAt,
-      props.updatedAt,
-    );
+    return new Realm({ ...props });
   }
 
-  getProps(): RealmProps {
-    return {
-      id: this.id,
-      name: this.name,
-      magicPresence: this.magicPresence,
-      shortDescription: this.shortDescription,
-      description: this.description,
-      imageUrl: this.imageUrl,
-      owner: this.owner,
-      accessType: this.accessType,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
-  }
-
-  update(props: Partial<Omit<RealmProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
-    if (props.name) this.name = props.name;
-    if (props.magicPresence) this.magicPresence = props.magicPresence;
-    if (props.shortDescription) this.shortDescription = props.shortDescription;
-    if (props.description) this.description = props.description;
-    if (props.imageUrl !== undefined) this.imageUrl = props.imageUrl;
-    if (props.accessType !== undefined) this.accessType = props.accessType;
-    this.updatedAt = new Date();
+  /**
+   * Fields left undefined stay as they are. The optional texts are cleared with '' or null; name and magic presence
+   * cannot be cleared.
+   */
+  update(changes: RealmUpdate) {
+    if (changes.name) this.props.name = changes.name;
+    if (changes.magicPresence) this.props.magicPresence = changes.magicPresence;
+    if (changes.shortDescription !== undefined) this.props.shortDescription = changes.shortDescription || undefined;
+    if (changes.description !== undefined) this.props.description = changes.description || undefined;
+    if (changes.imageUrl !== undefined) this.props.imageUrl = changes.imageUrl || undefined;
+    if (changes.accessType) this.props.accessType = changes.accessType;
+    if (changes.generic !== undefined) this.props.generic = changes.generic;
+    if (changes.entitySource !== undefined) this.props.entitySource = changes.entitySource;
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
     this.apply(new RealmUpdatedEvent(this.getProps()));
   }
 }

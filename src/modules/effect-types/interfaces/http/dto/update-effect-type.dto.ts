@@ -1,19 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsIn, IsOptional } from 'class-validator';
-import { UpdateEffectTypeCommand } from 'src/modules/effect-types/application/cqrs/commands/update-effect-type.command';
+import { IsBoolean, IsIn, IsOptional, IsInt, Min } from 'class-validator';
+import { UpdateEffectTypeCommand } from '../../../application/cqrs/commands/update-effect-type.command.js';
 import {
   EFFECT_PROPERTY_REQUIREMENTS,
   type EffectPropertyRequirement,
-} from 'src/modules/effect-types/domain/value-objects/effect-property-requirement.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
+} from '../../../domain/value-objects/effect-property-requirement.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateEffectTypeDto {
-  @ApiProperty({ description: 'Indicates if the effect persists over time', example: true, required: false })
+  @ApiProperty({ type: Boolean, description: 'Indicates if the effect persists over time', example: true, required: false })
   @IsBoolean()
   @IsOptional()
   isPersistent: boolean | undefined;
 
-  @ApiProperty({ description: 'Indicates if the effect can be stacked', example: false, required: false })
+  @ApiProperty({ type: Boolean, description: 'Indicates if the effect can be stacked', example: false, required: false })
   @IsBoolean()
   @IsOptional()
   isStackable: boolean | undefined;
@@ -48,10 +49,26 @@ export class UpdateEffectTypeDto {
   @IsOptional()
   delay: EffectPropertyRequirement | undefined;
 
-  @ApiProperty({ description: 'Access type of the effect type', example: 'public', required: false })
+  @ApiProperty({ type: String, description: 'Access type of the effect type', example: 'public', required: false })
   @IsIn(['public', 'private'])
   @IsOptional()
   accessType: AccessType | undefined;
+
+  @ApiProperty({ description: 'Version the client read (from the GET); a different stored version is a 409', required: false, example: 3 })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  version?: number;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook) or user. Only an admin changes it to system; the owner never changes',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
 
   static toCommand(id: string, dto: UpdateEffectTypeDto, userId: string, roles: string[]): UpdateEffectTypeCommand {
     return new UpdateEffectTypeCommand(
@@ -67,6 +84,8 @@ export class UpdateEffectTypeDto {
       dto.accessType,
       userId,
       roles,
+      dto.version,
+      dto.entitySource,
     );
   }
 }

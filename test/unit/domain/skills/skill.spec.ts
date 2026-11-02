@@ -1,7 +1,6 @@
-import { describe, expect, it } from '@jest/globals';
-import { Skill } from 'src/modules/skills/domain/aggregates/skill';
-import { SkillProps } from 'src/modules/skills/domain/aggregates/skill-props';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
+import { describe, expect, it } from 'vitest';
+import { Skill } from '../../../../src/modules/skills/domain/aggregates/skill.js';
+import type { SkillProps } from '../../../../src/modules/skills/domain/aggregates/skill-props.js';
 
 const baseProps = (): SkillProps => ({
   id: 'skill-1',
@@ -9,6 +8,7 @@ const baseProps = (): SkillProps => ({
   bonus: ['strength'],
   specialization: null,
   owner: 'user-1',
+  entitySource: 'user',
   accessType: 'private',
   createdAt: new Date('2026-03-01T00:00:00.000Z'),
   updatedAt: undefined,
@@ -22,6 +22,7 @@ describe('Skill', () => {
       bonus: ['presence', 'empathy'],
       specialization: 'skill-influence',
       owner: 'user-1',
+      entitySource: 'user',
       accessType: 'public',
     });
 
@@ -35,6 +36,18 @@ describe('Skill', () => {
     });
     expect(skill.createdAt).toBeInstanceOf(Date);
     expect(skill.updatedAt).toBeUndefined();
+  });
+
+  it('stores an optional specialization only when it is true, and clears it on false', () => {
+    const skill = Skill.create({ ...baseProps(), specialization: 'skill-culinary', specializationOptional: true });
+    expect(skill.specializationOptional).toBe(true);
+
+    skill.update({ specializationOptional: false });
+    expect(skill.getProps().specializationOptional).toBeUndefined();
+    expect(skill.specializationOptional).toBe(false);
+
+    const plain = Skill.create({ ...baseProps(), specializationOptional: false });
+    expect(plain.getProps().specializationOptional).toBeUndefined();
   });
 
   it('rehydrates persisted props exactly', () => {
@@ -68,11 +81,35 @@ describe('Skill', () => {
     expect(skill.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('throws NotModifiedError when no provided field changes state', () => {
-    const skill = Skill.fromProps(baseProps());
+  it('reports no change when no provided field changes state', () => {
+    const skill = Skill.fromProps(baseProps()).restoreVersion(0);
     const currentBonus = skill.bonus;
 
-    expect(() => skill.update({})).toThrow(NotModifiedError);
-    expect(() => skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus })).toThrow('Skill not modified');
+    skill.update({});
+    skill.update({ categoryId: 'athletic-brawn', bonus: currentBonus });
+    skill.update({ bonus: [...currentBonus] });
+    expect(skill.hasChanges()).toBe(false);
+  });
+});
+
+describe('Skill maneuver profile', () => {
+  it('stores only the defined maneuver fields', () => {
+    const skill = Skill.create({ ...baseProps(), maneuver: { light: 'required', movement: undefined } });
+
+    expect(skill.maneuver).toEqual({ light: 'required' });
+  });
+
+  it('rejects invalid maneuver profiles', () => {
+    expect(() => Skill.create({ ...baseProps(), maneuver: { actionPoints: { min: 4, max: 2 } } })).toThrow();
+  });
+
+  it('replaces and removes the maneuver profile on update', () => {
+    const skill = Skill.fromProps({ ...baseProps(), maneuver: { light: 'helpful' } });
+
+    skill.update({ maneuver: { movement: true } });
+    expect(skill.maneuver).toEqual({ movement: true });
+
+    skill.update({ maneuver: null });
+    expect(skill.maneuver).toBeUndefined();
   });
 });

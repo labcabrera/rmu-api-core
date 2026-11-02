@@ -1,6 +1,7 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { CultureSkillRank } from 'src/modules/cultures/domain/value-objects/culture-skill-rank';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { CultureSkillRankProps } from '../../../domain/value-objects/culture-skill-rank.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateCultureCommand extends AuthenticatedCommand {
   constructor(
@@ -8,9 +9,14 @@ export class CreateCultureCommand extends AuthenticatedCommand {
     public readonly description: string | null,
     public readonly imageUrl: string | null,
     public readonly accessType: AccessType,
-    public readonly fixedSkillRanks: CultureSkillRank[] | undefined,
+    public readonly skillRanks: CultureSkillRankProps[] | undefined,
+    public readonly languages: string[] | undefined,
+    public readonly suggestedCrafts: string | undefined,
+    public readonly suggestedVocations: string | undefined,
     userId: string,
     roles: string[],
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

@@ -1,12 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { PaginationDto } from 'src/modules/shared/interfaces/http/dto/page.dto';
-import { Skill } from 'src/modules/skills/domain/aggregates/skill';
+import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { PaginationDto } from '../../../../shared/interfaces/http/dto/page.dto.js';
+import type { SkillView } from '../../../application/read-models/skill-view.js';
+import { EffectiveManeuverProfileDto, ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class SkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
   id: string;
+
+  @ApiProperty({ description: 'Version of the stored entity: send it back in a PATCH to detect a concurrent change (409)', example: 3 })
+  version: number;
 
   @ApiProperty({ description: 'Category of the skill', example: 'animal' })
   categoryId: string;
@@ -14,19 +19,53 @@ export class SkillDto {
   @ApiProperty({ description: 'List of stats that apply a benefit to the skill', example: ['em', 'co'] })
   bonus: string[];
 
-  @ApiProperty({ description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
+  @ApiProperty({ type: String, description: 'List of specializations for the skill', example: ['stealth', 'tracking'] })
   specialization: EnumerationCategory | null;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
+  @ApiProperty({ description: 'The specialization is suggested, not required (spec 037)', example: false })
+  specializationOptional: boolean;
+
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
   accessType: AccessType;
 
-  static fromEntity(entity: Skill): SkillDto {
+  @ApiProperty({ description: 'Owner of the skill: the user that created it', example: 'user123', required: true })
+  owner: string;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, admin-only changes) or user',
+    required: true,
+    example: 'user',
+  })
+  entitySource: EntitySource;
+
+  @ApiProperty({
+    description: 'Effective maneuver profile: category profile overridden by the skill values, with defaults',
+    type: EffectiveManeuverProfileDto,
+  })
+  maneuver: EffectiveManeuverProfileDto;
+
+  @ApiProperty({
+    description: 'Maneuver values stored on the skill itself (overrides of the category profile). Omitted when none.',
+    type: ManeuverProfileDto,
+    required: false,
+  })
+  maneuverOverrides?: ManeuverProfileDto;
+
+  static fromView(view: SkillView): SkillDto {
+    const entity = view.skill;
     const dto = new SkillDto();
     dto.id = entity.id;
+    dto.version = entity.version;
     dto.categoryId = entity.categoryId;
     dto.bonus = entity.bonus || [];
     dto.specialization = entity.specialization;
+    dto.specializationOptional = entity.specializationOptional;
     dto.accessType = entity.accessType;
+    dto.owner = entity.owner;
+    dto.entitySource = entity.entitySource;
+    dto.maneuver = EffectiveManeuverProfileDto.fromProfile(view.maneuver);
+    dto.maneuverOverrides = ManeuverProfileDto.fromProfile(entity.maneuver);
     return dto;
   }
 }

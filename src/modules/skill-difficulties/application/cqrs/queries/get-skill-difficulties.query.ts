@@ -1,0 +1,6 @@
+export class GetSkillDifficultiesQuery {
+  constructor(
+    public readonly userId: string,
+    public readonly roles: string[],
+  ) {}
+}

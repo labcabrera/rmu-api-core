@@ -1,0 +1,39 @@
+import { Inject, Logger } from '@nestjs/common';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-repository.port.js';
+import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { DeleteCultureSkillRankCommand } from '../commands/delete-culture-skill-rank.command.js';
+import { CultureViewService } from '../../services/culture-view.service.js';
+import type { CultureView } from '../../read-models/culture-view.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
+
+@CommandHandler(DeleteCultureSkillRankCommand)
+export class DeleteCultureSkillRankHandler implements ICommandHandler<DeleteCultureSkillRankCommand, CultureView> {
+  private readonly logger = new Logger(DeleteCultureSkillRankHandler.name);
+
+  constructor(
+    @Inject(CULTURE_REPOSITORY) private readonly cultureRepository: CultureRepository,
+    @Inject(CULTURE_GUARD) private readonly cultureGuard: CultureGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
+    private readonly cultureViewService: CultureViewService,
+  ) {}
+
+  async execute(command: DeleteCultureSkillRankCommand): Promise<CultureView> {
+    this.logger.log(`Deleting skill rank ${command.index} of culture ${command.cultureId} for user ${command.userId}`);
+
+    const culture = await this.cultureRepository.findById(command.cultureId);
+    if (!culture) throw new NotFoundError('Culture', command.cultureId);
+
+    this.cultureGuard.checkUpdate(culture, command.userId, command.roles);
+
+    culture.deleteSkillRank(command.index);
+
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!culture.hasChanges()) return this.cultureViewService.toView(culture);
+    const updated = await this.cultureRepository.update(culture);
+
+    await this.events.publishChanges('culture', culture);
+    return this.cultureViewService.toView(updated);
+  }
+}

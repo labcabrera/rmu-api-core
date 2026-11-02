@@ -1,21 +1,25 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateTraitCommand } from '../commands/create-trait.command';
-import { Trait } from 'src/modules/traits/domain/aggregates/trait';
-import type { TraitRepository } from '../../ports/trait.repository';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { ConflictError } from 'src/modules/shared/domain/errors/errors';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CreateTraitCommand } from '../commands/create-trait.command.js';
+import { Trait } from '../../../domain/aggregates/trait.js';
+import { TRAIT_REPOSITORY, type TraitRepository } from '../../ports/trait-repository.port.js';
+import { TRAIT_GUARD, type TraitGuardPort } from '../../ports/trait-guard.port.js';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(CreateTraitCommand)
 export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, Trait> {
   private readonly logger = new Logger(CreateTraitHandler.name);
 
   constructor(
-    @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
-    @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
+    @Inject(TRAIT_REPOSITORY) private readonly traitRepository: TraitRepository,
+    @Inject(TRAIT_GUARD) private readonly guard: TraitGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: CreateTraitCommand): Promise<Trait> {
+    this.guard.checkCreate(command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
     this.logger.log(`Creating trait ${command.name} for user ${command.userId}`);
     const trait = Trait.create({
       name: command.name,
@@ -27,14 +31,16 @@ export class CreateTraitHandler implements ICommandHandler<CreateTraitCommand, T
       adquisitionCost: command.adquisitionCost,
       tierCost: command.tierCost,
       description: command.description,
+      ...command.details,
       owner: command.userId,
+      entitySource: command.entitySource ?? 'user',
     });
     const existing = await this.traitRepository.findById(trait.id);
     if (existing) {
-      throw new ConflictError(`Trait with id ${trait.id} already exists`);
+      throw new ConflictError(`Trait with id ${trait.id} already exists`, 'duplicate-key');
     }
     const savedTrait = await this.traitRepository.save(trait);
-    trait.getUncommittedEvents().forEach(event => this.traitEventBus.publish(event));
+    await this.events.publishChanges('trait', trait);
     return savedTrait;
   }
 }

@@ -1,37 +1,45 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateCultureCommand } from '../commands/create-culture.command';
-import { Culture } from 'src/modules/cultures/domain/aggregates/culture';
-import type { CultureRepository } from '../../ports/culture-repository';
-import type { CultureGuardPort } from '../../ports/culture-guard.port';
-import type { CultureEventBusPort } from '../../ports/culture-event-bus.port';
-import { CultureCreatedEvent } from 'src/modules/cultures/domain/events/culture-created.event';
-import { CreateCultureProps } from 'src/modules/cultures/domain/aggregates/culture-props';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CreateCultureCommand } from '../commands/create-culture.command.js';
+import { Culture } from '../../../domain/aggregates/culture.js';
+import { CULTURE_REPOSITORY, type CultureRepository } from '../../ports/culture-repository.port.js';
+import { CULTURE_GUARD, type CultureGuardPort } from '../../ports/culture-guard.port.js';
+import type { CreateCultureProps } from '../../../domain/aggregates/culture-props.js';
+import { CultureSkillRank } from '../../../domain/value-objects/culture-skill-rank.js';
+import { CultureViewService } from '../../services/culture-view.service.js';
+import type { CultureView } from '../../read-models/culture-view.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(CreateCultureCommand)
-export class CreateCultureHandler implements ICommandHandler<CreateCultureCommand, Culture> {
+export class CreateCultureHandler implements ICommandHandler<CreateCultureCommand, CultureView> {
   private readonly logger = new Logger(CreateCultureHandler.name);
 
   constructor(
-    @Inject('CultureRepository') private readonly cultureRepository: CultureRepository,
-    @Inject('CultureGuard') private readonly cultureGuard: CultureGuardPort,
-    @Inject('CultureEventProducer') private readonly cultureEventBus: CultureEventBusPort,
+    @Inject(CULTURE_REPOSITORY) private readonly cultureRepository: CultureRepository,
+    @Inject(CULTURE_GUARD) private readonly cultureGuard: CultureGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
+    private readonly cultureViewService: CultureViewService,
   ) {}
 
-  async execute(command: CreateCultureCommand): Promise<Culture> {
+  async execute(command: CreateCultureCommand): Promise<CultureView> {
     this.logger.log(`Creating culture ${command.name} for user ${command.userId}`);
     this.cultureGuard.checkCreate(command.roles);
-    const props = {
+    this.cultureGuard.checkEntitySource(command.roles, command.entitySource);
+    const props: CreateCultureProps = {
       name: command.name,
       description: command.description,
       imageUrl: command.imageUrl,
       owner: command.userId,
       accessType: command.accessType,
-      fixedSkillRanks: command.fixedSkillRanks || [],
-    } as CreateCultureProps;
+      entitySource: command.entitySource ?? 'user',
+      skillRanks: (command.skillRanks ?? []).map(s => CultureSkillRank.create(s)),
+      languages: command.languages,
+      suggestedCrafts: command.suggestedCrafts,
+      suggestedVocations: command.suggestedVocations,
+    };
     const culture = Culture.create(props);
     await this.cultureRepository.save(culture);
-    this.cultureEventBus.publish(new CultureCreatedEvent(culture.getProps()));
-    return culture;
+    await this.events.publishChanges('culture', culture);
+    return this.cultureViewService.toView(culture);
   }
 }

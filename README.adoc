@@ -18,79 +18,312 @@ This project is part of RMU Online: https://github.com/labcabrera/rmu-platform
 WARNING: *This application is an independent project developed by fans of Rolemaster Unified. It is not affiliated with, endorsed by, or licensed by Iron Crown Enterprises (ICE), the owners of the Rolemaster intellectual property.*
 *All Rolemaster trademarks, game systems, and materials are the property of Iron Crown Enterprises. This software is provided for personal, non-commercial use only. If you enjoy Rolemaster, please support the official publications and content from ICE.*
 
-== Description
+== Overview
 
-This API exposes endpoints to manage common entities used in the RMU ecosystem:
-
-- Realms
-- Races
-- Professions
-- Cultures
-- Skills (and categories)
-- Traits
-- Enumerations
-
-and other related entities.
+This API exposes endpoints to manage the common entities of the RMU ecosystem: realms, races, professions, cultures,
+skills (and categories), traits, enumerations and other related entities.
 
 image::diagrams/c4-context.png[API Core Context System]
 
-== Entities
-
-In summary, the diagram of the main aggregates is as follows:
+The main aggregates are:
 
 image::diagrams/class-diagram.png[Class diagram]
 
-== Quick Guide
-
-This section describes the most important steps and environment variables to run and develop this API.
+== Getting started
 
 === Requirements
 
-- Docker (recommended 20.10+)
-- Node.js (for local development): recommended 18+
-- npm or pnpm
+- Node.js 24 (`.nvmrc`; `nvm use`).
+- pnpm 10, pinned by the `packageManager` field of `package.json`. `corepack enable` installs that exact version.
+- Docker (20.10+) for the infrastructure and the image.
 
-=== Local configuration
+=== Infrastructure
 
-Configuration is loaded from the `.env` file at the repository root (used by `ConfigModule`).
+The API connects to MongoDB, Kafka and the Keycloak JWKS at startup. Start them from
+https://github.com/labcabrera/rmu-platform[rmu-platform] with `make up-infra` (Compose files in `compose/`).
 
-A sample configuration is as follows:
+=== Configuration
 
-----
-PORT=3001
-RMU_MONGO_CORE_URI=mongodb://user:pass@localhost:27017/rmu-core?authSource=admin
-RMU_KAFKA_CLIENT_ID=rmu-api-core
-RMU_KAFKA_CONSUMER_GROUP_ID=rmu-api-core-consumer
-RMU_KAFKA_DEFAULT_PARTITIONS=1
-RMU_KAFKA_BROKERS=localhost:9092
-RMU_IAM_JWK_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/certs
-RMU_IAM_TOKEN_URI=http://localhost:8090/realms/rmu-local/protocol/openid-connect/token
-RMU_IAM_CLIENT_ID=rmu-client
-RMU_IAM_CLIENT_SECRET={our-clientId-secret}
-LOG_LEVEL=debug
-----
-
-=== Running with Docker
-
-This project includes `docker-run.sh` which builds the image and runs the container on the `rmu-network` Docker network.
-
-In https://github.com/labcabrera/rmu-platform/docker-compose there are some `docker-compose` files that run multiple services together such as MongoDB, Keycloak and Kafka.
-
-=== Local development
-
-Install dependencies and run in development mode (see `package.json` scripts):
+Configuration is read from `.env` at the repository root. Copy `.env.example`, which already points to the
+infrastructure ports seen from the host. Set `RMU_IAM_CLIENT_SECRET` there only to run `scripts/smoke.sh`:
 
 ```bash
-npm install
-npm run start:dev
+cp .env.example .env
 ```
 
-For production build:
+The Joi schema in `src/config/env.schema.ts` fails startup on a missing required variable.
+
+[cols="2,1,3"]
+|===
+| Variable | Required | Purpose
+
+| `PORT` | no (`3001`) | HTTP port
+| `LOG_LEVEL` | no (`info`) | Nest logger level
+| `RMU_MONGO_CORE_URI` | yes | MongoDB connection string
+| `RMU_IAM_JWK_URI`, `RMU_IAM_ISSUER_URI`, `RMU_IAM_AUDIENCE` | yes | JWT validation
+| `RMU_IAM_URI`, `RMU_IAM_REALM` | no (`http://localhost/sso`, `rmu`) | browser-facing OAuth URLs of the Swagger UI (`/api-docs`)
+| `RMU_KAFKA_BROKERS`, `RMU_KAFKA_CLIENT_ID` | yes | Kafka connection
+| `RMU_KAFKA_CONSUMER_GROUP_ID` | no (`rmu-api-core-consumer`) | consumer group of the realm events that keep the races in step
+| `RMU_KAFKA_DEFAULT_PARTITIONS` | no (`1`) | number of partitions the producer spreads messages over (by key hash)
+| `RMU_CORS_ORIGINS` | no (empty) | comma-separated origins allowed by CORS; empty turns CORS off, as browsers come through the gateway on the same origin
+| `RMU_THROTTLE_LIMIT`, `RMU_THROTTLE_TTL_MS` | no (`300`, `60000`) | requests per client IP and window; `0` turns the limit off. `/v1/health` is never limited
+| `RMU_TRUST_PROXY` | no (`loopback, linklocal, uniquelocal`) | Express `trust proxy`: the client IP comes from `X-Forwarded-For` when the request arrives from these addresses (Caddy)
+|===
+
+=== Running locally
 
 ```bash
-npm run build
-npm run start:prod
+pnpm install
+pnpm start:dev       # watch mode on http://localhost:3001, Swagger UI on /api-docs
 ```
+
+Production build (SWC; `dist/` holds only `.js` and source maps):
+
+```bash
+pnpm build
+pnpm start:prod
+```
+
+== Development
+
+=== Scripts
+
+[cols="1,3"]
+|===
+| Command | What it does
+
+| `pnpm start:dev` / `pnpm start:debug` | Nest in watch mode (with the inspector for `start:debug`)
+| `pnpm build` | SWC build to `dist/`, without type checking
+| `pnpm typecheck` | `tsc --noEmit`
+| `pnpm lint` / `pnpm lint:fix` | ESLint (typed `typescript-eslint` + Prettier) over `src` and `test`
+| `pnpm format` | Prettier over `src` and `test`
+| `pnpm test` / `pnpm test:watch` | unit tests (`test/unit`)
+| `pnpm test:cov` | unit and e2e tests with v8 coverage in `coverage/`; the thresholds of `vitest.config.ts` count both (what CI runs)
+| `pnpm test:e2e` | one file per resource booting `AppModule` against mongodb-memory-server, with RS256 tokens checked against a local JWKS (`test/e2e/support`); only the Kafka producer is replaced
+| `pnpm check:swc` | `scripts/check-swc-metadata.cjs`: fails on the decorators SWC cannot compile like tsc (see the SWC convention under <<Project layout>>); `--fix` adds the missing `type`
+| `pnpm check` | lint + typecheck + `check:swc` + unit tests
+| `make check` | `pnpm check` plus the e2e tests
+|===
+
+Tests run on Vitest with SWC (`vitest.config.ts`, projects `unit` and `e2e`). The first `test:e2e` run downloads a
+`mongod` binary to `~/.cache/mongodb-binaries`, once, in the `globalSetup` of the e2e project
+(`test/e2e/support/mongod-binary.ts`): without it, the files would download it in parallel and fail on the lock file.
+
+`scripts/smoke.sh [base-url]` calls one endpoint of every controller of a running API with a service-account token and
+fails on any non-2xx answer (default `http://localhost:3001`; through the gateway `http://localhost/api/core`).
+
+pnpm skips the install scripts of `@scarf/scarf`, `@swc/core` and `mongodb-memory-server` (`pnpm.ignoredBuiltDependencies`):
+none of them is needed, and mongodb-memory-server downloads `mongod` on first use.
+
+=== Project layout
+
+----
+src/
+  main.ts                  bootstrap only: HTTP setup, OpenAPI, Kafka transport; a failed start exits with code 1
+  bootstrap/               HTTP setup (trust proxy, helmet, CORS, validation, error filter), logger levels, OpenAPI
+  config/env.schema.ts     Joi schema of the environment
+  modules/<feature>/
+    <feature>.module.ts
+    domain/
+      aggregates/          aggregate roots with a lifecycle (update, delete, events) and their props
+      entities/            immutable catalog entities (armor-types, skill-categories)
+      value-objects/, services/, events/
+    application/
+      cqrs/{commands,queries,handlers}/
+      ports/               <entity>-repository.port.ts, <entity>-guard.port.ts: interface + DI token
+    infrastructure/
+      db/                  mongo.<entity>.repository.ts, in-memory.<entity>.repository.ts
+      persistence/models/  <entity>.model.ts (Mongoose schemas)
+      security/            <entity>-guard.adapter.ts (read/write access checks)
+    interfaces/http/       <entity>.controller.ts
+      dto/                 request and response DTOs
+    interfaces/messaging/  Kafka consumers (races: realm events)
+  modules/shared/
+    application/           ports (base repository, entity guard, DomainEventPublisher), criteria, pagination (Page)
+    domain/                base aggregate, domain events, DomainError, access types and roles
+    infrastructure/db/     MongoBaseRepository, RsqlParser, MongoQueryCriteriaMapper
+    infrastructure/messaging/  KafkaProducerService, KafkaDomainEventPublisher
+    infrastructure/security/   JWT strategy and guard, base entity guard, AuthModule
+    interfaces/http/       DomainError -> HTTP filter, @CurrentUser(), @ApiErrors(), health, shared DTOs
+test/unit/domain/<feature>/  unit tests of each feature
+test/unit/shared/            unit tests of the shared module
+test/e2e/<resource>.e2e-spec.ts  the whole application against mongodb-memory-server, one file per resource
+test/e2e/support/            local JWKS and tokens, startApp(), request body fixtures
+----
+
+Conventions:
+
+- The package is ESM (`"type": "module"`). Imports are relative and end in `.js` (`'./races.module.js'`); there is no
+  `src/...` alias. `verbatimModuleSyntax` requires `import type` for anything that is only a type, but a class used as a
+  constructor parameter must stay a value import, because Nest reads it from the decorator metadata.
+- File names are kebab-case with a dotted suffix for the role (`.module`, `.controller`, `.dto`, `.command`, `.query`,
+  `.handler`, `.port`, `.repository`, `.model`, `.adapter`). A file holds one command, query or handler and is named
+  after it (`SyncRaceRealmCommand` -> `sync-race-realm.command.ts`, its handler `sync-race-realm.handler.ts`).
+  Adapters tied to a technology start with it: `mongo.race.repository.ts`.
+- Each port exports its DI token next to the interface (`export const RACE_REPOSITORY = Symbol('RaceRepository')`).
+  Modules bind it (`{ provide: RACE_REPOSITORY, useClass: MongoRaceRepository }`) and handlers inject it with
+  `@Inject(RACE_REPOSITORY)`. There are no string tokens, and no abstract classes as tokens either: an API that still
+  uses them (users) converts them to a `Symbol` next to the interface when it touches the port (spec 021).
+- Controllers take the user with `@CurrentUser() user: AuthenticatedUser` and document their errors with
+  `@ApiErrors({ 404: 'Race not found' })`, which always adds the 401.
+- `domain/` never imports from `application/`. A read-only module may skip `domain/` (`character-sizes`).
+- Handlers publish domain events through `DomainEventPublisher` (`DOMAIN_EVENT_PUBLISHER`) after saving:
+  `publishChanges('race', race)` for the aggregate's uncommitted events, `publish('race', event)` for one built by
+  hand. Publishing awaits Kafka (with retries) and logs a failure instead of failing the request. Modules react to
+  each other's changes through these topics, like any other service, and never import each other's commands. The
+  event `producer` is `RMU_KAFKA_CLIENT_ID` (`rmu-api-core` when unset).
+- **Writes without changes.** `BaseAggregateRoot` keeps the stored version in an ECMAScript private field
+  (`#storedVersion`, never serialized) and, in `restoreVersion()`, a snapshot of `getProps()`. The repository calls it
+  when it loads the aggregate (`toEntity`, also from custom finders) and after each write, including on the aggregate
+  passed to `update()`, which can then be written again. `hasChanges()` compares the props without `updatedAt` with
+  that snapshot; an aggregate made with `create()` always has changes. Every update handler applies the changes and
+  returns the aggregate unchanged when `!aggregate.hasChanges()`: no write, no new version, no event. Aggregates set
+  `updatedAt` only when `hasChanges()` is true.
+- The build uses SWC (`nest build`), which compiles file by file and cannot resolve imported type aliases in decorator
+  metadata. A property typed with a string union alias (`AccessType`) needs an explicit `type: String` in `@ApiProperty`
+  and `@Prop` (also `string | null` or `number | undefined`, which SWC documents as `object`), and constructor
+  injection must not use a bare `@Inject()` (Nest would read `Function` as the token). Neither lint nor typecheck sees
+  them, only booting the app does: `pnpm check:swc` (in `make check` and the CI) finds both. `pnpm typecheck` runs
+  `tsc --noEmit` separately.
+- `armor-types` and `character-sizes` are fixed catalogs served from memory, and `resistance-rolls` and `maneuvers` are
+  calculations: they have no aggregates, persistence or events, and that is on purpose. A module only gets the full
+  CQRS and Mongo layout when its data can change.
+- **Permissions.** The guards (`<entity>-guard.adapter.ts`) extend `BaseEntityGuard`: `rmu-user` or `rmu-admin`
+  creates, a `public` entity is read by everyone and a `private` one by its owner and admins, and only the owner or an
+  admin changes or deletes it.
+  * **Entity source** (spec 063): cultures, effect types, enumerations, maneuver modifiers, professions, races, realms,
+    skills and traits carry `entitySource: 'system' | 'user'`. A `system` (rulebook) entity is changed or deleted, also
+    through its sub-resources, only by an admin: anyone else gets 403 `system-entity-admin-only`, its owner included.
+    The rule lives in `shared/domain/services/entity-permissions.ts`, which `BaseEntityGuard` and `TraitGuardAdapter`
+    call. Create and update DTOs take an optional `entitySource`: only an admin sends `system`, and a missing value
+    is `user` on create. A document stored without the field is read as `user`.
+  * Deleting a realm cascades to its races (Kafka, `DeleteRacesByRealmCommand`, a system command without access
+    check). So a realm with at least one `system` race is deleted only by an admin: 403 `system-entity-admin-only`
+    for its owner. `DeleteRealmHandler` counts those races through `REALM_RACE_QUERY` (a realms port whose adapter
+    reads the `races` collection, since the races module imports the realms one and not the other way round).
+
+  Exceptions:
+  * traits are the only public resource without `accessType` (`TraitGuardAdapter`): every authenticated user reads
+    and lists all of them, because races and characters of any user reference them;
+  * a race, or an enumeration with a `realmId`, is created only by who can change that realm (`REALM_GUARD`, exported
+    by `RealmsModule`): 400 if the realm does not exist, 403 if it belongs to someone else;
+  * skill categories are a catalog without owner: only `rmu-admin` creates them, a check that lives in the handler.
+
+=== Rulebook data
+
+The numbers of the rulebook tables are not in this repository (it is public). `healing-tables` and
+`psychology-tables` read one document (`_id: core-law`) from the collections of the same name, and they answer 404
+until it has been imported; both need the `rmu-core-law` group (or `rmu-admin`). The maneuver profiles of skills and
+categories, the maneuver modifiers and the stored absolute maneuver tables come from the same place. The JSON files
+and the import scripts live in the workspace `data/` directory, outside every git repository, and are loaded by hand
+into the local `rmu-mongo` container from the workspace root (`DRY_RUN=1` only prints what would change):
+
+```bash
+data/scripts/run.sh data/scripts/import-healing-tables.js data/core-law/healing-tables.json
+data/scripts/run.sh data/scripts/import-psychology-tables.js data/core-law/psychology-tables.json
+data/scripts/run.sh data/scripts/import-maneuver-profiles.js data/core-law/maneuver-profiles.json
+OWNER=<keycloak-user-id> data/scripts/run.sh data/scripts/import-maneuver-modifiers.js data/core-law/maneuver-modifiers.json
+data/scripts/run.sh data/scripts/import-skill-difficulties.js data/character-companion/skill-difficulties.json
+```
+
+- `GET /v1/healing-tables` also returns `treatmentDifficulties` (`procedure`, `injuryType`, `severity` and the
+  difficulty key of a Medicine procedure; no row means the procedure does not apply) and `treatmentRules` (head
+  injuries one step harder, cauterize penalty per point of bleeding, procedures that need bleeding, tourniquet
+  locations). A document imported before them returns no rows and neutral rules: import it again.
+- `GET /v1/psychology-tables` returns the fright levels, the fear states by failure margin, the morale and rally
+  tables and the resistance roll table, all as numbers and result keys.
+- The maneuver profile has a `resultKind`: `standard` (the `resultTable` or the percent table), `morale` (the morale
+  and rally tables, Leadership) or `price` (an opposed percent maneuver whose result is a price, Trading).
+- `GET /v1/skill-difficulties/{skillId}` returns the example difficulties of a skill (Character Companion), one text
+  per difficulty key in `en` and, when translated, `es`. A skill with no guide gets the `general` scale with
+  `fallback: true`, and the endpoint answers 404 only when `general` itself has not been imported.
+  `GET /v1/skill-difficulties` returns every guide. Both need `rmu-core-law` (or `rmu-admin`), like the other tables.
+- `specializationOptional` on a skill means the specialization may be left empty (the crafting skills); without it, a
+  skill with a `specialization` category needs one.
+
+=== HTTP contract
+
+- **Validation:** the global `ValidationPipe` uses `whitelist`, so unknown body fields are dropped without an error
+  (no `forbidNonWhitelisted`). A client sending extra fields, like the `owner` of an entity, is not rejected; the field
+  is ignored.
+- **Search:** `q` is RSQL (`==`, `!=`, `<`, `<=`, `>`, `>=`, `=in=`, `=out=`, `=re=`, `;` for and, `,` for or). `=re=` is a case-insensitive
+  *contains* over the literal text, not a regular expression: the value is escaped, so `name=re=fire` finds
+  `Fireball` but `name=re=^Fire` looks for the characters `^Fire` and finds nothing.
+- **Paging:** `size` goes up to 100 (`PagedQueryDto`). Skills, skill categories, enumerations and traits, which the
+  clients load whole, accept up to 1000 (`CatalogPagedQueryDto`).
+- **Errors:** every failure answers `{ statusCode, error, code, message, timestamp, path }`. `code` is stable and meant
+  for clients: `not-found`, `forbidden`, `unauthorized`, `validation`, `bad-request`, `invalid-search`, `conflict`,
+  `duplicate-key`, `version-conflict`, `too-many-requests`, `internal-error`... Domain errors take a default code from
+  their class and can pass a more specific one (`new ConflictError(message, 'duplicate-key')`). `path` is the route
+  without the query string (`/v1/realms`, not `/v1/realms?size=101`).
+- **OpenAPI:** every operation is documented with the `oauth2` and `access-token` security, except the public
+  `/v1/health`.
+- **Optimistic concurrency:** every stored aggregate has a `version` (0 when created, +1 on each write), returned in
+  the responses. `MongoBaseRepository.update` only writes when the stored version is still the one that was loaded, so
+  two concurrent handlers cannot overwrite each other. A `PATCH` may send the `version` its client read: if the entity
+  moved on, the answer is 409 `version-conflict` and nothing changes. Without it, the update is applied to the current
+  version (image changes do that). Documents stored before versions existed count as version 0. A `PATCH` that leaves
+  the entity as it was answers 200 with the stored entity, the same `version` and no event.
+- **Request limit:** `RMU_THROTTLE_LIMIT` requests per client IP and `RMU_THROTTLE_TTL_MS` window (429 with
+  `Retry-After`); `/v1/health` and the Kafka handlers are never limited.
+
+== Docker
+
+`make docker-build` builds `labcabrera/rmu-api-core:latest` and `make docker-run` runs it on the `rmu-network` Docker
+network (needs `.env.docker`, copied from `.env.docker.example`). The image (`node:24-bookworm-slim`, pnpm through
+corepack) only holds `dist/` and the production dependencies, runs as the `node` user with `NODE_ENV=production` and has
+its own `HEALTHCHECK` on `/v1/health`. Run it with `--init` (`init: true` in compose) so `SIGTERM` reaches Node and Nest
+closes Kafka and Mongo.
+
+`make docker-push` builds `linux/amd64` and `linux/arm64` without emulation: every `RUN` step happens on the builder's
+platform, and `supportedArchitectures` makes pnpm install the optional native binaries of the target platform.
+
+The whole stack (APIs, MFEs, gateway, infrastructure) runs from the Compose files of rmu-platform.
+
+== Releases
+
+`make create-release` runs semantic-release from a clean `develop`: it merges into `master`, derives the version from the
+Conventional Commits (force one with `RELEASE_BUMP=patch|minor|major`), tags it without `v`, updates `CHANGELOG.md`, and
+bumps `develop` to the next `-SNAPSHOT`. Commit messages are checked by commitlint in a husky hook.
+
+== API template
+
+`rmu-api-core` is the reference for the other NestJS APIs (spec 014). To bring an API to the same platform, copy these
+files and adapt names, ports and the Mongo variable:
+
+[cols="1,3"]
+|===
+| File | What it sets
+
+| `Dockerfile`, `.dockerignore` | `node:24-bookworm-slim`, pnpm through corepack, build and production dependencies on the builder's platform, `node` user, `HEALTHCHECK` on `/v1/health`, `--enable-source-maps`
+| `nest-cli.json`, `.swcrc` | SWC builder (`stripLeadingPaths`, decorator metadata, ES modules), no type check during the build
+| `tsconfig.json`, `tsconfig.build.json` | `nodenext`, ES2024, `strict`, `verbatimModuleSyntax`, no declarations, build info in `node_modules/.cache`
+| `vitest.config.ts` | Vitest + `unplugin-swc`, `unit` and `e2e` projects, v8 coverage
+| `eslint.config.mjs` | typed `typescript-eslint`, Prettier, ESM, Vitest globals, `no-unsafe-*` as errors
+| `package.json`, `pnpm-lock.yaml` | `"type": "module"`, `engines.node >=24`, `packageManager` (pnpm), `pnpm.ignoredBuiltDependencies`, scripts `build`, `typecheck`, `lint`, `lint:fix`, `test`, `test:cov`, `test:e2e`, `check`, `start:prod`
+| `commitlint.config.cjs`, `release.config.cjs` | CommonJS configs in an ESM package
+| `.github/workflows/ci.yml` | pnpm install, lint, typecheck, `check:swc`, unit, e2e and build on Node 24, plus a `docker build` without push
+| `scripts/check-swc-metadata.cjs` | the SWC decorator check (`pnpm check:swc`)
+| `test/e2e/support/mongod-binary.ts` | `globalSetup` of the e2e project: downloads `mongod` once before the files
+| `src/main.ts`, `src/bootstrap/`, `src/config/env.schema.ts` | short bootstrap with shutdown hooks, logger levels, OpenAPI and the Joi schema
+| `src/modules/shared/` | JWT strategy and guard, `AuthModule`, `DomainEventPublisher`, `RsqlParser`, `@CurrentUser()`, `@ApiErrors()`, `BaseAggregateRoot` (`#storedVersion`, `hasChanges()`), `MongoBaseRepository` and the conventions under <<Project layout>> (Symbol DI tokens, file names)
+| `test/e2e/app.e2e-spec.ts`, `scripts/smoke.sh` | smoke test with `mongodb-memory-server`, and the same calls against a running API with a real token
+|===
+
+Run the API with `init: true` in compose. The SWC caveats under <<Project layout>> apply to every API: an explicit
+`type: String` for string union aliases in `@ApiProperty`/`@Prop`, and no bare `@Inject()`; `pnpm check:swc` finds
+both.
+
+Core calls no other API, so it has no HTTP client. The APIs that do (items, strategic, tactical, users) share two files
+that are not in core:
+
+- `shared/infrastructure/http/http-client.ts`: `fetch` with a timeout (`RMU_HTTP_TIMEOUT_MS`, 10000 by default). A
+  timeout is a 504 `upstream-timeout`, a network failure a 502, an upstream 400/422 a 400 and an upstream 404/5xx a 502,
+  the last three with the upstream `status` (`isUpstreamHttpError(err) && err.status === 404` to tell a missing
+  entity). No axios.
+- `shared/infrastructure/security/token.service.ts`: the token of the call. It is the service account token (client
+  credentials, cached until it expires, with `rmu-admin`); tactical forwards the caller's own token instead while it
+  handles an HTTP request, so the other API checks that user's permissions.
 
 == Contributing
 

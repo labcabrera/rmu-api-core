@@ -1,128 +1,102 @@
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { EntitySource } from 'src/modules/shared/domain/entities/entity-source';
-import { EffectPropertyRequirement } from '../value-objects/effect-property-requirement.vo';
-import { EffectTypeProps } from './effect-type-props';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import type { EffectTypeProps } from './effect-type-props.js';
 
 export class EffectType extends BaseAggregateRoot<EffectTypeProps> {
-  private constructor(
-    id: string,
-    public isPersistent: boolean,
-    public isStackable: boolean,
-    public value: EffectPropertyRequirement,
-    public modifier: EffectPropertyRequirement,
-    public rounds: EffectPropertyRequirement,
-    public text: EffectPropertyRequirement,
-    public location: EffectPropertyRequirement,
-    public delay: EffectPropertyRequirement,
-    public owner: string,
-    public accessType: AccessType,
-    public entitySource: EntitySource,
-    public createdAt: Date,
-    public updatedAt?: Date,
-  ) {
-    super(id);
+  private constructor(props: EffectTypeProps) {
+    super(props);
+  }
+
+  get isPersistent() {
+    return this.props.isPersistent;
+  }
+
+  get isStackable() {
+    return this.props.isStackable;
+  }
+
+  get value() {
+    return this.props.value;
+  }
+
+  get modifier() {
+    return this.props.modifier;
+  }
+
+  get rounds() {
+    return this.props.rounds;
+  }
+
+  get text() {
+    return this.props.text;
+  }
+
+  get location() {
+    return this.props.location;
+  }
+
+  get delay() {
+    return this.props.delay;
+  }
+
+  get owner() {
+    return this.props.owner;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   static create(props: Omit<EffectTypeProps, 'createdAt' | 'updatedAt'>) {
-    return new EffectType(
-      props.id,
-      props.isPersistent,
-      props.isStackable,
-      props.value,
-      props.modifier,
-      props.rounds,
-      props.text,
-      props.location,
-      props.delay,
-      props.owner,
-      props.accessType,
-      props.entitySource,
-      new Date(),
-      undefined,
-    );
+    return new EffectType({ ...props, createdAt: new Date(), updatedAt: undefined });
   }
 
   static fromProps(props: EffectTypeProps) {
-    return new EffectType(
-      props.id,
-      props.isPersistent,
-      props.isStackable,
-      props.value,
-      props.modifier,
-      props.rounds,
-      props.text,
-      props.location,
-      props.delay,
-      props.owner,
-      props.accessType,
-      props.entitySource,
-      props.createdAt,
-      props.updatedAt,
-    );
+    return new EffectType({ ...props });
   }
 
-  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner' | 'entitySource'>) {
-    let modified = false;
-
+  /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
+  update(props: Omit<Partial<EffectTypeProps>, 'id' | 'createdAt' | 'updatedAt' | 'owner'>): void {
     if (props.isPersistent !== undefined) {
-      modified = this.isPersistent !== props.isPersistent;
-      this.isPersistent = props.isPersistent;
+      this.props.isPersistent = props.isPersistent;
     }
     if (props.isStackable !== undefined) {
-      modified = modified || this.isStackable !== props.isStackable;
-      this.isStackable = props.isStackable;
+      this.props.isStackable = props.isStackable;
     }
     if (props.value !== undefined) {
-      modified = modified || this.value !== props.value;
-      this.value = props.value;
+      this.props.value = props.value;
     }
     if (props.modifier !== undefined) {
-      modified = modified || this.modifier !== props.modifier;
-      this.modifier = props.modifier;
+      this.props.modifier = props.modifier;
     }
     if (props.rounds !== undefined) {
-      modified = modified || this.rounds !== props.rounds;
-      this.rounds = props.rounds;
+      this.props.rounds = props.rounds;
     }
     if (props.text !== undefined) {
-      modified = modified || this.text !== props.text;
-      this.text = props.text;
+      this.props.text = props.text;
     }
     if (props.location !== undefined) {
-      modified = modified || this.location !== props.location;
-      this.location = props.location;
+      this.props.location = props.location;
     }
     if (props.delay !== undefined) {
-      modified = modified || this.delay !== props.delay;
-      this.delay = props.delay;
+      this.props.delay = props.delay;
     }
     if (props.accessType !== undefined) {
-      modified = modified || this.accessType !== props.accessType;
-      this.accessType = props.accessType;
+      this.props.accessType = props.accessType;
     }
-
-    if (!modified) throw new NotModifiedError('No changes detected');
-    this.updatedAt = new Date();
-  }
-
-  public getProps(): EffectTypeProps {
-    return {
-      id: this.id,
-      isPersistent: this.isPersistent,
-      isStackable: this.isStackable,
-      value: this.value,
-      modifier: this.modifier,
-      rounds: this.rounds,
-      text: this.text,
-      location: this.location,
-      delay: this.delay,
-      owner: this.owner,
-      accessType: this.accessType,
-      entitySource: this.entitySource,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 }

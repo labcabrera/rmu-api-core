@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { RealmRepository } from 'src/modules/realms/application/ports/realm-repository';
-import { Realm } from 'src/modules/realms/domain/aggregates/realm';
-import { RealmModel, RealmDocument } from '../persistence/models/realm-model';
+import type { RealmRepository } from '../../application/ports/realm-repository.port.js';
+import { Realm } from '../../domain/aggregates/realm.js';
+import { RealmModel, type RealmDocument } from '../persistence/models/realm.model.js';
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
+import { InjectModel } from '@nestjs/mongoose';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
 
 @Injectable()
 export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocument> implements RealmRepository {
@@ -15,14 +15,16 @@ export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocume
 
   protected mapToEntity(doc: RealmDocument): Realm {
     return Realm.fromProps({
-      id: doc.id as string,
+      id: doc._id,
       name: doc.name,
       magicPresence: doc.magicPresence,
       shortDescription: doc.shortDescription,
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
+      generic: doc.generic ?? false,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

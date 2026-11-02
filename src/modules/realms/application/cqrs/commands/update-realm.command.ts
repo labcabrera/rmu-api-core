@@ -1,18 +1,24 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { MagicPresence } from 'src/modules/realms/domain/value-objects/realm-magic-type.vo';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
+import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class UpdateRealmCommand extends AuthenticatedCommand {
   constructor(
     public readonly id: string,
     public readonly name: string | undefined,
     public readonly magicPresence: MagicPresence | undefined,
-    public readonly shortDescription: string | undefined,
-    public readonly description: string | undefined,
-    public readonly imageUrl: string | undefined,
+    public readonly shortDescription: string | null | undefined,
+    public readonly description: string | null | undefined,
+    public readonly imageUrl: string | null | undefined,
     public readonly accessType: AccessType | undefined,
     userId: string,
     roles: string[],
+    /** The version the client read; undefined skips the concurrency check. */
+    public readonly expectedVersion?: number,
+    public readonly generic?: boolean,
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

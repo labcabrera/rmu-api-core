@@ -1,8 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import type { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { CreateSkillCommand } from 'src/modules/skills/application/cqrs/commands/create-skill.command';
+import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested, IsIn } from 'class-validator';
+import { ManeuverProfileDto } from '../../../../skill-categories/interfaces/http/dto/maneuver-profile.dto.js';
+import type { EnumerationCategory } from '../../../../enumerations/domain/value-objects/enumeration-category.vo.js';
+import { ACCESS_TYPES, type AccessType } from '../../../../shared/domain/entities/access-type.js';
+import { CreateSkillCommand } from '../../../application/cqrs/commands/create-skill.command.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateSkillDto {
   @ApiProperty({ description: 'Unique identifier of the skill', example: 'animal-handling' })
@@ -19,16 +22,48 @@ export class CreateSkillDto {
   @IsArray()
   bonus!: string[];
 
-  @ApiProperty({ description: 'Specialization of the skill', example: 'tracking' })
+  @ApiProperty({ type: String, description: 'Specialization of the skill', example: 'tracking' })
   @IsString()
   @IsOptional()
   specialization: EnumerationCategory | null;
 
-  @ApiProperty({ description: 'Access type of the skill', example: 'public' })
-  @IsString()
+  @ApiProperty({ description: 'The specialization is suggested, not required', required: false, example: false })
+  @IsBoolean()
+  @IsOptional()
+  specializationOptional?: boolean;
+
+  @ApiProperty({ type: String, description: 'Access type of the skill', example: 'public' })
+  @IsIn(ACCESS_TYPES)
   accessType: AccessType;
 
+  @ApiProperty({ description: 'Maneuver profile values that override the category profile', type: ManeuverProfileDto, required: false })
+  @ValidateNested()
+  @Type(() => ManeuverProfileDto)
+  @IsOptional()
+  maneuver?: ManeuverProfileDto;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
   static toCommand(dto: CreateSkillDto, userId: string, roles: string[]): CreateSkillCommand {
-    return new CreateSkillCommand(dto.id, dto.categoryId, dto.bonus, dto.specialization, dto.accessType, userId, roles);
+    return new CreateSkillCommand(
+      dto.id,
+      dto.categoryId,
+      dto.bonus,
+      dto.specialization,
+      dto.accessType,
+      ManeuverProfileDto.toProfile(dto.maneuver),
+      userId,
+      roles,
+      dto.specializationOptional,
+      dto.entitySource,
+    );
   }
 }

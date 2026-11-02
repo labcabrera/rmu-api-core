@@ -1,0 +1,139 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsArray, IsOptional, IsIn } from 'class-validator';
+import { RaceResistancesDto } from './race-resistances.dto.js';
+import { CreateRaceCommand } from '../../../application/cqrs/commands/create-race.command.js';
+import { RaceStatsDto } from './race-stats.dto.js';
+import { SexBasedAttributeDto } from './sex-based-attribute.dto.js';
+import { RaceTraitDto } from './race-trait.dto.js';
+import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+// realmId is a string identifier
+
+export class CreateRaceDto {
+  @ApiProperty({ description: 'Name of the race', example: 'Elf' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty({ description: 'Archetype of the race', example: 'wood-elf' })
+  @IsString()
+  @IsNotEmpty()
+  archetype: string;
+
+  @ApiProperty({ description: 'Realm identifier' })
+  @IsString()
+  @IsNotEmpty()
+  realmId: string;
+
+  @ApiProperty({ description: 'Size of the race', example: 'Medium' })
+  @IsString()
+  @IsNotEmpty()
+  sizeId: string;
+
+  @ApiProperty({ description: 'Default stat bonus for the race' })
+  @ValidateNested()
+  @Type(() => RaceStatsDto)
+  stats: RaceStatsDto;
+
+  @ApiProperty({ description: 'Resistances of the race' })
+  @ValidateNested()
+  @Type(() => RaceResistancesDto)
+  resistances: RaceResistancesDto;
+
+  @ApiProperty({ description: 'Average height of the race by sex' })
+  @ValidateNested()
+  @Type(() => SexBasedAttributeDto)
+  averageHeight: SexBasedAttributeDto;
+
+  @ApiProperty({ description: 'Average weight of the race by sex' })
+  @ValidateNested()
+  @Type(() => SexBasedAttributeDto)
+  averageWeight: SexBasedAttributeDto;
+
+  @ApiProperty({ description: 'Stride bonus for the race' })
+  @IsNumber()
+  strideBonus: number;
+
+  @ApiProperty({ description: 'Endurance bonus for the race' })
+  @IsNumber()
+  enduranceBonus: number;
+
+  @ApiProperty({ description: 'Recovery multiplier for the race' })
+  @IsNumber()
+  recoveryMultiplier: number;
+
+  @ApiProperty({ description: 'Base hits for the race' })
+  @IsNumber()
+  baseHits: number;
+
+  @ApiProperty({ description: 'Base development points for the race' })
+  @IsNumber()
+  baseDevPoints: number;
+
+  @ApiProperty({ description: 'Racial armor bonus', example: 1 })
+  @IsNumber()
+  baseAt: number;
+
+  @ApiProperty({ description: 'List of talents identifiers for the race' })
+  @IsArray()
+  @IsString({ each: true })
+  talents: string[];
+
+  @ApiProperty({ description: 'List of traits associated with the race', type: [RaceTraitDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RaceTraitDto)
+  traits: RaceTraitDto[];
+
+  @ApiProperty({ description: 'Default language', required: false, type: String })
+  @IsString()
+  @IsOptional()
+  defaultLanguage: string | null;
+
+  @ApiProperty({ type: String, description: 'Description of the race' })
+  @IsString()
+  @IsOptional()
+  description: string | null;
+
+  @ApiProperty({ type: String, description: 'Image URL of the race', required: false, example: 'https://example.com/images/races/elf.jpg' })
+  @IsString()
+  @IsOptional()
+  imageUrl: string | null;
+
+  @ApiProperty({
+    enum: ENTITY_SOURCES,
+    description: 'Source: system (rulebook, only an admin sets it) or user. Missing on create means user',
+    required: false,
+    example: 'user',
+  })
+  @IsOptional()
+  @IsIn(ENTITY_SOURCES)
+  entitySource?: EntitySource;
+
+  static toCommand(dto: CreateRaceDto, userId: string, roles: string[]): CreateRaceCommand {
+    return new CreateRaceCommand(
+      dto.name,
+      dto.archetype,
+      dto.realmId,
+      dto.sizeId,
+      dto.stats,
+      dto.resistances,
+      dto.averageHeight,
+      dto.averageWeight,
+      dto.strideBonus,
+      dto.enduranceBonus,
+      dto.recoveryMultiplier,
+      dto.baseHits,
+      dto.baseDevPoints,
+      dto.baseAt,
+      dto.talents,
+      dto.traits.map(t => RaceTraitDto.toEntity(t)),
+      dto.defaultLanguage,
+      dto.description,
+      dto.imageUrl,
+      userId,
+      roles,
+      dto.entitySource,
+    );
+  }
+}

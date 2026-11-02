@@ -1,5 +1,6 @@
-import { describe, expect, it } from '@jest/globals';
-import { EnduranceManeuverService } from 'src/modules/maneuvers/domain/services/endurance-maneuver.service';
+import { describe, expect, it } from 'vitest';
+import { ValidationError } from '../../../../src/modules/shared/domain/errors/errors.js';
+import { EnduranceManeuverService } from '../../../../src/modules/maneuvers/domain/services/endurance-maneuver.service.js';
 
 describe('EnduranceManeuverService', () => {
   const service = new EnduranceManeuverService();
@@ -34,5 +35,9 @@ describe('EnduranceManeuverService', () => {
     expect(normalResult.message).not.toContain('reroll a previously failed Lore');
     expect(unusualResult.message).toContain(normalResult.message);
     expect(unusualResult.message).toContain('reroll a previously failed Lore');
+  });
+
+  it.each([Number.NaN, 0.5])('rejects a roll that fits no row (%s) with a ValidationError', x => {
+    expect(() => service.execute(x, false)).toThrow(ValidationError);
   });
 });

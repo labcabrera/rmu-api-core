@@ -1,0 +1,30 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import type { HydratedDocument } from 'mongoose';
+import type { AbsoluteManeuverResult } from '../../../domain/value-objects/absolute-maneuver-result.vo.js';
+import type { Translations } from '../../../domain/value-objects/translations.vo.js';
+
+export type ManeuverTableDocument = HydratedDocument<ManeuverTableModel>;
+
+export interface ManeuverTableEntryModel {
+  min: number | null;
+  max: number | null;
+  result: AbsoluteManeuverResult;
+}
+
+/** Same shape as the code tables (AbsoluteManeuverTable), with the table name as _id. */
+@Schema({ collection: 'maneuver-tables', id: true, versionKey: false })
+export class ManeuverTableModel {
+  @Prop({ type: String, required: true })
+  _id: string;
+
+  @Prop({ type: [Object], required: true })
+  table: ManeuverTableEntryModel[];
+
+  @Prop({ type: String, required: false })
+  unusualEvent?: string;
+
+  @Prop({ type: Object, required: false })
+  unusualEventTranslations?: Translations;
+}
+
+export const ManeuverTableSchema = SchemaFactory.createForClass(ManeuverTableModel);

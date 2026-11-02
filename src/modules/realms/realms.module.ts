@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from 'src/modules/auth/auth.module';
-import { MongoRealmRepository } from './infrastructure/db/mongo.realm.repository';
-import { RealmController } from './interfaces/http/realm.controller';
+import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
+import { MongoRealmRepository } from './infrastructure/db/mongo.realm.repository.js';
+import { RealmController } from './interfaces/http/realm.controller.js';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RealmModel, RealmSchema } from './infrastructure/persistence/models/realm-model';
-import { KafkaRealmProducerService } from './infrastructure/messaging/kafka.realm-bus.adapter';
-import { CreateRealmHandler } from './application/cqrs/handlers/create-realm.handler';
-import { DeleteRealmHandler } from './application/cqrs/handlers/delete-realm.handler';
-import { GetRealmHandler } from './application/cqrs/handlers/get-realm.handler';
-import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler';
-import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler';
-import { SharedModule } from '../shared/shared.module';
-import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter';
-import { KafkaRealmEventConsumer } from './interfaces/messaging/kafka.realm-event-consumer';
+import { RealmModel, RealmSchema } from './infrastructure/persistence/models/realm.model.js';
+import { CreateRealmHandler } from './application/cqrs/handlers/create-realm.handler.js';
+import { DeleteRealmHandler } from './application/cqrs/handlers/delete-realm.handler.js';
+import { GetRealmHandler } from './application/cqrs/handlers/get-realm.handler.js';
+import { GetRealmsHandler } from './application/cqrs/handlers/get-realms.handler.js';
+import { UpdateRealmHandler } from './application/cqrs/handlers/update-realm.handler.js';
+import { SharedModule } from '../shared/shared.module.js';
+import { RealmGuardAdapter } from './infrastructure/security/realm-guard.adapter.js';
+import { REALM_GUARD } from './application/ports/realm-guard.port.js';
+import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
+import { REALM_RACE_QUERY } from './application/ports/realm-race-query.port.js';
+import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race-query.adapter.js';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { KafkaRealmEventConsumer } from './interfaces/messaging/kafka.realm-even
     AuthModule,
     SharedModule,
   ],
-  controllers: [RealmController, KafkaRealmEventConsumer],
+  controllers: [RealmController],
   providers: [
     GetRealmHandler,
     GetRealmsHandler,
@@ -32,18 +34,18 @@ import { KafkaRealmEventConsumer } from './interfaces/messaging/kafka.realm-even
     UpdateRealmHandler,
     DeleteRealmHandler,
     {
-      provide: 'RealmRepository',
+      provide: REALM_REPOSITORY,
       useClass: MongoRealmRepository,
     },
     {
-      provide: 'RealmEventProducer',
-      useClass: KafkaRealmProducerService,
-    },
-    {
-      provide: 'RealmGuardPort',
+      provide: REALM_GUARD,
       useClass: RealmGuardAdapter,
     },
+    {
+      provide: REALM_RACE_QUERY,
+      useClass: MongoRealmRaceQueryAdapter,
+    },
   ],
-  exports: ['RealmRepository'],
+  exports: [REALM_REPOSITORY, REALM_GUARD],
 })
 export class RealmsModule {}

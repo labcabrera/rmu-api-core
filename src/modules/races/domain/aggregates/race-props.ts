@@ -1,9 +1,10 @@
-import { RaceResistances } from '../value-objects/race-resistances.vo';
-import { RaceStats } from '../value-objects/race-stats.vo';
-import { RaceTrait } from '../value-objects/race-trait.vo';
-import { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo';
+import { RaceResistances } from '../value-objects/race-resistances.vo.js';
+import { RaceStats } from '../value-objects/race-stats.vo.js';
+import { RaceTrait } from '../value-objects/race-trait.vo.js';
+import type { SexBasedAttribute } from '../value-objects/sex-based-attribute.vo.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
+import { RaceSkillBonus } from '../value-objects/race-skill-bonus.vo.js';
+import type { EntitySource } from '../../../shared/domain/entities/entity-source.js';
 
 export interface RaceProps {
   id: string;
@@ -29,6 +30,8 @@ export interface RaceProps {
   imageUrl: string | null;
   owner: string;
   accessType: AccessType;
+  /** Rulebook (`system`, admin-only changes) or user content (spec 063). */
+  entitySource: EntitySource;
   createdAt: Date;
   updatedAt: Date | null;
 }

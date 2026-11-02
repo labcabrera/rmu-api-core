@@ -1,29 +1,37 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError, ValidationError } from 'src/modules/shared/domain/errors/errors';
-import type { SkillRepository } from '../../ports/skill-repository';
-import { Skill } from 'src/modules/skills/domain/aggregates/skill';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
-import type { SkillGuardPort } from '../../ports/skill-guard';
-import { UpdateSkillCommand } from '../commands/update-skill.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors.js';
+import { SKILL_REPOSITORY, type SkillRepository } from '../../ports/skill-repository.port.js';
+import {
+  SKILL_CATEGORY_REPOSITORY,
+  type SkillCategoryRepository,
+} from '../../../../skill-categories/application/ports/skill-category-repository.port.js';
+import type { SkillView } from '../../read-models/skill-view.js';
+import { SkillViewService } from '../../services/skill-view.service.js';
+import { SKILL_GUARD, type SkillGuardPort } from '../../ports/skill-guard.port.js';
+import { UpdateSkillCommand } from '../commands/update-skill.command.js';
 
 @CommandHandler(UpdateSkillCommand)
-export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, Skill> {
+export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, SkillView> {
   private readonly logger = new Logger(UpdateSkillHandler.name);
 
   constructor(
-    @Inject('SkillRepository') private readonly skillRepository: SkillRepository,
-    @Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository,
-    @Inject('SkillGuardPort') private readonly skillGuard: SkillGuardPort,
+    @Inject(SKILL_REPOSITORY) private readonly skillRepository: SkillRepository,
+    @Inject(SKILL_CATEGORY_REPOSITORY) private readonly skillCategoryRepository: SkillCategoryRepository,
+    @Inject(SKILL_GUARD) private readonly skillGuard: SkillGuardPort,
+    private readonly skillViewService: SkillViewService,
   ) {}
 
-  async execute(command: UpdateSkillCommand): Promise<Skill> {
+  async execute(command: UpdateSkillCommand): Promise<SkillView> {
     this.logger.log(`Updating skill ${command.id} for user ${command.userId}`);
 
     const current = await this.skillRepository.findById(command.id);
     if (!current) throw new NotFoundError('Skill', command.id);
 
     this.skillGuard.checkUpdate(current, command.userId, command.roles);
+    this.skillGuard.checkEntitySource(command.roles, command.entitySource);
+
+    current.checkVersion(command.expectedVersion);
 
     if (command.categoryId) {
       const category = await this.skillCategoryRepository.findById(command.categoryId);
@@ -34,9 +42,15 @@ export class UpdateSkillHandler implements ICommandHandler<UpdateSkillCommand, S
       categoryId: command.categoryId,
       bonus: command.bonus,
       specialization: command.specialization,
+      specializationOptional: command.specializationOptional,
       accessType: command.accessType,
+      entitySource: command.entitySource,
+      maneuver: command.maneuver,
     });
 
-    return await this.skillRepository.update(current.id, current);
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!current.hasChanges()) return await this.skillViewService.toView(current);
+    const updated = await this.skillRepository.update(current);
+    return await this.skillViewService.toView(updated);
   }
 }

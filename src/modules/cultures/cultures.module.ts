@@ -2,21 +2,24 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TerminusModule } from '@nestjs/terminus';
-import { AuthModule } from '../auth/auth.module';
-import { KafkaCultureEventBusAdapter } from './infrastructure/messaging/kafka.culture-event-bus.adapter';
-import { RealmsModule } from '../realms/realms.module';
-import { SharedModule } from '../shared/shared.module';
-import { CultureModel, CultureSchema } from './infrastructure/persistence/models/culture-model';
-import { CultureController } from './interfaces/http/culture.controller';
-import { CultureGuardAdapter } from './infrastructure/security/culture-guard.adapter';
-import { GetCultureHandler } from './application/cqrs/handlers/get-culture.query.handler';
-import { GetCulturesHandler } from './application/cqrs/handlers/get-cultures.query.handler';
-import { CreateCultureHandler } from './application/cqrs/handlers/create-culture.handler';
-import { UpdateCultureHandler } from './application/cqrs/handlers/update-race.handler';
-import { DeleteCultureHandler } from './application/cqrs/handlers/delete-culture.handler';
-import { MongoCultureRepository } from './infrastructure/db/mongo.culture.repository';
-import { AddCultureFixedSkillRankHandler } from './application/cqrs/handlers/add-culture-fixed-skill-rank.handler';
-import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/delete-culture-fixed-skill-rank.handler';
+import { AuthModule } from '../shared/infrastructure/security/auth.module.js';
+import { RealmsModule } from '../realms/realms.module.js';
+import { SharedModule } from '../shared/shared.module.js';
+import { CultureModel, CultureSchema } from './infrastructure/persistence/models/culture.model.js';
+import { CultureController } from './interfaces/http/culture.controller.js';
+import { CultureGuardAdapter } from './infrastructure/security/culture-guard.adapter.js';
+import { GetCultureHandler } from './application/cqrs/handlers/get-culture.handler.js';
+import { GetCulturesHandler } from './application/cqrs/handlers/get-cultures.handler.js';
+import { CreateCultureHandler } from './application/cqrs/handlers/create-culture.handler.js';
+import { UpdateCultureHandler } from './application/cqrs/handlers/update-culture.handler.js';
+import { DeleteCultureHandler } from './application/cqrs/handlers/delete-culture.handler.js';
+import { MongoCultureRepository } from './infrastructure/db/mongo.culture.repository.js';
+import { AddCultureSkillRankHandler } from './application/cqrs/handlers/add-culture-skill-rank.handler.js';
+import { DeleteCultureSkillRankHandler } from './application/cqrs/handlers/delete-culture-skill-rank.handler.js';
+import { CultureViewService } from './application/services/culture-view.service.js';
+import { SkillsModule } from '../skills/skills.module.js';
+import { CULTURE_GUARD } from './application/ports/culture-guard.port.js';
+import { CULTURE_REPOSITORY } from './application/ports/culture-repository.port.js';
 
 @Module({
   imports: [
@@ -26,6 +29,7 @@ import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/
     AuthModule,
     SharedModule,
     RealmsModule,
+    SkillsModule,
   ],
   controllers: [CultureController],
   providers: [
@@ -34,21 +38,18 @@ import { DeleteCultureFixedSkillRankHandler } from './application/cqrs/handlers/
     CreateCultureHandler,
     UpdateCultureHandler,
     DeleteCultureHandler,
-    AddCultureFixedSkillRankHandler,
-    DeleteCultureFixedSkillRankHandler,
+    AddCultureSkillRankHandler,
+    DeleteCultureSkillRankHandler,
+    CultureViewService,
     {
-      provide: 'CultureRepository',
+      provide: CULTURE_REPOSITORY,
       useClass: MongoCultureRepository,
     },
     {
-      provide: 'CultureEventProducer',
-      useClass: KafkaCultureEventBusAdapter,
-    },
-    {
-      provide: 'CultureGuard',
+      provide: CULTURE_GUARD,
       useClass: CultureGuardAdapter,
     },
   ],
-  exports: ['CultureRepository'],
+  exports: [CULTURE_REPOSITORY],
 })
 export class CulturesModule {}

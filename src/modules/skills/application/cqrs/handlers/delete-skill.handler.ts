@@ -1,19 +1,17 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import type { SkillRepository } from '../../ports/skill-repository';
-import type { SkillCategoryRepository } from '../../../../realms/application/ports/skill-category-repository';
-import type { SkillGuardPort } from '../../ports/skill-guard';
-import { DeleteSkillCommand } from '../commands/delete-skill.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { SKILL_REPOSITORY, type SkillRepository } from '../../ports/skill-repository.port.js';
+import { SKILL_GUARD, type SkillGuardPort } from '../../ports/skill-guard.port.js';
+import { DeleteSkillCommand } from '../commands/delete-skill.command.js';
 
 @CommandHandler(DeleteSkillCommand)
 export class DeleteSkillHandler implements ICommandHandler<DeleteSkillCommand, void> {
   private readonly logger = new Logger(DeleteSkillHandler.name);
 
   constructor(
-    @Inject('SkillRepository') private readonly skillRepository: SkillRepository,
-    @Inject('SkillCategoryRepository') private readonly skillCategoryRepository: SkillCategoryRepository,
-    @Inject('SkillGuardPort') private readonly skillGuard: SkillGuardPort,
+    @Inject(SKILL_REPOSITORY) private readonly skillRepository: SkillRepository,
+    @Inject(SKILL_GUARD) private readonly skillGuard: SkillGuardPort,
   ) {}
 
   async execute(command: DeleteSkillCommand): Promise<void> {

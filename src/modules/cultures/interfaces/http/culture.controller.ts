@@ -1,24 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { Culture } from '../../domain/aggregates/culture';
-import { CultureDto, CulturePageDto } from './dtos/culture.dto';
-import { CreateCultureDto } from './dtos/create-culture.dto';
-import { GetCultureQuery } from '../../application/cqrs/queries/get-culture.query';
-import { GetCulturesQuery } from '../../application/cqrs/queries/get-cultures.query';
-import { UpdateCultureDto } from './dtos/update-culture.dto';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
-import { CreateCultureCommand } from '../../application/cqrs/commands/create-culture.command';
-import { UpdateCultureCommand } from '../../application/cqrs/commands/update-culture.command';
-import { DeleteCultureCommand } from '../../application/cqrs/commands/delete-culture.command';
-import { CultureSkillRankDto } from './dtos/culture-skill-rank.dto';
-import { AddCultureFixedSkillRankCommand } from '../../application/cqrs/commands/add-culture-fixed-skill-rank.command';
-import { DeleteCultureFixedSkillRankCommand } from '../../application/cqrs/commands/delete-culture-fixed-skill-rank.command';
-import { DeleteCultureFixedSkillDto } from './dtos/delete-culture-fixed-skill.dto';
+import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { CultureDto, CulturePageDto } from './dto/culture.dto.js';
+import { CreateCultureDto } from './dto/create-culture.dto.js';
+import { GetCultureQuery } from '../../application/cqrs/queries/get-culture.query.js';
+import { GetCulturesQuery } from '../../application/cqrs/queries/get-cultures.query.js';
+import { UpdateCultureDto } from './dto/update-culture.dto.js';
+import { Page } from '../../../shared/application/pagination/page.js';
+import { PagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { CreateCultureCommand } from '../../application/cqrs/commands/create-culture.command.js';
+import { UpdateCultureCommand } from '../../application/cqrs/commands/update-culture.command.js';
+import { DeleteCultureCommand } from '../../application/cqrs/commands/delete-culture.command.js';
+import { AddCultureSkillRankDto } from './dto/add-culture-skill-rank.dto.js';
+import { AddCultureSkillRankCommand } from '../../application/cqrs/commands/add-culture-skill-rank.command.js';
+import { DeleteCultureSkillRankCommand } from '../../application/cqrs/commands/delete-culture-skill-rank.command.js';
+import type { CultureView } from '../../application/read-models/culture-view.js';
+import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
+import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/cultures')
@@ -32,93 +32,87 @@ export class CultureController {
   @Get(':id')
   @ApiOperation({ operationId: 'findCultureById', summary: 'Find culture by id' })
   @ApiOkResponse({ type: CultureDto })
-  @ApiNotFoundResponse({ description: 'Culture not found', type: ErrorDto })
-  async findById(@Param('id') id: string, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  @ApiErrors({ 404: 'Culture not found' })
+  async findById(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const query = new GetCultureQuery(id, userId, roles);
-    const entity = await this.queryBus.execute<GetCultureQuery, Culture>(query);
-    return CultureDto.fromEntity(entity);
+    const view = await this.queryBus.execute<GetCultureQuery, CultureView>(query);
+    return CultureDto.fromView(view);
   }
 
   @Get('')
   @ApiOperation({ operationId: 'findCultures', summary: 'Find cultures by RSQL' })
   @ApiOkResponse({ type: CulturePageDto })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
-  async find(@Query() dto: PagedQueryDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  @ApiErrors({ 400: 'Invalid RSQL query' })
+  async find(@Query() dto: PagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const query = new GetCulturesQuery(dto.q, dto.page, dto.size, userId, roles);
-    const page = await this.queryBus.execute<GetCulturesQuery, Page<Culture>>(query);
-    const mapped = page.content.map(culture => CultureDto.fromEntity(culture));
+    const page = await this.queryBus.execute<GetCulturesQuery, Page<CultureView>>(query);
+    const mapped = page.content.map(view => CultureDto.fromView(view));
     return new Page<CultureDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
   @Post('')
   @ApiOperation({ operationId: 'createCulture', summary: 'Create a new culture' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  @ApiResponse({ status: 409, description: 'Conflict, culture already exists', type: ErrorDto })
-  async create(@Body() createRaceDto: CreateCultureDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
-    const command = CreateCultureDto.toCommand(createRaceDto, userId, roles);
-    const entity = await this.commandBus.execute<CreateCultureCommand, Culture>(command);
-    return CultureDto.fromEntity(entity);
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, culture already exists' })
+  async create(@Body() createCultureDto: CreateCultureDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
+    const command = CreateCultureDto.toCommand(createCultureDto, userId, roles);
+    const view = await this.commandBus.execute<CreateCultureCommand, CultureView>(command);
+    return CultureDto.fromView(view);
   }
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateCulture', summary: 'Update culture by id' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Race not found', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async updateSettings(@Param('id') id: string, @Body() dto: UpdateCultureDto, @Request() req) {
-    const userId = req.user! as string;
-    const roles = req.user!.roles as string[];
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Culture not found' })
+  async updateSettings(@Param('id') id: string, @Body() dto: UpdateCultureDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = UpdateCultureDto.toCommand(id, dto, userId, roles);
-    const entity = this.commandBus.execute<UpdateCultureCommand, Culture>(command);
-    return CultureDto.fromEntity(await entity);
+    const view = await this.commandBus.execute<UpdateCultureCommand, CultureView>(command);
+    return CultureDto.fromView(view);
   }
 
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteCulture', summary: 'Delete culture by id' })
-  @ApiNotFoundResponse({ description: 'Culture not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req) {
-    const userId = req.user! as string;
-    const roles = req.user!.roles as string[];
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Culture not found' })
+  async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = new DeleteCultureCommand(id, userId, roles);
     await this.commandBus.execute(command);
   }
 
-  @Post(':id/fixed-skills')
+  @Post(':id/skill-ranks')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'addCultureFixedSkill', summary: 'Add culture fixed skill ranks' })
+  @ApiOperation({ operationId: 'addCultureSkillRank', summary: 'Append a ranks entry to the culture' })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async addFixedSkill(@Param('id') id: string, @Body() dto: CultureSkillRankDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
-    const command = new AddCultureFixedSkillRankCommand(id, dto.skillId, dto.specialization, dto.ranks, userId, roles);
-    const entity = await this.commandBus.execute<AddCultureFixedSkillRankCommand, Culture>(command);
-    return CultureDto.fromEntity(entity);
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Culture not found' })
+  async addSkillRank(@Param('id') id: string, @Body() dto: AddCultureSkillRankDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
+    const command = AddCultureSkillRankDto.toCommand(id, dto, userId, roles);
+    const view = await this.commandBus.execute<AddCultureSkillRankCommand, CultureView>(command);
+    return CultureDto.fromView(view);
   }
 
-  @Delete(':id/fixed-skills')
+  @Delete(':id/skill-ranks/:index')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'deleteCultureFixedSkill', summary: 'Delete culture fixed skill ranks' })
+  @ApiOperation({ operationId: 'deleteCultureSkillRank', summary: 'Delete the culture ranks entry at a position' })
+  @ApiParam({ name: 'index', description: 'Zero-based position of the entry in skillRanks', type: Number })
   @ApiOkResponse({ type: CultureDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async deleteFixedSkill(@Param('id') id: string, @Body() dto: DeleteCultureFixedSkillDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
-    const command = DeleteCultureFixedSkillDto.toCommand(id, dto, userId, roles);
-    const entity = await this.commandBus.execute<DeleteCultureFixedSkillRankCommand, Culture>(command);
-    return CultureDto.fromEntity(entity);
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Culture or entry not found' })
+  async deleteSkillRank(@Param('id') id: string, @Param('index', ParseIntPipe) index: number, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
+    const command = new DeleteCultureSkillRankCommand(id, index, userId, roles);
+    const view = await this.commandBus.execute<DeleteCultureSkillRankCommand, CultureView>(command);
+    return CultureDto.fromView(view);
   }
 }

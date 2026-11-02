@@ -1,12 +1,13 @@
-import { describe, it, expect } from '@jest/globals';
-import { Race } from 'src/modules/races/domain/aggregates/race';
-import { RaceProps } from 'src/modules/races/domain/aggregates/race-props';
-import { RaceCreatedEvent } from 'src/modules/races/domain/events/race-created.event';
-import { RaceUpdatedEvent } from 'src/modules/races/domain/events/race-updated.event';
-import { RaceResistances } from 'src/modules/races/domain/value-objects/race-resistances.vo';
-import { RaceSkillBonus } from 'src/modules/races/domain/value-objects/race-skill-bonus.vo';
-import { RaceStats } from 'src/modules/races/domain/value-objects/race-stats.vo';
-import { RaceTrait } from 'src/modules/races/domain/value-objects/race-trait.vo';
+import { describe, it, expect } from 'vitest';
+import { Race } from '../../../../src/modules/races/domain/aggregates/race.js';
+import type { RaceProps } from '../../../../src/modules/races/domain/aggregates/race-props.js';
+import { RaceCreatedEvent } from '../../../../src/modules/races/domain/events/race-created.event.js';
+import { RaceUpdatedEvent } from '../../../../src/modules/races/domain/events/race-updated.event.js';
+import { RaceResistances } from '../../../../src/modules/races/domain/value-objects/race-resistances.vo.js';
+import { RaceSkillBonus } from '../../../../src/modules/races/domain/value-objects/race-skill-bonus.vo.js';
+import { RaceStats } from '../../../../src/modules/races/domain/value-objects/race-stats.vo.js';
+import { RaceTrait } from '../../../../src/modules/races/domain/value-objects/race-trait.vo.js';
+import { NotFoundError } from '../../../../src/modules/shared/domain/errors/errors.js';
 
 const makeStats = (overrides: Partial<RaceStats> = {}): RaceStats => ({
   ag: 0,
@@ -45,6 +46,7 @@ const makeRaceProps = (overrides: Partial<RaceProps> = {}): RaceProps => ({
   description: null,
   imageUrl: null,
   owner: 'owner-1',
+  entitySource: 'user',
   accessType: 'public',
   createdAt: new Date('2025-01-01T00:00:00.000Z'),
   updatedAt: null,
@@ -147,7 +149,7 @@ describe('Race domain aggregate', () => {
     expect(race.traits).toHaveLength(1);
     expect(race.traits[0]).toEqual(
       expect.objectContaining({
-        id: expect.any(String),
+        id: expect.any(String) as unknown,
         traitId: 'trait-1',
         specialization: 'forest',
         isTalent: true,
@@ -159,7 +161,40 @@ describe('Race domain aggregate', () => {
     race.removeTrait(race.traits[0].id);
 
     expect(race.traits).toEqual([]);
-    expect(race.getUncommittedEvents()).toEqual([expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent)]);
+    expect(race.getUncommittedEvents()).toEqual([expect.any(RaceUpdatedEvent), expect.any(RaceUpdatedEvent)]);
+  });
+
+  it('keeps earlier event snapshots unchanged when the race changes again', () => {
+    const race = Race.fromProps(makeRaceProps({ traits: [] }));
+
+    race.addTrait('trait-1', undefined, false, undefined, undefined);
+    race.addSkillBonus('skill-1', null, 10);
+    race.removeTrait(race.traits[0].id);
+
+    const [afterAdd, afterBonus, afterRemove] = race.getUncommittedEvents().map(event => event.data);
+    expect(afterAdd.traits).toHaveLength(1);
+    expect(afterAdd.skillBonuses).toEqual([new RaceSkillBonus('skill-1', null, 5)]);
+    expect(afterBonus.skillBonuses).toEqual([new RaceSkillBonus('skill-1', null, 10)]);
+    expect(afterRemove.traits).toEqual([]);
+    expect(race.updatedAt).toBeInstanceOf(Date);
+  });
+
+  it('cannot be changed from outside through its props', () => {
+    const race = Race.fromProps(makeRaceProps());
+
+    race.getProps().name = 'Changed';
+
+    expect(race.name).toBe('Human');
+  });
+
+  it('rejects removing a trait or skill bonus the race does not have, without emitting events', () => {
+    const race = Race.fromProps(makeRaceProps());
+
+    expect(() => race.removeTrait('missing')).toThrow(NotFoundError);
+    expect(() => race.removeSkillBonus('skill-1', 'missing')).toThrow(NotFoundError);
+    expect(race.traits).toHaveLength(1);
+    expect(race.skillBonuses).toHaveLength(1);
+    expect(race.getUncommittedEvents()).toEqual([]);
   });
 
   it('upserts and deletes skill bonuses by skill and nullable specialization', () => {
@@ -194,5 +229,18 @@ describe('Race domain aggregate', () => {
       tier: undefined,
       description: undefined,
     });
+  });
+
+  it('stores the bonus specializations and the default language as normalized keys (spec 050)', () => {
+    const race = Race.fromProps(makeRaceProps({ skillBonuses: [] }));
+
+    race.addSkillBonus('language-spoken', 'Orcish tongues', 20);
+    race.addSkillBonus('language-spoken', 'Orcish-Tongues', 25);
+    race.update({ defaultLanguage: 'Black Speech' });
+
+    expect(race.skillBonuses).toEqual([expect.objectContaining({ specialization: 'orcish-tongues', bonus: 25 })]);
+    expect(race.defaultLanguage).toBe('black-speech');
+    race.removeSkillBonus('language-spoken', 'Orcish tongues');
+    expect(race.skillBonuses).toEqual([]);
   });
 });

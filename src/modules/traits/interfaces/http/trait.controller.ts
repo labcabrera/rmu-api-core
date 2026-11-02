@@ -1,21 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { CreateTraitCommand } from '../../application/cqrs/commands/create-trait.command';
-import { DeleteTraitCommand } from '../../application/cqrs/commands/delete-trait.command';
-import { UpdateTraitCommand } from '../../application/cqrs/commands/update-trait.command';
-import { Trait } from '../../domain/aggregates/trait';
-import { UpdateTraitDto } from './dtos/update-trait.dto';
-import { TraitDto, TraitPageDto } from './dtos/trait.dto';
-import { CreateTraitDto } from './dtos/create-trait.dto';
-import { GetTraitsQuery } from '../../application/cqrs/queries/get-traits.query';
-import { GetTraitQuery } from '../../application/cqrs/queries/get-trait.query';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { CreateTraitCommand } from '../../application/cqrs/commands/create-trait.command.js';
+import { DeleteTraitCommand } from '../../application/cqrs/commands/delete-trait.command.js';
+import { UpdateTraitCommand } from '../../application/cqrs/commands/update-trait.command.js';
+import { Trait } from '../../domain/aggregates/trait.js';
+import { UpdateTraitDto } from './dto/update-trait.dto.js';
+import { TraitDto, TraitPageDto } from './dto/trait.dto.js';
+import { CreateTraitDto } from './dto/create-trait.dto.js';
+import { GetTraitsQuery } from '../../application/cqrs/queries/get-traits.query.js';
+import { GetTraitQuery } from '../../application/cqrs/queries/get-trait.query.js';
+import { Page } from '../../../shared/application/pagination/page.js';
+import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
+import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/traits')
@@ -29,11 +29,9 @@ export class TraitController {
   @Get(':id')
   @ApiOperation({ operationId: 'findTraitById', summary: 'Find Trait by id' })
   @ApiOkResponse({ type: TraitDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Trait not found', type: ErrorDto })
-  async findById(@Param('id') id: string, @Request() req) {
-    const user = req.user!;
-    const query = new GetTraitQuery(id, user.id as string, user.roles as string[]);
+  @ApiErrors({ 404: 'Trait not found' })
+  async findById(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const query = new GetTraitQuery(id, user.id, user.roles);
     const entity = await this.queryBus.execute<GetTraitQuery, Trait>(query);
     return TraitDto.fromEntity(entity);
   }
@@ -41,11 +39,9 @@ export class TraitController {
   @Get('')
   @ApiOperation({ operationId: 'findTraits', summary: 'Find Traits by RSQL' })
   @ApiOkResponse({ type: TraitPageDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Invalid RSQL query', type: ErrorDto })
-  async find(@Query() dto: PagedQueryDto, @Request() req) {
-    const user = req.user!;
-    const query = new GetTraitsQuery(dto.q, dto.page, dto.size, user.id as string, user.roles as string[]);
+  @ApiErrors({ 400: 'Invalid RSQL query' })
+  async find(@Query() dto: CatalogPagedQueryDto, @CurrentUser() user: AuthenticatedUser) {
+    const query = new GetTraitsQuery(dto.q, dto.page, dto.size, user.id, user.roles);
     const page = await this.queryBus.execute<GetTraitsQuery, Page<Trait>>(query);
     const mapped = page.content.map(Trait => TraitDto.fromEntity(Trait));
     return new Page<TraitDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
@@ -55,12 +51,9 @@ export class TraitController {
   @ApiBody({ type: CreateTraitDto })
   @ApiOperation({ operationId: 'createTrait', summary: 'Create a new Trait' })
   @ApiOkResponse({ type: TraitDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  @ApiResponse({ status: 409, description: 'Conflict, Trait already exists', type: ErrorDto })
-  async create(@Body() dto: CreateTraitDto, @Request() req) {
-    const user = req.user!;
-    const command = CreateTraitDto.toCommand(dto, user.id as string, user.roles as string[]);
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CREATE, 409: 'Conflict, Trait already exists' })
+  async create(@Body() dto: CreateTraitDto, @CurrentUser() user: AuthenticatedUser) {
+    const command = CreateTraitDto.toCommand(dto, user.id, user.roles);
     const entity = await this.commandBus.execute<CreateTraitCommand, Trait>(command);
     return TraitDto.fromEntity(entity);
   }
@@ -68,12 +61,9 @@ export class TraitController {
   @Patch(':id')
   @ApiOperation({ operationId: 'updateTrait', summary: 'Update Trait' })
   @ApiOkResponse({ type: TraitDto, description: 'Success' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Trait not found', type: ErrorDto })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data', type: ErrorDto })
-  async updateSettings(@Param('id') id: string, @Body() dto: UpdateTraitDto, @Request() req) {
-    const user = req.user!;
-    const command = UpdateTraitDto.toCommand(id, dto, user.id as string, user.roles as string[]);
+  @ApiErrors({ 400: 'Bad request, invalid data', 403: FORBIDDEN_CHANGE, 404: 'Trait not found' })
+  async updateSettings(@Param('id') id: string, @Body() dto: UpdateTraitDto, @CurrentUser() user: AuthenticatedUser) {
+    const command = UpdateTraitDto.toCommand(id, dto, user.id, user.roles);
     const entity = await this.commandBus.execute<UpdateTraitCommand, Trait>(command);
     return TraitDto.fromEntity(entity);
   }
@@ -81,11 +71,9 @@ export class TraitController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteTrait', summary: 'Delete Trait by id' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Trait not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req) {
-    const user = req.user!;
-    const command = new DeleteTraitCommand(id, undefined, user.id as string, user.roles! as string[]);
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Trait not found' })
+  async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const command = new DeleteTraitCommand(id, undefined, user.id, user.roles);
     await this.commandBus.execute(command);
   }
 }

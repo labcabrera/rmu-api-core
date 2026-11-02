@@ -1,74 +1,97 @@
-import { BaseAggregateRoot } from 'src/modules/shared/domain/aggregates/base-aggregate';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
-import { SkillProps } from './skill-props';
-import { EnumerationCategory } from 'src/modules/enumerations/domain/value-objects/enumeration-category.vo';
-import { NotModifiedError } from 'src/modules/shared/domain/errors/errors';
+import { BaseAggregateRoot } from '../../../shared/domain/aggregates/base-aggregate.js';
+import type { SkillProps } from './skill-props.js';
+import { type ManeuverProfile, ManeuverProfiles } from '../../../skill-categories/domain/value-objects/maneuver-profile.vo.js';
+
+export type SkillUpdateProps = Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt' | 'maneuver'>> & {
+  /** undefined keeps the current profile, null removes it. */
+  maneuver?: ManeuverProfile | null;
+};
 
 export class Skill extends BaseAggregateRoot<SkillProps> {
-  private constructor(
-    id: string,
-    public categoryId: string,
-    public bonus: string[],
-    public specialization: EnumerationCategory | null,
-    public owner: string,
-    public accessType: AccessType,
-    public createdAt: Date,
-    public updatedAt?: Date,
-  ) {
-    super(id);
+  private constructor(props: SkillProps) {
+    super(props);
+  }
+
+  get categoryId() {
+    return this.props.categoryId;
+  }
+
+  get bonus() {
+    return this.props.bonus;
+  }
+
+  get specialization() {
+    return this.props.specialization;
+  }
+
+  get specializationOptional() {
+    return this.props.specializationOptional === true;
+  }
+
+  get owner() {
+    return this.props.owner;
+  }
+
+  get entitySource() {
+    return this.props.entitySource;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
+
+  get maneuver() {
+    return this.props.maneuver;
   }
 
   static create(props: Omit<SkillProps, 'createdAt' | 'updatedAt'>) {
-    return new Skill(props.id, props.categoryId, props.bonus, props.specialization, props.owner, props.accessType, new Date(), undefined);
+    ManeuverProfiles.validate(props.maneuver);
+    return new Skill({
+      ...props,
+      specializationOptional: props.specializationOptional || undefined,
+      createdAt: new Date(),
+      updatedAt: undefined,
+      maneuver: ManeuverProfiles.normalize(props.maneuver),
+    });
   }
 
   static fromProps(props: SkillProps) {
-    return new Skill(
-      props.id,
-      props.categoryId,
-      props.bonus,
-      props.specialization,
-      props.owner,
-      props.accessType,
-      props.createdAt,
-      props.updatedAt,
-    );
+    return new Skill({ ...props, maneuver: ManeuverProfiles.normalize(props.maneuver) });
   }
 
-  update(props: Partial<Omit<SkillProps, 'id' | 'owner' | 'createdAt' | 'updatedAt'>>) {
-    let modified = false;
+  /** Applies the given fields; the handler asks hasChanges() whether they changed the state (spec 021). */
+  update(props: SkillUpdateProps): void {
     if (props.categoryId) {
-      modified = props.categoryId !== this.categoryId;
-      this.categoryId = props.categoryId;
+      this.props.categoryId = props.categoryId;
     }
     if (props.bonus) {
-      modified = modified || props.bonus !== this.bonus;
-      this.bonus = props.bonus;
+      this.props.bonus = props.bonus;
     }
     if (props.specialization) {
-      modified = modified || props.specialization !== this.specialization;
-      this.specialization = props.specialization;
+      this.props.specialization = props.specialization;
+    }
+    if (props.specializationOptional !== undefined) {
+      // Only true is stored: false clears the field.
+      this.props.specializationOptional = props.specializationOptional || undefined;
     }
     if (props.accessType) {
-      modified = modified || props.accessType !== this.accessType;
-      this.accessType = props.accessType;
+      this.props.accessType = props.accessType;
     }
-    this.updatedAt = new Date();
-    if (!modified) {
-      throw new NotModifiedError('Skill not modified');
+    if (props.entitySource !== undefined) this.props.entitySource = props.entitySource;
+    if (props.maneuver !== undefined) {
+      ManeuverProfiles.validate(props.maneuver);
+      const maneuver = ManeuverProfiles.normalize(props.maneuver);
+      this.props.maneuver = maneuver;
     }
-  }
-
-  public getProps(): SkillProps {
-    return {
-      id: this.id,
-      categoryId: this.categoryId,
-      bonus: this.bonus,
-      specialization: this.specialization,
-      owner: this.owner,
-      accessType: this.accessType,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
+    // A change without effect keeps the stored updatedAt: the handler neither writes nor publishes it.
+    if (this.hasChanges()) this.props.updatedAt = new Date();
   }
 }

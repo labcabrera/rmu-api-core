@@ -1,9 +1,9 @@
-import { describe, expect, it } from '@jest/globals';
-import { Realm } from 'src/modules/realms/domain/aggregates/realm';
-import { RealmCreatedEvent } from 'src/modules/realms/domain/events/realm-created.event';
-import { RealmDeletedEvent } from 'src/modules/realms/domain/events/realm-deleted.event';
-import { RealmUpdatedEvent } from 'src/modules/realms/domain/events/realm-updated.event';
-import { RealmProps } from 'src/modules/realms/domain/aggregates/realm-props';
+import { describe, expect, it } from 'vitest';
+import { Realm } from '../../../../src/modules/realms/domain/aggregates/realm.js';
+import { RealmCreatedEvent } from '../../../../src/modules/realms/domain/events/realm-created.event.js';
+import { RealmDeletedEvent } from '../../../../src/modules/realms/domain/events/realm-deleted.event.js';
+import { RealmUpdatedEvent } from '../../../../src/modules/realms/domain/events/realm-updated.event.js';
+import type { RealmProps } from '../../../../src/modules/realms/domain/aggregates/realm-props.js';
 
 const baseProps = (): RealmProps => ({
   id: 'realm-1',
@@ -13,7 +13,9 @@ const baseProps = (): RealmProps => ({
   description: 'Long description',
   imageUrl: 'https://example.test/shadow.png',
   owner: 'user-1',
+  entitySource: 'user',
   accessType: 'private',
+  generic: false,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-02T00:00:00.000Z'),
 });
@@ -27,7 +29,9 @@ describe('Realm', () => {
       description: undefined,
       imageUrl: undefined,
       owner: 'user-1',
+      entitySource: 'user',
       accessType: 'public',
+      generic: false,
     });
 
     expect(realm.id).toEqual(expect.any(String));
@@ -72,6 +76,40 @@ describe('Realm', () => {
     expect(realm.updatedAt).toBeInstanceOf(Date);
     expect(realm.getUncommittedEvents()).toHaveLength(1);
     expect(realm.getUncommittedEvents()[0]).toBeInstanceOf(RealmUpdatedEvent);
+  });
+
+  it('clears the optional texts with an empty string or null and leaves undefined fields alone', () => {
+    const realm = Realm.fromProps({ ...baseProps(), description: 'Long text', imageUrl: 'https://example.test/a.png' });
+
+    realm.update({ shortDescription: '', description: null, name: undefined });
+
+    expect(realm.shortDescription).toBeUndefined();
+    expect(realm.description).toBeUndefined();
+    expect(realm.imageUrl).toBe('https://example.test/a.png');
+    expect(realm.name).toBe('Shadow World');
+  });
+
+  it('keeps the name and magic presence when they come empty', () => {
+    const realm = Realm.fromProps(baseProps());
+
+    realm.update({ name: '', magicPresence: undefined });
+
+    expect(realm.name).toBe('Shadow World');
+    expect(realm.magicPresence).toBe('limited');
+  });
+
+  it('marks and unmarks the realm as generic, and carries it in the updated event', () => {
+    const realm = Realm.fromProps(baseProps());
+
+    realm.update({ generic: true });
+    expect(realm.generic).toBe(true);
+    expect(realm.getUncommittedEvents()[0]).toMatchObject({ eventType: 'updated', data: { generic: true } });
+
+    realm.update({ name: 'Other' });
+    expect(realm.generic).toBe(true);
+
+    realm.update({ generic: false });
+    expect(realm.generic).toBe(false);
   });
 
   it('builds realm lifecycle events with the expected event types', () => {

@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Request, Delete, HttpCode, Patch } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt.auth.guard';
-import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto';
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Delete, HttpCode, Patch } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
+import { EnumerationDto, EnumerationPageDto } from './dto/enumeration.dto.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateEnumerationDto } from './dto/create-enumeration.dto';
-import { PagedQueryDto } from 'src/modules/shared/interfaces/http/dto/paged-rsql-query';
-import { GetEnumerationQuery } from '../../application/cqrs/queries/get-enumeration.query';
-import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumerations.query';
-import { Page } from 'src/modules/shared/domain/entities/page';
-import { Enumeration } from '../../domain/aggregates/enumeration';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command';
-import { ErrorDto } from 'src/modules/shared/interfaces/http/dto/error-dto';
-import { UpdateEnumerationDto } from './dto/update-enumeration.dto';
+import { CreateEnumerationDto } from './dto/create-enumeration.dto.js';
+import { CatalogPagedQueryDto } from '../../../shared/interfaces/http/dto/paged-rsql-query.js';
+import { GetEnumerationQuery } from '../../application/cqrs/queries/get-enumeration.query.js';
+import { GetEnumerationsQuery } from '../../application/cqrs/queries/get-enumerations.query.js';
+import { Page } from '../../../shared/application/pagination/page.js';
+import { Enumeration } from '../../domain/aggregates/enumeration.js';
+import { NotFoundError } from '../../../shared/domain/errors/errors.js';
+import { DeleteEnumerationCommand } from '../../application/cqrs/commands/delete-enumeration.command.js';
+import { UpdateEnumerationDto } from './dto/update-enumeration.dto.js';
+import type { AuthenticatedUser } from '../../../shared/interfaces/http/authenticated-request.js';
+import { CurrentUser } from '../../../shared/interfaces/http/current-user.decorator.js';
+import { ApiErrors, FORBIDDEN_CHANGE, FORBIDDEN_CREATE } from '../../../shared/interfaces/http/api-errors.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/enumerations')
@@ -27,9 +28,9 @@ export class EnumerationController {
   @Get(':id')
   @ApiOperation({ operationId: 'findEnumerationById', summary: 'Find enumeration by id' })
   @ApiOkResponse({ type: EnumerationDto })
-  async findById(@Param('id') id: string, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async findById(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const query = new GetEnumerationQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetEnumerationQuery, Enumeration>(query);
     if (!entity) throw new NotFoundError('Skill not found', id);
@@ -39,9 +40,9 @@ export class EnumerationController {
   @Get('')
   @ApiOperation({ operationId: 'findEnumerations', summary: 'Find enumerations by RSQL' })
   @ApiOkResponse({ type: EnumerationPageDto })
-  async find(@Query() dto: PagedQueryDto, @Request() req): Promise<EnumerationPageDto> {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  async find(@Query() dto: CatalogPagedQueryDto, @CurrentUser() user: AuthenticatedUser): Promise<EnumerationPageDto> {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const query = new GetEnumerationsQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetEnumerationsQuery, Page<Enumeration>>(query);
     const mapped = page.content.map(category => EnumerationDto.fromEntity(category));
@@ -51,10 +52,14 @@ export class EnumerationController {
   @Post('')
   @HttpCode(201)
   @ApiOperation({ operationId: 'createEnumeration', summary: 'Create enumeration' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async create(@Body() createSkillDto: CreateEnumerationDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  @ApiErrors({
+    400: 'Bad request, invalid data or unknown realm',
+    403: `${FORBIDDEN_CREATE}, or no permission to change the realm`,
+    409: 'Conflict, enumeration already exists',
+  })
+  async create(@Body() createSkillDto: CreateEnumerationDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = CreateEnumerationDto.toCommand(createSkillDto, userId, roles);
     const result = await this.commandBus.execute<CreateEnumerationDto, Enumeration>(command);
     return EnumerationDto.fromEntity(result);
@@ -62,10 +67,10 @@ export class EnumerationController {
 
   @Patch(':id')
   @ApiOperation({ operationId: 'updateEnumeration', summary: 'Update enumeration' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  async update(@Param('id') id: string, @Body() dto: UpdateEnumerationDto, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  @ApiErrors({ 403: FORBIDDEN_CHANGE })
+  async update(@Param('id') id: string, @Body() dto: UpdateEnumerationDto, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = UpdateEnumerationDto.toCommand(id, dto, userId, roles);
     const result = await this.commandBus.execute<UpdateEnumerationDto, Enumeration>(command);
     return EnumerationDto.fromEntity(result);
@@ -74,11 +79,10 @@ export class EnumerationController {
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ operationId: 'deleteEnumeration', summary: 'Delete enumeration' })
-  @ApiUnauthorizedResponse({ description: 'Invalid or missing authentication token', type: ErrorDto })
-  @ApiNotFoundResponse({ description: 'Enumeration not found', type: ErrorDto })
-  async delete(@Param('id') id: string, @Request() req) {
-    const userId: string = req.user!.id as string;
-    const roles: string[] = req.user!.roles as string[];
+  @ApiErrors({ 403: FORBIDDEN_CHANGE, 404: 'Enumeration not found' })
+  async delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    const userId: string = user.id;
+    const roles: string[] = user.roles;
     const command = new DeleteEnumerationCommand(id, userId, roles);
     await this.commandBus.execute(command);
   }

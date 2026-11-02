@@ -1,18 +1,18 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UpdateTraitCommand } from '../commands/update-trait.command';
-import { Trait } from 'src/modules/traits/domain/aggregates/trait';
-import type { TraitRepository } from '../../ports/trait.repository';
-import type { TraitEventBusPort } from '../../ports/trait-event-bus.port';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import type { TraitGuardPort } from '../../ports/trait-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { UpdateTraitCommand } from '../commands/update-trait.command.js';
+import { Trait } from '../../../domain/aggregates/trait.js';
+import { TRAIT_REPOSITORY, type TraitRepository } from '../../ports/trait-repository.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { TRAIT_GUARD, type TraitGuardPort } from '../../ports/trait-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(UpdateTraitCommand)
 export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, Trait> {
   constructor(
-    @Inject('TraitRepository') private readonly traitRepository: TraitRepository,
-    @Inject('TraitGuardPort') private readonly traitGuard: TraitGuardPort,
-    @Inject('TraitEventProducer') private readonly traitEventBus: TraitEventBusPort,
+    @Inject(TRAIT_REPOSITORY) private readonly traitRepository: TraitRepository,
+    @Inject(TRAIT_GUARD) private readonly traitGuard: TraitGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: UpdateTraitCommand): Promise<Trait> {
@@ -21,6 +21,8 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       throw new NotFoundError('Trait', command.id);
     }
     this.traitGuard.checkUpdate(trait, command.userId, command.roles);
+    this.traitGuard.checkEntitySource(command.roles, command.entitySource);
+    trait.checkVersion(command.expectedVersion);
     trait.update({
       name: command.name,
       category: command.category,
@@ -31,9 +33,13 @@ export class UpdateTraitHandler implements ICommandHandler<UpdateTraitCommand, T
       adquisitionCost: command.adquisitionCost,
       tierCost: command.tierCost,
       description: command.description,
+      ...command.details,
+      entitySource: command.entitySource,
     });
-    const updated = await this.traitRepository.update(trait.id, trait);
-    trait.getUncommittedEvents().forEach(event => this.traitEventBus.publish(event));
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!trait.hasChanges()) return trait;
+    const updated = await this.traitRepository.update(trait);
+    await this.events.publishChanges('trait', trait);
     return updated;
   }
 }

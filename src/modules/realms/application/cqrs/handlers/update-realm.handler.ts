@@ -1,20 +1,20 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Realm } from '../../../domain/aggregates/realm';
-import { UpdateRealmCommand } from '../commands/update-realm.command';
-import type { RealmEventBusPort } from '../../ports/realm-event-bus.port';
-import type { RealmRepository } from '../../ports/realm-repository';
-import { NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import type { RealmGuardPort } from '../../ports/realm-guard.port';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { Realm } from '../../../domain/aggregates/realm.js';
+import { UpdateRealmCommand } from '../commands/update-realm.command.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../ports/realm-repository.port.js';
+import { NotFoundError } from '../../../../shared/domain/errors/errors.js';
+import { REALM_GUARD, type RealmGuardPort } from '../../ports/realm-guard.port.js';
+import { DOMAIN_EVENT_PUBLISHER, type DomainEventPublisher } from '../../../../shared/application/ports/domain-event-publisher.port.js';
 
 @CommandHandler(UpdateRealmCommand)
 export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, Realm> {
   private readonly logger = new Logger(UpdateRealmHandler.name);
 
   constructor(
-    @Inject('RealmRepository') private readonly realmRepository: RealmRepository,
-    @Inject('RealmGuardPort') private readonly realmGuard: RealmGuardPort,
-    @Inject('RealmEventProducer') private readonly realmEventBus: RealmEventBusPort,
+    @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
+    @Inject(REALM_GUARD) private readonly realmGuard: RealmGuardPort,
+    @Inject(DOMAIN_EVENT_PUBLISHER) private readonly events: DomainEventPublisher,
   ) {}
 
   async execute(command: UpdateRealmCommand): Promise<Realm> {
@@ -24,6 +24,11 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
     if (!realm) throw new NotFoundError('Realm', command.id);
 
     this.realmGuard.checkUpdate(realm, command.userId, command.roles);
+    this.realmGuard.checkEntitySource(command.roles, command.entitySource);
+    // Sending the stored value back is not a change: the front sends the whole form.
+    if (command.generic !== undefined && command.generic !== realm.generic) this.realmGuard.checkGeneric(command.roles);
+
+    realm.checkVersion(command.expectedVersion);
 
     realm.update({
       name: command.name,
@@ -32,9 +37,13 @@ export class UpdateRealmHandler implements ICommandHandler<UpdateRealmCommand, R
       description: command.description,
       imageUrl: command.imageUrl,
       accessType: command.accessType,
+      generic: command.generic,
+      entitySource: command.entitySource,
     });
-    const updated = await this.realmRepository.update(realm.id, realm);
-    realm.getUncommittedEvents().forEach(event => this.realmEventBus.publish(event));
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!realm.hasChanges()) return realm;
+    const updated = await this.realmRepository.update(realm);
+    await this.events.publishChanges('realm', realm);
     return updated;
   }
 }

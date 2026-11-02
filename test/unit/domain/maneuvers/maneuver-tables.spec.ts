@@ -1,14 +1,14 @@
-import { describe, expect, it } from '@jest/globals';
-import { AbsoluteManeuverTable } from 'src/modules/maneuvers/domain/value-objects/absolute-maneuver-table.vo';
-import { ABSOLUTE_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/generic-maneuver.table';
-import { ADRENAL_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/adrenal-maneuver.table';
-import { ANIMAL_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/animal-maneuver.table';
-import { AWARENESS_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/awareness-maneuver.table';
-import { COMPOSITION_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/composition-maneuver.table';
-import { CRAFTING_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/crafting-maneuver.table';
-import { GYMNASTIC_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/gymnastic-maneuver.table';
-import { LORE_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/lore-maneuver.table';
-import { MEDICAL_MANEUVER_TABLE } from 'src/modules/maneuvers/domain/value-objects/tables/medical-maneuver.table';
+import { describe, expect, it } from 'vitest';
+import { AbsoluteManeuverTable } from '../../../../src/modules/maneuvers/domain/value-objects/absolute-maneuver-table.vo.js';
+import { ABSOLUTE_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/generic-maneuver.table.js';
+import { ADRENAL_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/adrenal-maneuver.table.js';
+import { ANIMAL_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/animal-maneuver.table.js';
+import { AWARENESS_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/awareness-maneuver.table.js';
+import { COMPOSITION_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/composition-maneuver.table.js';
+import { CRAFTING_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/crafting-maneuver.table.js';
+import { GYMNASTIC_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/gymnastic-maneuver.table.js';
+import { LORE_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/lore-maneuver.table.js';
+import { MEDICAL_MANEUVER_TABLE } from '../../../../src/modules/maneuvers/domain/value-objects/tables/medical-maneuver.table.js';
 
 const tables = [
   ABSOLUTE_MANEUVER_TABLE,
@@ -23,6 +23,18 @@ const tables = [
 ];
 
 describe('absolute maneuver tables', () => {
+  // Both are modifiers added to the roll (spec 044, decision 6): the penalty is always negative, the bonus positive.
+  it('store penaltyUntilAbsoluteSuccess as a negative and bonusUntilAbsoluteFailure as a positive modifier', () => {
+    const effects = tables.flatMap(table => table.table.flatMap(entry => entry.result.effects ?? []));
+    const penalties = effects.filter(effect => effect.status === 'penaltyUntilAbsoluteSuccess');
+    const bonuses = effects.filter(effect => effect.status === 'bonusUntilAbsoluteFailure');
+
+    expect(penalties.length).toBeGreaterThan(0);
+    penalties.forEach(effect => expect(effect.value).toBeLessThan(0));
+    expect(bonuses.length).toBeGreaterThan(0);
+    bonuses.forEach(effect => expect(effect.value).toBeGreaterThan(0));
+  });
+
   it('are value objects with a name, unusual event, and five ordered result entries', () => {
     tables.forEach(table => {
       expect(table).toBeInstanceOf(AbsoluteManeuverTable);

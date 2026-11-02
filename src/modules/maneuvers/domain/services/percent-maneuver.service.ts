@@ -1,4 +1,5 @@
-import { PercentManeuverResult } from '../value-objects/percent-maneuver-result.vo';
+import { ValidationError } from '../../../shared/domain/errors/errors.js';
+import type { PercentManeuverResult } from '../value-objects/percent-maneuver-result.vo.js';
 
 const percentTable: { min: number; max: number; result: PercentManeuverResult }[] = [
   { min: -Infinity, max: -100, result: { percent: 0, critical: 'E', message: 'Received critical E' } },
@@ -30,7 +31,7 @@ export class PercentManeuverService {
   execute(roll: number): PercentManeuverResult {
     const entry = percentTable.find(row => roll >= row.min && roll <= row.max);
     if (!entry) {
-      throw new Error('Roll out of bounds');
+      throw new ValidationError(`Roll ${roll} out of bounds`);
     }
     return entry.result;
   }

@@ -1,0 +1,33 @@
+import { Inject, Logger } from '@nestjs/common';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ConflictError } from '../../../../shared/domain/errors/errors.js';
+import { ManeuverModifier } from '../../../domain/aggregates/maneuver-modifier.js';
+import { MANEUVER_MODIFIER_GUARD, type ManeuverModifierGuardPort } from '../../ports/maneuver-modifier-guard.port.js';
+import { MANEUVER_MODIFIER_REPOSITORY, type ManeuverModifierRepository } from '../../ports/maneuver-modifier-repository.port.js';
+import { CreateManeuverModifierCommand } from '../commands/create-maneuver-modifier.command.js';
+
+@CommandHandler(CreateManeuverModifierCommand)
+export class CreateManeuverModifierHandler implements ICommandHandler<CreateManeuverModifierCommand, ManeuverModifier> {
+  private readonly logger = new Logger(CreateManeuverModifierHandler.name);
+
+  constructor(
+    @Inject(MANEUVER_MODIFIER_REPOSITORY) private readonly repository: ManeuverModifierRepository,
+    @Inject(MANEUVER_MODIFIER_GUARD) private readonly guard: ManeuverModifierGuardPort,
+  ) {}
+
+  async execute(command: CreateManeuverModifierCommand): Promise<ManeuverModifier> {
+    this.logger.log(`Creating maneuver modifier ${command.definition.key} for user ${command.userId}`);
+    this.guard.checkCreate(command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
+    const modifier = ManeuverModifier.create({
+      ...command.definition,
+      owner: command.userId,
+      accessType: command.accessType,
+      entitySource: command.entitySource ?? 'user',
+    });
+    if (await this.repository.findByKey(modifier.key)) {
+      throw new ConflictError(`Maneuver modifier with key ${modifier.key} already exists`, 'duplicate-key');
+    }
+    return await this.repository.save(modifier);
+  }
+}

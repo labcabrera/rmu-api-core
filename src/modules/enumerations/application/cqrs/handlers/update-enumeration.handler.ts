@@ -1,18 +1,23 @@
 import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import type { EnumerationRepository } from '../../ports/enumeration-repository';
-import type { EnumerationGuardPort } from '../../ports/enumeration-guard';
-import { ConflictError, NotFoundError } from 'src/modules/shared/domain/errors/errors';
-import { Enumeration } from 'src/modules/enumerations/domain/aggregates/enumeration';
-import { UpdateEnumerationCommand } from '../commands/update-enumeration.command';
+import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { ENUMERATION_REPOSITORY, type EnumerationRepository } from '../../ports/enumeration-repository.port.js';
+import { ENUMERATION_GUARD, type EnumerationGuardPort } from '../../ports/enumeration-guard.port.js';
+import { ConflictError, NotFoundError, ValidationError } from '../../../../shared/domain/errors/errors.js';
+import { REALM_REPOSITORY, type RealmRepository } from '../../../../realms/application/ports/realm-repository.port.js';
+import { REALM_GUARD, type RealmGuardPort } from '../../../../realms/application/ports/realm-guard.port.js';
+import { Enumeration } from '../../../domain/aggregates/enumeration.js';
+import { toKey } from '../../../../shared/domain/services/key.js';
+import { UpdateEnumerationCommand } from '../commands/update-enumeration.command.js';
 
 @CommandHandler(UpdateEnumerationCommand)
 export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerationCommand, Enumeration> {
   private readonly logger = new Logger(UpdateEnumerationHandler.name);
 
   constructor(
-    @Inject('EnumerationRepository') private readonly enumerationRepository: EnumerationRepository,
-    @Inject('EnumerationGuardPort') private readonly guard: EnumerationGuardPort,
+    @Inject(ENUMERATION_REPOSITORY) private readonly enumerationRepository: EnumerationRepository,
+    @Inject(ENUMERATION_GUARD) private readonly guard: EnumerationGuardPort,
+    @Inject(REALM_REPOSITORY) private readonly realmRepository: RealmRepository,
+    @Inject(REALM_GUARD) private readonly realmGuard: RealmGuardPort,
   ) {}
 
   async execute(command: UpdateEnumerationCommand): Promise<Enumeration> {
@@ -20,20 +25,46 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
     if (!current) throw new NotFoundError('Enumeration', command.id);
 
     this.guard.checkUpdate(current, command.userId, command.roles);
+    this.guard.checkEntitySource(command.roles, command.entitySource);
 
-    const page = await this.enumerationRepository.findByRsql(`key=="${command.key}";category=="${command.category}"`, 0, 1);
-    if (page.pagination.totalElements > 0) {
-      throw new ConflictError(`Enumeration with key ${command.key} and category ${command.category} already exists`);
+    current.checkVersion(command.expectedVersion);
+
+    // Moving it to another realm follows the create rule: only who can change that realm adds to it.
+    if (command.realmId && command.realmId !== current.realmId) {
+      const realm = await this.realmRepository.findById(command.realmId);
+      if (!realm) throw new ValidationError(`Realm with id ${command.realmId} does not exist`);
+      this.realmGuard.checkUpdate(realm, command.userId, command.roles);
+    }
+
+    // The key is what references store (spec 050): it never changes, so a client may only send it back as it is
+    if (command.key && toKey(command.key) !== current.key) {
+      throw new ValidationError(`The key of enumeration ${current.id} cannot change`, 'enumeration-key-immutable');
+    }
+    // The same uniqueness as on create: key, category and realm (the update never clears the realm).
+    const key = current.key;
+    const category = command.category || current.category;
+    const realmId = command.realmId || current.realmId;
+    if (key !== current.key || category !== current.category || realmId !== current.realmId) {
+      const existing = await this.enumerationRepository.findByKeyCategoryAndRealm(key, category, realmId);
+      if (existing && existing.id !== current.id) {
+        throw new ConflictError(
+          `Enumeration with key ${key} and category ${category} already exists${realmId ? ` for realm ${realmId}` : ''}`,
+          'duplicate-key',
+        );
+      }
     }
 
     current.update({
-      key: command.key,
+      name: command.name,
       category: command.category,
       realmId: command.realmId,
       description: command.description,
       imageUrl: command.imageUrl,
       accessType: command.accessType,
+      entitySource: command.entitySource,
     });
-    return await this.enumerationRepository.update(command.id, current);
+    // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).
+    if (!current.hasChanges()) return current;
+    return await this.enumerationRepository.update(current);
   }
 }

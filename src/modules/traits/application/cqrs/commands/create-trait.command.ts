@@ -1,6 +1,8 @@
-import { AuthenticatedCommand } from 'src/modules/shared/application/cqrs/authenticated-command';
-import { TraitCategory } from 'src/modules/traits/domain/value-objects/trait-category.vo';
-import { TraitSpecialization } from 'src/modules/traits/domain/value-objects/trait-specialization.vo';
+import { AuthenticatedCommand } from '../../../../shared/application/cqrs/authenticated-command.js';
+import type { TraitCategory } from '../../../domain/value-objects/trait-category.vo.js';
+import type { TraitDetails } from '../../../domain/value-objects/trait-details.vo.js';
+import type { TraitSpecialization } from '../../../domain/value-objects/trait-specialization.vo.js';
+import type { EntitySource } from '../../../../shared/domain/entities/entity-source.js';
 
 export class CreateTraitCommand extends AuthenticatedCommand {
   public constructor(
@@ -15,6 +17,9 @@ export class CreateTraitCommand extends AuthenticatedCommand {
     public readonly description: string | undefined,
     userId: string,
     roles: string[],
+    public readonly details: TraitDetails = {},
+    /** Spec 063: only an admin asks for `system`; undefined is `user` on create and no change on update. */
+    public readonly entitySource?: EntitySource,
   ) {
     super(userId, roles);
   }

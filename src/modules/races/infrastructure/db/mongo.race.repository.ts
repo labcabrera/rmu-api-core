@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Race } from 'src/modules/races/domain/aggregates/race';
-import { RaceDocument, RaceModel } from '../persistence/models/race-model';
-import { RaceRepository } from '../../application/ports/race-repository';
-import { RsqlParser } from 'src/modules/shared/infrastructure/persistence/repositories/rsql-parser';
-import { MongoBaseRepository } from 'src/modules/shared/infrastructure/db/mongo.base.repository';
-import { AccessType } from 'src/modules/shared/domain/entities/access-type';
+import { Race } from '../../domain/aggregates/race.js';
+import { type RaceDocument, RaceModel } from '../persistence/models/race.model.js';
+import type { RaceRepository } from '../../application/ports/race-repository.port.js';
+import { RsqlParser } from '../../../shared/infrastructure/db/rsql-parser.js';
+import { MongoBaseRepository } from '../../../shared/infrastructure/db/mongo.base.repository.js';
+import type { AccessType } from '../../../shared/domain/entities/access-type.js';
 
 @Injectable()
 export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument> implements RaceRepository {
@@ -17,12 +17,12 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
   async updateRealmInfo(realmId: string, realmName: string, realmOwner: string, accessType: AccessType): Promise<void> {
     const now = new Date();
     const update = { owner: realmOwner, accessType: accessType, updatedAt: now };
-    await this.model.updateMany({ realmId: realmId }, { $set: update }).exec();
+    await this.model.updateMany({ realmId: realmId }, { $set: update, $inc: { version: 1 } }).exec();
   }
 
   async findByRealmId(realmId: string): Promise<Race[]> {
     const values = await this.model.find({ realmId: realmId }).exec();
-    return values.map(doc => this.mapToEntity(doc));
+    return values.map(doc => this.toEntity(doc));
   }
 
   protected mapToEntity(doc: RaceDocument): Race {
@@ -49,6 +49,7 @@ export class MongoRaceRepository extends MongoBaseRepository<Race, RaceDocument>
       description: doc.description,
       imageUrl: doc.imageUrl,
       owner: doc.owner,
+      entitySource: doc.entitySource ?? 'user',
       accessType: doc.accessType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
