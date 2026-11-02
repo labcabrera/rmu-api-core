@@ -7,6 +7,25 @@ import request from 'supertest';
 import { configureHttp } from '../../../src/bootstrap/http.js';
 import { KafkaProducerService } from '../../../src/modules/shared/infrastructure/messaging/kafka-producer.service.js';
 import { AUDIENCE, ISSUER, LocalJwks } from './jwks.js';
+import { FRIENDSHIP_PORT, type Friend, type FriendshipPort } from '../../../src/modules/realms/application/ports/friendship.port.js';
+
+/** Accepted friendships of the suite, in place of users (spec 069). Names are the user keys of USERS. */
+export class FakeFriendships implements FriendshipPort {
+  private readonly pairs = new Set<string>();
+
+  befriend(a: string, b: string): void {
+    this.pairs.add([a, b].sort().join('|'));
+  }
+
+  unfriend(a: string, b: string): void {
+    this.pairs.delete([a, b].sort().join('|'));
+  }
+
+  findAcceptedFriend(userA: string, userB: string): Promise<Friend | null> {
+    if (!this.pairs.has([userA, userB].sort().join('|'))) return Promise.resolve(null);
+    return Promise.resolve({ userId: userB, userName: `name-of-${userB}` });
+  }
+}
 
 export type Server = Parameters<typeof request>[0];
 
@@ -17,6 +36,7 @@ export const USERS = {
   other: { sub: 'e2e-other', groups: ['rmu-user'] },
   coreLaw: { sub: 'e2e-core-law', groups: ['rmu-user', 'rmu-core-law'] },
   noRole: { sub: 'e2e-guest', groups: [] as string[] },
+  friend: { sub: 'e2e-friend', groups: ['rmu-user'] },
 } as const;
 
 export type UserName = keyof typeof USERS;
@@ -29,6 +49,8 @@ export type E2eApp = {
   events: { topic: string; message: unknown }[];
   /** `Bearer <token>` of one of the USERS. */
   auth: (user: UserName) => string;
+  /** Accepted friendships that the users API would answer (spec 069). */
+  friendships: FakeFriendships;
   /** The Mongo connection, to insert or read documents directly. */
   connection: Connection;
   stop: () => Promise<void>;
@@ -57,14 +79,21 @@ export async function startApp(
     RMU_KAFKA_CLIENT_ID: 'rmu-api-core-e2e',
     RMU_THROTTLE_LIMIT: '0',
     RMU_CORS_ORIGINS: '',
+    RMU_IAM_TOKEN_URI: 'http://localhost:1/token',
+    RMU_IAM_CLIENT_ID: 'rmu-client-e2e',
+    RMU_IAM_CLIENT_SECRET: 'e2e',
+    RMU_API_USERS_URI: 'http://localhost:1/v1',
     ...env,
   });
 
   const events: E2eApp['events'] = [];
+  const friendships = new FakeFriendships();
   const { AppModule } = await import('../../../src/app.module.js');
   const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(KafkaProducerService)
     .useValue({ emit: (topic: string, message: unknown) => Promise.resolve(void events.push({ topic, message })) })
+    .overrideProvider(FRIENDSHIP_PORT)
+    .useValue(friendships)
     .compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>({ logger: ['error'] });
   configureHttp(app);
@@ -76,6 +105,7 @@ export async function startApp(
     server: app.getHttpServer() as Server,
     jwks,
     events,
+    friendships,
     auth: user => `Bearer ${jwks.token(USERS[user])}`,
     connection: app.get<Connection>(getConnectionToken()),
     stop: async () => {
