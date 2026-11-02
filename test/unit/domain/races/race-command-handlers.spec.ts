@@ -1,3 +1,4 @@
+import { RealmAccessService } from '../../../../src/modules/realms/application/services/realm-access.service.js';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Race } from '../../../../src/modules/races/domain/aggregates/race.js';
 import type { RaceProps } from '../../../../src/modules/races/domain/aggregates/race-props.js';
@@ -27,6 +28,7 @@ import { SyncRaceRealmCommand } from '../../../../src/modules/races/application/
 import { DeleteRacesByRealmHandler } from '../../../../src/modules/races/application/cqrs/handlers/delete-races-by-realm.handler.js';
 import { DeleteRacesByRealmCommand } from '../../../../src/modules/races/application/cqrs/commands/delete-races-by-realm.command.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
+import { InMemoryRealmRepository } from '../../support/in-memory-realm.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
 import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
 import { RealmGuardAdapter } from '../../../../src/modules/realms/infrastructure/security/realm-guard.adapter.js';
@@ -89,19 +91,21 @@ const realm = Realm.fromProps({
   entitySource: 'user',
   accessType: 'private',
   generic: false,
+  shares: [],
   createdAt: new Date('2026-01-01T00:00:00Z'),
   updatedAt: undefined,
 });
 
 describe('race command handlers', () => {
   let races: InMemoryRaceRepository;
-  let realms: InMemoryRepository<Realm>;
+  let realms: InMemoryRealmRepository;
   let events: RecordingEventPublisher;
-  const guard = new RaceGuardAdapter();
+  let guard: RaceGuardAdapter;
 
   beforeEach(() => {
     races = new InMemoryRaceRepository(race());
-    realms = new InMemoryRepository(realm);
+    realms = new InMemoryRealmRepository(realm);
+    guard = new RaceGuardAdapter(new RealmAccessService(realms, new RealmGuardAdapter()));
     events = new RecordingEventPublisher();
   });
 

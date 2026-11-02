@@ -19,7 +19,7 @@ export class UpdateRaceHandler implements ICommandHandler<UpdateRaceCommand, Rac
     const race = await this.raceRepository.findById(command.id);
     if (!race) throw new NotFoundError('Race', command.id);
 
-    this.raceGuard.checkUpdate(race, command.userId, command.roles);
+    await this.raceGuard.checkUpdate(race, command.userId, command.roles);
     this.raceGuard.checkEntitySource(command.roles, command.entitySource);
 
     race.checkVersion(command.expectedVersion);

@@ -23,7 +23,7 @@ export class AddRaceSkillBonusHandler implements ICommandHandler<AddRaceSkillBon
     const race = await this.raceRepository.findById(command.raceId);
     if (!race) throw new NotFoundError('Race', command.raceId);
 
-    this.raceGuard.checkUpdate(race, command.userId, command.roles);
+    await this.raceGuard.checkUpdate(race, command.userId, command.roles);
     race.addSkillBonus(command.skillId, command.specialization, command.bonus);
 
     // A change that leaves the state as it was neither writes nor publishes (spec 021, decision 9).

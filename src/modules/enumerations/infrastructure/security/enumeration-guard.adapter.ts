@@ -1,5 +1,18 @@
-import { BaseEntityGuard } from '../../../shared/infrastructure/security/base-entity-guard.js';
+import { Inject, Injectable } from '@nestjs/common';
 import type { EnumerationGuardPort } from '../../application/ports/enumeration-guard.port.js';
 import { Enumeration } from '../../domain/aggregates/enumeration.js';
+import { RealmChildGuardBase } from '../../../realms/infrastructure/security/realm-child-guard.js';
+import { REALM_ACCESS, type RealmAccessPort } from '../../../realms/application/ports/realm-access.port.js';
+import type { QueryCriteria } from '../../../shared/application/criteria/query-criteria.js';
 
-export class EnumerationGuardAdapter extends BaseEntityGuard<Enumeration> implements EnumerationGuardPort {}
+@Injectable()
+export class EnumerationGuardAdapter extends RealmChildGuardBase<Enumeration> implements EnumerationGuardPort {
+  constructor(@Inject(REALM_ACCESS) realmAccess: RealmAccessPort) {
+    super(realmAccess);
+  }
+
+  /** The global enumerations the user reads, and those of the realms the user reads. */
+  buildQueryPredicate(userId: string, roles: string[]): Promise<QueryCriteria> {
+    return this.realmPredicate(userId, roles, true);
+  }
+}

@@ -23,7 +23,7 @@ export class DeleteRaceSkillBonusHandler implements ICommandHandler<DeleteRaceSk
     const race = await this.raceRepository.findById(command.raceId);
     if (!race) throw new NotFoundError('Race', command.raceId);
 
-    this.raceGuard.checkUpdate(race, command.userId, command.roles);
+    await this.raceGuard.checkUpdate(race, command.userId, command.roles);
 
     race.removeSkillBonus(command.skillId, command.specialization);
 

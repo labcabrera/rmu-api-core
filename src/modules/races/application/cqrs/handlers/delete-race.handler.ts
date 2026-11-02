@@ -23,7 +23,7 @@ export class DeleteRaceHandler implements ICommandHandler<DeleteRaceCommand> {
     const race = await this.raceRepository.findById(command.id);
     if (!race) throw new NotFoundError('Race', command.id);
 
-    this.raceGuard.checkDelete(race, command.userId, command.roles);
+    await this.raceGuard.checkDelete(race, command.userId, command.roles);
 
     await this.raceRepository.deleteById(command.id);
     await this.events.publish('race', new RaceDeletedEvent(race.getProps()));

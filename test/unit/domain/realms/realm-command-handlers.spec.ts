@@ -9,7 +9,7 @@ import { UpdateRealmHandler } from '../../../../src/modules/realms/application/c
 import { UpdateRealmCommand } from '../../../../src/modules/realms/application/cqrs/commands/update-realm.command.js';
 import { DeleteRealmHandler } from '../../../../src/modules/realms/application/cqrs/handlers/delete-realm.handler.js';
 import { DeleteRealmCommand } from '../../../../src/modules/realms/application/cqrs/commands/delete-realm.command.js';
-import { InMemoryRepository } from '../../support/in-memory.repository.js';
+import { InMemoryRealmRepository } from '../../support/in-memory-realm.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
 import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
 
@@ -27,18 +27,19 @@ const realm = (overrides: Partial<RealmProps> = {}) =>
     entitySource: 'user',
     accessType: 'private',
     generic: false,
+    shares: [],
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: undefined,
     ...overrides,
   });
 
 describe('realm command handlers', () => {
-  let realms: InMemoryRepository<Realm>;
+  let realms: InMemoryRealmRepository;
   let events: RecordingEventPublisher;
   const guard = new RealmGuardAdapter();
 
   beforeEach(() => {
-    realms = new InMemoryRepository(realm());
+    realms = new InMemoryRealmRepository(realm());
     events = new RecordingEventPublisher();
   });
 
@@ -261,7 +262,7 @@ describe('realm command handlers', () => {
     });
 
     it('fails without publishing when the repository finds nothing to delete', async () => {
-      class VanishingRealmRepository extends InMemoryRepository<Realm> {
+      class VanishingRealmRepository extends InMemoryRealmRepository {
         override deleteById(): Promise<Realm | null> {
           return Promise.resolve(null);
         }

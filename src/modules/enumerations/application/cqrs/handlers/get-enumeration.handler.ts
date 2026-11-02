@@ -16,7 +16,7 @@ export class GetEnumerationHandler implements IQueryHandler<GetEnumerationQuery,
   async execute(query: GetEnumerationQuery): Promise<Enumeration> {
     const current = await this.skillRepository.findById(query.id);
     if (!current) throw new NotFoundError('Enumeration', query.id);
-    this.guard.checkRead(current, query.userId, query.roles);
+    await this.guard.checkRead(current, query.userId, query.roles);
     return current;
   }
 }

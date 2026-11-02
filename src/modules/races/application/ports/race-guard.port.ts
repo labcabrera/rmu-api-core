@@ -1,6 +1,7 @@
-import type { EntityGuard } from '../../../shared/application/ports/entity-guard.port.js';
+import type { RealmChildGuard } from '../../../shared/application/ports/realm-child-guard.port.js';
 import { Race } from '../../domain/aggregates/race.js';
 
 export const RACE_GUARD = Symbol('RaceGuardPort');
 
-export type RaceGuardPort = EntityGuard<Race>;
+/** A race follows the access of its realm (spec 069). */
+export type RaceGuardPort = RealmChildGuard<Race>;

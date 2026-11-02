@@ -3,6 +3,25 @@ import type { HydratedDocument } from 'mongoose';
 import type { MagicPresence } from '../../../domain/value-objects/realm-magic-type.vo.js';
 import type { AccessType } from '../../../../shared/domain/entities/access-type.js';
 import { ENTITY_SOURCES, type EntitySource } from '../../../../shared/domain/entities/entity-source.js';
+import { SHARE_LEVELS, type ShareLevel } from '../../../../shared/domain/entities/entity-share.js';
+
+/** One access given by the owner (spec 069). */
+@Schema({ _id: false, versionKey: false })
+export class RealmShareModel {
+  @Prop({ required: true })
+  userId: string;
+
+  @Prop({ required: true })
+  userName: string;
+
+  @Prop({ type: String, enum: SHARE_LEVELS, required: true })
+  level: ShareLevel;
+
+  @Prop({ required: true })
+  grantedAt: Date;
+}
+
+const RealmShareSchema = SchemaFactory.createForClass(RealmShareModel);
 
 export type RealmDocument = HydratedDocument<RealmModel>;
 
@@ -44,6 +63,10 @@ export class RealmModel {
   @Prop({ type: Boolean, default: false })
   generic: boolean;
 
+  /** Spec 069: missing in documents stored before, which read as no shares. */
+  @Prop({ type: [RealmShareSchema], default: [] })
+  shares: RealmShareModel[];
+
   @Prop({ required: true })
   createdAt: Date;
 
@@ -55,3 +78,5 @@ export const RealmSchema = SchemaFactory.createForClass(RealmModel);
 // owner and accessType back the access filter of every listing (an $or that uses one index per branch).
 RealmSchema.index({ owner: 1 });
 RealmSchema.index({ accessType: 1 });
+// The realms shared with a user: listings and the revocation of spec 069.
+RealmSchema.index({ 'shares.userId': 1 });
