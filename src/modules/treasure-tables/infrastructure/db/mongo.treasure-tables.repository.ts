@@ -41,6 +41,7 @@ export class MongoTreasureTablesRepository implements TreasureTablesRepository {
     >;
     const pricing = doc.standardPricing ?? {};
     const standardPricing: StandardPricing = {
+      ...pricing,
       pricePerDay: pricing.pricePerDay ?? [],
       weapon: pricing.weapon ?? [],
       ranged: pricing.ranged ?? [],
@@ -82,6 +83,7 @@ export class MongoTreasureTablesRepository implements TreasureTablesRepository {
         semiPrecious: doc.gems?.semiPrecious ?? { columns: [] },
       },
       standardPricing,
+      extras: { armorTables: doc.armorTables ?? null, baseOptions: doc.baseOptions ?? null },
       version: doc.version ?? 0,
     };
   }

@@ -72,6 +72,12 @@ export class TreasureTablesModel {
   @Prop({ type: Object })
   standardPricing?: Stored<'standardPricing'>;
 
+  @Prop({ type: Object })
+  armorTables?: Record<string, unknown>;
+
+  @Prop({ type: Object })
+  baseOptions?: Record<string, unknown>;
+
   @Prop({ type: Number, default: 0 })
   version: number;
 }

@@ -207,6 +207,8 @@ export interface SpellPriceRow {
 
 /** Chapter 6: the standard pricing tables. */
 export interface StandardPricing {
+  /** Extra chapter 6 tables of the import (rune paper, sacred, single use…), passed through as stored. */
+  [extra: string]: unknown;
   pricePerDay: PricePerDayRow[];
   /** 6-5 */
   weapon: StandardBonusRow[];
@@ -234,6 +236,8 @@ export interface StandardPricing {
 /** The document of the treasure-tables collection, as GET v1/treasure-tables returns it (TreasureTablesDto). */
 export interface TreasureTables {
   id: typeof TREASURE_TABLES_ID;
+  /** Extra parts of the import beyond the plan (armorTables, baseOptions), passed through as stored. */
+  extras?: Record<string, unknown>;
   /** 7-1a */
   codes: TreasureCodes;
   /** 7-1b */

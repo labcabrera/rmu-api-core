@@ -111,7 +111,23 @@ describe('GetTreasureTablesHandler', () => {
 describe('MongoTreasureTablesRepository.mapToTables', () => {
   it('maps a complete stored document as it is', () => {
     const { id: _id, ...rest } = TABLES;
-    expect(MongoTreasureTablesRepository.mapToTables({ _id, ...rest })).toEqual(TABLES);
+    expect(MongoTreasureTablesRepository.mapToTables({ _id, ...rest })).toEqual({
+      ...TABLES,
+      extras: { armorTables: null, baseOptions: null },
+    });
+  });
+
+  it('passes the extra parts of the import through', () => {
+    const { id: _id, ...rest } = TABLES;
+    const armorTables = { coverage: [{ min: 1, max: 100 }] };
+    const mapped = MongoTreasureTablesRepository.mapToTables({
+      _id,
+      ...rest,
+      armorTables,
+      standardPricing: { ...TABLES.standardPricing, runePaper: [{ days: 1 }] },
+    });
+    expect(mapped.extras?.armorTables).toEqual(armorTables);
+    expect(mapped.standardPricing.runePaper).toEqual([{ days: 1 }]);
   });
 
   it('fills the missing parts, sorts the range rows and defaults the version to 0', () => {
