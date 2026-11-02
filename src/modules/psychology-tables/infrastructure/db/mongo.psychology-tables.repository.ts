@@ -40,6 +40,10 @@ export class MongoPsychologyTablesRepository implements PsychologyTablesReposito
       rallyGroupModifier: { ...doc.rallyGroupModifier },
       resistance: (doc.resistance || []).map(row => ({ ...band(row), result: row.result, severity: row.severity })),
       resistanceRoll: { ...doc.resistanceRoll, stats: { ...doc.resistanceRoll.stats } },
+      fallenThresholds: (doc.fallenThresholds || [])
+        .map(row => ({ minShare: row.minShare, exclusive: row.exclusive === true, frightLevel: row.frightLevel }))
+        .sort((a, b) => a.minShare - b.minShare || Number(a.exclusive) - Number(b.exclusive)),
+      revulsion: doc.revulsion ? { corpseLevel: doc.revulsion.corpseLevel } : null,
     };
   }
 }

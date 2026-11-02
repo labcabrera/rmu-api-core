@@ -87,10 +87,47 @@ describe('Catalogs and calculations (e2e)', () => {
       };
       await e2e.connection.collection('healing-tables').insertOne({ _id: 'core-law', ...tables } as never);
 
+      // A document imported before spec 068 gets the new fields empty.
       const res = await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
-      expect(res.body).toEqual(tables);
+      expect(res.body).toEqual({
+        ...tables,
+        treatmentDurations: [],
+        cauterization: [],
+        cauterizationUnusualRoll: null,
+        surgeryRequired: [],
+        treatmentLimits: null,
+        tourniquet: null,
+        stabilize: null,
+        salveModifier: null,
+        combatItemAp: null,
+      });
       await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('admin')).expect(200);
       await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('owner')).expect(403);
+
+      // Made-up values for the spec 068 fields.
+      const combat = {
+        treatmentDurations: [
+          { procedure: 'pressure', rounds: 3, perBleeding: true },
+          { procedure: 'surgery', rounds: null, perBleeding: false },
+        ],
+        cauterization: [
+          { min: null, max: 5, result: 'failure', bleeding: 'halved', heatSeverity: 'E', hitsDice: 7 },
+          { min: 6, max: null, result: 'success', bleeding: 'stopped', heatSeverity: null, hitsDice: 0 },
+        ],
+        cauterizationUnusualRoll: 33,
+        surgeryRequired: [{ injuryType: 'skin-tissue', severity: 'light' }],
+        treatmentLimits: {
+          splint: { leg: { pace: 'run' }, arm: { limbUnusable: true } },
+          cast: { leg: { pace: 'walk', cane: 'jog', crutches: 'run' }, maneuverPenaltyFactor: 0.25 },
+        },
+        tourniquet: { loosenEveryRounds: 7, graceRounds: 3 },
+        stabilize: { difficulty: 'h', successRounds: 2, absoluteRounds: 4 },
+        salveModifier: { min: -7, max: 9 },
+        combatItemAp: 3,
+      };
+      await e2e.connection.collection('healing-tables').replaceOne({ _id: 'core-law' } as never, { ...tables, ...combat });
+      const full = await request(e2e.server).get('/v1/healing-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(full.body).toEqual({ ...tables, ...combat });
     });
   });
 
@@ -308,10 +345,23 @@ describe('Catalogs and calculations (e2e)', () => {
       };
       await e2e.connection.collection('psychology-tables').insertOne({ _id: 'core-law', ...tables } as never);
 
+      // A document imported before spec 068 gets the new fields empty.
       const res = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
-      expect(res.body).toEqual(tables);
+      expect(res.body).toEqual({ ...tables, fallenThresholds: [], revulsion: null });
       await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('admin')).expect(200);
       await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('owner')).expect(403);
+
+      // Made-up values for the spec 068 fields.
+      const fear = {
+        fallenThresholds: [
+          { minShare: 0.2, exclusive: false, frightLevel: 2 },
+          { minShare: 0.6, exclusive: true, frightLevel: 8 },
+        ],
+        revulsion: { corpseLevel: 4 },
+      };
+      await e2e.connection.collection('psychology-tables').replaceOne({ _id: 'core-law' } as never, { ...tables, ...fear });
+      const full = await request(e2e.server).get('/v1/psychology-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      expect(full.body).toEqual({ ...tables, ...fear });
     });
   });
 

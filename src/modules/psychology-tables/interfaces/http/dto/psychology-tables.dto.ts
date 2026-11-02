@@ -145,6 +145,22 @@ export class ResistanceRollRulesDto {
   fearIgnoresInjuryPenalties: boolean;
 }
 
+export class FallenThresholdDto {
+  @ApiProperty({ description: 'Share of the allies down or fled, from 0 to 1', example: 0.5 })
+  minShare: number;
+
+  @ApiProperty({ description: 'The share must be greater than minShare instead of reaching it', example: false })
+  exclusive: boolean;
+
+  @ApiProperty({ description: 'Fright level of the suggested fear check', example: 5 })
+  frightLevel: number;
+}
+
+export class RevulsionRulesDto {
+  @ApiProperty({ description: 'Level each bloody corpse in view counts as', example: 10 })
+  corpseLevel: number;
+}
+
 export class PsychologyTablesDto {
   @ApiProperty({ description: 'Fright levels by situation (Table 14-3a)', type: [FrightLevelDto] })
   frightLevels: FrightLevelDto[];
@@ -175,6 +191,15 @@ export class PsychologyTablesDto {
 
   @ApiProperty({ description: 'How the resistance roll total is built (Table 5-6)', type: ResistanceRollRulesDto })
   resistanceRoll: ResistanceRollRulesDto;
+
+  @ApiProperty({
+    description: 'Fear checks suggested by the share of fallen allies (Table 14-3a), from the lowest share',
+    type: [FallenThresholdDto],
+  })
+  fallenThresholds: FallenThresholdDto[];
+
+  @ApiProperty({ description: 'Fright level of the Revulsion flaw RR', type: RevulsionRulesDto, nullable: true })
+  revulsion: RevulsionRulesDto | null;
 
   static fromEntity(entity: PsychologyTables): PsychologyTablesDto {
     return Object.assign(new PsychologyTablesDto(), entity);

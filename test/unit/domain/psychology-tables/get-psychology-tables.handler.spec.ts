@@ -26,6 +26,12 @@ const TABLES: PsychologyTables = {
     stats: { physical: 'a', fear: 'b', channeling: 'c', essence: 'd', mentalism: 'e' },
     fearIgnoresInjuryPenalties: true,
   },
+  fallenThresholds: [
+    { minShare: 0.1, exclusive: false, frightLevel: 1 },
+    { minShare: 0.1, exclusive: true, frightLevel: 2 },
+    { minShare: 0.4, exclusive: true, frightLevel: 7 },
+  ],
+  revulsion: { corpseLevel: 3 },
 };
 
 const repository = (tables: PsychologyTables | null): PsychologyTablesRepository => ({ findById: () => Promise.resolve(tables) });
@@ -65,6 +71,26 @@ describe('GetPsychologyTablesHandler', () => {
     expect(mapped.rally).toEqual([{ min: null, max: null, result: 'failure', fearSeverityChange: 0 }]);
     expect(mapped.resistance).toEqual([{ min: 1, max: null, result: 'mild-failure', severity: 'mild' }]);
     expect(mapped.resistanceRoll).toEqual(TABLES.resistanceRoll);
+  });
+
+  it('maps a document imported before spec 068 without fallen thresholds nor revulsion', () => {
+    const doc = { ...TABLES, _id: 'core-law', fallenThresholds: undefined, revulsion: undefined } as PsychologyTablesModel;
+    const mapped = MongoPsychologyTablesRepository.mapToTables(doc);
+    expect(mapped.fallenThresholds).toEqual([]);
+    expect(mapped.revulsion).toBeNull();
+  });
+
+  it('sorts the fallen thresholds by share, the inclusive one first, and defaults exclusive to false', () => {
+    const doc = {
+      ...TABLES,
+      _id: 'core-law',
+      fallenThresholds: [
+        { minShare: 0.4, exclusive: true, frightLevel: 7 },
+        { minShare: 0.1, exclusive: true, frightLevel: 2 },
+        { minShare: 0.1, frightLevel: 1 },
+      ],
+    } as unknown as PsychologyTablesModel;
+    expect(MongoPsychologyTablesRepository.mapToTables(doc).fallenThresholds).toEqual(TABLES.fallenThresholds);
   });
 
   it('maps a document with empty lists to empty arrays', () => {
