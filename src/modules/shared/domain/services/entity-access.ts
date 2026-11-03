@@ -21,6 +21,11 @@ export type AccessSubject = {
   accessType?: string | null;
   entitySource?: EntitySource | null;
   shares?: readonly EntityShare[] | null;
+  /**
+   * Members of strategic games on the entity (a realm) whose owner reads it (spec 071, decision 2): they read it. The
+   * realm keeps the list up to date.
+   */
+  gameReaderIds?: readonly string[] | null;
 };
 
 export function atLeast(level: AccessLevel, required: AccessLevel): boolean {
@@ -34,9 +39,17 @@ export function atLeast(level: AccessLevel, required: AccessLevel): boolean {
  *    owned by the user (who imported it, spec 063);
  * 3. the owner manages a user entity;
  * 4. a share gives its level;
- * 5. a public entity is read by everyone.
+ * 5. a public entity is read by everyone;
+ * 6. otherwise, a member of a strategic game on it reads it (spec 071).
  */
 export function resolveAccess(entity: AccessSubject, userId: string, roles: readonly string[]): AccessLevel {
+  const level = resolveOwnAccess(entity, userId, roles);
+  if (level !== 'none') return level;
+  return entity.gameReaderIds?.includes(userId) ? 'read' : 'none';
+}
+
+/** The access without the strategic games (rules 1 to 5): what a game owner needs to pass the realm on (spec 071). */
+export function resolveOwnAccess(entity: AccessSubject, userId: string, roles: readonly string[]): AccessLevel {
   if (roles.includes(RMU_ADMIN)) return 'manage';
   const share = entity.shares?.find(s => s.userId === userId);
   const isPublic = entity.accessType === 'public';

@@ -22,6 +22,9 @@ import { UnshareRealmCommand } from '../../application/cqrs/commands/unshare-rea
 import { GetRealmSharesQuery } from '../../application/cqrs/queries/get-realm-shares.query.js';
 import { EntityShareDto } from '../../../shared/interfaces/http/dto/entity-share.dto.js';
 import type { EntityShare } from '../../../shared/domain/entities/entity-share.js';
+import { GetRealmAccessQuery } from '../../application/cqrs/queries/get-realm-access.query.js';
+import type { AccessLevel } from '../../../shared/domain/services/entity-access.js';
+import { RealmAccessDto } from './dto/realm-access.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')
@@ -98,6 +101,18 @@ export class RealmController {
       new GetRealmSharesQuery(id, user.id, user.roles),
     );
     return shares.map(share => EntityShareDto.fromShare(share));
+  }
+
+  @Get(':id/access/:userId')
+  @ApiOperation({
+    operationId: 'findRealmAccess',
+    summary: 'Access of a user to the realm, for other APIs with the service token (spec 071)',
+  })
+  @ApiOkResponse({ type: RealmAccessDto, description: 'Success' })
+  @ApiErrors({ 403: 'The caller is not an admin (the service account)', 404: 'Realm not found' })
+  async findAccess(@Param('id') id: string, @Param('userId') userId: string, @CurrentUser() user: AuthenticatedUser) {
+    const level = await this.queryBus.execute<GetRealmAccessQuery, AccessLevel>(new GetRealmAccessQuery(id, userId, user.id, user.roles));
+    return { realmId: id, userId, level } satisfies RealmAccessDto;
   }
 
   @Put(':id/shares/:userId')
