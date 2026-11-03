@@ -25,6 +25,9 @@ import type { EntityShare } from '../../../shared/domain/entities/entity-share.j
 import { GetRealmAccessQuery } from '../../application/cqrs/queries/get-realm-access.query.js';
 import type { AccessLevel } from '../../../shared/domain/services/entity-access.js';
 import { RealmAccessDto } from './dto/realm-access.dto.js';
+import { RealmAccessMapQueryDto, RealmLevelDto } from './dto/realm-access-map.dto.js';
+import { GetRealmAccessMapQuery } from '../../application/cqrs/queries/get-realm-access-map.query.js';
+import type { RealmLevel } from '../../application/cqrs/handlers/get-realm-access-map.handler.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/realms')
@@ -34,6 +37,18 @@ export class RealmController {
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
+
+  // Before `:id`, which would take `access` for a realm id.
+  @Get('access')
+  @ApiOperation({
+    operationId: 'findRealmAccessMap',
+    summary: 'Every realm a user reads, with the level, for other APIs with the service token (spec 073)',
+  })
+  @ApiOkResponse({ type: [RealmLevelDto], description: 'Success' })
+  @ApiErrors({ 400: 'Missing userId', 403: 'The caller is not an admin (the service account)' })
+  async findAccessMap(@Query() dto: RealmAccessMapQueryDto, @CurrentUser() user: AuthenticatedUser) {
+    return this.queryBus.execute<GetRealmAccessMapQuery, RealmLevel[]>(new GetRealmAccessMapQuery(dto.userId, user.id, user.roles));
+  }
 
   @Get(':id')
   @ApiOperation({ operationId: 'findRealmById', summary: 'Find realm by id' })
