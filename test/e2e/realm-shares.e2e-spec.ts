@@ -121,6 +121,25 @@ describe('Realm shares (e2e)', () => {
     expect(denied.body).toMatchObject({ code: 'system-entity-admin-only' });
   });
 
+  it('lets an admin share a realm of another user with a friend of the admin', async () => {
+    const realm = await createRealm('owner');
+    // coreLaw is no friend of the owner: an admin shares it as their own friend (spec 073)
+    await share('owner', realm.id, 'coreLaw', 'read').expect(400);
+    e2e.friendships.befriend(id('admin'), id('coreLaw'));
+    try {
+      const shared = await share('admin', realm.id, 'coreLaw', 'write').expect(200);
+      expect((shared.body as Realm).shares).toContainEqual(expect.objectContaining({ userId: id('coreLaw'), level: 'write' }));
+      await request(e2e.server).get(`/v1/realms/${realm.id}`).set(as('coreLaw')).expect(200);
+      // Not a friend of the admin either
+      await share('admin', realm.id, 'noRole', 'read').expect(400);
+      // The admin does not share it with themselves
+      const self = await share('admin', realm.id, 'admin', 'read').expect(400);
+      expect(self.body).toMatchObject({ code: 'share-self' });
+    } finally {
+      e2e.friendships.unfriend(id('admin'), id('coreLaw'));
+    }
+  });
+
   it('rejects sharing with a user who is not a friend, with the owner, or with a stale version', async () => {
     const realm = await createRealm('owner');
     const notFriend = await share('owner', realm.id, 'coreLaw', 'read').expect(400);
