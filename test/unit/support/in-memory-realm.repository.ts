@@ -41,4 +41,8 @@ export class InMemoryRealmRepository extends InMemoryRepository<Realm> implement
       [...this.items.values()].filter(realm => realm.owner === ownerId && realm.shares.some(s => s.userId === userId)),
     );
   }
+
+  findByGameId(gameId: string): Promise<Realm[]> {
+    return Promise.resolve([...this.items.values()].filter(realm => realm.games.some(game => game.gameId === gameId)));
+  }
 }

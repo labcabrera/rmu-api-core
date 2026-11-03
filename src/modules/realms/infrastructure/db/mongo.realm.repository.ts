@@ -31,6 +31,11 @@ export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocume
     return docs.map(doc => this.toEntity(doc));
   }
 
+  async findByGameId(gameId: string): Promise<Realm[]> {
+    const docs = await this.model.find({ 'games.gameId': gameId });
+    return docs.map(doc => this.toEntity(doc));
+  }
+
   protected mapToEntity(doc: RealmDocument): Realm {
     return Realm.fromProps({
       id: doc._id,
@@ -44,6 +49,8 @@ export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocume
       accessType: doc.accessType,
       generic: doc.generic ?? false,
       shares: (doc.shares ?? []).map(s => ({ userId: s.userId, userName: s.userName, level: s.level, grantedAt: s.grantedAt })),
+      games: (doc.games ?? []).map(g => ({ gameId: g.gameId, ownerId: g.ownerId, memberIds: [...(g.memberIds ?? [])] })),
+      gameReaderIds: [...(doc.gameReaderIds ?? [])],
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

@@ -23,6 +23,9 @@ import { ShareRealmHandler } from './application/cqrs/handlers/share-realm.handl
 import { UnshareRealmHandler } from './application/cqrs/handlers/unshare-realm.handler.js';
 import { RevokeSharesBetweenUsersHandler } from './application/cqrs/handlers/revoke-shares-between-users.handler.js';
 import { GetRealmSharesHandler } from './application/cqrs/handlers/get-realm-shares.handler.js';
+import { GetRealmAccessHandler } from './application/cqrs/handlers/get-realm-access.handler.js';
+import { SyncRealmGameHandler } from './application/cqrs/handlers/sync-realm-game.handler.js';
+import { KafkaStrategicGameEventConsumer } from './interfaces/messaging/kafka.strategic-game-event-consumer.js';
 import { FRIENDSHIP_PORT } from './application/ports/friendship.port.js';
 import { ApiFriendshipAdapter } from './infrastructure/api-clients/api.friendship.adapter.js';
 import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.friendship-event-consumer.js';
@@ -35,7 +38,7 @@ import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.frien
     AuthModule,
     SharedModule,
   ],
-  controllers: [RealmController, KafkaFriendshipEventConsumer],
+  controllers: [RealmController, KafkaFriendshipEventConsumer, KafkaStrategicGameEventConsumer],
   providers: [
     GetRealmHandler,
     GetRealmsHandler,
@@ -46,6 +49,8 @@ import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.frien
     UnshareRealmHandler,
     RevokeSharesBetweenUsersHandler,
     GetRealmSharesHandler,
+    GetRealmAccessHandler,
+    SyncRealmGameHandler,
     {
       provide: FRIENDSHIP_PORT,
       useClass: ApiFriendshipAdapter,

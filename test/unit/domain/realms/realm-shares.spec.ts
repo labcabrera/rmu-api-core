@@ -73,13 +73,14 @@ describe('Realm shares (spec 069)', () => {
       expect(code(() => guard.checkUpdate(r, OTHER.id, [...OTHER.roles]))).toBe('forbidden');
     });
 
-    it('lists public, owned and shared realms', () => {
+    it('lists public, owned and shared realms, and those of the games of the user (spec 071)', () => {
       expect(guard.buildQueryPredicate(FRIEND.id, [...FRIEND.roles])).toEqual({
         type: 'anyOf',
         criteria: [
           { type: 'eq', field: 'accessType', value: 'public' },
           { type: 'eq', field: 'owner', value: FRIEND.id },
           { type: 'eq', field: 'shares.userId', value: FRIEND.id },
+          { type: 'eq', field: 'gameReaderIds', value: FRIEND.id },
         ],
       });
     });

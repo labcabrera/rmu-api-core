@@ -13,4 +13,7 @@ export interface RealmRepository extends BaseRepository<Realm> {
 
   /** The realms of `ownerId` shared with `userId` (spec 069, revocation when a friendship ends). */
   findOwnedSharedWith(ownerId: string, userId: string): Promise<Realm[]>;
+
+  /** The realms that record a strategic game (spec 071): one, or more while the game moves to another realm. */
+  findByGameId(gameId: string): Promise<Realm[]>;
 }
