@@ -24,6 +24,7 @@ import { UnshareRealmHandler } from './application/cqrs/handlers/unshare-realm.h
 import { RevokeSharesBetweenUsersHandler } from './application/cqrs/handlers/revoke-shares-between-users.handler.js';
 import { GetRealmSharesHandler } from './application/cqrs/handlers/get-realm-shares.handler.js';
 import { GetRealmAccessHandler } from './application/cqrs/handlers/get-realm-access.handler.js';
+import { GetRealmAccessMapHandler } from './application/cqrs/handlers/get-realm-access-map.handler.js';
 import { SyncRealmGameHandler } from './application/cqrs/handlers/sync-realm-game.handler.js';
 import { KafkaStrategicGameEventConsumer } from './interfaces/messaging/kafka.strategic-game-event-consumer.js';
 import { FRIENDSHIP_PORT } from './application/ports/friendship.port.js';
@@ -50,6 +51,7 @@ import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.frien
     RevokeSharesBetweenUsersHandler,
     GetRealmSharesHandler,
     GetRealmAccessHandler,
+    GetRealmAccessMapHandler,
     SyncRealmGameHandler,
     {
       provide: FRIENDSHIP_PORT,

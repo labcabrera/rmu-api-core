@@ -56,6 +56,28 @@ describe('Realm games (e2e)', () => {
       .set(as('admin'))
       .expect(404);
 
+    // Spec 073: every realm the user reads, in one call
+    const map = await request(e2e.server)
+      .get(`/v1/realms/access?userId=${id('friend')}`)
+      .set(as('admin'))
+      .expect(200);
+    expect(map.body).toContainEqual({ realmId: realm.id, level: 'read' });
+    const strangerMap = await request(e2e.server)
+      .get(`/v1/realms/access?userId=${id('other')}`)
+      .set(as('admin'))
+      .expect(200);
+    expect((strangerMap.body as { realmId: string }[]).map(entry => entry.realmId)).not.toContain(realm.id);
+    const ownerMap = await request(e2e.server)
+      .get(`/v1/realms/access?userId=${id('owner')}`)
+      .set(as('admin'))
+      .expect(200);
+    expect(ownerMap.body).toContainEqual({ realmId: realm.id, level: 'manage' });
+    await request(e2e.server)
+      .get(`/v1/realms/access?userId=${id('friend')}`)
+      .set(as('owner'))
+      .expect(403);
+    await request(e2e.server).get('/v1/realms/access').set(as('admin')).expect(400);
+
     // The member leaves, then the game is deleted.
     await consumer.handleGameUpdated(game(realm.id, []), context('internal.rmu-strategic.game.updated.v1'));
     await request(e2e.server).get(`/v1/realms/${realm.id}`).set(as('friend')).expect(403);
