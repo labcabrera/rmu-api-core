@@ -6,6 +6,8 @@ import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.g
 import { Race } from '../../domain/aggregates/race.js';
 import { RaceDto, RacePageDto } from './dto/race.dto.js';
 import { CreateRaceDto } from './dto/create-race.dto.js';
+import { CopyRaceDto } from './dto/copy-race.dto.js';
+import { CopyRaceCommand } from '../../application/cqrs/commands/copy-race.command.js';
 import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command.js';
 import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query.js';
 import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query.js';
@@ -82,6 +84,20 @@ export class RaceController {
     const roles: string[] = user.roles;
     const command = CreateRaceDto.toCommand(createRaceDto, userId, roles);
     const entity = await this.commandBus.execute<CreateRaceCommand, Race>(command);
+    return this.toDto(entity, user);
+  }
+
+  @Post(':id/copy')
+  @ApiOperation({ operationId: 'copyRace', summary: 'Copy a race into a realm the user can change (spec 074)' })
+  @ApiOkResponse({ type: RaceDto, description: 'The new race' })
+  @ApiErrors({
+    400: 'Bad request, invalid data or unknown realm',
+    403: `${FORBIDDEN_CREATE}, or no permission to change the realm`,
+    404: 'Race not found',
+  })
+  async copy(@Param('id') id: string, @Body() dto: CopyRaceDto, @CurrentUser() user: AuthenticatedUser) {
+    const command = CopyRaceDto.toCommand(id, dto, user.id, user.roles);
+    const entity = await this.commandBus.execute<CopyRaceCommand, Race>(command);
     return this.toDto(entity, user);
   }
 

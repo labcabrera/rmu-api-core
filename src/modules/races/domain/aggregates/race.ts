@@ -125,6 +125,38 @@ export class Race extends BaseAggregateRoot<RaceProps> {
     return race;
   }
 
+  /**
+   * A new race with all the data of this one (workspace spec 074): new ids for it and its traits, the given name, realm,
+   * owner and access type, and always a user race, so who copies a rulebook race can change the copy.
+   */
+  copyTo(target: { name: string; realmId: string; owner: string; accessType: RaceProps['accessType'] }): Race {
+    const props = this.getProps();
+    return Race.create({
+      archetype: props.archetype,
+      sizeId: props.sizeId,
+      stats: props.stats,
+      resistances: props.resistances,
+      averageHeight: props.averageHeight,
+      averageWeight: props.averageWeight,
+      strideBonus: props.strideBonus,
+      enduranceBonus: props.enduranceBonus,
+      recoveryMultiplier: props.recoveryMultiplier,
+      baseHits: props.baseHits,
+      baseDevPoints: props.baseDevPoints,
+      baseAt: props.baseAt,
+      defaultLanguage: props.defaultLanguage,
+      description: props.description,
+      imageUrl: props.imageUrl,
+      ...target,
+      traits: props.traits.map(
+        trait => new RaceTrait(randomUUID(), trait.traitId, trait.specialization, trait.isTalent, trait.tier, trait.description),
+      ),
+      skillBonuses: props.skillBonuses.map(bonus => new RaceSkillBonus(bonus.skillId, bonus.specialization, bonus.bonus)),
+      talents: [...props.talents],
+      entitySource: 'user',
+    });
+  }
+
   // Sub-entity changes replace the arrays instead of mutating them, so earlier event snapshots keep their state.
   addTrait(
     traitId: string,
