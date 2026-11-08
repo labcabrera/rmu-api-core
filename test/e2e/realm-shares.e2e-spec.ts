@@ -4,12 +4,15 @@ import {
   type FriendshipEventData,
   KafkaFriendshipEventConsumer,
 } from '../../src/modules/realms/interfaces/messaging/kafka.friendship-event-consumer.js';
+import { KafkaUserEventConsumer } from '../../src/modules/realms/interfaces/messaging/kafka.user-event-consumer.js';
 import { type E2eApp, ids, startApp, takeTopics, USERS, type UserName } from './support/app.js';
 import { enumerationBody, raceBody, realmBody } from './support/fixtures.js';
 
 type Realm = { id: string; version: number; access: string; shares?: { userId: string; userName: string; level: string }[] };
 
 // Spec 069: the owner shares a realm with friends; races and enumerations of the realm follow its access.
+type RenamedRealm = { version: number; shares: { userId: string; userName: string }[] };
+
 describe('Realm shares (e2e)', () => {
   let e2e: E2eApp;
   const id = (user: UserName) => USERS[user].sub;
@@ -188,6 +191,24 @@ describe('Realm shares (e2e)', () => {
       .delete(`/v1/realms/${realm.id}/shares/${id('friend')}`)
       .set(as('owner'))
       .expect(200);
+  });
+
+  it('follows the new name of a user in the shares, once', async () => {
+    const realm = await createRealm('owner');
+    await share('owner', realm.id, 'friend', 'read').expect(200);
+    const consumer = e2e.app.get(KafkaUserEventConsumer);
+    const context = { getTopic: () => 'internal.rmu-users.user.updated.v1' } as unknown as KafkaContext;
+    const read = async () => (await request(e2e.server).get(`/v1/realms/${realm.id}`).set(as('owner')).expect(200)).body as RenamedRealm;
+    const before = await read();
+
+    await consumer.handleUserUpdated({ data: { id: id('friend'), name: 'Nuevo nombre' } }, context);
+    const after = await read();
+    expect(after.shares).toEqual([expect.objectContaining({ userId: id('friend'), userName: 'Nuevo nombre' })]);
+    expect(after.version).toBe(before.version + 1);
+
+    // Redelivered, or another change of the user: nothing to write.
+    await consumer.handleUserUpdated({ data: { id: id('friend'), name: 'Nuevo nombre' } }, context);
+    expect((await read()).version).toBe(after.version);
   });
 
   it('revokes the shares between two users when their friendship is blocked or deleted', async () => {

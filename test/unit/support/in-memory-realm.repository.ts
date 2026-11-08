@@ -42,6 +42,13 @@ export class InMemoryRealmRepository extends InMemoryRepository<Realm> implement
     );
   }
 
+  renameShareUser(userId: string, name: string): Promise<void> {
+    for (const realm of this.items.values()) {
+      realm.getProps().shares = realm.shares.map(share => (share.userId === userId ? { ...share, userName: name } : share));
+    }
+    return Promise.resolve();
+  }
+
   findByGameId(gameId: string): Promise<Realm[]> {
     return Promise.resolve([...this.items.values()].filter(realm => realm.games.some(game => game.gameId === gameId)));
   }

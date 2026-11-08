@@ -31,6 +31,14 @@ export class MongoRealmRepository extends MongoBaseRepository<Realm, RealmDocume
     return docs.map(doc => this.toEntity(doc));
   }
 
+  async renameShareUser(userId: string, name: string): Promise<void> {
+    await this.model.updateMany(
+      { shares: { $elemMatch: { userId, userName: { $ne: name } } } },
+      { $set: { 'shares.$[share].userName': name }, $inc: { version: 1 } },
+      { arrayFilters: [{ 'share.userId': userId }] },
+    );
+  }
+
   async findByGameId(gameId: string): Promise<Realm[]> {
     const docs = await this.model.find({ 'games.gameId': gameId });
     return docs.map(doc => this.toEntity(doc));

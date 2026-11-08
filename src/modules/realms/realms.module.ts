@@ -30,6 +30,8 @@ import { KafkaStrategicGameEventConsumer } from './interfaces/messaging/kafka.st
 import { FRIENDSHIP_PORT } from './application/ports/friendship.port.js';
 import { ApiFriendshipAdapter } from './infrastructure/api-clients/api.friendship.adapter.js';
 import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.friendship-event-consumer.js';
+import { KafkaUserEventConsumer } from './interfaces/messaging/kafka.user-event-consumer.js';
+import { RenameShareUserHandler } from './application/cqrs/handlers/rename-share-user.handler.js';
 
 @Module({
   imports: [
@@ -39,7 +41,7 @@ import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.frien
     AuthModule,
     SharedModule,
   ],
-  controllers: [RealmController, KafkaFriendshipEventConsumer, KafkaStrategicGameEventConsumer],
+  controllers: [RealmController, KafkaFriendshipEventConsumer, KafkaStrategicGameEventConsumer, KafkaUserEventConsumer],
   providers: [
     GetRealmHandler,
     GetRealmsHandler,
@@ -49,6 +51,7 @@ import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.frien
     ShareRealmHandler,
     UnshareRealmHandler,
     RevokeSharesBetweenUsersHandler,
+    RenameShareUserHandler,
     GetRealmSharesHandler,
     GetRealmAccessHandler,
     GetRealmAccessMapHandler,
