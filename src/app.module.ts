@@ -20,8 +20,6 @@ import { EffectTypesModule } from './modules/effect-types/effect-types.module.js
 import { ManeuverModifiersModule } from './modules/maneuver-modifiers/maneuver-modifiers.module.js';
 import { HealingTablesModule } from './modules/healing-tables/healing-tables.module.js';
 import { PoisonTablesModule } from './modules/poison-tables/poison-tables.module.js';
-import { AlchemyTablesModule } from './modules/alchemy-tables/alchemy-tables.module.js';
-import { MaterialsModule } from './modules/materials/materials.module.js';
 import { PsychologyTablesModule } from './modules/psychology-tables/psychology-tables.module.js';
 import { FightingStylesModule } from './modules/fighting-styles/fighting-styles.module.js';
 import { SkillDifficultiesModule } from './modules/skill-difficulties/skill-difficulties.module.js';
@@ -58,8 +56,6 @@ import { SkillDifficultiesModule } from './modules/skill-difficulties/skill-diff
     ManeuverModifiersModule,
     HealingTablesModule,
     PoisonTablesModule,
-    AlchemyTablesModule,
-    MaterialsModule,
     PsychologyTablesModule,
     FightingStylesModule,
     SkillDifficultiesModule,
