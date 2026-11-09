@@ -35,7 +35,6 @@ export const USERS = {
   owner: { sub: 'e2e-owner', groups: ['rmu-user'] },
   other: { sub: 'e2e-other', groups: ['rmu-user'] },
   coreLaw: { sub: 'e2e-core-law', groups: ['rmu-user', 'rmu-core-law'] },
-  treasureLaw: { sub: 'e2e-treasure-law', groups: ['rmu-user', 'rmu-treasure-law'] },
   noRole: { sub: 'e2e-guest', groups: [] as string[] },
   friend: { sub: 'e2e-friend', groups: ['rmu-user'] },
 } as const;
