@@ -21,10 +21,10 @@ export class TreasureTablesController {
     summary: 'Get the treasure tables',
     description:
       'The random treasure tables (codes, wealth, art, gear quality, magic items, random weapons, armor and spells), ' +
-      'the random gem tables and the standard magic item pricing. Requires Core Law access.',
+      'the random gem tables and the standard magic item pricing. Requires Treasure Law access.',
   })
   @ApiOkResponse({ type: TreasureTablesDto, description: 'Success' })
-  @ApiErrors({ 403: 'The user has no Core Law access', 404: 'The treasure tables have not been imported (treasure-tables-not-found)' })
+  @ApiErrors({ 403: 'The user has no Treasure Law access', 404: 'The treasure tables have not been imported (treasure-tables-not-found)' })
   async getTreasureTables(@CurrentUser() user: AuthenticatedUser): Promise<TreasureTablesDto> {
     const query = new GetTreasureTablesQuery(user.id, user.roles);
     const tables = await this.queryBus.execute<GetTreasureTablesQuery, TreasureTables>(query);

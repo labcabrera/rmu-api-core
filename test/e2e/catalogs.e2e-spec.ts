@@ -222,10 +222,11 @@ describe('Catalogs and calculations (e2e)', () => {
   });
 
   describe('treasure tables (spec 067)', () => {
-    it('requires Core Law access, answers 404 until imported and returns the tables once they are', async () => {
+    it('requires Treasure Law access, answers 404 until imported and returns the tables once they are', async () => {
       await request(e2e.server).get('/v1/treasure-tables').expect(401);
       await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('owner')).expect(403);
-      const missing = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(404);
+      await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(403);
+      const missing = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('treasureLaw')).expect(404);
       expect(missing.body).toMatchObject({ statusCode: 404, code: 'treasure-tables-not-found', path: '/v1/treasure-tables' });
 
       // A small invented document with the shape of the import, not the rulebook tables.
@@ -240,7 +241,7 @@ describe('Catalogs and calculations (e2e)', () => {
         .collection('treasure-tables')
         .insertOne({ _id: 'treasure', codes, wealthRolls, magicTables: { melee }, standardPricing, version: 3 } as never);
 
-      const res = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('coreLaw')).expect(200);
+      const res = await request(e2e.server).get('/v1/treasure-tables').set('Authorization', e2e.auth('treasureLaw')).expect(200);
       const body = res.body as {
         id: string;
         version: number;
