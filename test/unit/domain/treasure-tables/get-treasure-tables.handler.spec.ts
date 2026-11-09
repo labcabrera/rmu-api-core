@@ -89,20 +89,21 @@ const TABLES: TreasureTables = {
 const repository = (tables: TreasureTables | null): TreasureTablesRepository => ({ find: () => Promise.resolve(tables) });
 
 describe('GetTreasureTablesHandler', () => {
-  it('returns the stored tables to Core Law users and administrators', async () => {
+  it('returns the stored tables to Treasure Law users and administrators', async () => {
     const handler = new GetTreasureTablesHandler(repository(TABLES));
-    await expect(handler.execute(new GetTreasureTablesQuery('user', ['rmu-core-law']))).resolves.toEqual(TABLES);
+    await expect(handler.execute(new GetTreasureTablesQuery('user', ['rmu-treasure-law']))).resolves.toEqual(TABLES);
     await expect(handler.execute(new GetTreasureTablesQuery('service', ['rmu-admin']))).resolves.toEqual(TABLES);
   });
 
-  it('rejects users without Core Law access', async () => {
+  it('rejects users without Treasure Law access, even with Core Law', async () => {
     const handler = new GetTreasureTablesHandler(repository(TABLES));
     await expect(handler.execute(new GetTreasureTablesQuery('guest', ['rmu-user']))).rejects.toBeInstanceOf(ForbiddenError);
+    await expect(handler.execute(new GetTreasureTablesQuery('guest', ['rmu-core-law']))).rejects.toBeInstanceOf(ForbiddenError);
   });
 
   it('fails with treasure-tables-not-found when the tables have not been imported', async () => {
     const handler = new GetTreasureTablesHandler(repository(null));
-    const error = handler.execute(new GetTreasureTablesQuery('user', ['rmu-core-law']));
+    const error = handler.execute(new GetTreasureTablesQuery('user', ['rmu-treasure-law']));
     await expect(error).rejects.toBeInstanceOf(NotFoundError);
     await expect(error).rejects.toMatchObject({ statusCode: 404, code: 'treasure-tables-not-found' });
   });
