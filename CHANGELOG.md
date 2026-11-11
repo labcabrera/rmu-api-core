@@ -1,3 +1,27 @@
+# [0.9.0](https://github.com/labcabrera/rmu-api-core/compare/0.8.0...0.9.0) (2026-11-11)
+
+
+* feat!: alchemy tables and materials leave this api ([adab006](https://github.com/labcabrera/rmu-api-core/commit/adab0068736b896b4344d5e9f87da04add233811))
+
+
+### Features
+
+* **access:** realm shares and access levels inherited by races and enumerations ([d0d7633](https://github.com/labcabrera/rmu-api-core/commit/d0d7633c35d11fe018b9b151c8d9ea5f7bd02008))
+* admins share realms with their own friends ([cb343fc](https://github.com/labcabrera/rmu-api-core/commit/cb343fcc5ebf7bda7f23d77dc8eafff07705c532))
+* copy a race into a writable realm (spec 074) ([a24f121](https://github.com/labcabrera/rmu-api-core/commit/a24f121d9861489b49e0cb65e508ca7c27a71a54))
+* realm access map for other apis ([1d887b1](https://github.com/labcabrera/rmu-api-core/commit/1d887b1b46486aaf35853a726f7df4d40ff60d44))
+* **realms:** follow the new name of a user in the shares ([980f1e1](https://github.com/labcabrera/rmu-api-core/commit/980f1e1cd8c90304f4311641d00f0f86c72acb06))
+* **realms:** members of strategic games read the realm, access endpoint ([ffb31fa](https://github.com/labcabrera/rmu-api-core/commit/ffb31faa451227b408d57448cb735f1aad79cc89))
+* **realms:** share a realm with friends and revoke on a broken friendship ([a8cde0b](https://github.com/labcabrera/rmu-api-core/commit/a8cde0b8518270f6e9d9383ac844cfdca1a26e19))
+* treasure tables require Treasure Law access ([ea3165b](https://github.com/labcabrera/rmu-api-core/commit/ea3165b4fe669001ba912bcfd15303cab4471410))
+
+
+### BREAKING CHANGES
+
+* GET /v1/alchemy-tables moves to rmu-api-spells
+
+and GET /v1/materials to rmu-api-items (workspace spec 096).
+
 # [0.8.0](https://github.com/labcabrera/rmu-api-core/compare/0.7.9...0.8.0) (2026-11-02)
 
 
