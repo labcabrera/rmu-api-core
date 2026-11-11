@@ -10,6 +10,7 @@ import { RaceModel, RaceSchema } from './infrastructure/persistence/models/race.
 import { DeleteRaceHandler } from './application/cqrs/handlers/delete-race.handler.js';
 import { UpdateRaceHandler } from './application/cqrs/handlers/update-race.handler.js';
 import { CreateRaceHandler } from './application/cqrs/handlers/create-race.handler.js';
+import { CopyRaceHandler } from './application/cqrs/handlers/copy-race.handler.js';
 import { GetRaceHandler } from './application/cqrs/handlers/get-race.handler.js';
 import { GetRacesHandler } from './application/cqrs/handlers/get-races.handler.js';
 import { SharedModule } from '../shared/shared.module.js';
@@ -38,6 +39,7 @@ import { RACE_REPOSITORY } from './application/ports/race-repository.port.js';
     GetRaceHandler,
     GetRacesHandler,
     CreateRaceHandler,
+    CopyRaceHandler,
     UpdateRaceHandler,
     DeleteRaceHandler,
     AddRaceTraitHandler,

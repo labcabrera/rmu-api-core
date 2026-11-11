@@ -1,3 +1,4 @@
+import { RealmAccessService } from '../../../../src/modules/realms/application/services/realm-access.service.js';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Race } from '../../../../src/modules/races/domain/aggregates/race.js';
 import type { RaceProps } from '../../../../src/modules/races/domain/aggregates/race-props.js';
@@ -14,6 +15,10 @@ import { UpdateRaceHandler } from '../../../../src/modules/races/application/cqr
 import { UpdateRaceCommand } from '../../../../src/modules/races/application/cqrs/commands/update-race.command.js';
 import { DeleteRaceHandler } from '../../../../src/modules/races/application/cqrs/handlers/delete-race.handler.js';
 import { DeleteRaceCommand } from '../../../../src/modules/races/application/cqrs/commands/delete-race.command.js';
+import { CopyRaceHandler } from '../../../../src/modules/races/application/cqrs/handlers/copy-race.handler.js';
+import { CopyRaceCommand } from '../../../../src/modules/races/application/cqrs/commands/copy-race.command.js';
+import { RaceTrait } from '../../../../src/modules/races/domain/value-objects/race-trait.vo.js';
+import { RaceSkillBonus } from '../../../../src/modules/races/domain/value-objects/race-skill-bonus.vo.js';
 import { AddRaceTraitHandler } from '../../../../src/modules/races/application/cqrs/handlers/add-race-trait.handler.js';
 import { AddRaceTraitCommand } from '../../../../src/modules/races/application/cqrs/commands/add-race-trait.command.js';
 import { DeleteRaceTraitHandler } from '../../../../src/modules/races/application/cqrs/handlers/delete-race-trait.handler.js';
@@ -27,6 +32,7 @@ import { SyncRaceRealmCommand } from '../../../../src/modules/races/application/
 import { DeleteRacesByRealmHandler } from '../../../../src/modules/races/application/cqrs/handlers/delete-races-by-realm.handler.js';
 import { DeleteRacesByRealmCommand } from '../../../../src/modules/races/application/cqrs/commands/delete-races-by-realm.command.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
+import { InMemoryRealmRepository } from '../../support/in-memory-realm.repository.js';
 import { RecordingEventPublisher } from '../../support/recording-event-publisher.js';
 import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
 import { RealmGuardAdapter } from '../../../../src/modules/realms/infrastructure/security/realm-guard.adapter.js';
@@ -89,19 +95,21 @@ const realm = Realm.fromProps({
   entitySource: 'user',
   accessType: 'private',
   generic: false,
+  shares: [],
   createdAt: new Date('2026-01-01T00:00:00Z'),
   updatedAt: undefined,
 });
 
 describe('race command handlers', () => {
   let races: InMemoryRaceRepository;
-  let realms: InMemoryRepository<Realm>;
+  let realms: InMemoryRealmRepository;
   let events: RecordingEventPublisher;
-  const guard = new RaceGuardAdapter();
+  let guard: RaceGuardAdapter;
 
   beforeEach(() => {
     races = new InMemoryRaceRepository(race());
-    realms = new InMemoryRepository(realm);
+    realms = new InMemoryRealmRepository(realm);
+    guard = new RaceGuardAdapter(new RealmAccessService(realms, new RealmGuardAdapter()));
     events = new RecordingEventPublisher();
   });
 
@@ -167,6 +175,80 @@ describe('race command handlers', () => {
       await expect(handler().execute(command('realm-1', OTHER))).rejects.toThrow(ForbiddenError);
       expect(races.items.size).toBe(1);
       expect(events.topics).toEqual([]);
+    });
+  });
+
+  describe('CopyRaceHandler (spec 074)', () => {
+    const otherRealm = Realm.fromProps({ ...realm.getProps(), id: 'realm-2', name: 'Other', owner: OTHER.id, accessType: 'public' });
+    const handler = () => new CopyRaceHandler(races, realmRepository(), guard, new RealmGuardAdapter(), events);
+    const command = (realmId: string, user: { id: string; roles: readonly string[] } = OTHER, id = 'race-1') =>
+      new CopyRaceCommand(id, 'Human (copy)', realmId, user.id, [...user.roles]);
+
+    beforeEach(() => {
+      realms.items.set('realm-2', otherRealm);
+      races.items.set(
+        'race-1',
+        race({
+          accessType: 'public',
+          entitySource: 'system',
+          talents: ['night-vision'],
+          traits: [new RaceTrait('t-1', 'tough', 'cold', true, 2, 'Hardy')],
+          skillBonuses: [new RaceSkillBonus('swimming', null, 5)],
+          defaultLanguage: 'westron',
+          imageUrl: '/images/races/human.png',
+        }),
+      );
+      realms.items.set('realm-1', Realm.fromProps({ ...realm.getProps(), accessType: 'public' }));
+    });
+
+    it('copies every field into a user race of the caller, with new ids, and publishes race.created', async () => {
+      const copy = await handler().execute(command('realm-2'));
+      const source = races.items.get('race-1')!;
+
+      expect(copy.id).not.toBe('race-1');
+      expect(copy).toMatchObject({
+        name: 'Human (copy)',
+        realmId: 'realm-2',
+        owner: OTHER.id,
+        accessType: 'public',
+        entitySource: 'user',
+        archetype: source.archetype,
+        baseHits: 10,
+        talents: ['night-vision'],
+        skillBonuses: [{ skillId: 'swimming', specialization: null, bonus: 5 }],
+        defaultLanguage: 'westron',
+        imageUrl: '/images/races/human.png',
+      });
+      expect(copy.traits).toHaveLength(1);
+      expect(copy.traits[0]).toMatchObject({ traitId: 'tough', specialization: 'cold', isTalent: true, tier: 2, description: 'Hardy' });
+      expect(copy.traits[0].id).not.toBe('t-1');
+      expect(races.items.get('race-1')).toMatchObject({ name: 'Human', entitySource: 'system' });
+      expect(events.topics).toEqual(['race.created']);
+    });
+
+    it('takes the access type of the target realm', async () => {
+      realms.items.set('realm-2', Realm.fromProps({ ...otherRealm.getProps(), accessType: 'private' }));
+      expect((await handler().execute(command('realm-2'))).accessType).toBe('private');
+    });
+
+    it('rejects a target realm the caller cannot change', async () => {
+      await expect(handler().execute(command('realm-1'))).rejects.toThrow(ForbiddenError);
+      expect(races.items.size).toBe(1);
+      expect(events.topics).toEqual([]);
+    });
+
+    it('rejects an unknown realm, an unknown race and a user without role', async () => {
+      await expect(handler().execute(command('missing'))).rejects.toThrow(ValidationError);
+      await expect(handler().execute(command('realm-2', OTHER, 'missing'))).rejects.toThrow(NotFoundError);
+      await expect(handler().execute(command('realm-2', NO_ROLES))).rejects.toThrow(ForbiddenError);
+      expect(events.topics).toEqual([]);
+    });
+
+    it('does not copy a race the caller cannot read', async () => {
+      realms.items.set('realm-1', Realm.fromProps({ ...realm.getProps(), accessType: 'private' }));
+      races.items.set('race-1', race({ accessType: 'private' }));
+      await expect(handler().execute(command('realm-2'))).rejects.toThrow(ForbiddenError);
+      expect(races.items.size).toBe(1);
     });
   });
 

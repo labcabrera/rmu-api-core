@@ -1,3 +1,4 @@
+import { type AccessLevel } from '../../../../shared/domain/services/entity-access.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { Enumeration } from '../../../domain/aggregates/enumeration.js';
 import { ENUMERATION_CATEGORIES, type EnumerationCategory } from '../../../domain/value-objects/enumeration-category.vo.js';
@@ -50,8 +51,17 @@ export class EnumerationDto {
   })
   entitySource: EntitySource;
 
-  static fromEntity(entity: Enumeration): EnumerationDto {
+  @ApiProperty({
+    enum: ['read', 'write', 'manage'],
+    required: false,
+    description: 'What the caller can do (spec 069): read, or write (change and delete it); follows the realm when it has one',
+    example: 'write',
+  })
+  access?: AccessLevel;
+
+  static fromEntity(entity: Enumeration, access?: AccessLevel): EnumerationDto {
     const dto = new EnumerationDto();
+    if (access) dto.access = access;
     dto.id = entity.id;
     dto.version = entity.version;
     dto.key = entity.key;

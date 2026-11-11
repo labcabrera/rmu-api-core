@@ -9,6 +9,12 @@ export const envSchema = Joi.object({
   RMU_IAM_JWK_URI: Joi.string().uri().required(),
   RMU_IAM_ISSUER_URI: Joi.string().uri().required(),
   RMU_IAM_AUDIENCE: Joi.string().required(),
+  // Service token (client credentials) for the calls to users (spec 069).
+  RMU_IAM_TOKEN_URI: Joi.string().uri().required(),
+  RMU_IAM_CLIENT_ID: Joi.string().required(),
+  RMU_IAM_CLIENT_SECRET: Joi.string().required(),
+  RMU_API_USERS_URI: Joi.string().uri().required(),
+  RMU_HTTP_TIMEOUT_MS: Joi.number().integer().min(1).default(10_000),
   RMU_KAFKA_BROKERS: Joi.string().required(),
   RMU_KAFKA_CLIENT_ID: Joi.string().required(),
   RMU_KAFKA_CONSUMER_GROUP_ID: Joi.string().default('rmu-api-core-consumer'),

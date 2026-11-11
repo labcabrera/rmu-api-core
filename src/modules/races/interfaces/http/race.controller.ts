@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { RACE_GUARD, type RaceGuardPort } from '../../application/ports/race-guard.port.js';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards, Inject } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../shared/infrastructure/security/jwt-auth.guard.js';
 import { Race } from '../../domain/aggregates/race.js';
 import { RaceDto, RacePageDto } from './dto/race.dto.js';
 import { CreateRaceDto } from './dto/create-race.dto.js';
+import { CopyRaceDto } from './dto/copy-race.dto.js';
+import { CopyRaceCommand } from '../../application/cqrs/commands/copy-race.command.js';
 import { DeleteRaceCommand } from '../../application/cqrs/commands/delete-race.command.js';
 import { GetRaceQuery } from '../../application/cqrs/queries/get-race.query.js';
 import { GetRacesQuery } from '../../application/cqrs/queries/get-races.query.js';
@@ -30,7 +33,18 @@ export class RaceController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    @Inject(RACE_GUARD) private readonly guard: RaceGuardPort,
   ) {}
+
+  /** `access` follows the realm (spec 069): one read of the realms per response. */
+  private async toDtos(entities: Race[], user: AuthenticatedUser): Promise<RaceDto[]> {
+    const levels = await this.guard.accessOf(entities, user.id, user.roles);
+    return entities.map((entity, i) => RaceDto.fromEntity(entity, levels[i] === 'none' ? undefined : levels[i]));
+  }
+
+  private async toDto(entity: Race, user: AuthenticatedUser): Promise<RaceDto> {
+    return (await this.toDtos([entity], user))[0];
+  }
 
   @Get(':id')
   @ApiOperation({ operationId: 'findRaceById', summary: 'Find race by id' })
@@ -41,7 +55,7 @@ export class RaceController {
     const roles: string[] = user.roles;
     const query = new GetRaceQuery(id, userId, roles);
     const entity = await this.queryBus.execute<GetRaceQuery, Race>(query);
-    return RaceDto.fromEntity(entity);
+    return this.toDto(entity, user);
   }
 
   @Get('')
@@ -53,7 +67,7 @@ export class RaceController {
     const roles: string[] = user.roles;
     const query = new GetRacesQuery(dto.q, dto.page, dto.size, userId, roles);
     const page = await this.queryBus.execute<GetRacesQuery, Page<Race>>(query);
-    const mapped = page.content.map(race => RaceDto.fromEntity(race));
+    const mapped = await this.toDtos(page.content, user);
     return new Page<RaceDto>(mapped, page.pagination.page, page.pagination.size, page.pagination.totalElements);
   }
 
@@ -70,7 +84,21 @@ export class RaceController {
     const roles: string[] = user.roles;
     const command = CreateRaceDto.toCommand(createRaceDto, userId, roles);
     const entity = await this.commandBus.execute<CreateRaceCommand, Race>(command);
-    return RaceDto.fromEntity(entity);
+    return this.toDto(entity, user);
+  }
+
+  @Post(':id/copy')
+  @ApiOperation({ operationId: 'copyRace', summary: 'Copy a race into a realm the user can change (spec 074)' })
+  @ApiOkResponse({ type: RaceDto, description: 'The new race' })
+  @ApiErrors({
+    400: 'Bad request, invalid data or unknown realm',
+    403: `${FORBIDDEN_CREATE}, or no permission to change the realm`,
+    404: 'Race not found',
+  })
+  async copy(@Param('id') id: string, @Body() dto: CopyRaceDto, @CurrentUser() user: AuthenticatedUser) {
+    const command = CopyRaceDto.toCommand(id, dto, user.id, user.roles);
+    const entity = await this.commandBus.execute<CopyRaceCommand, Race>(command);
+    return this.toDto(entity, user);
   }
 
   @Patch(':id')
@@ -82,7 +110,7 @@ export class RaceController {
     const roles = user.roles;
     const command = UpdateRaceDto.toCommand(id, updateRaceDto, userId, roles);
     const entity = this.commandBus.execute<UpdateRaceCommand, Race>(command);
-    return RaceDto.fromEntity(await entity);
+    return this.toDto(await entity, user);
   }
 
   @Delete(':id')
@@ -106,7 +134,7 @@ export class RaceController {
     const roles = user.roles;
     const command = AddRaceTraitDto.toCommand(id, addRaceTraitDto, userId, roles);
     const entity = await this.commandBus.execute<AddRaceTraitCommand, Race>(command);
-    return RaceDto.fromEntity(entity);
+    return this.toDto(entity, user);
   }
 
   @Post(':id/skill-bonuses')
@@ -119,7 +147,7 @@ export class RaceController {
     const roles = user.roles;
     const command = AddRaceSkillBonusDto.toCommand(id, dto, userId, roles);
     const entity = await this.commandBus.execute<AddRaceSkillBonusCommand, Race>(command);
-    return RaceDto.fromEntity(entity);
+    return this.toDto(entity, user);
   }
 
   @Delete(':id/traits/:traitId')
@@ -132,7 +160,7 @@ export class RaceController {
     const roles = user.roles;
     const command = new DeleteRaceTraitCommand(id, traitId, userId, roles);
     const entity = await this.commandBus.execute<DeleteRaceTraitCommand, Race>(command);
-    return RaceDto.fromEntity(entity);
+    return this.toDto(entity, user);
   }
 
   @Delete(':id/skill-bonuses/:skillId')
@@ -150,6 +178,6 @@ export class RaceController {
     const roles = user.roles;
     const command = new DeleteRaceSkillBonusCommand(id, skillId, specialization, userId, roles);
     const entity = await this.commandBus.execute<DeleteRaceSkillBonusCommand, Race>(command);
-    return RaceDto.fromEntity(entity);
+    return this.toDto(entity, user);
   }
 }

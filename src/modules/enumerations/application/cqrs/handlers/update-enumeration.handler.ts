@@ -24,7 +24,7 @@ export class UpdateEnumerationHandler implements ICommandHandler<UpdateEnumerati
     const current = await this.enumerationRepository.findById(command.id);
     if (!current) throw new NotFoundError('Enumeration', command.id);
 
-    this.guard.checkUpdate(current, command.userId, command.roles);
+    await this.guard.checkUpdate(current, command.userId, command.roles);
     this.guard.checkEntitySource(command.roles, command.entitySource);
 
     current.checkVersion(command.expectedVersion);

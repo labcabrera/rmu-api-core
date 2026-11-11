@@ -360,4 +360,75 @@ describe('Races (e2e)', () => {
       await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
     });
   });
+
+  describe('copy (spec 074)', () => {
+    const copy = (user: UserName, id: string, body: object) =>
+      request(e2e.server).post(`/v1/races/${id}/copy`).set('Authorization', e2e.auth(user)).send(body);
+
+    it('copies a system race of a public realm into a realm of the caller, with its skill bonuses and traits', async () => {
+      const source = await create('owner', (await createRealm('owner', { accessType: 'public' })).id, { name: 'Book elf' });
+      await request(e2e.server)
+        .post(`/v1/races/${source.id}/skill-bonuses`)
+        .set('Authorization', e2e.auth('owner'))
+        .send({ skillId: 'perception', bonus: 5 })
+        .expect(200);
+      const withTrait = await request(e2e.server)
+        .post(`/v1/races/${source.id}/traits`)
+        .set('Authorization', e2e.auth('owner'))
+        .send({ traitId: 'night-vision', isTalent: false, tier: 2 })
+        .expect(200);
+      const sourceTraitId = (withTrait.body as Race).traits[0].id;
+      await request(e2e.server)
+        .patch(`/v1/races/${source.id}`)
+        .set('Authorization', e2e.auth('admin'))
+        .send({ entitySource: 'system' })
+        .expect(200);
+      const target = await createRealm('other');
+      takeTopics(e2e.events);
+
+      const res = await copy('other', source.id, { name: '  My elf  ', realmId: target.id }).expect(201);
+      const copied = res.body as Race & { realmId: string; entitySource: string; access: string; version: number };
+      expect(copied.id).not.toBe(source.id);
+      expect(copied).toMatchObject({
+        name: 'My elf',
+        realmId: target.id,
+        owner: 'e2e-other',
+        accessType: 'private',
+        entitySource: 'user',
+        access: 'write',
+        version: 0,
+        traits: [expect.objectContaining({ traitId: 'night-vision', tier: 2 })],
+        skillBonuses: [expect.objectContaining({ skillId: 'perception', bonus: 5 })],
+      });
+      expect(copied.traits[0].id).not.toBe(sourceTraitId);
+      expect(takeTopics(e2e.events)).toEqual(['internal.rmu-core.race.created.v1']);
+
+      // The copy is the caller's: they change it, while the source stays a system race
+      await request(e2e.server).patch(`/v1/races/${copied.id}`).set('Authorization', e2e.auth('other')).send({ baseHits: 12 }).expect(200);
+      const stored = await request(e2e.server).get(`/v1/races/${source.id}`).set('Authorization', e2e.auth('other')).expect(200);
+      expect(stored.body).toMatchObject({ name: 'Book elf', entitySource: 'system' });
+    });
+
+    it('needs write on the target realm and read on the race', async () => {
+      const publicRealm = await createRealm('owner', { accessType: 'public' });
+      const source = await create('owner', publicRealm.id);
+      const hidden = await create('owner', (await createRealm('owner')).id);
+      const mine = await createRealm('other');
+
+      // Reads the public realm of the owner but cannot change it
+      expect((await copy('other', source.id, { name: 'Copy', realmId: publicRealm.id }).expect(403)).body).toMatchObject({
+        statusCode: 403,
+      });
+      // Cannot read the race of a private realm of the owner
+      const unreadable = await copy('other', hidden.id, { name: 'Copy', realmId: mine.id });
+      expect([403, 404]).toContain(unreadable.status);
+      await copy('noRole', source.id, { name: 'Copy', realmId: mine.id }).expect(403);
+      await copy('other', 'missing-race', { name: 'Copy', realmId: mine.id }).expect(404);
+      await copy('other', source.id, { name: 'Copy', realmId: 'missing-realm' }).expect(400);
+      await copy('other', source.id, { name: '   ', realmId: mine.id }).expect(400);
+      await copy('other', source.id, { name: 'Copy' }).expect(400);
+      // The owner copies it into the same realm, as a variant
+      await copy('owner', source.id, { name: 'Variant', realmId: publicRealm.id }).expect(201);
+    });
+  });
 });

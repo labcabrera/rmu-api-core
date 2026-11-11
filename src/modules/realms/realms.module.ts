@@ -17,6 +17,21 @@ import { REALM_GUARD } from './application/ports/realm-guard.port.js';
 import { REALM_REPOSITORY } from './application/ports/realm-repository.port.js';
 import { REALM_RACE_QUERY } from './application/ports/realm-race-query.port.js';
 import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race-query.adapter.js';
+import { REALM_ACCESS } from './application/ports/realm-access.port.js';
+import { RealmAccessService } from './application/services/realm-access.service.js';
+import { ShareRealmHandler } from './application/cqrs/handlers/share-realm.handler.js';
+import { UnshareRealmHandler } from './application/cqrs/handlers/unshare-realm.handler.js';
+import { RevokeSharesBetweenUsersHandler } from './application/cqrs/handlers/revoke-shares-between-users.handler.js';
+import { GetRealmSharesHandler } from './application/cqrs/handlers/get-realm-shares.handler.js';
+import { GetRealmAccessHandler } from './application/cqrs/handlers/get-realm-access.handler.js';
+import { GetRealmAccessMapHandler } from './application/cqrs/handlers/get-realm-access-map.handler.js';
+import { SyncRealmGameHandler } from './application/cqrs/handlers/sync-realm-game.handler.js';
+import { KafkaStrategicGameEventConsumer } from './interfaces/messaging/kafka.strategic-game-event-consumer.js';
+import { FRIENDSHIP_PORT } from './application/ports/friendship.port.js';
+import { ApiFriendshipAdapter } from './infrastructure/api-clients/api.friendship.adapter.js';
+import { KafkaFriendshipEventConsumer } from './interfaces/messaging/kafka.friendship-event-consumer.js';
+import { KafkaUserEventConsumer } from './interfaces/messaging/kafka.user-event-consumer.js';
+import { RenameShareUserHandler } from './application/cqrs/handlers/rename-share-user.handler.js';
 
 @Module({
   imports: [
@@ -26,13 +41,25 @@ import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race
     AuthModule,
     SharedModule,
   ],
-  controllers: [RealmController],
+  controllers: [RealmController, KafkaFriendshipEventConsumer, KafkaStrategicGameEventConsumer, KafkaUserEventConsumer],
   providers: [
     GetRealmHandler,
     GetRealmsHandler,
     CreateRealmHandler,
     UpdateRealmHandler,
     DeleteRealmHandler,
+    ShareRealmHandler,
+    UnshareRealmHandler,
+    RevokeSharesBetweenUsersHandler,
+    RenameShareUserHandler,
+    GetRealmSharesHandler,
+    GetRealmAccessHandler,
+    GetRealmAccessMapHandler,
+    SyncRealmGameHandler,
+    {
+      provide: FRIENDSHIP_PORT,
+      useClass: ApiFriendshipAdapter,
+    },
     {
       provide: REALM_REPOSITORY,
       useClass: MongoRealmRepository,
@@ -42,10 +69,14 @@ import { MongoRealmRaceQueryAdapter } from './infrastructure/db/mongo.realm-race
       useClass: RealmGuardAdapter,
     },
     {
+      provide: REALM_ACCESS,
+      useClass: RealmAccessService,
+    },
+    {
       provide: REALM_RACE_QUERY,
       useClass: MongoRealmRaceQueryAdapter,
     },
   ],
-  exports: [REALM_REPOSITORY, REALM_GUARD],
+  exports: [REALM_REPOSITORY, REALM_GUARD, REALM_ACCESS],
 })
 export class RealmsModule {}

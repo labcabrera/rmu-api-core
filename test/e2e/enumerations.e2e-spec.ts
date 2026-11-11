@@ -270,8 +270,14 @@ describe('Enumerations (e2e)', () => {
       await request(e2e.server).delete(path).set('Authorization', e2e.auth('admin')).expect(204);
     });
 
-    it('shows a public enumeration to everyone but lets only its owner and admins change it', async () => {
-      const enumeration = await create('owner', { key: 'public-key', accessType: 'public' });
+    it('shows an enumeration of a public realm to everyone but lets only the realm owner and admins change it', async () => {
+      // Spec 069: an enumeration of a realm follows the visibility of the realm, not its own accessType.
+      const realm = await request(e2e.server)
+        .post('/v1/realms')
+        .set('Authorization', e2e.auth('owner'))
+        .send(realmBody({ accessType: 'public' }))
+        .expect(201);
+      const enumeration = await create('owner', { key: 'public-key', realmId: (realm.body as { id: string }).id });
       const path = `/v1/enumerations/${enumeration.id}`;
 
       await request(e2e.server).get(path).set('Authorization', e2e.auth('other')).expect(200);

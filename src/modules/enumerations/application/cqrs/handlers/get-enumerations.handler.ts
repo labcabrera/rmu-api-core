@@ -14,7 +14,7 @@ export class GetEnumerationsHandler implements IQueryHandler<GetEnumerationsQuer
   ) {}
 
   async execute(query: GetEnumerationsQuery): Promise<Page<Enumeration>> {
-    const filter = this.skillGuard.buildQueryPredicate(query.userId, query.roles);
+    const filter = await this.skillGuard.buildQueryPredicate(query.userId, query.roles);
     const sort = { key: 'asc' } as const;
     return await this.skillRepository.findByRsql(query.rsql, query.page, query.size, filter, sort);
   }

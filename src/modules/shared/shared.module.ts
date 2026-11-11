@@ -12,6 +12,8 @@ import { TerminusModule } from '@nestjs/terminus';
 import { RsqlParser } from './infrastructure/db/rsql-parser.js';
 import { KafkaDomainEventPublisher } from './infrastructure/messaging/kafka.domain-event.publisher.js';
 import { DOMAIN_EVENT_PUBLISHER } from './application/ports/domain-event-publisher.port.js';
+import { HttpClient } from './infrastructure/http/http-client.js';
+import { TokenService } from './infrastructure/security/token.service.js';
 
 @Module({
   imports: [
@@ -34,7 +36,10 @@ import { DOMAIN_EVENT_PUBLISHER } from './application/ports/domain-event-publish
     RsqlParser,
     KafkaProducerService,
     { provide: DOMAIN_EVENT_PUBLISHER, useClass: KafkaDomainEventPublisher },
+    // Calls to other APIs with the service token (spec 069: users, for the friendships).
+    HttpClient,
+    TokenService,
   ],
-  exports: [RsqlParser, KafkaProducerService, DOMAIN_EVENT_PUBLISHER],
+  exports: [RsqlParser, KafkaProducerService, DOMAIN_EVENT_PUBLISHER, HttpClient, TokenService],
 })
 export class SharedModule {}

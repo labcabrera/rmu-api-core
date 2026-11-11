@@ -1,3 +1,4 @@
+import { RealmAccessService } from '../../../../src/modules/realms/application/services/realm-access.service.js';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Enumeration } from '../../../../src/modules/enumerations/domain/aggregates/enumeration.js';
 import type { EnumerationProps } from '../../../../src/modules/enumerations/domain/aggregates/enumeration-props.js';
@@ -11,6 +12,7 @@ import { DeleteEnumerationCommand } from '../../../../src/modules/enumerations/a
 import { Realm } from '../../../../src/modules/realms/domain/aggregates/realm.js';
 import { RealmGuardAdapter } from '../../../../src/modules/realms/infrastructure/security/realm-guard.adapter.js';
 import { InMemoryRepository } from '../../support/in-memory.repository.js';
+import { InMemoryRealmRepository } from '../../support/in-memory-realm.repository.js';
 import { ADMIN, NO_ROLES, OTHER, OWNER } from '../../support/users.js';
 
 class InMemoryEnumerationRepository extends InMemoryRepository<Enumeration> implements EnumerationRepository {
@@ -51,18 +53,20 @@ const realm = (accessType: 'private' | 'public' = 'private') =>
     entitySource: 'user',
     accessType,
     generic: false,
+    shares: [],
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: undefined,
   });
 
 describe('enumeration command handlers', () => {
   let enumerations: InMemoryEnumerationRepository;
-  let realms: InMemoryRepository<Realm>;
-  const guard = new EnumerationGuardAdapter();
+  let realms: InMemoryRealmRepository;
+  let guard: EnumerationGuardAdapter;
 
   beforeEach(() => {
     enumerations = new InMemoryEnumerationRepository(enumeration());
-    realms = new InMemoryRepository(realm());
+    realms = new InMemoryRealmRepository(realm());
+    guard = new EnumerationGuardAdapter(new RealmAccessService(realms, new RealmGuardAdapter()));
   });
 
   describe('CreateEnumerationHandler', () => {

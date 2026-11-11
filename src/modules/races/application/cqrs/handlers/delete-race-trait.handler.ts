@@ -23,7 +23,7 @@ export class DeleteRaceTraitHandler implements ICommandHandler<DeleteRaceTraitCo
     const race = await this.raceRepository.findById(command.raceId);
     if (!race) throw new NotFoundError('Race', command.raceId);
 
-    this.raceGuard.checkUpdate(race, command.userId, command.roles);
+    await this.raceGuard.checkUpdate(race, command.userId, command.roles);
 
     race.removeTrait(command.traitId);
 
